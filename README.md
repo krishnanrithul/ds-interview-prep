@@ -19,7 +19,11 @@ Those are the questions that separate junior from mid/senior candidates.
 - **Follow-up chains** showing what interviewers actually ask next, with what each follow-up is testing
 - **Topics:** SQL, System Design, ML, Statistics, Python, Production ML
 - **Frequency weighting** so you know what actually gets asked
-- **A practice loop:** think first, face the follow-ups one at a time, see the key insight, then rate yourself Missed it / Shaky / Solid. Missed questions come back sooner
+- **A practice loop:** write your answer, face the follow-ups one at a time, then compare with a junior and a senior answer and the key insight, and rate yourself Missed it / Shaky / Solid
+- **Spaced repetition:** each rating schedules the next review (Missed tomorrow, Shaky in 2 days, Solid in 4 to 45 days), so due questions come first
+- **Mock interview mode:** a timed run across topics with no answers until the end, then a review and ratings
+- **Saved attempts:** your own answers are kept, so you can see how they change over time
+- **Streaks and a daily goal**
 - **Dashboard** with daily goal, interview-date countdown and per-topic progress
 - **Light and dark themes**, optional daily reminder, JSON backup and restore
 - **Local-first design:** No backend, no login, runs entirely in your browser
@@ -73,7 +77,9 @@ The questions live in `src/data/questions.json` (wrapped as `{ "questions": [...
       "intent": "test understanding of tradeoffs"
     }
   ],
-  "key_insight": "Senior engineers choose models based on constraints, not accuracy alone"
+  "key_insight": "Senior engineers choose models based on constraints, not accuracy alone",
+  "junior_answer": "Clean the data, train XGBoost, report accuracy.",
+  "senior_answer": "Start from the decision the model supports, define churn and the window, baseline with logistic regression, and judge it on cost-weighted precision and recall."
 }
 ```
 
@@ -87,7 +93,7 @@ The questions live in `src/data/questions.json` (wrapped as `{ "questions": [...
 
 ## Adding Questions
 
-Add an entry to `src/data/questions.json` using the format above. The app picks it up automatically, including topic counts and the practice queue. A new topic gets a neutral color unless you add it to `src/lib/topics.js`.
+Add an entry to `src/data/questions.json` using the format above (`junior_answer` and `senior_answer` are optional, and the ladder is hidden when they're missing). The app picks it up automatically, including topic counts and the practice queue. A new topic gets a neutral color unless you add it to `src/lib/topics.js`.
 
 ## Questions?
 

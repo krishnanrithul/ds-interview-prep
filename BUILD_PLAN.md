@@ -52,7 +52,7 @@ The first UI was a flat, filterable list with a "studied" checkbox. It was repla
 
 - **Dashboard:** today's session, daily goal, Solid/Shaky/Missed/Unseen counts, per-topic progress
 - **Practice:** one question at a time. Think first, then follow-ups unlock one by one, then the key insight, then self-rate (Missed it / Shaky / Solid). Keyboard shortcuts: Space/Enter, 1/2/3
-- **Smart queue:** missed > unseen > shaky > solid, weighted toward weak topics and stale questions
+- **Smart queue:** overdue reviews first, then unseen, then weak-but-not-due, solid last; weighted toward weak topics
 - **Library:** search plus topic and status filters over all questions
 
 ### Phase 1.5: Settings and wrap-up (IN PROGRESS)
@@ -65,7 +65,12 @@ Borrowed from the vape-ease-journey app:
 - [x] Backup: export progress and settings as JSON; import validates the file and asks before replacing; old export formats still import
 - [x] Corrupted-storage protection (`safeStorage`) and an error boundary instead of a white screen
 - [x] Docs updated to match the app
-- [ ] Mobile check at phone width (and a bottom nav if the top tabs feel cramped)
+- [x] Junior vs senior answer ladder on every question (drafts, to be reviewed by the author)
+- [x] Mock interview mode: mixed topics, follow-ups one at a time, soft timer, no answers until the review, then rate and save
+- [x] Spaced repetition: each rating schedules the next review (Missed 1 day, Shaky 2 days, Solid 4/10/21/45 days); "due" questions come first
+- [x] Activity log with streaks, best streak and a daily goal driven by it
+- [x] Saved attempts: your answers are stored per question (last 5) and shown next to the senior answer on later attempts
+- [x] Mobile check at phone width: no horizontal overflow, tabs collapse to icons (a bottom nav is still optional)
 - [ ] Bug pass on edge cases: empty queue, 1-question session, keyboard shortcuts
 - [ ] Optional polish: animations, card transitions
 
@@ -103,19 +108,26 @@ src/
     questions.json           the content (edit this)
     questions.js             exports QUESTIONS from the JSON
   components/
-    Dashboard.jsx            session start, daily goal, stats, topics
-    Practice.jsx             the study loop
-    Library.jsx              browse and search
+    Dashboard.jsx            session start, streak, due count, daily goal, stats, topics
+    Practice.jsx             the study loop (kept mounted while you switch tabs)
+    Mock.jsx                 timed mock interview: setup, run, review
+    Library.jsx              browse and search; shows ladder, due date, saved attempts
+    AnswerLadder.jsx         junior vs senior answer plus key insight
+    Attempts.jsx             your saved answers for a question
     Settings.jsx             study settings, theme, reminders, data
     ConfirmDialog.jsx        confirm before destructive actions
     ErrorBoundary.jsx        recovery screen instead of a white page
   hooks/
-    useProgress.js           per-question rating, persisted
+    useProgress.js           per-question rating, streak and due date, persisted
+    useActivity.js           daily activity log (streak, daily goal)
+    useNotes.js              your saved answers per question
     useSettings.js           session size, daily goal, interview date
     useTheme.jsx             light / dark / system
     useReminderScheduler.js  daily reminder timer
   lib/
-    queue.js                 builds the practice queue, summarizes progress
+    queue.js                 practice queue and mock queue, progress summary
+    srs.js                   spaced-repetition scheduling and due dates
+    streak.js                current and best streak from the activity log
     backup.js                export / import / clear
     reminders.js             Web Notifications reminder logic
     safeStorage.js           safe JSON parsing from localStorage
@@ -133,7 +145,9 @@ src/
   "frequency": "asked Nx in last year",
   "context": "...",
   "follow_ups": [{ "text": "...", "intent": "..." }],
-  "key_insight": "..."
+  "key_insight": "...",
+  "junior_answer": "what a typical weaker answer sounds like",
+  "senior_answer": "what a strong answer sounds like"
 }
 ```
 
@@ -141,7 +155,9 @@ src/
 
 | Key | Contents |
 |-----|----------|
-| `progress-v2` | `{ [questionId]: { rating: "missed"/"shaky"/"solid", last: timestamp, count } }` |
+| `progress-v2` | `{ [questionId]: { rating: "missed"/"shaky"/"solid", last, count, streak, due } }` |
+| `ds-activity` | `{ "YYYY-MM-DD": questionsPracticed }` (streak and daily goal) |
+| `ds-notes` | `{ [questionId]: [{ ts, text, rating, source }] }`, last 5 answers per question |
 | `ds-settings` | `{ sessionSize, dailyGoal, interviewDate }` |
 | `ds-theme` | `"light"`, `"dark"` or `"system"` |
 | `ds-reminder-enabled`, `ds-reminder-hour`, `ds-reminder-last-fired` | reminder state |
