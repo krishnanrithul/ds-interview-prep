@@ -222,18 +222,30 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
             )}
             {n > 0 && (
               <div className="rounded-xl border border-border bg-card p-4">
-                <p className="text-sm font-semibold mb-2">The follow-ups and what they were testing</p>
-                <ul className="space-y-2.5">
-                  {q.follow_ups.map((fu, k) => (
-                    <li key={k} className="text-sm">
-                      <p className="text-foreground/90">{followUpText(q, picks, k)}</p>
-                      <p className="text-muted-foreground flex gap-1.5 mt-0.5">
-                        <CornerDownRight className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                        {fu.intent}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
+                <p className="text-sm font-semibold mb-3">The follow-ups, your replies, and what they were testing</p>
+                <ol className="space-y-4">
+                  {q.follow_ups.map((fu, k) => {
+                    const reply = turns[k + 1]
+                    return (
+                      <li key={k} className="text-sm">
+                        <p className="font-medium text-foreground/90">
+                          <span className="text-muted-foreground tabular-nums mr-1.5">{k + 1}.</span>
+                          {followUpText(q, picks, k)}
+                        </p>
+                        <div className="mt-1.5 ml-5 rounded-lg bg-muted/50 border border-border px-3 py-2">
+                          <p className="text-xs text-muted-foreground mb-0.5">You said</p>
+                          {reply
+                            ? <p className="whitespace-pre-wrap text-foreground/80">{reply}</p>
+                            : <p className="italic text-muted-foreground">No written reply</p>}
+                        </div>
+                        <p className="text-muted-foreground flex gap-1.5 mt-1.5 ml-5">
+                          <CornerDownRight className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                          Testing: {fu.intent}
+                        </p>
+                      </li>
+                    )
+                  })}
+                </ol>
               </div>
             )}
             <Attempts attempts={notes[q.id]} title="Your previous attempts" limit={1} />
