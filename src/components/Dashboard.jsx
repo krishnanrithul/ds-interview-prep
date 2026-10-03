@@ -1,6 +1,7 @@
-import { ArrowRight, Play, CalendarDays } from 'lucide-react'
+import { ArrowRight, Play, CalendarDays, Flame, Timer, RotateCw } from 'lucide-react'
 import { QUESTIONS } from '../data/questions'
-import { summarize } from '../lib/queue'
+import { summarize, countDue } from '../lib/queue'
+import { currentStreak, bestStreak, countToday } from '../lib/streak'
 import { dot, RATINGS } from '../lib/topics'
 
 function StackedBar({ counts, total }) {
@@ -14,11 +15,14 @@ function StackedBar({ counts, total }) {
   )
 }
 
-export default function Dashboard({ progress, settings, practicedToday, onStart }) {
+export default function Dashboard({ progress, settings, activity, onStart, onMock }) {
   const overall = summarize(QUESTIONS, progress)
   const topics = [...new Set(QUESTIONS.map((q) => q.topic))]
-  const pickCount = Math.min(settings.sessionSize, QUESTIONS.length)
-  const goalPct = Math.min(100, Math.round((practicedToday / settings.dailyGoal) * 100))
+  const due = countDue(QUESTIONS, progress)
+  const today = countToday(activity)
+  const streak = currentStreak(activity)
+  const best = bestStreak(activity)
+  const goalPct = Math.min(100, Math.round((today / settings.dailyGoal) * 100))
 
   let daysLeft = null
   if (settings.interviewDate) {
@@ -32,6 +36,11 @@ export default function Dashboard({ progress, settings, practicedToday, onStart 
       return { t, weak: qs.filter((q) => progress[q.id]?.rating !== 'solid').length / qs.length }
     })
     .sort((a, b) => b.weak - a.weak)[0]
+
+  const heading =
+    due > 0 ? `${due} ${due === 1 ? 'question is' : 'questions are'} due for review`
+    : overall.unseen > 0 ? `${Math.min(settings.sessionSize, overall.unseen)} new questions to try`
+    : 'All caught up. Try a mock interview to stay sharp.'
 
   const stats = [
     { label: 'Solid', n: overall.solid, cls: 'text-emerald-600 dark:text-emerald-400' },
@@ -52,40 +61,61 @@ export default function Dashboard({ progress, settings, practicedToday, onStart 
             </span>
           )}
         </div>
-        <h2 className="text-2xl sm:text-3xl font-semibold leading-tight mb-2">
-          {overall.solid === QUESTIONS.length
-            ? 'Everything is solid. Keep it fresh with a review.'
-            : `${pickCount} questions picked for you`}
-        </h2>
+        <h2 className="text-2xl sm:text-3xl font-semibold leading-tight mb-2">{heading}</h2>
         <p className="text-primary-foreground/80 text-sm sm:text-base mb-6 max-w-xl">
           Answer first, then face the follow-ups the way an interviewer would push. Rate yourself
-          honestly. Missed questions come back sooner.
+          honestly. Missed questions come back tomorrow.
           {nextTopic && nextTopic.weak > 0 && (
             <> Weakest area right now: <span className="font-semibold text-primary-foreground">{nextTopic.t}</span>.</>
           )}
         </p>
-        <button
-          onClick={() => onStart({ topic: 'all' })}
-          className="inline-flex items-center gap-2 bg-white text-indigo-700 font-semibold px-5 py-3 rounded-xl hover:bg-indigo-50 transition-colors"
-        >
-          <Play className="w-4 h-4 fill-current" />
-          Start session
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={() => onStart({ topic: 'all' })}
+            className="inline-flex items-center gap-2 bg-white text-indigo-700 font-semibold px-5 py-3 rounded-xl hover:bg-indigo-50 transition-colors"
+          >
+            <Play className="w-4 h-4 fill-current" />
+            Start session
+          </button>
+          <button
+            onClick={onMock}
+            className="inline-flex items-center gap-2 bg-white/15 text-white font-semibold px-5 py-3 rounded-xl hover:bg-white/25 transition-colors"
+          >
+            <Timer className="w-4 h-4" />
+            Mock interview
+          </button>
+        </div>
       </section>
 
-      <section className="bg-card border border-border rounded-2xl p-5">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold">Daily goal</h3>
-          <span className="text-sm text-muted-foreground tabular-nums">
-            {practicedToday} / {settings.dailyGoal} questions today
-          </span>
+      <section className="grid sm:grid-cols-3 gap-3">
+        <div className="bg-card border border-border rounded-2xl p-5">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+            <Flame className={`w-4 h-4 ${streak > 0 ? 'text-orange-500' : ''}`} /> Streak
+          </div>
+          <p className="text-3xl font-semibold tabular-nums">{streak} <span className="text-base font-medium text-muted-foreground">{streak === 1 ? 'day' : 'days'}</span></p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {streak === 0 ? 'Practice today to start one' : today === 0 ? 'Practice today to keep it going' : `Best: ${Math.max(best, streak)} ${Math.max(best, streak) === 1 ? 'day' : 'days'}`}
+          </p>
         </div>
-        <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-          <div className="h-full bg-primary transition-all duration-500" style={{ width: `${goalPct}%` }} />
+        <div className="bg-card border border-border rounded-2xl p-5">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+            <RotateCw className="w-4 h-4" /> Due for review
+          </div>
+          <p className="text-3xl font-semibold tabular-nums">{due}</p>
+          <p className="text-xs text-muted-foreground mt-1">{due === 0 ? 'Nothing due today' : 'Included first in your next session'}</p>
         </div>
-        {practicedToday >= settings.dailyGoal && (
-          <p className="text-sm text-emerald-600 dark:text-emerald-400 mt-3 font-medium">Goal reached. Anything more is a bonus.</p>
-        )}
+        <div className="bg-card border border-border rounded-2xl p-5">
+          <div className="flex items-center justify-between text-sm text-muted-foreground mb-1">
+            <span>Daily goal</span>
+            <span className="tabular-nums">{today} / {settings.dailyGoal}</span>
+          </div>
+          <div className="h-2 w-full rounded-full bg-muted overflow-hidden mt-3">
+            <div className="h-full bg-primary transition-all duration-500" style={{ width: `${goalPct}%` }} />
+          </div>
+          <p className="text-xs text-muted-foreground mt-3">
+            {today >= settings.dailyGoal ? 'Goal reached. Anything more is a bonus.' : `${settings.dailyGoal - today} to go today`}
+          </p>
+        </div>
       </section>
 
       <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">

@@ -2,8 +2,11 @@ import { useState } from 'react'
 import { Search, X, ChevronDown, CornerDownRight, Play } from 'lucide-react'
 import { QUESTIONS } from '../data/questions'
 import { DIFFICULTY, RATINGS, dot } from '../lib/topics'
+import { describeDue } from '../lib/srs'
+import AnswerLadder from './AnswerLadder'
+import Attempts from './Attempts'
 
-const STATUS = ['all', 'unseen', 'missed', 'shaky', 'solid']
+const STATUS = ['all', 'unseen', 'due', 'missed', 'shaky', 'solid']
 
 function Chip({ active, onClick, children }) {
   return (
@@ -18,19 +21,22 @@ function Chip({ active, onClick, children }) {
   )
 }
 
-export default function Library({ progress, onPractice }) {
+export default function Library({ progress, notes, onPractice }) {
   const [query, setQuery] = useState('')
   const [topic, setTopic] = useState('all')
   const [status, setStatus] = useState('all')
   const [open, setOpen] = useState(null)
   const topics = [...new Set(QUESTIONS.map((q) => q.topic))]
+  const endOfToday = new Date().setHours(23, 59, 59, 999)
 
   const list = QUESTIONS.filter((q) => {
-    const r = progress[q.id]?.rating || 'unseen'
+    const p = progress[q.id]
+    const r = p?.rating || 'unseen'
+    const statusOk = status === 'all' || (status === 'due' ? !!p && p.due <= endOfToday : r === status)
     return (
       (!query || q.question.toLowerCase().includes(query.toLowerCase())) &&
       (topic === 'all' || q.topic === topic) &&
-      (status === 'all' || r === status)
+      statusOk
     )
   })
 
@@ -63,7 +69,8 @@ export default function Library({ progress, onPractice }) {
 
       <div className="space-y-2.5">
         {list.map((q) => {
-          const r = progress[q.id]?.rating
+          const p = progress[q.id]
+          const r = p?.rating
           const isOpen = open === q.id
           return (
             <article key={q.id} className="bg-card border border-border rounded-2xl">
@@ -77,6 +84,7 @@ export default function Library({ progress, onPractice }) {
                     {r
                       ? <span className={`px-2 py-0.5 rounded-md ring-1 font-medium ${RATINGS[r].badge}`}>{RATINGS[r].label}</span>
                       : <span className="text-muted-foreground">Unseen</span>}
+                    {p && <span className="text-muted-foreground">{describeDue(p)}</span>}
                   </div>
                   <h3 className="font-medium leading-snug">{q.question}</h3>
                 </div>
@@ -84,7 +92,7 @@ export default function Library({ progress, onPractice }) {
               </button>
 
               {isOpen && (
-                <div className="px-5 pb-5 space-y-4 border-t border-border pt-4">
+                <div className="px-5 pb-5 space-y-5 border-t border-border pt-4">
                   {q.context && <p className="text-sm text-muted-foreground">{q.context}</p>}
                   <ol className="space-y-3">
                     {q.follow_ups.map((fu, k) => (
@@ -96,10 +104,8 @@ export default function Library({ progress, onPractice }) {
                       </li>
                     ))}
                   </ol>
-                  <div className="rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 p-4">
-                    <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider mb-1">Key insight</p>
-                    <p className="text-sm leading-relaxed">{q.key_insight}</p>
-                  </div>
+                  <AnswerLadder q={q} />
+                  <Attempts attempts={notes[q.id]} />
                   <button
                     onClick={() => onPractice(q.id)}
                     className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80"

@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { ArrowRight, X, RotateCcw, CornerDownRight } from 'lucide-react'
 import { DIFFICULTY, RATINGS, dot } from '../lib/topics'
+import AnswerLadder from './AnswerLadder'
+import Attempts from './Attempts'
 
-export default function Practice({ ids, byId, onRate, onExit, onAgain }) {
+export default function Practice({ ids, byId, notes, active, onRate, onExit, onAgain }) {
   const [i, setI] = useState(0)
   const [step, setStep] = useState(0)
   const [draft, setDraft] = useState('')
@@ -12,21 +14,21 @@ export default function Practice({ ids, byId, onRate, onExit, onAgain }) {
   const done = i >= ids.length
   const q = done ? null : byId[ids[i]]
   const n = q ? q.follow_ups.length : 0
-  const total = n + 1 // step === total -> insight + rating
+  const total = n + 1 // step === total -> ladder + insight + rating
   const rating = q && step === total
 
   const advance = () => setStep((s) => Math.min(s + 1, total))
   const rate = (r) => {
-    onRate(q.id, r)
+    onRate(q.id, r, draft)
     setResults((x) => [...x, { id: q.id, rating: r }])
     setI((x) => x + 1)
     setStep(0)
     setDraft('')
   }
 
-  // keyboard: Cmd/Ctrl+Enter or Space/Enter to advance, 1/2/3 to rate
+  // Keyboard: Cmd/Ctrl+Enter or Space/Enter advances, 1/2/3 rates. Ignored while another tab is showing.
   useEffect(() => {
-    if (done) return
+    if (done || !active) return
     const onKey = (e) => {
       const typing = ['TEXTAREA', 'INPUT'].includes(e.target.tagName)
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); if (!rating) advance(); return }
@@ -40,7 +42,7 @@ export default function Practice({ ids, byId, onRate, onExit, onAgain }) {
     return () => window.removeEventListener('keydown', onKey)
   })
 
-  useEffect(() => { if (step === 0) textRef.current?.focus() }, [i, step])
+  useEffect(() => { if (active && step === 0) textRef.current?.focus() }, [i, step, active])
 
   if (ids.length === 0) {
     return <p className="text-center text-muted-foreground py-20">No questions to practice here.</p>
@@ -48,7 +50,7 @@ export default function Practice({ ids, byId, onRate, onExit, onAgain }) {
 
   if (done) {
     const count = (k) => results.filter((r) => r.rating === k).length
-    const missed = results.filter((r) => r.rating !== 'solid')
+    const revisit = results.filter((r) => r.rating !== 'solid')
     return (
       <div className="max-w-xl mx-auto text-center py-8">
         <h2 className="text-3xl font-semibold mb-2">Session complete</h2>
@@ -61,11 +63,11 @@ export default function Practice({ ids, byId, onRate, onExit, onAgain }) {
             </div>
           ))}
         </div>
-        {missed.length > 0 && (
+        {revisit.length > 0 && (
           <div className="text-left bg-card border border-border rounded-2xl p-5 mb-8">
-            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">To revisit</p>
+            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Coming back soon</p>
             <ul className="space-y-2">
-              {missed.map((r) => (
+              {revisit.map((r) => (
                 <li key={r.id} className="text-sm flex gap-2">
                   <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${r.rating === 'missed' ? 'bg-rose-400' : 'bg-amber-400'}`} />
                   {byId[r.id].question}
@@ -86,11 +88,11 @@ export default function Practice({ ids, byId, onRate, onExit, onAgain }) {
     )
   }
 
-  const label = step < n ? (step === 0 ? 'Done, hear the follow-up' : 'Answered, next follow-up') : 'Show key insight'
+  const label = step < n ? (step === 0 ? 'Done, hear the follow-up' : 'Answered, next follow-up') : 'Show the answers'
+  const previous = notes[q.id]
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Progress */}
       <div className="flex items-center gap-4 mb-6">
         <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
           <div className="h-full bg-primary transition-all duration-300" style={{ width: `${(i / ids.length) * 100}%` }} />
@@ -118,7 +120,7 @@ export default function Practice({ ids, byId, onRate, onExit, onAgain }) {
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             rows={5}
-            placeholder="Think out loud or jot your approach. Nothing is saved; this is just for you."
+            placeholder="Write or think through your answer. If you write something, it's saved so you can compare later."
             className="w-full rounded-xl border border-border bg-muted/50 p-4 text-sm leading-relaxed placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition resize-y"
           />
         )}
@@ -130,15 +132,12 @@ export default function Practice({ ids, byId, onRate, onExit, onAgain }) {
           </div>
         )}
 
-        {/* Interviewer follow-ups, one at a time */}
         {step > 0 && (
           <ol className="space-y-3 mb-6">
             {q.follow_ups.slice(0, Math.min(step, n)).map((fu, k) => (
               <li key={k} className="rounded-xl border border-primary/20 bg-primary/5 p-4">
-                <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-1">
-                  Interviewer follow-up {k + 1}
-                </p>
-                <p className="text-[15px] leading-relaxed text-foreground">{fu.text}</p>
+                <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-1">Interviewer follow-up {k + 1}</p>
+                <p className="text-[15px] leading-relaxed">{fu.text}</p>
                 {rating && (
                   <p className="text-xs text-muted-foreground mt-2 flex gap-1.5">
                     <CornerDownRight className="w-3 h-3 mt-0.5 shrink-0" />
@@ -151,14 +150,13 @@ export default function Practice({ ids, byId, onRate, onExit, onAgain }) {
         )}
 
         {rating && (
-          <div className="rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 p-5 mb-2">
-            <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider mb-1">Key insight</p>
-            <p className="text-[15px] leading-relaxed text-foreground">{q.key_insight}</p>
+          <div className="space-y-5">
+            <AnswerLadder q={q} />
+            <Attempts attempts={previous} title="Your previous attempts" limit={1} />
           </div>
         )}
       </div>
 
-      {/* Actions */}
       <div className="mt-5">
         {!rating ? (
           <button

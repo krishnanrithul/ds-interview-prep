@@ -1,12 +1,16 @@
 import { useState, useMemo, useCallback } from 'react'
-import { BookOpen, LayoutDashboard, GraduationCap, Library as LibraryIcon, Settings as SettingsIcon } from 'lucide-react'
+import { BookOpen, LayoutDashboard, GraduationCap, Timer, Library as LibraryIcon, Settings as SettingsIcon } from 'lucide-react'
 import { QUESTIONS } from './data/questions'
 import { useProgress } from './hooks/useProgress'
 import { useSettings } from './hooks/useSettings'
+import { useActivity } from './hooks/useActivity'
+import { useNotes } from './hooks/useNotes'
 import { useReminderScheduler } from './hooks/useReminderScheduler'
 import { buildQueue } from './lib/queue'
+import { countToday } from './lib/streak'
 import Dashboard from './components/Dashboard'
 import Practice from './components/Practice'
+import Mock from './components/Mock'
 import Library from './components/Library'
 import Settings from './components/Settings'
 import './index.css'
@@ -14,15 +18,16 @@ import './index.css'
 const TABS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'practice', label: 'Practice', icon: GraduationCap },
+  { id: 'mock', label: 'Mock', icon: Timer },
   { id: 'library', label: 'Library', icon: LibraryIcon },
   { id: 'settings', label: 'Settings', icon: SettingsIcon },
 ]
 
-const startOfToday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime() }
-
 export default function App() {
   const { progress, rate } = useProgress()
   const { settings, update } = useSettings()
+  const { activity, record } = useActivity()
+  const { notes, addAttempt } = useNotes()
   const [view, setView] = useState('dashboard')
   const [session, setSession] = useState(null) // { ids, topic, key }
   const [status, setStatus] = useState(null)
@@ -30,8 +35,19 @@ export default function App() {
 
   const flash = useCallback((m) => { setStatus(m); setTimeout(() => setStatus(null), 3000) }, [])
 
-  const practicedToday = Object.values(progress).filter((p) => p.last >= startOfToday()).length
-  useReminderScheduler(() => Object.values(progress).some((p) => p.last >= startOfToday()))
+  useReminderScheduler(() => countToday(activity) > 0)
+
+  // One place that records a rated question: schedule, activity (streak/goal), and your answer.
+  const handleRate = useCallback((id, rating, answer, source = 'practice') => {
+    rate(id, rating)
+    record(1)
+    addAttempt(id, answer, rating, source)
+  }, [rate, record, addAttempt])
+
+  const saveMock = useCallback((results) => {
+    results.forEach((r) => handleRate(r.id, r.rating, r.answer, 'mock'))
+    flash(results.length ? `Saved ${results.length} result${results.length === 1 ? '' : 's'}. They'll shape your next sessions.` : 'Nothing was rated, so nothing was saved')
+  }, [handleRate, flash])
 
   const start = ({ topic = 'all', only = null } = {}) => {
     setSession({ ids: buildQueue(QUESTIONS, progress, { topic, only, size: settings.sessionSize }), topic, key: Date.now() })
@@ -51,7 +67,7 @@ export default function App() {
             <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
               <BookOpen className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="font-semibold hidden md:block">DS Interview Prep</span>
+            <span className="font-semibold hidden lg:block">DS Interview Prep</span>
           </div>
 
           <nav className="flex gap-1 flex-1">
@@ -60,7 +76,7 @@ export default function App() {
                 key={id}
                 onClick={() => go(id)}
                 aria-label={label}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   view === id ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 }`}
               >
@@ -73,18 +89,30 @@ export default function App() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-8">
-        {view === 'dashboard' && <Dashboard progress={progress} settings={settings} practicedToday={practicedToday} onStart={start} />}
-        {view === 'practice' && session && (
-          <Practice
-            key={session.key}
-            ids={session.ids}
-            byId={byId}
-            onRate={rate}
-            onExit={() => { setSession(null); setView('dashboard') }}
-            onAgain={() => start({ topic: session.topic })}
-          />
+        {view === 'dashboard' && (
+          <Dashboard progress={progress} settings={settings} activity={activity} onStart={start} onMock={() => setView('mock')} />
         )}
-        {view === 'library' && <Library progress={progress} onPractice={(id) => start({ only: [id] })} />}
+
+        {/* Practice and Mock stay mounted while hidden so switching tabs doesn't lose your place. */}
+        {session && (
+          <div className={view === 'practice' ? '' : 'hidden'}>
+            <Practice
+              key={session.key}
+              ids={session.ids}
+              byId={byId}
+              notes={notes}
+              active={view === 'practice'}
+              onRate={handleRate}
+              onExit={() => { setSession(null); setView('dashboard') }}
+              onAgain={() => start({ topic: session.topic })}
+            />
+          </div>
+        )}
+        <div className={view === 'mock' ? '' : 'hidden'}>
+          <Mock progress={progress} byId={byId} active={view === 'mock'} onSave={saveMock} />
+        </div>
+
+        {view === 'library' && <Library progress={progress} notes={notes} onPractice={(id) => start({ only: [id] })} />}
         {view === 'settings' && <Settings settings={settings} update={update} flash={flash} />}
       </main>
 

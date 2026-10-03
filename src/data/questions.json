@@ -21,7 +21,9 @@
           "intent": "test SQL fundamentals and edge cases"
         }
       ],
-      "key_insight": "Duplicate detection isn't just a GROUP BY—it's about understanding what constitutes a duplicate in your business context"
+      "key_insight": "Duplicate detection isn't just a GROUP BY—it's about understanding what constitutes a duplicate in your business context",
+      "junior_answer": "SELECT email, COUNT(*) FROM users GROUP BY email HAVING COUNT(*) > 1. Done.",
+      "senior_answer": "First I'd ask what counts as a duplicate: same email, same normalized email (case, whitespace, plus-addressing), same phone, or the same person across several fields. Then GROUP BY the normalized key with HAVING COUNT(*) > 1, and ROW_NUMBER() over that key ordered by created_at when I need to keep one record and flag the rest. For duplicates across time periods I'd compare created_at gaps. At 100M rows I'd precompute and index the normalized key instead of computing it per query. GROUP BY surfaces the duplicate groups, while DISTINCT only collapses rows and hides them."
     },
     {
       "id": "sql-002",
@@ -44,7 +46,9 @@
           "intent": "test judgment on data staleness and recency bias"
         }
       ],
-      "key_insight": "Financial forecasting queries need to handle missing data gracefully and acknowledge that historical patterns may no longer be relevant"
+      "key_insight": "Financial forecasting queries need to handle missing data gracefully and acknowledge that historical patterns may no longer be relevant",
+      "junior_answer": "Join invoices to payments, group by customer segment, and average the days to pay.",
+      "senior_answer": "I'd define the unit first: the distribution of days from invoice to cash by segment, not just the average. Unpaid invoices are censored observations, so dropping them would bias the pattern toward fast payers. I'd build it as a daily incremental table so the 15-minute scan becomes a small partition read. New customers with no history fall back to their segment prior. For a regime change like COVID I'd compare recent against full-history distributions and decide on recency weighting or excluding the shock period with a backtest, not a guess."
     },
     {
       "id": "sql-003",
@@ -63,7 +67,9 @@
           "intent": "test business logic thinking"
         }
       ],
-      "key_insight": "Window functions are powerful for temporal analysis, but the business context determines how to interpret null values and edge cases"
+      "key_insight": "Window functions are powerful for temporal analysis, but the business context determines how to interpret null values and edge cases",
+      "junior_answer": "Use LAG(payment_date) per customer, subtract, and take the MAX.",
+      "senior_answer": "LAG(payment_date) OVER (PARTITION BY customer_id ORDER BY payment_date), a date difference for each gap, then MAX per customer. The business rules matter more than the syntax. Refunds probably shouldn't reset the gap, because a refund isn't engagement. The open gap since the last payment must be counted, or churned customers look healthy. A single-payment customer has a NULL gap, not zero. For churn risk I'd compare the current open gap to that customer's own history instead of using one global threshold."
     },
     {
       "id": "sql-004",
@@ -82,7 +88,9 @@
           "intent": "test statistical thinking and confounding variable awareness"
         }
       ],
-      "key_insight": "Cohort analysis requires clear definitions of lifecycle events and careful handling of incomplete data (recent cohorts have less follow-up time)"
+      "key_insight": "Cohort analysis requires clear definitions of lifecycle events and careful handling of incomplete data (recent cohorts have less follow-up time)",
+      "junior_answer": "Group customers by signup month, count who is active in March, and divide by the cohort size.",
+      "senior_answer": "I'd define the cohort (signup month) and 'active' (at least one qualifying transaction in the window) explicitly, then LEFT JOIN cohort members to activity so inactive customers stay in the denominator. Returners count as active in month N. If lapses matter I'd also report 'never lapsed'. Recent cohorts have less follow-up, so I'd compare cohorts at the same age and mask incomplete periods. If January beats December I'd check confounders before crediting the product: seasonality, an acquisition channel or pricing change, a different customer mix, or survivorship."
     },
     {
       "id": "ml-001",
@@ -105,7 +113,9 @@
           "intent": "test production thinking and stakeholder communication"
         }
       ],
-      "key_insight": "Senior engineers choose models based on business constraints (FP cost, latency, maintainability), not accuracy alone"
+      "key_insight": "Senior engineers choose models based on business constraints (FP cost, latency, maintainability), not accuracy alone",
+      "junior_answer": "Clean the data, train XGBoost, tune it, and report accuracy.",
+      "senior_answer": "I'd start with the decision the model supports: who gets a retention offer, and what an offer costs versus a lost customer. Then I'd define churn and the prediction window, build features only from data available at prediction time, split by time, and baseline with logistic regression. Churn is imbalanced, so accuracy is meaningless. I'd use precision and recall at the top-k the team can actually act on, plus calibration. XGBoost is justified if it beats the baseline by enough to matter, and SHAP explains it. Production-ready means the false-positive cost is acceptable, not that a metric crossed a number."
     },
     {
       "id": "ml-002",
@@ -128,7 +138,9 @@
           "intent": "test systems thinking and pragmatism"
         }
       ],
-      "key_insight": "Drift detection alone is useless—you need a decision framework for when to act and what action to take"
+      "key_insight": "Drift detection alone is useless—you need a decision framework for when to act and what action to take",
+      "junior_answer": "Compare the training and live feature distributions and alert when they differ.",
+      "senior_answer": "I'd separate data drift (inputs shift, measured with PSI or KS on key features) from model drift (performance degrades, which needs labels that often arrive late). Input and prediction distributions are the leading signal, and real performance follows when labels land. The valuable part is the action policy: thresholds tied to impact, and a clear rule for when drift means investigate, retrain, or roll back. To avoid alert fatigue I'd alert on a few high-importance features and an aggregate score, not every column."
     },
     {
       "id": "ml-003",
@@ -151,7 +163,9 @@
           "intent": "test model selection reasoning"
         }
       ],
-      "key_insight": "Forecasting organizational metrics requires integrating business constraints and forward-looking signals that don't exist in historical data"
+      "key_insight": "Forecasting organizational metrics requires integrating business constraints and forward-looking signals that don't exist in historical data",
+      "junior_answer": "Fit ARIMA or a regression on past hiring numbers and forecast the next 12 months.",
+      "senior_answer": "History only shows what happened under past budgets. I'd model the demand drivers (revenue plan, attrition, ramp time, open requisitions) and treat approved budget as a constraint on supply. I'd compare a seasonal baseline, a regression with drivers, and ARIMA using rolling-origin backtests. If the model says 150 and Finance budgeted 80, I wouldn't defend or discard the number. I'd show the gap, the assumptions driving it, and scenarios. A hiring pause is a regime shift, so I'd flag those months instead of learning from them as normal."
     },
     {
       "id": "ml-004",
@@ -174,7 +188,9 @@
           "intent": "test pragmatism in handling incomplete data"
         }
       ],
-      "key_insight": "Feature engineering for financial predictions requires careful temporal thinking and business validation—the best statistical features can be meaningless or biased"
+      "key_insight": "Feature engineering for financial predictions requires careful temporal thinking and business validation—the best statistical features can be meaningless or biased",
+      "junior_answer": "Create features like average payment delay, customer size, and month, then feed them to the model.",
+      "senior_answer": "Every feature is computed as of a cutoff date using only data available then, via as-of joins or a point-in-time feature store. I'd verify by recomputing features at past cutoffs. 'Days since last payment' leaks if it's calculated from the full table. From 10,000 candidates I'd prune by domain priors, stability across time, and importance under time-based validation, not on a single fold. For credit score missing on 40% of customers, I'd keep missingness as a signal, impute inside a pipeline fit only on training data, and check whether missingness correlates with the target."
     },
     {
       "id": "ml-005",
@@ -193,7 +209,9 @@
           "intent": "test handling of out-of-distribution shifts"
         }
       ],
-      "key_insight": "Production failures are rarely about code—they're usually about assumptions baked into your training data that no longer hold"
+      "key_insight": "Production failures are rarely about code—they're usually about assumptions baked into your training data that no longer hold",
+      "junior_answer": "Retrain the model on newer data.",
+      "senior_answer": "First rule out a pipeline bug: schema, null rates, feature computation, and train/serve skew. Then compare feature and target distributions between 2023 and 2024 and slice performance by segment and month to see where it broke. If the world changed, as with the rate spike, it's covariate or concept shift. Retraining helps only if the new regime is represented in the data. Otherwise I'd add macro features, shorten the training window, or add a guardrail. I'd decide with a time-based backtest, not a gut call."
     },
     {
       "id": "stats-001",
@@ -216,7 +234,9 @@
           "intent": "test understanding of p-hacking and when to stop"
         }
       ],
-      "key_insight": "Statistical significance isn't a binary switch—it's a tool for decision-making, and you need to know what error costs you more"
+      "key_insight": "Statistical significance isn't a binary switch—it's a tool for decision-making, and you need to know what error costs you more",
+      "junior_answer": "Type I is a false positive and Type II is a false negative.",
+      "senior_answer": "Type I means we ship a change that does nothing, and Type II means we miss a real improvement. Which is worse depends on cost. For a risky lending policy a false positive can lose money, so I'd use a stricter alpha. I'd control Type II by planning power and sample size before the test. At p=0.08 after 7 days I wouldn't stop or keep extending until it crosses 0.05. The stopping rule is fixed in advance, peeking inflates false positives, and sequential methods are the answer if early looks are needed."
     },
     {
       "id": "stats-002",
@@ -239,7 +259,9 @@
           "intent": "test understanding of delayed feedback loops"
         }
       ],
-      "key_insight": "Financial experiments have delayed feedback and compounding effects—statistical significance doesn't equal business impact"
+      "key_insight": "Financial experiments have delayed feedback and compounding effects—statistical significance doesn't equal business impact",
+      "junior_answer": "Run a two-proportion z-test and check whether p is below 0.05.",
+      "senior_answer": "I'd compute the sample size needed to detect the effect I care about. Detecting 0.1 percentage points on a 2% base rate needs a very large sample, so this test is probably underpowered. Then I'd translate it into money: 0.1pp of default on the portfolio's average loan size can be expensive, so 'not significant' doesn't mean 'safe'. I'd report a confidence interval for the difference. Defaults mature after 90 days, so a 30-day window sees incomplete outcomes. I'd use early proxies like delinquency, fixed-maturity cohorts, or survival analysis."
     },
     {
       "id": "stats-003",
@@ -258,7 +280,9 @@
           "intent": "test judgment and stakeholder communication"
         }
       ],
-      "key_insight": "Aggregated statistics can be misleading—you must segment carefully and question what each number represents"
+      "key_insight": "Aggregated statistics can be misleading—you must segment carefully and question what each number represents",
+      "junior_answer": "It's when a trend reverses once you combine groups.",
+      "senior_answer": "For example, segment A's overall approval rate looks lower than B's, but within every income band A is approved more often, because A has more applicants in the harder bands. I'd detect it by always slicing key metrics by likely confounders and checking whether the direction flips. For the board I'd report the stratified or adjusted comparison with a plain explanation, and say which question each number answers, because the aggregate answers a different question than the one they're asking."
     },
     {
       "id": "system-design-001",
@@ -281,7 +305,9 @@
           "intent": "test operational sophistication"
         }
       ],
-      "key_insight": "Real-time systems are about constraints—latency, freshness, cost—and making principled tradeoffs across them"
+      "key_insight": "Real-time systems are about constraints—latency, freshness, cost—and making principled tradeoffs across them",
+      "junior_answer": "Train a collaborative filtering model and serve it behind an API.",
+      "senior_answer": "I'd split it into candidate generation (fast retrieval from embeddings or an ANN index), ranking (a heavier model over a few hundred candidates), and re-ranking for business rules. With a 100ms budget I'd spend roughly 20ms on feature fetch from an online store, 30ms on retrieval, 30ms on ranking, and keep the rest as buffer. Freshness comes from training offline on a schedule while updating cheap features like recent clicks in real time. For A/B tests I'd randomize by user through one experiment-assignment layer, not per-feature flags."
     },
     {
       "id": "system-design-002",
@@ -304,7 +330,9 @@
           "intent": "test operational maturity"
         }
       ],
-      "key_insight": "Financial systems need predictable, auditable behavior—the model accuracy matters less than explainability and stability"
+      "key_insight": "Financial systems need predictable, auditable behavior—the model accuracy matters less than explainability and stability",
+      "junior_answer": "Build a model and expose predictions through an API for each customer.",
+      "senior_answer": "Forecasts are needed daily, not per request, so I'd batch: compute overnight, store versioned predictions in a table, and serve from there. It's cheaper, reproducible, and auditable, and the dashboard never waits on a model. For a sudden 50% drop I'd validate before alerting (data issue, model change, or real behavior?) and include the reason, because false alarms destroy trust. I'd write predictions with a model-version column, run new versions in shadow, then cut over without changing the dashboard's schema."
     },
     {
       "id": "system-design-003",
@@ -323,7 +351,9 @@
           "intent": "test systems thinking with competing constraints"
         }
       ],
-      "key_insight": "ML infrastructure is really about standardizing decision-making, not just technology"
+      "key_insight": "ML infrastructure is really about standardizing decision-making, not just technology",
+      "junior_answer": "A form where teams submit ideas, tracked in a spreadsheet.",
+      "senior_answer": "I'd treat intake as a decision process: a short standard template (problem, decision supported, success metric, data availability, owner), a triage rubric (business value, feasibility, risk), and stage gates from idea to pilot to production with explicit exit criteria. Ideas with no decision owner or no data get parked, which keeps it from becoming a dumping ground. For differing SLOs I'd define a few standard tiers (daily batch, near-real-time, real-time), each with known costs and requirements, and let teams pick a tier instead of imposing one rigid standard."
     },
     {
       "id": "python-001",
@@ -342,7 +372,9 @@
           "intent": "test judgment on interpretation methods"
         }
       ],
-      "key_insight": "Feature importance is a useful starting point but incomplete—correlated features confound the signal"
+      "key_insight": "Feature importance is a useful starting point but incomplete—correlated features confound the signal",
+      "junior_answer": "Use model.feature_importances_ and plot a bar chart.",
+      "senior_answer": "Built-in importance (gain or weight) is biased toward high-cardinality features and splits credit arbitrarily among correlated ones. I'd compute permutation importance or SHAP on held-out data, and get confidence intervals by repeating over bootstrap resamples or CV folds and reporting the spread. For correlated features I'd group them and permute the group together. For stakeholders I'd use SHAP, because per-prediction explanations are what non-technical people want to see."
     },
     {
       "id": "python-002",
@@ -361,7 +393,9 @@
           "intent": "test systems thinking and communication design"
         }
       ],
-      "key_insight": "Data quality is a contract between producers and consumers—validation is a conversation, not just a gate"
+      "key_insight": "Data quality is a contract between producers and consumers—validation is a conversation, not just a gate",
+      "junior_answer": "Check for nulls and fail the pipeline if there are any.",
+      "senior_answer": "I'd layer the checks: schema and types, null rates, ranges, uniqueness, freshness and volume, then distribution checks against a recent baseline. Each check has a severity: hard failures block the pipeline, soft ones warn. A high-importance feature jumping to 50% missing should fail or fall back to the last good data, not be silently imputed. Treat it as a contract with upstream: send alerts to the owning team with the failing check and sample rows, and batch them into one daily digest instead of a flood."
     },
     {
       "id": "python-003",
@@ -380,7 +414,9 @@
           "intent": "test understanding of train/test distribution shift"
         }
       ],
-      "key_insight": "Backtesting is hard because you must simulate exactly what the model sees at prediction time—any deviation invalidates the results"
+      "key_insight": "Backtesting is hard because you must simulate exactly what the model sees at prediction time—any deviation invalidates the results",
+      "junior_answer": "Split the data into train and test and compute RMSE.",
+      "senior_answer": "I'd use rolling-origin (walk-forward) evaluation: at each cutoff, build features from data available at that time, train, forecast the next horizon, then advance the cutoff. I'd respect real publication lags, such as payments recorded days late, or the features contain information that wouldn't exist live. A backtest RMSE of 0.05 against 0.2 live usually means leakage, a different data-availability timeline, or a regime shift. I'd rebuild the live features at the same cutoff and compare them with the backtest features."
     },
     {
       "id": "prodml-001",
@@ -399,7 +435,9 @@
           "intent": "test pragmatism and resource constraints"
         }
       ],
-      "key_insight": "Debugging production ML failures is detective work—you need clear telemetry and a hypothesis-testing mindset"
+      "key_insight": "Debugging production ML failures is detective work—you need clear telemetry and a hypothesis-testing mindset",
+      "junior_answer": "Retrain the model with the latest data.",
+      "senior_answer": "I'd triage first: is the pipeline healthy (missing data, schema change, delayed features)? Then I'd compare input distributions (data drift), the prediction distribution, and where labels exist, performance by segment and time (concept drift). Label drift is a change in the base rate. I'd fix the cheapest cause first. If retraining on all history is too expensive, I'd use a recent window, a warm start, or fine-tune only the affected segment, and validate with a backtest. Then I'd add telemetry so the next incident is faster to diagnose."
     },
     {
       "id": "prodml-002",
@@ -422,7 +460,9 @@
           "intent": "test tradeoff between automation and safety"
         }
       ],
-      "key_insight": "Monitoring must be specific to your use case—a lending model and a recommendation engine need completely different alerting strategies"
+      "key_insight": "Monitoring must be specific to your use case—a lending model and a recommendation engine need completely different alerting strategies",
+      "junior_answer": "Track accuracy over time and alert if it drops.",
+      "senior_answer": "I'd monitor in layers: system health (latency, errors), data quality, input and prediction drift as leading indicators, outcome metrics when labels arrive (often delayed), plus segment-level and fairness metrics for a lending model. Thresholds are tied to impact and require persistence over several days, and only actionable issues page someone, so 100 weekly alerts become a handful. I'd automate retraining into a candidate model but require human approval to promote it for a critical model. Automate detection and preparation, and keep a human on the irreversible step."
     },
     {
       "id": "prodml-003",
@@ -445,7 +485,9 @@
           "intent": "test business judgment on fairness/accuracy tradeoffs"
         }
       ],
-      "key_insight": "Fairness is a business and ethical decision, not just a technical problem—you need domain expertise and stakeholder alignment"
+      "key_insight": "Fairness is a business and ethical decision, not just a technical problem—you need domain expertise and stakeholder alignment",
+      "junior_answer": "Remove the sensitive features from the model.",
+      "senior_answer": "I'd measure first: approval and error rates by group (demographic parity, equalized odds), and involve legal and compliance, since in lending this is a regulatory issue. Removing protected attributes doesn't help when proxies like zip code or employer carry the signal. So I'd audit the features, drop or constrain the proxies, and consider fairness-constrained training or threshold adjustments, evaluated against a less-discriminatory alternative. The accuracy-versus-fairness tradeoff is a business, legal and ethical decision, so I'd present the options with numbers for stakeholders to decide and document the choice."
     },
     {
       "id": "prodml-004",
@@ -468,7 +510,9 @@
           "intent": "test judgment on monitoring windows"
         }
       ],
-      "key_insight": "Model deployment is about managing risk—perfect is the enemy of good enough, and the cost of being wrong changes your decision"
+      "key_insight": "Model deployment is about managing risk—perfect is the enemy of good enough, and the cost of being wrong changes your decision",
+      "junior_answer": "Test the new model on a holdout set, and switch over if the error is lower.",
+      "senior_answer": "Backtest first, then shadow mode: run old and new side by side on live inputs with no user impact. Next a canary or segment rollout if the forecast drives decisions, with a one-step rollback. If the new model is better only for some segments, I'd evaluate each segment by what it is worth to the business and consider routing by segment, not an all-or-nothing switch. The monitoring window depends on the feedback loop: long enough to cover at least one full business cycle and for labels to arrive, not a fixed number of days."
     }
   ]
 }
