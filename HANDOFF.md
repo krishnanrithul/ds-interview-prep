@@ -1,4 +1,4 @@
-# Gradient Ascent: handoff (2026-10-03)
+# Gradient Ascent: handoff (2026-10-04)
 
 Paste this into a new conversation, or tell it to read HANDOFF.md in the repo. It is written so work can resume without the old chat.
 
@@ -7,14 +7,14 @@ Paste this into a new conversation, or tell it to read HANDOFF.md in the repo. I
 
 - Repo on his Mac: `~/ds-interview-prep` (GitHub: krishnanrithul/ds-interview-prep, branch `main`).
 - Stack: React 18, Vite 5, Tailwind pinned to 3.4.17, lucide-react 0.462.0, localStorage only, Vercel planned.
-- The session reaches his Mac only through the device bridge (`mcp__remote-devices__device_bash`, working directory `$HOME/mnt/ds-interview-prep`). The shell on his Mac has node and node_modules, so `npx vite build` works there. It has no GitHub credentials, so it cannot push.
+- The session reaches his Mac only through the device bridge (`mcp__remote-devices__device_bash`, working directory `$HOME/mnt/ds-interview-prep`). That shell is a Linux VM: the repo's node_modules hold Mac binaries and fail there with "Exec format error". To build, copy the repo without node_modules to `$HOME/build`, run `npm ci` once, then `npx vite build` (copy `src` across again after edits). It has no GitHub credentials, so it cannot push; Claude's GitHub app isn't installed for the repo either, so pushing from the cloud sandbox is refused too. He pushes from his Mac.
+- Gotchas: (1) Deleting files in his folder needs `device_request_delete_permission`, and so does git: without it every commit leaves `.git/index.lock` behind and blocks his git. (2) If VSCode has a file open with unsaved or stale contents, it can save over an edit made through the bridge; grep the file after writing and tell him to close the tab without saving. (3) Commit with his identity via `GIT_AUTHOR_NAME`/`GIT_COMMITTER_NAME` = Rithul Krishnan and `..._EMAIL` = krishnanrithul@gmail.com env vars; never change git config.
 
 ## 2. State right now
 | Item | State |
 |---|---|
-| Commit `03161fe` | Committed locally earlier |
-| Later work (map, 50 questions, 11 explainers, docs 11 to 13) | Committed in a second local commit; **pushing needs his Mac** (`cd ~/ds-interview-prep && git push origin main`), the session shell has no GitHub credentials |
-| Bank | 155 questions (106 are drafts), 88 tags, 165 glossary terms, 17 explainers, 9 topics |
+| Git | Everything through docs 14 and 15 is committed on `main`. He pushes from his Mac (`git push`); check `git status -sb` for how far ahead of origin it is |
+| Bank | 155 questions (133 are drafts; the 22 without `draft` are the real-interview ones), 455 follow-ups each with 2 draft variants (910), 88 tags, 165 glossary terms, 17 explainers, 9 topics |
 
 ## 3. What was built (see `docs/implemented/` 01 to 10 for the detail of each)
 - Redesign: conversational Practice, mastery map on the Dashboard, spruce and marker-yellow palette, Literata and Schibsted Grotesk fonts, motion that responds to the learner and respects reduced motion.
@@ -37,6 +37,9 @@ Never hand-edit the generated parts.
 ## 5. Builder helpers (in `scripts/builders/`)
 `h.py` (Q, write, shared TAGS and TERMS dictionaries), `h2.py` (26 new tags and 50 new terms already defined for the algorithm batch), and the earlier per-topic files `b_*.py` as examples. Each topic file calls `write("name", [Q(...), ...])`, which writes `scripts/batches/name.json` containing only the tags and terms that batch uses. Run from the repo root with `PYTHONPATH=scripts/builders python3 scripts/builders/b_xxx.py`, then `python3 scripts/add_questions.py`. `Q(id, question, topic, difficulty, frequency, context, follow_ups, key_insight, junior, senior, tags, terms, kind)`; `kind` is concept, implementation, case or design.
 
+## 5b. Follow-up variants (doc 14)
+`scripts/variants/<topic>.json` is the source of truth; `python3 scripts/apply_variants.py` merges it into `questions.json` and refuses entries whose `base` text no longer matches the follow-up. Editing a follow-up means updating its `base` and variants in the topic file too. Runtime picking is in `src/lib/variants.js`.
+
 ## 6. Done: 50 algorithm questions
 See docs/implemented/12. Builders in `scripts/builders/` (`b_algo1`, `b_algo2`, `b_dl`, `b_spread`, helper `h2.py`).
 
@@ -47,8 +50,8 @@ See docs/implemented/12. Builders in `scripts/builders/` (`b_algo1`, `b_algo2`, 
 1. **Logo** may resemble an existing one (user concern). Redesign planned, see THINGS_TO_DO.md section 4.
 2. Re-screenshot attention, sampling and k-NN after their last small edits.
 3. His review of the 56 (soon 106) draft questions and the 74 original definitions. Senior answers need an expert eye.
-4. THINGS_TO_DO.md ideas: match score (rubric checklist recommended), AI feedback (cost about 0.35 to 0.7 cents per grade; bring-your-own-key suggested), AI-generated harder follow-ups, junior and senior answers for every follow-up (only the main question has them), Learn section, phone layout pass for chart legends plus installable web app, name and trademark check before public launch, share image and PNG icon.
-5. Commit and push (he pushes from his Mac).
+4. THINGS_TO_DO.md section 4 has the current plan. Decisions from 2026-10-03: Practice keeps fixed follow-ups plus stored variants (stable for spaced repetition); Mock becomes the reactive mode, where one generated follow-up probes what the learner actually wrote (1.5). The match score must be automatic and real-time, not self-ticked: in-browser embeddings (transformers.js, all-MiniLM-L6-v2) score key-point coverage as the learner types, with optional AI grading on submit for correctness, bring-your-own-key, Haiku by default.
+5. **Next task: key points per question.** 4 to 6 short points per question, each one idea a strong answer must cover, taken from the senior answer, marked draft. Start with the 24 ML questions and the 22 real-interview ones. Match score, AI feedback and reactive Mock all check against them. Suggested store: `scripts/key_points/<topic>.json` plus an apply script, same pattern as variants, with a `base` check against the senior answer.
 
 ## 9. How to verify (the loop used all along)
 1. On the Mac shell: `npx vite build` (assets get new hash names each build).

@@ -18,4 +18,6 @@ Each file states what changed, which files were touched, the decisions made and 
 | 11 | [Collapsible mastery map](11-collapsible-map.md) | Built and verified, uncommitted at time of writing |
 | 12 | [Algorithm and technique questions: 105 to 155](12-algorithm-questions.md) | Built and verified, uncommitted at time of writing |
 | 13 | [Eleven more explainers (17 in total)](13-more-explainers.md) | Built, last edits not re-screenshotted |
-| 14 | Learn section: concept lessons | Not started |
+| 14 | [Follow-up variants: 910 alternative wordings](14-follow-up-variants.md) | Built and committed, variants are draft |
+| 15 | [Practice and mastery map changes: tile preview, easier-first queue, redo, replies in debrief](15-practice-and-map-changes.md) | Built and committed |
+| 16 | Learn section: concept lessons | Not started |
