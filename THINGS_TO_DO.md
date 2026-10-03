@@ -12,6 +12,7 @@ Living list for Gradient Ascent. What has already been built is recorded in `doc
 - AI scoring (see 1.2).
 **Work.** Write key points for every question (first the 22 real ones), add a checklist step to the debrief, suggest a rating from it. The key points must be reviewed for accuracy because a wrong point would mislead.
 **Notes.** Key points should be reusable as the rubric an AI grader checks against.
+**Update (2026-10-03).** The score should be automatic and real-time, not self-ticked. Plan: in-browser embeddings (transformers.js) score key-point coverage as the learner types; they measure topic match, not correctness, so optional AI grading on submit checks correctness. Tune the match threshold on about 30 hand-labeled answers.
 
 ### 1.2 AI-based feedback
 **Idea.** A model reads the learner's answer against the senior answer and the key points, returns a match score and specific feedback (what was covered, what was missed, what a senior answer would add).
@@ -35,6 +36,7 @@ Living list for Gradient Ascent. What has already been built is recorded in `doc
 - A steady trickle of new questions.
 **Needs.** The same backend or bring-your-own-key decision as 1.2, plus a rule for what counts as a section being "strong" (for example every question in a topic Solid at least twice) and a way to review generated questions for quality.
 **Open question.** Who is the app for: personal prep and a portfolio piece, or a product people return to? The answer decides how much to invest here.
+**Status (2026-10-03).** Pre-generated variants started: ML done (see section 4). Follow-ups that react to the learner's answer moved to Mock (1.5).
 
 ### 1.4 Junior and senior answers for every follow-up
 **Problem.** Junior and senior answers exist once per question. Follow-ups only have their text and what they test, so a learner cannot compare their reply to a follow-up with how a senior would handle that follow-up.
@@ -82,12 +84,28 @@ The audit searched every question, answer and follow-up for a checklist of algor
 Proposed fix: a new "ML Algorithms" topic (supervised plus unsupervised, about 24 questions) and a "Deep Learning & NLP" topic (about 12), plus about 14 questions spread across the existing topics. Roughly 50 questions, taking the bank to about 155.
 
 
-## 4. Status after the 2026-10-03 session
-Done: collapsible map, 155 questions, 17 explainers, level and type filters.
-Next candidates:
-- Follow-up variants: ML topic done (142 variants, 2 per follow-up, marked draft) in `scripts/variants/ml.json`, applied with `python3 scripts/apply_variants.py`. Practice and Mock pick one wording per follow-up and avoid the one shown last time. Review the ML variants, then do the other topics.
+## 4. Status after the 2026-10-03 sessions
+Done (first session): collapsible map, 155 questions, 17 explainers, level and type filters.
+Done (second session):
+- Follow-up variants for ML: 142 variants (2 per follow-up, same intent, different scenario), marked draft, in `scripts/variants/ml.json`. Apply with `python3 scripts/apply_variants.py`; it refuses variants whose follow-up text has changed. Practice and Mock pick one wording per follow-up and avoid the one shown last time (`src/lib/variants.js`, localStorage key `ds-variant-seen`). The Practice debrief now shows the follow-up actually asked.
+- "Practice these again" on the end-of-session screen reruns the same questions with new follow-up wording.
+- Mastery map: clicking a tile opens a preview inside that topic, under its tiles, with Practice and Close.
+- Queue: unseen questions ramp by level (Foundations, then Core, then Advanced), so a new learner starts easy. No login needed: "new" just means no rating stored in this browser.
+- Decided: Practice keeps fixed follow-ups plus variants (stable for spaced repetition); Mock becomes the reactive mode (1.5). Match score should be automatic, not self-ticked: in-browser embeddings give real-time key-point coverage, with optional AI grading on submit for correctness (1.1, 1.2).
+
+Recommended next, in order:
+1. Push commit 75185bd (made locally; the sandbox has no GitHub credentials).
+2. Review the ML variants and flip `"draft"` to false for the good ones. This checks the format before writing about 1,200 more.
+3. Key points for every question (1.1), starting with the 24 ML questions and the 22 real-interview ones. Everything else depends on them: match score, AI feedback and reactive Mock.
+4. Real-time coverage score: embed key points at build time, embed the learner's answer in the browser (transformers.js, all-MiniLM-L6-v2), show "3 of 5 key points covered" live. Set the threshold from about 30 hand-labeled answers.
+5. Variants for the remaining topics, once the ML review confirms the format.
+6. Bring-your-own-key setting, then reactive Mock (1.5).
+
+Still open:
 - Logo: the current mark (dots, trend line, arrow) may resemble others. Plan: contour hill with climbing dots; keep `Logo.jsx` and `public/favicon.svg` in sync; run a real trademark and logo search before public launch.
-- More Foundations questions (only 25 easy).
-- Expert review of all 106 draft questions.
+- More Foundations questions (only 25 easy). Matters more now that new learners start with them.
+- Expert review of the 133 draft questions.
 - Optional explainers: class imbalance and threshold, hierarchical clustering, boosting residuals for LightGBM.
-- Items in section 1 (match score, AI feedback, per-follow-up answers, reactive Mock), Learn section, phone legends and PWA.
+- Per-follow-up junior and senior answers (1.4), Learn section, phone legends and PWA.
+- Mock layout: all follow-ups stack above one text box. Redo it as a back-and-forth when building 1.5.
+- Housekeeping: `src/components/QuestionBubble.jsx` is unused and untracked; delete it.
