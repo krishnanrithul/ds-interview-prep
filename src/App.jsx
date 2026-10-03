@@ -1,136 +1,98 @@
-import { useState, useEffect } from 'react'
-import questions from './data/questions.json'
-import './App.css'
+import { useState, useMemo, useCallback } from 'react'
+import { BookOpen, LayoutDashboard, GraduationCap, Library as LibraryIcon, Settings as SettingsIcon } from 'lucide-react'
+import { QUESTIONS } from './data/questions'
+import { useProgress } from './hooks/useProgress'
+import { useSettings } from './hooks/useSettings'
+import { useReminderScheduler } from './hooks/useReminderScheduler'
+import { buildQueue } from './lib/queue'
+import Dashboard from './components/Dashboard'
+import Practice from './components/Practice'
+import Library from './components/Library'
+import Settings from './components/Settings'
+import './index.css'
 
-function App() {
-  const [filter, setFilter] = useState('')
-  const [topicFilter, setTopicFilter] = useState('all')
-  const [studied, setStudied] = useState({})
+const TABS = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'practice', label: 'Practice', icon: GraduationCap },
+  { id: 'library', label: 'Library', icon: LibraryIcon },
+  { id: 'settings', label: 'Settings', icon: SettingsIcon },
+]
 
-  // Load studied from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem('studied')
-    if (saved) {
-      setStudied(JSON.parse(saved))
-    }
-  }, [])
+const startOfToday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime() }
 
-  // Save studied to localStorage on change
-  useEffect(() => {
-    localStorage.setItem('studied', JSON.stringify(studied))
-  }, [studied])
+export default function App() {
+  const { progress, rate } = useProgress()
+  const { settings, update } = useSettings()
+  const [view, setView] = useState('dashboard')
+  const [session, setSession] = useState(null) // { ids, topic, key }
+  const [status, setStatus] = useState(null)
+  const byId = useMemo(() => Object.fromEntries(QUESTIONS.map((q) => [q.id, q])), [])
 
-  const toggleStudied = (id) => {
-    setStudied(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }))
+  const flash = useCallback((m) => { setStatus(m); setTimeout(() => setStatus(null), 3000) }, [])
+
+  const practicedToday = Object.values(progress).filter((p) => p.last >= startOfToday()).length
+  useReminderScheduler(() => Object.values(progress).some((p) => p.last >= startOfToday()))
+
+  const start = ({ topic = 'all', only = null } = {}) => {
+    setSession({ ids: buildQueue(QUESTIONS, progress, { topic, only, size: settings.sessionSize }), topic, key: Date.now() })
+    setView('practice')
   }
 
-  const topics = ['all', ...new Set(questions.questions.map(q => q.topic))]
-
-  const filtered = questions.questions.filter(q => {
-    const matchesSearch = q.question.toLowerCase().includes(filter.toLowerCase())
-    const matchesTopic = topicFilter === 'all' || q.topic === topicFilter
-    return matchesSearch && matchesTopic
-  })
+  const go = (id) => {
+    if (id === 'practice' && !session) return start()
+    setView(id)
+  }
 
   return (
-    <div className="app">
-      <header className="header">
-        <h1>DS Interview Prep</h1>
-        <p>Real follow-up chains from someone who hires senior DS engineers</p>
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-20 bg-card/90 backdrop-blur border-b border-border">
+        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center gap-4">
+          <div className="flex items-center gap-2.5 mr-2">
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
+              <BookOpen className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <span className="font-semibold hidden md:block">DS Interview Prep</span>
+          </div>
+
+          <nav className="flex gap-1 flex-1">
+            {TABS.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                onClick={() => go(id)}
+                aria-label={label}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  view === id ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="hidden sm:inline">{label}</span>
+              </button>
+            ))}
+          </nav>
+        </div>
       </header>
 
-      <div className="container">
-        <aside className="sidebar">
-          <div className="filter-group">
-            <label>Search</label>
-            <input
-              type="text"
-              placeholder="Search questions..."
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-            />
-          </div>
+      <main className="max-w-4xl mx-auto px-4 py-8">
+        {view === 'dashboard' && <Dashboard progress={progress} settings={settings} practicedToday={practicedToday} onStart={start} />}
+        {view === 'practice' && session && (
+          <Practice
+            key={session.key}
+            ids={session.ids}
+            byId={byId}
+            onRate={rate}
+            onExit={() => { setSession(null); setView('dashboard') }}
+            onAgain={() => start({ topic: session.topic })}
+          />
+        )}
+        {view === 'library' && <Library progress={progress} onPractice={(id) => start({ only: [id] })} />}
+        {view === 'settings' && <Settings settings={settings} update={update} flash={flash} />}
+      </main>
 
-          <div className="filter-group">
-            <label>Topic</label>
-            <select value={topicFilter} onChange={(e) => setTopicFilter(e.target.value)}>
-              {topics.map(topic => (
-                <option key={topic} value={topic}>
-                  {topic.charAt(0).toUpperCase() + topic.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <p className="count">
-            {filtered.length} of {questions.questions.length} questions
-          </p>
-        </aside>
-
-        <main className="questions-list">
-          {filtered.length === 0 ? (
-            <p className="no-results">No questions match your filters</p>
-          ) : (
-            filtered.map(q => (
-              <QuestionCard
-                key={q.id}
-                question={q}
-                studied={studied[q.id]}
-                toggleStudied={toggleStudied}
-              />
-            ))
-          )}
-        </main>
-      </div>
-    </div>
-  )
-}
-
-function QuestionCard({ question, studied, toggleStudied }) {
-  const [expanded, setExpanded] = useState(false)
-
-  return (
-    <div className="question-card">
-      <div className="question-header" onClick={() => setExpanded(!expanded)}>
-        <div className="question-content">
-          <h3>{question.question}</h3>
-          <p className="meta">
-            {question.topic} · {question.difficulty} · {question.frequency}
-          </p>
-        </div>
-        <button
-          className={`study-btn ${studied ? 'studied' : ''}`}
-          onClick={(e) => {
-            e.stopPropagation()
-            toggleStudied(question.id)
-          }}
-        >
-          {studied ? '✓' : '○'}
-        </button>
-      </div>
-
-      {expanded && (
-        <div className="question-details">
-          <div className="follow-ups">
-            <strong>Follow-ups:</strong>
-            {question.follow_ups.map((fu, idx) => (
-              <p key={idx} className="follow-up">
-                <strong>{idx + 1}.</strong> {fu.text}
-                <br />
-                <em>→ {fu.intent}</em>
-              </p>
-            ))}
-          </div>
-          <div className="insight">
-            <strong>Key insight:</strong> {question.key_insight}
-          </div>
+      {status && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 max-w-[90vw] px-4 py-2 rounded-full bg-foreground text-background text-sm font-medium shadow-lg text-center">
+          {status}
         </div>
       )}
     </div>
   )
 }
-
-export default App
