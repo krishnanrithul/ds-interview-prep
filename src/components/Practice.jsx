@@ -1,11 +1,12 @@
-import { Fragment, useState, useEffect, useRef } from 'react'
-import { ArrowUp, X, RotateCcw, CornerDownRight } from 'lucide-react'
+import { Fragment, useState, useEffect, useRef, useMemo } from 'react'
+import { ArrowUp, X, RotateCcw, Repeat, CornerDownRight } from 'lucide-react'
 import { RATINGS, dot } from '../lib/topics'
 import AnswerLadder from './AnswerLadder'
 import Attempts from './Attempts'
 import DraftBadge from './DraftBadge'
 import TagChips from './TagChips'
 import KeyTerms from './KeyTerms'
+import { pickVariants, markSeen, followUpText } from '../lib/variants'
 
 const reduced = () => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
 
@@ -42,7 +43,7 @@ function Typing() {
   )
 }
 
-export default function Practice({ ids, byId, notes, active, onRate, onExit, onAgain, onTag }) {
+export default function Practice({ ids, byId, notes, active, onRate, onExit, onAgain, onRedo, onTag }) {
   const [i, setI] = useState(0)
   const [turns, setTurns] = useState([]) // your replies, one per message you sent
   const [revealed, setRevealed] = useState(0) // how many interviewer replies have landed
@@ -60,6 +61,10 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
   const typing = !!q && revealed < step
   const rating = !!q && step === total && revealed === total
   const draft = turns.filter(Boolean).join('\n\n')
+
+  // One wording per follow-up for this question, avoiding the wording shown last time.
+  const picks = useMemo(() => (q ? pickVariants(q) : []), [q?.id, i]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (q) markSeen(q.id, picks) }, [q, picks])
 
   const send = () => {
     if (typing || rating) return
@@ -137,9 +142,16 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
             </ul>
           </div>
         )}
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           <button onClick={onAgain} className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-5 py-3 rounded-xl hover:opacity-90 transition-opacity">
             <RotateCcw className="w-4 h-4" /> Another session
+          </button>
+          <button
+            onClick={() => onRedo(ids)}
+            title="Same questions again. Follow-ups with alternative wordings will be phrased differently."
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-border font-semibold hover:bg-muted transition-colors"
+          >
+            <Repeat className="w-4 h-4" /> Practice these again
           </button>
           <button onClick={onExit} className="px-5 py-3 rounded-xl border border-border font-semibold hover:bg-muted transition-colors">
             Dashboard
@@ -187,7 +199,7 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
             <You text={t} />
             {k < revealed && k < n && (
               <Interviewer label={`Follow-up ${k + 1} of ${n}`}>
-                <p className="font-serif text-lg leading-relaxed">{q.follow_ups[k].text}</p>
+                <p className="font-serif text-lg leading-relaxed">{followUpText(q, picks, k)}</p>
               </Interviewer>
             )}
           </Fragment>
@@ -210,12 +222,15 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
             )}
             {n > 0 && (
               <div className="rounded-xl border border-border bg-card p-4">
-                <p className="text-sm font-semibold mb-2">What the follow-ups were testing</p>
-                <ul className="space-y-1.5">
+                <p className="text-sm font-semibold mb-2">The follow-ups and what they were testing</p>
+                <ul className="space-y-2.5">
                   {q.follow_ups.map((fu, k) => (
-                    <li key={k} className="text-sm text-muted-foreground flex gap-2">
-                      <CornerDownRight className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                      {fu.intent}
+                    <li key={k} className="text-sm">
+                      <p className="text-foreground/90">{followUpText(q, picks, k)}</p>
+                      <p className="text-muted-foreground flex gap-1.5 mt-0.5">
+                        <CornerDownRight className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                        {fu.intent}
+                      </p>
                     </li>
                   ))}
                 </ul>

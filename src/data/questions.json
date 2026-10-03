@@ -142,15 +142,45 @@
       "follow_ups": [
         {
           "text": "Why would you choose XGBoost over logistic regression here?",
-          "intent": "test understanding of model selection tradeoffs"
+          "intent": "test understanding of model selection tradeoffs",
+          "variants": [
+            {
+              "text": "Your manager wants logistic regression because the retention team needs to understand it. You think XGBoost would score better. How do you settle it?",
+              "draft": true
+            },
+            {
+              "text": "You have 3,000 customers and 15 features. Does XGBoost still beat logistic regression here? What would make you pick one over the other?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Your model gets 95% accuracy. Is that good? Why or why not?",
-          "intent": "test business acumen and class imbalance awareness"
+          "intent": "test business acumen and class imbalance awareness",
+          "variants": [
+            {
+              "text": "Monthly churn is 3%. Your model reports 97% accuracy. What do you tell the stakeholder?",
+              "draft": true
+            },
+            {
+              "text": "A colleague's churn model has 88% accuracy and yours has 82%. Before declaring theirs better, what do you check?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "You achieved 92% accuracy but 50% false positive rate. How do you decide if this is production-ready?",
-          "intent": "test production thinking and stakeholder communication"
+          "intent": "test production thinking and stakeholder communication",
+          "variants": [
+            {
+              "text": "Half the customers your model flags as churners would have stayed anyway, and each flag triggers a $40 discount. How do you decide whether to launch?",
+              "draft": true
+            },
+            {
+              "text": "The retention team can only call 500 customers a week, and your model flags 2,000. Is the model ready, and what would you change?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Senior engineers choose models based on business constraints (FP cost, latency, maintainability), not accuracy alone",
@@ -180,15 +210,45 @@
       "follow_ups": [
         {
           "text": "What's the difference between data drift and model drift?",
-          "intent": "test understanding of failure modes"
+          "intent": "test understanding of failure modes",
+          "variants": [
+            {
+              "text": "Input distributions look identical to training, yet accuracy has dropped 8 points. What kind of drift is this, and how is it different from the inputs shifting?",
+              "draft": true
+            },
+            {
+              "text": "The age distribution of new users has shifted a lot, but the model's accuracy hasn't moved. Is that a problem? Which kind of drift is it?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "You detect drift. What do you do next? Retrain? Rollback? How do you decide?",
-          "intent": "test operational decision-making"
+          "intent": "test operational decision-making",
+          "variants": [
+            {
+              "text": "Your drift alert fires on a Friday evening for a credit model that approves loans automatically. What do you do in the next hour, and what do you do next week?",
+              "draft": true
+            },
+            {
+              "text": "Drift is detected, but you won't have fresh labels for six weeks. How do you decide between retraining, rolling back and waiting?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "How would you automate this monitoring without creating alert fatigue?",
-          "intent": "test systems thinking and pragmatism"
+          "intent": "test systems thinking and pragmatism",
+          "variants": [
+            {
+              "text": "Your monitoring checks 300 features daily and fires about 20 drift alerts a week. The team has started ignoring them. How do you fix it?",
+              "draft": true
+            },
+            {
+              "text": "You're setting up drift monitoring for 40 models owned by four teams. How do you decide what pages someone and what goes in a weekly report?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Drift detection alone is useless—you need a decision framework for when to act and what action to take",
@@ -216,15 +276,45 @@
       "follow_ups": [
         {
           "text": "Your model predicts 150 hires for Q3, but Finance only budgeted 80. How do you handle this disagreement?",
-          "intent": "test stakeholder management and when to trust the model vs. domain knowledge"
+          "intent": "test stakeholder management and when to trust the model vs. domain knowledge",
+          "variants": [
+            {
+              "text": "Your forecast says Engineering needs 60 hires next half, but the VP is confident 25 is enough. How do you work out who is right?",
+              "draft": true
+            },
+            {
+              "text": "Finance asks you to adjust your forecast down so it fits the approved budget. What do you do?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Hiring has been paused for 2 months due to market conditions. How does this affect your forecast?",
-          "intent": "test handling of policy changes and regime shifts"
+          "intent": "test handling of policy changes and regime shifts",
+          "variants": [
+            {
+              "text": "The company announces a one-quarter hiring freeze starting next month. How do you update a forecast trained on three years of steady hiring?",
+              "draft": true
+            },
+            {
+              "text": "Attrition doubled last quarter after a reorganization. How does that change your 12-month forecast?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Should you use time series (ARIMA) or regression? What are the tradeoffs?",
-          "intent": "test model selection reasoning"
+          "intent": "test model selection reasoning",
+          "variants": [
+            {
+              "text": "You only have 30 months of history for a newly formed business unit. Which modeling approach would you use, and why?",
+              "draft": true
+            },
+            {
+              "text": "Hiring plans depend on revenue targets that Finance sets each quarter. Would you use a pure time-series model or a driver-based regression?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Forecasting organizational metrics requires integrating business constraints and forward-looking signals that don't exist in historical data",
@@ -251,15 +341,45 @@
       "follow_ups": [
         {
           "text": "You have 10,000 potential features (customer behavior, macro indicators, seasonality). How do you select the right ones?",
-          "intent": "test feature selection methodology and avoiding overfitting"
+          "intent": "test feature selection methodology and avoiding overfitting",
+          "variants": [
+            {
+              "text": "A colleague adds 3,000 macroeconomic series as features and validation error drops sharply. Why might you be suspicious, and how would you check?",
+              "draft": true
+            },
+            {
+              "text": "You have 40,000 invoices and 2,500 candidate features. How do you narrow them down without overfitting your selection to the validation set?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "A feature (e.g., 'days since last payment') has look-ahead bias. How do you detect and fix it?",
-          "intent": "test understanding of temporal logic in ML pipelines"
+          "intent": "test understanding of temporal logic in ML pipelines",
+          "variants": [
+            {
+              "text": "The feature 'number of reminders sent' turns out to be your strongest predictor of late payment. Why might that be a leak, and how do you check?",
+              "draft": true
+            },
+            {
+              "text": "Your feature table is rebuilt nightly from the current customer table. Why could that leak future information into training, and how would you build it correctly?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Your feature 'customer credit score' is only available for 40% of customers. How do you handle missing values?",
-          "intent": "test pragmatism in handling incomplete data"
+          "intent": "test pragmatism in handling incomplete data",
+          "variants": [
+            {
+              "text": "Payment terms are recorded for only 25% of invoices, mostly for large customers. How do you handle the missing values?",
+              "draft": true
+            },
+            {
+              "text": "Credit scores are missing more often for customers who later pay late. How does that change how you treat the missing values?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Feature engineering for financial predictions requires careful temporal thinking and business validation—the best statistical features can be meaningless or biased",
@@ -288,11 +408,31 @@
       "follow_ups": [
         {
           "text": "How do you distinguish between 'the world changed' vs. 'our model is broken'?",
-          "intent": "test systematic debugging approach"
+          "intent": "test systematic debugging approach",
+          "variants": [
+            {
+              "text": "Accuracy dropped right after a data platform migration, which happened the same week as a pricing change. How do you tell which caused it?",
+              "draft": true
+            },
+            {
+              "text": "Your model's production errors are much larger than in testing, but only in one region. How do you work out whether it's the data, the pipeline or the world?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "You realize interest rates spiked in Q1 2024, which wasn't in your training data. Do you retrain or adjust?",
-          "intent": "test handling of out-of-distribution shifts"
+          "intent": "test handling of out-of-distribution shifts",
+          "variants": [
+            {
+              "text": "A new competitor entered the market in March, and your demand model now overpredicts every week. Do you retrain on the last two months, adjust the predictions, or something else?",
+              "draft": true
+            },
+            {
+              "text": "A regulation change in January altered how customers can repay loans, and you have only six weeks of data under the new rules. What do you do with the model?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Production failures are rarely about code—they're usually about assumptions baked into your training data that no longer hold",
@@ -918,15 +1058,45 @@
       "follow_ups": [
         {
           "text": "How can you tell from learning curves whether you have a bias problem or a variance problem?",
-          "intent": "test practical diagnosis"
+          "intent": "test practical diagnosis",
+          "variants": [
+            {
+              "text": "Training and validation error both sit at 30% and stay flat as you add data. What does that tell you?",
+              "draft": true
+            },
+            {
+              "text": "Training error is 2% and validation error is 18%, and the gap shrinks slowly as you add data. What problem do you have?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Will collecting more data fix it?",
-          "intent": "test understanding that more data helps variance, not bias"
+          "intent": "test understanding that more data helps variance, not bias",
+          "variants": [
+            {
+              "text": "Your team proposes spending a month labeling 50,000 more examples. Under what conditions is that worth it?",
+              "draft": true
+            },
+            {
+              "text": "A linear model underfits a clearly nonlinear relationship. Will doubling the dataset help? Why or why not?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "How does regularization move you along the tradeoff?",
-          "intent": "test intuition about model complexity"
+          "intent": "test intuition about model complexity",
+          "variants": [
+            {
+              "text": "You increase the L2 penalty step by step. What happens to training and validation error along the way?",
+              "draft": true
+            },
+            {
+              "text": "In XGBoost, which settings act as regularization, and which way do they push bias and variance?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "High bias means the model is too simple (both train and validation error are high). High variance means it is too sensitive to the training set (a big gap between them). The fix differs.",
@@ -952,15 +1122,45 @@
       "follow_ups": [
         {
           "text": "Fraud is 0.1% of transactions. ROC-AUC looks great at 0.97. Is it?",
-          "intent": "test why PR-AUC is more informative when positives are rare"
+          "intent": "test why PR-AUC is more informative when positives are rare",
+          "variants": [
+            {
+              "text": "One in 2,000 transactions is fraud. Your model's ROC-AUC is 0.96, but at your chosen threshold only 3% of flagged transactions are fraud. How can both be true?",
+              "draft": true
+            },
+            {
+              "text": "Two fraud models have the same ROC-AUC but very different PR-AUC. Which number should drive your choice, and why?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "How do you pick the decision threshold?",
-          "intent": "test connecting the threshold to costs and review capacity"
+          "intent": "test connecting the threshold to costs and review capacity",
+          "variants": [
+            {
+              "text": "Your fraud team can review 300 transactions a day. A missed fraud costs $500 on average and a false alarm costs $5 of analyst time. How do you set the threshold?",
+              "draft": true
+            },
+            {
+              "text": "When you block a legitimate transaction, the customer leaves about 10% of the time. How does that change where you set the threshold?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Fraud labels arrive weeks late and some fraud is never caught. How does that affect evaluation?",
-          "intent": "test awareness of label delay and noisy labels"
+          "intent": "test awareness of label delay and noisy labels",
+          "variants": [
+            {
+              "text": "Chargebacks take up to 90 days to arrive. How do you evaluate a model you trained last month?",
+              "draft": true
+            },
+            {
+              "text": "Your labels only include fraud that analysts caught. What does that do to your recall estimate?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "With rare positives, accuracy is meaningless and ROC-AUC can look flattering. Evaluate precision and recall at the operating point the business can actually use.",
@@ -991,15 +1191,45 @@
       "follow_ups": [
         {
           "text": "Your target is 'did the customer churn in the next 30 days'. Is a clean time split enough?",
-          "intent": "test label-horizon leakage and the need for a gap"
+          "intent": "test label-horizon leakage and the need for a gap",
+          "variants": [
+            {
+              "text": "Your target is 'will the invoice be paid within 60 days', and you split train and test at June 1. What can still leak?",
+              "draft": true
+            },
+            {
+              "text": "You train on data up to March 31 and test from April 1, but your features use 90-day rolling windows. Is there a gap problem?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Expanding window or sliding window: how do you choose?",
-          "intent": "test reasoning about stationarity and data volume"
+          "intent": "test reasoning about stationarity and data volume",
+          "variants": [
+            {
+              "text": "Customer behavior changed sharply two years ago, and you have eight years of data. Expanding or sliding window, and why?",
+              "draft": true
+            },
+            {
+              "text": "You have only 18 months of history. Which window scheme would you use for backtesting?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "How do you tune hyperparameters without leaking the future?",
-          "intent": "test nested, time-aware validation"
+          "intent": "test nested, time-aware validation",
+          "variants": [
+            {
+              "text": "A colleague tuned hyperparameters with random 5-fold CV, then reported results on a time-based holdout. What's wrong with that?",
+              "draft": true
+            },
+            {
+              "text": "How would you run early stopping for a gradient-boosted forecasting model without peeking at the test period?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Random k-fold lets the model train on the future and test on the past. Validation must mimic how the model will be used: train on earlier data, test on later data.",
@@ -1029,15 +1259,45 @@
       "follow_ups": [
         {
           "text": "How would you know whether that 1% is real or noise?",
-          "intent": "test statistical thinking about model comparison"
+          "intent": "test statistical thinking about model comparison",
+          "variants": [
+            {
+              "text": "The test set has 1,500 rows and 80 positives, and the new model's AUC is 0.012 higher. How confident are you that it's better?",
+              "draft": true
+            },
+            {
+              "text": "Across five cross-validation folds, the new model wins three and loses two. What do you conclude?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "The business owner needs to explain each decision to customers. What changes?",
-          "intent": "test interpretability as a requirement"
+          "intent": "test interpretability as a requirement",
+          "variants": [
+            {
+              "text": "Regulators require a reason code for every declined loan. Does that rule out the boosted model?",
+              "draft": true
+            },
+            {
+              "text": "The sales team wants to show customers why they got a particular price. How does that affect your choice between the two models?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "What does the more complex model cost you after launch?",
-          "intent": "test awareness of maintenance, monitoring and latency"
+          "intent": "test awareness of maintenance, monitoring and latency",
+          "variants": [
+            {
+              "text": "The boosted model needs 40 features from five upstream tables, while the logistic regression needs 8 from one. How does that factor into the decision?",
+              "draft": true
+            },
+            {
+              "text": "Your scoring service has a 20 ms latency budget. Besides accuracy, what do you compare between the two models?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "A small metric gain has to justify real costs in interpretability, latency, monitoring and maintenance. Compare on the business metric, with uncertainty.",
@@ -1070,15 +1330,45 @@
       "follow_ups": [
         {
           "text": "What is the difference between data missing at random and missing not at random? Give an example of the second.",
-          "intent": "test understanding of missingness mechanisms"
+          "intent": "test understanding of missingness mechanisms",
+          "variants": [
+            {
+              "text": "In a survey, high earners skip the income question more often. What kind of missingness is this, and why does it matter?",
+              "draft": true
+            },
+            {
+              "text": "Sensor readings are missing whenever a machine is switched off for maintenance. Is that missing at random? How would you treat it?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Does your approach change between a tree-based model and a linear model?",
-          "intent": "test model-aware preprocessing"
+          "intent": "test model-aware preprocessing",
+          "variants": [
+            {
+              "text": "XGBoost handles missing values natively. Does that mean you can skip thinking about them?",
+              "draft": true
+            },
+            {
+              "text": "You switch from a random forest to logistic regression. What preprocessing do you now need that you didn't before?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "You find extreme values in income. Do you remove them?",
-          "intent": "test judgment about investigating outliers before deleting them"
+          "intent": "test judgment about investigating outliers before deleting them",
+          "variants": [
+            {
+              "text": "Some customers show 1,000 purchases in a single day. Do you drop them before training?",
+              "draft": true
+            },
+            {
+              "text": "A few houses in your price data are listed at $1. What do you do with them?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Ask why the data is missing or extreme before fixing it. The mechanism decides the treatment, and sometimes the missingness itself is the signal.",
@@ -2010,15 +2300,45 @@
       "follow_ups": [
         {
           "text": "How would you tell whether more data would help?",
-          "intent": "test learning curves"
+          "intent": "test learning curves",
+          "variants": [
+            {
+              "text": "Labeling costs $2 per row. How would you decide whether it's worth buying another 20,000 rows?",
+              "draft": true
+            },
+            {
+              "text": "If you trained on half your data and got the same validation accuracy, what would that tell you?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Which levers reduce the gap, and which do you try first?",
-          "intent": "test prioritizing regularization, simpler models, features and data"
+          "intent": "test prioritizing regularization, simpler models, features and data",
+          "variants": [
+            {
+              "text": "You have one afternoon to narrow the gap. What do you try first, and why that?",
+              "draft": true
+            },
+            {
+              "text": "Your model is a single deep decision tree. Which settings would you change to reduce overfitting?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Could the validation set itself be the problem?",
-          "intent": "test suspicion of the split"
+          "intent": "test suspicion of the split",
+          "variants": [
+            {
+              "text": "The validation set was collected six months after the training set. Could that explain the gap?",
+              "draft": true
+            },
+            {
+              "text": "The validation set has only 150 rows. How much can you trust the 71%?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "A large train-validation gap points to high variance, but check that the split is trustworthy before reaching for a fix.",
@@ -2046,15 +2366,45 @@
       "follow_ups": [
         {
           "text": "Which of the two is more sensitive to noisy labels?",
-          "intent": "test boosting chasing noise"
+          "intent": "test boosting chasing noise",
+          "variants": [
+            {
+              "text": "About 10% of your labels are wrong. Would you expect bagging or boosting to suffer more, and why?",
+              "draft": true
+            },
+            {
+              "text": "Your boosted model's training loss keeps falling while validation loss rises after round 300. What might the later trees be fitting?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "When would you choose a random forest over XGBoost?",
-          "intent": "test practical model selection"
+          "intent": "test practical model selection",
+          "variants": [
+            {
+              "text": "You need a strong baseline today with no time to tune. Random forest or XGBoost?",
+              "draft": true
+            },
+            {
+              "text": "In what situations does a random forest match or beat a tuned gradient-boosted model?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "What does the learning rate do in boosting?",
-          "intent": "test shrinkage and its trade-off with the number of rounds"
+          "intent": "test shrinkage and its trade-off with the number of rounds",
+          "variants": [
+            {
+              "text": "You halve the learning rate. What else do you need to change, and what do you gain?",
+              "draft": true
+            },
+            {
+              "text": "A model with learning rate 0.3 and 100 trees overfits. What happens if you switch to 0.03 and 1,000 trees?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Bagging averages many independent high-variance models to cut variance. Boosting adds weak models in sequence to cut bias.",
@@ -2082,15 +2432,45 @@
       "follow_ups": [
         {
           "text": "When does ranking quality alone suffice, and when does the probability itself matter?",
-          "intent": "test linking the metric to the decision"
+          "intent": "test linking the metric to the decision",
+          "variants": [
+            {
+              "text": "Your model ranks leads for a sales team that calls the top 100 each day. Does calibration matter?",
+              "draft": true
+            },
+            {
+              "text": "An insurer uses your model's probability directly to set premiums. Is a high AUC enough?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "How would you detect and fix this?",
-          "intent": "test reliability plots, Platt scaling and isotonic regression"
+          "intent": "test reliability plots, Platt scaling and isotonic regression",
+          "variants": [
+            {
+              "text": "How would you check whether a score of 0.3 really means a 30% chance?",
+              "draft": true
+            },
+            {
+              "text": "You have only 2,000 validation rows. Would you calibrate with Platt scaling or isotonic regression, and why?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Which model types tend to have this problem?",
-          "intent": "test knowledge across model families"
+          "intent": "test knowledge across model families",
+          "variants": [
+            {
+              "text": "Would you expect naive Bayes, a random forest or logistic regression to be best calibrated out of the box? Why?",
+              "draft": true
+            },
+            {
+              "text": "A colleague says XGBoost is always well calibrated. Do you agree?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "AUC measures ranking. If anyone multiplies the score by a cost or reports it as a probability, whether it is trustworthy decides the outcome.",
@@ -2118,15 +2498,45 @@
       "follow_ups": [
         {
           "text": "What goes wrong with one-hot encoding here?",
-          "intent": "test dimensionality and sparsity"
+          "intent": "test dimensionality and sparsity",
+          "variants": [
+            {
+              "text": "You one-hot encode 30,000 product IDs for a logistic regression. What problems show up?",
+              "draft": true
+            },
+            {
+              "text": "Why does one-hot encoding a feature with 50,000 values hurt tree models in particular?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "How do you avoid leaking the target when you encode with target statistics?",
-          "intent": "test out-of-fold encoding"
+          "intent": "test out-of-fold encoding",
+          "variants": [
+            {
+              "text": "You replace each merchant ID with that merchant's fraud rate, computed on the full training set. Validation AUC jumps from 0.80 to 0.95. What happened?",
+              "draft": true
+            },
+            {
+              "text": "A merchant appears only twice in training, both times as fraud. What does its target encoding look like, and how do you fix it?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "What do you do with values never seen in training?",
-          "intent": "test handling unseen categories"
+          "intent": "test handling unseen categories",
+          "variants": [
+            {
+              "text": "New merchants sign up every day. How does your model handle a merchant ID it has never seen?",
+              "draft": true
+            },
+            {
+              "text": "Your zip-code feature works well in testing, but the business is expanding to a new state. What happens, and how do you prepare?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Encoding a high-cardinality feature is easy. Encoding it without leaking the target and with a plan for new values is the hard part.",
@@ -2153,15 +2563,45 @@
       "follow_ups": [
         {
           "text": "What happens to the coefficients of a linear model?",
-          "intent": "test coefficient instability and variance inflation"
+          "intent": "test coefficient instability and variance inflation",
+          "variants": [
+            {
+              "text": "You retrain a linear model on a new month of data, and the coefficients of two correlated features flip sign. Is the model broken?",
+              "draft": true
+            },
+            {
+              "text": "Height in centimeters and height in inches are both in your linear model. What happens to their coefficients and standard errors?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "What happens to SHAP values or feature importance?",
-          "intent": "test importance being split between correlated features"
+          "intent": "test importance being split between correlated features",
+          "variants": [
+            {
+              "text": "A stakeholder sees that income has low importance and concludes it doesn't matter. Monthly and annual income are both in the model. What do you say?",
+              "draft": true
+            },
+            {
+              "text": "You drop one of two correlated features, and the other's SHAP importance roughly doubles. Why?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "When would you remove one of them?",
-          "intent": "test practical judgment"
+          "intent": "test practical judgment",
+          "variants": [
+            {
+              "text": "Your only goal is prediction accuracy with XGBoost. Do you bother removing one of the two features?",
+              "draft": true
+            },
+            {
+              "text": "One of the two correlated features costs money to collect each month. How do you decide whether to keep it?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Correlation hurts interpretation more than prediction. Predictions stay fine, but credit gets split arbitrarily between the correlated features.",
@@ -2190,15 +2630,45 @@
       "follow_ups": [
         {
           "text": "What inputs do you need beyond the model itself?",
-          "intent": "test costs and benefits: discount cost, saved-customer value, effect of the offer"
+          "intent": "test costs and benefits: discount cost, saved-customer value, effect of the offer",
+          "variants": [
+            {
+              "text": "The discount costs $20, a saved customer is worth $300, and only a third of flagged churners stay because of the offer. How do you turn that into a threshold?",
+              "draft": true
+            },
+            {
+              "text": "What do you need to know about the offer itself, not just the model, before picking a threshold?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Why might 0.5 be a bad default?",
-          "intent": "test base rates and costs"
+          "intent": "test base rates and costs",
+          "variants": [
+            {
+              "text": "Only 4% of customers churn. What happens if you flag everyone above 0.5?",
+              "draft": true
+            },
+            {
+              "text": "Your model was trained on a balanced sample of churners and non-churners. Why is 0.5 especially misleading now?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "How would you revisit the threshold over time?",
-          "intent": "test monitoring and base-rate shifts"
+          "intent": "test monitoring and base-rate shifts",
+          "variants": [
+            {
+              "text": "Six months after launch, the churn rate has halved. Should the threshold change?",
+              "draft": true
+            },
+            {
+              "text": "Marketing raises the discount from 10% to 25%. What happens to your best threshold?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "The best threshold comes from business costs and benefits, not from the model's metrics alone.",
@@ -2226,15 +2696,45 @@
       "follow_ups": [
         {
           "text": "What does it do to your confidence intervals?",
-          "intent": "test heteroscedasticity and inference"
+          "intent": "test heteroscedasticity and inference",
+          "variants": [
+            {
+              "text": "Your model predicts house prices, and errors grow with price. A buyer of a $2M house asks how accurate the prediction is. What do your standard intervals get wrong?",
+              "draft": true
+            },
+            {
+              "text": "You report the same plus-or-minus $10k interval for every prediction. For which predictions is that too wide, and for which is it too narrow?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "What transformations or models would you try?",
-          "intent": "test log transform, weighted least squares, robust errors"
+          "intent": "test log transform, weighted least squares, robust errors",
+          "variants": [
+            {
+              "text": "Your target is revenue per customer, ranging from $10 to $10M. Which transformation would you try first, and what does it do to the errors?",
+              "draft": true
+            },
+            {
+              "text": "After a log transform your residuals look fine, but you need predictions in dollars. What do you watch out for when transforming back?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Does it matter if you only care about point predictions?",
-          "intent": "test linking diagnostics to purpose"
+          "intent": "test linking diagnostics to purpose",
+          "variants": [
+            {
+              "text": "You only need to rank the predictions, not put intervals on them. Does the fanning matter at all?",
+              "draft": true
+            },
+            {
+              "text": "You train with mean squared error. How do the few large-value cases influence what the model learns?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "A high R-squared doesn't mean the model's assumptions hold. Fanning residuals mean error grows with the level, which breaks uncertainty estimates and signals missing structure.",
@@ -2262,15 +2762,45 @@
       "follow_ups": [
         {
           "text": "What can go wrong with cross-validation on a small dataset?",
-          "intent": "test the variance of the estimate and tuning on the same folds"
+          "intent": "test the variance of the estimate and tuning on the same folds",
+          "variants": [
+            {
+              "text": "You tried 50 hyperparameter settings and reported the best cross-validation score. Why is that number optimistic?",
+              "draft": true
+            },
+            {
+              "text": "With 400 examples, how much would you expect CV accuracy to change if you reshuffled the folds?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "How would you get a more honest estimate?",
-          "intent": "test nested CV, repeated CV and a final holdout"
+          "intent": "test nested CV, repeated CV and a final holdout",
+          "variants": [
+            {
+              "text": "You can't collect more data. How do you report a number your manager can rely on?",
+              "draft": true
+            },
+            {
+              "text": "Explain how nested cross-validation would change your process here.",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "What would you check about the data itself?",
-          "intent": "test duplicates, leakage and group structure"
+          "intent": "test duplicates, leakage and group structure",
+          "variants": [
+            {
+              "text": "The 400 images come from 40 patients. What could make 98% misleading?",
+              "draft": true
+            },
+            {
+              "text": "A simple model with three features also gets 97%. What would you look for in the data?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "A high score on a small dataset is more often a sign of leakage, duplicates or tuning on the evaluation folds than of a great model.",
@@ -5154,15 +5684,45 @@
       "follow_ups": [
         {
           "text": "What do the p, d and q mean?",
-          "intent": "test the components"
+          "intent": "test the components",
+          "variants": [
+            {
+              "text": "Explain what an ARIMA(2,1,0) model assumes about the series.",
+              "draft": true
+            },
+            {
+              "text": "What does an ARIMA(0,1,1) model say about how today's value relates to the past?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Why does the series need to be stationary?",
-          "intent": "test differencing"
+          "intent": "test differencing",
+          "variants": [
+            {
+              "text": "Your series has a steady upward trend. What do you do before fitting ARIMA, and why?",
+              "draft": true
+            },
+            {
+              "text": "After first differencing, the series still has a strong yearly pattern. What now?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "How do you pick the orders?",
-          "intent": "test ACF and PACF, information criteria and validation"
+          "intent": "test ACF and PACF, information criteria and validation",
+          "variants": [
+            {
+              "text": "The PACF cuts off after lag 2 and the ACF decays slowly. What does that suggest?",
+              "draft": true
+            },
+            {
+              "text": "auto_arima picked the model with the lowest AIC. Would you trust that choice on its own?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "ARIMA forecasts a single series from its own past values and past errors after differencing it to be stable; it is a strong baseline for short, regular series.",
@@ -5189,15 +5749,45 @@
       "follow_ups": [
         {
           "text": "What can boosting use that the classical models can't?",
-          "intent": "test external features and cross-series learning"
+          "intent": "test external features and cross-series learning",
+          "variants": [
+            {
+              "text": "Promotions and price changes drive much of the variation. Which approach can use that information, and how?",
+              "draft": true
+            },
+            {
+              "text": "Half of the 200 products have less than a year of history. Which approach handles that best, and why?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "How would you evaluate the choice?",
-          "intent": "test walk-forward validation"
+          "intent": "test walk-forward validation",
+          "variants": [
+            {
+              "text": "How would you set up a backtest to compare the three approaches fairly?",
+              "draft": true
+            },
+            {
+              "text": "One model wins on average but loses badly on your 20 best-selling products. How do you decide?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "What would you ship first?",
-          "intent": "test baselines and pragmatism"
+          "intent": "test baselines and pragmatism",
+          "variants": [
+            {
+              "text": "You have two weeks before the first forecast is due. What do you deliver?",
+              "draft": true
+            },
+            {
+              "text": "What simple baseline must every candidate beat before you take it seriously?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Start with a simple baseline per series, then add a global model once you have drivers such as price and promotions that the classical methods cannot use.",
@@ -5225,15 +5815,45 @@
       "follow_ups": [
         {
           "text": "What is the difference between bottom-up and top-down?",
-          "intent": "test the simple approaches"
+          "intent": "test the simple approaches",
+          "variants": [
+            {
+              "text": "Store-level sales are noisy, but the company total is stable. Would you forecast bottom-up or top-down, and what do you lose?",
+              "draft": true
+            },
+            {
+              "text": "A new store opened last month. How does that affect bottom-up versus top-down forecasting?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "What does reconciliation do?",
-          "intent": "test optimal combination"
+          "intent": "test optimal combination",
+          "variants": [
+            {
+              "text": "Finance wants region forecasts that sum to the company number and store forecasts that sum to their regions. How do you get there without just forcing it at one level?",
+              "draft": true
+            },
+            {
+              "text": "What does MinT reconciliation do differently from scaling the store forecasts to match the total?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "How do you evaluate the result?",
-          "intent": "test accuracy at every level"
+          "intent": "test accuracy at every level",
+          "variants": [
+            {
+              "text": "Reconciliation improved the company-level forecast but made store forecasts slightly worse. Is that acceptable?",
+              "draft": true
+            },
+            {
+              "text": "Which error metric would you use to compare levels with very different volumes?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Forecasts made separately at each level disagree; reconciliation adjusts them so they add up, usually improving accuracy as well as consistency.",
@@ -5259,15 +5879,45 @@
       "follow_ups": [
         {
           "text": "What happens to MAPE when actual values are near zero?",
-          "intent": "test blow-up and asymmetry"
+          "intent": "test blow-up and asymmetry",
+          "variants": [
+            {
+              "text": "Some products sell zero units in many weeks. What happens to MAPE, and what do you use instead?",
+              "draft": true
+            },
+            {
+              "text": "MAPE treats over-forecasts and under-forecasts differently. Which does it punish more, and why does that matter for inventory?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Why might RMSE and MAE disagree on which model is better?",
-          "intent": "test sensitivity to large errors"
+          "intent": "test sensitivity to large errors",
+          "variants": [
+            {
+              "text": "Model A has lower MAE but higher RMSE than model B. What does that tell you about their errors?",
+              "draft": true
+            },
+            {
+              "text": "One holiday week with a huge miss dominates your RMSE. How should that affect which model you pick?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "How would you match the metric to the business cost?",
-          "intent": "test cost alignment"
+          "intent": "test cost alignment",
+          "variants": [
+            {
+              "text": "Running out of stock costs three times as much as overstocking. Which metric or loss would you use?",
+              "draft": true
+            },
+            {
+              "text": "The planning team cares about total units across all products, not each product. Which metric fits?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Each metric rewards a different behavior, so choose by what an error costs the business and by whether the data contain small or zero values.",
@@ -5293,15 +5943,45 @@
       "follow_ups": [
         {
           "text": "What happens for a brand-new item or user?",
-          "intent": "test the cold start problem"
+          "intent": "test the cold start problem",
+          "variants": [
+            {
+              "text": "A user signs up and hasn't clicked anything yet. What do you show them?",
+              "draft": true
+            },
+            {
+              "text": "Your catalog adds 5,000 new products each week. How does matrix factorization cope, and what do you add?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Explicit ratings are rare. What do you use instead?",
-          "intent": "test implicit feedback"
+          "intent": "test implicit feedback",
+          "variants": [
+            {
+              "text": "You have clicks, add-to-carts and purchases but no ratings. How do you turn them into a training signal?",
+              "draft": true
+            },
+            {
+              "text": "A user never clicked an item. Did they dislike it, or never see it? How do you handle that in training?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "How do you evaluate offline and online?",
-          "intent": "test ranking metrics and A/B tests"
+          "intent": "test ranking metrics and A/B tests",
+          "variants": [
+            {
+              "text": "Your new recommender improves offline recall@10 by 8%, but the A/B test shows no revenue lift. What could explain it?",
+              "draft": true
+            },
+            {
+              "text": "Which offline metric would you use, and how would you build the test set so it reflects real use?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Collaborative methods learn from behavior but need history; content-based methods work from item attributes but stay narrow. Real systems combine them.",
@@ -5328,15 +6008,45 @@
       "follow_ups": [
         {
           "text": "What goes wrong if you fit the scaler on all the data?",
-          "intent": "test leakage"
+          "intent": "test leakage",
+          "variants": [
+            {
+              "text": "You standardize the whole dataset before splitting into train and test. What's wrong, and does it matter much?",
+              "draft": true
+            },
+            {
+              "text": "How do you make sure scaling happens correctly inside cross-validation?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "Does scaling matter for lasso and ridge?",
-          "intent": "test penalty sensitivity"
+          "intent": "test penalty sensitivity",
+          "variants": [
+            {
+              "text": "One feature is in dollars and another in millions of dollars. Without scaling, what happens to their coefficients under lasso?",
+              "draft": true
+            },
+            {
+              "text": "Why does ridge regression effectively penalize an unscaled feature with a tiny range more heavily?",
+              "draft": true
+            }
+          ]
         },
         {
           "text": "When would you use standardization versus min-max?",
-          "intent": "test outliers and bounded ranges"
+          "intent": "test outliers and bounded ranges",
+          "variants": [
+            {
+              "text": "One feature has a few extreme outliers. Which scaling would you use, and why?",
+              "draft": true
+            },
+            {
+              "text": "You're feeding pixel intensities between 0 and 255 into a neural network. Which scaling makes sense?",
+              "draft": true
+            }
+          ]
         }
       ],
       "key_insight": "Scaling matters when a model uses distances or penalizes coefficient size, or when optimization is sensitive to scale; tree models split on order and don't care.",

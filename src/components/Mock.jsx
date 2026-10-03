@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { Timer, ArrowRight, X, Minus, Plus, CornerDownRight } from 'lucide-react'
+import { pickVariants, markSeen, followUpText } from '../lib/variants'
 import { QUESTIONS } from '../data/questions'
 import { buildMockQueue } from '../lib/queue'
 import { DIFFICULTY, RATINGS, dot } from '../lib/topics'
@@ -36,6 +37,7 @@ export default function Mock({ progress, byId, active, onSave }) {
   const [answers, setAnswers] = useState({})
   const [times, setTimes] = useState({})
   const [ratings, setRatings] = useState({})
+  const [picks, setPicks] = useState({}) // follow-up wording chosen per question for this interview
   const [startedAt, setStartedAt] = useState(0)
   const [elapsed, setElapsed] = useState(0)
   const [confirmEnd, setConfirmEnd] = useState(false)
@@ -61,6 +63,9 @@ export default function Mock({ progress, byId, active, onSave }) {
   const start = () => {
     const picked = buildMockQueue(QUESTIONS, progress, { count, topic: cfg.topic })
     setIds(picked)
+    const chosen = Object.fromEntries(picked.map((id) => [id, pickVariants(byId[id])]))
+    Object.entries(chosen).forEach(([id, p]) => markSeen(id, p))
+    setPicks(chosen)
     setIdx(0); setStep(0); setAnswers({}); setTimes({}); setRatings({}); setElapsed(0)
     setStartedAt(Date.now())
     setStage('run')
@@ -176,7 +181,7 @@ export default function Mock({ progress, byId, active, onSave }) {
               {q.follow_ups.slice(0, Math.min(step, n)).map((fu, k) => (
                 <li key={k} className="rounded-xl border border-primary/20 bg-primary/5 p-4">
                   <p className="text-sm font-semibold text-primary mb-1">Interviewer follow-up {k + 1}</p>
-                  <p className="text-[15px] leading-relaxed">{fu.text}</p>
+                  <p className="text-[15px] leading-relaxed">{followUpText(q, picks[q.id], k)}</p>
                 </li>
               ))}
             </ol>
@@ -271,7 +276,7 @@ export default function Mock({ progress, byId, active, onSave }) {
               <ul className="space-y-1.5 mb-4">
                 {item.follow_ups.map((fu, j) => (
                   <li key={j} className="text-sm">
-                    <span className="font-semibold text-primary mr-1.5">{j + 1}.</span>{fu.text}
+                    <span className="font-semibold text-primary mr-1.5">{j + 1}.</span>{followUpText(item, picks[id], j)}
                     <span className="block text-xs text-muted-foreground ml-5 mt-0.5 flex gap-1.5">
                       <CornerDownRight className="w-3 h-3 mt-0.5 shrink-0" />Testing: {fu.intent}
                     </span>

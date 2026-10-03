@@ -42,6 +42,20 @@ Living list for Gradient Ascent. What has already been built is recorded in `doc
 **Rollout.** Start with the 22 questions based on real interviews (the ones you can judge best), see whether the format works, then do the other 27. Mark generated answers as draft until reviewed.
 **Review.** All answers need your review for accuracy.
 
+### 1.5 Mock interview with reactive follow-ups
+**Problem.** Mock is currently Practice with a timer and hidden answers. It steps through the same fixed `follow_ups` list, so the interviewer never reacts to what the learner said. Fixed follow-ups can also assume an answer the learner never gave (for example "Why would you convert it to Parquet?" when Parquet was never mentioned), which breaks the feel of a real interview.
+**Idea.** Make Mock the one place where the interviewer listens. After the main answer, generate one follow-up that probes what the learner actually wrote: the vaguest claim they made, or the most important key point they missed. Practice keeps its fixed follow-ups (see 1.3), because spaced repetition needs a stable question for ratings to be comparable. Mock has no ratings to keep consistent, so unpredictability is the point.
+**Why.** In real interviews the hardest follow-ups come from your own answer ("You mentioned SMOTE, what does that do to calibration?"). Defending your own claims is the skill a fixed question bank cannot train, and it is what would set the app apart from flashcards.
+**Approach.**
+- Hook into `Mock.jsx` where `next()` advances from the main answer (`step === 0`): call the model and replace follow-up 1 with the generated probe before it is shown. The existing "interviewer is typing" delay covers the 1 to 2 seconds of latency.
+- Prompt inputs: the question, the learner's answer and the question's key points (from 1.1). Grounding on key points prevents probes built on a false premise ("you said X" when they did not).
+- One reactive probe per question to start; at most two (a probe on the probe) later.
+- Fallback: no API key, a failed call or a timeout over about 4 seconds means the fixed follow-up is used, so Mock never breaks.
+- In the review screen, label the probe "Asked because you said…" with the quoted part of the answer, so the learner sees why it came up.
+- The same call can return the match score and feedback from 1.2, so the probe adds little extra cost.
+**Needs.** Key points for every question (1.1) and the bring-your-own-key setting (1.2), default model Haiku. Cost is about the same as one AI grade per question.
+**Open questions.** Replace only follow-up 1 or all of them; whether to allow a second probe; how to review probe quality (log a sample of probes and check them by hand).
+
 ## 2. Carried over from earlier discussion
 - **Learn section.** Concept lessons linked both ways with questions, built on the tag vocabulary (first 8 to 10 concepts chosen from your questions, marked draft until reviewed).
 - **More "go deeper" explainers.** Done: boosting, bias-variance, drift, false positives, time series, CLT. Next: SQL join fan-out, temperature and top-p, regularization paths, Bayesian updating, then gradient descent.
@@ -71,8 +85,9 @@ Proposed fix: a new "ML Algorithms" topic (supervised plus unsupervised, about 2
 ## 4. Status after the 2026-10-03 session
 Done: collapsible map, 155 questions, 17 explainers, level and type filters.
 Next candidates:
+- Follow-up variants: ML topic done (142 variants, 2 per follow-up, marked draft) in `scripts/variants/ml.json`, applied with `python3 scripts/apply_variants.py`. Practice and Mock pick one wording per follow-up and avoid the one shown last time. Review the ML variants, then do the other topics.
 - Logo: the current mark (dots, trend line, arrow) may resemble others. Plan: contour hill with climbing dots; keep `Logo.jsx` and `public/favicon.svg` in sync; run a real trademark and logo search before public launch.
 - More Foundations questions (only 25 easy).
 - Expert review of all 106 draft questions.
 - Optional explainers: class imbalance and threshold, hierarchical clustering, boosting residuals for LightGBM.
-- Items in section 1 (match score, AI feedback, per-follow-up answers), Learn section, phone legends and PWA.
+- Items in section 1 (match score, AI feedback, per-follow-up answers, reactive Mock), Learn section, phone legends and PWA.

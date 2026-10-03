@@ -1,0 +1,618 @@
+{
+ "ml-001": [
+  {
+   "base": "Why would you choose XGBoost over logistic regression here?",
+   "draft": true,
+   "variants": [
+    "Your manager wants logistic regression because the retention team needs to understand it. You think XGBoost would score better. How do you settle it?",
+    "You have 3,000 customers and 15 features. Does XGBoost still beat logistic regression here? What would make you pick one over the other?"
+   ]
+  },
+  {
+   "base": "Your model gets 95% accuracy. Is that good? Why or why not?",
+   "draft": true,
+   "variants": [
+    "Monthly churn is 3%. Your model reports 97% accuracy. What do you tell the stakeholder?",
+    "A colleague's churn model has 88% accuracy and yours has 82%. Before declaring theirs better, what do you check?"
+   ]
+  },
+  {
+   "base": "You achieved 92% accuracy but 50% false positive rate. How do you decide if this is production-ready?",
+   "draft": true,
+   "variants": [
+    "Half the customers your model flags as churners would have stayed anyway, and each flag triggers a $40 discount. How do you decide whether to launch?",
+    "The retention team can only call 500 customers a week, and your model flags 2,000. Is the model ready, and what would you change?"
+   ]
+  }
+ ],
+ "ml-002": [
+  {
+   "base": "What's the difference between data drift and model drift?",
+   "draft": true,
+   "variants": [
+    "Input distributions look identical to training, yet accuracy has dropped 8 points. What kind of drift is this, and how is it different from the inputs shifting?",
+    "The age distribution of new users has shifted a lot, but the model's accuracy hasn't moved. Is that a problem? Which kind of drift is it?"
+   ]
+  },
+  {
+   "base": "You detect drift. What do you do next? Retrain? Rollback? How do you decide?",
+   "draft": true,
+   "variants": [
+    "Your drift alert fires on a Friday evening for a credit model that approves loans automatically. What do you do in the next hour, and what do you do next week?",
+    "Drift is detected, but you won't have fresh labels for six weeks. How do you decide between retraining, rolling back and waiting?"
+   ]
+  },
+  {
+   "base": "How would you automate this monitoring without creating alert fatigue?",
+   "draft": true,
+   "variants": [
+    "Your monitoring checks 300 features daily and fires about 20 drift alerts a week. The team has started ignoring them. How do you fix it?",
+    "You're setting up drift monitoring for 40 models owned by four teams. How do you decide what pages someone and what goes in a weekly report?"
+   ]
+  }
+ ],
+ "ml-003": [
+  {
+   "base": "Your model predicts 150 hires for Q3, but Finance only budgeted 80. How do you handle this disagreement?",
+   "draft": true,
+   "variants": [
+    "Your forecast says Engineering needs 60 hires next half, but the VP is confident 25 is enough. How do you work out who is right?",
+    "Finance asks you to adjust your forecast down so it fits the approved budget. What do you do?"
+   ]
+  },
+  {
+   "base": "Hiring has been paused for 2 months due to market conditions. How does this affect your forecast?",
+   "draft": true,
+   "variants": [
+    "The company announces a one-quarter hiring freeze starting next month. How do you update a forecast trained on three years of steady hiring?",
+    "Attrition doubled last quarter after a reorganization. How does that change your 12-month forecast?"
+   ]
+  },
+  {
+   "base": "Should you use time series (ARIMA) or regression? What are the tradeoffs?",
+   "draft": true,
+   "variants": [
+    "You only have 30 months of history for a newly formed business unit. Which modeling approach would you use, and why?",
+    "Hiring plans depend on revenue targets that Finance sets each quarter. Would you use a pure time-series model or a driver-based regression?"
+   ]
+  }
+ ],
+ "ml-004": [
+  {
+   "base": "You have 10,000 potential features (customer behavior, macro indicators, seasonality). How do you select the right ones?",
+   "draft": true,
+   "variants": [
+    "A colleague adds 3,000 macroeconomic series as features and validation error drops sharply. Why might you be suspicious, and how would you check?",
+    "You have 40,000 invoices and 2,500 candidate features. How do you narrow them down without overfitting your selection to the validation set?"
+   ]
+  },
+  {
+   "base": "A feature (e.g., 'days since last payment') has look-ahead bias. How do you detect and fix it?",
+   "draft": true,
+   "variants": [
+    "The feature 'number of reminders sent' turns out to be your strongest predictor of late payment. Why might that be a leak, and how do you check?",
+    "Your feature table is rebuilt nightly from the current customer table. Why could that leak future information into training, and how would you build it correctly?"
+   ]
+  },
+  {
+   "base": "Your feature 'customer credit score' is only available for 40% of customers. How do you handle missing values?",
+   "draft": true,
+   "variants": [
+    "Payment terms are recorded for only 25% of invoices, mostly for large customers. How do you handle the missing values?",
+    "Credit scores are missing more often for customers who later pay late. How does that change how you treat the missing values?"
+   ]
+  }
+ ],
+ "ml-005": [
+  {
+   "base": "How do you distinguish between 'the world changed' vs. 'our model is broken'?",
+   "draft": true,
+   "variants": [
+    "Accuracy dropped right after a data platform migration, which happened the same week as a pricing change. How do you tell which caused it?",
+    "Your model's production errors are much larger than in testing, but only in one region. How do you work out whether it's the data, the pipeline or the world?"
+   ]
+  },
+  {
+   "base": "You realize interest rates spiked in Q1 2024, which wasn't in your training data. Do you retrain or adjust?",
+   "draft": true,
+   "variants": [
+    "A new competitor entered the market in March, and your demand model now overpredicts every week. Do you retrain on the last two months, adjust the predictions, or something else?",
+    "A regulation change in January altered how customers can repay loans, and you have only six weeks of data under the new rules. What do you do with the model?"
+   ]
+  }
+ ],
+ "ml-006": [
+  {
+   "base": "How can you tell from learning curves whether you have a bias problem or a variance problem?",
+   "draft": true,
+   "variants": [
+    "Training and validation error both sit at 30% and stay flat as you add data. What does that tell you?",
+    "Training error is 2% and validation error is 18%, and the gap shrinks slowly as you add data. What problem do you have?"
+   ]
+  },
+  {
+   "base": "Will collecting more data fix it?",
+   "draft": true,
+   "variants": [
+    "Your team proposes spending a month labeling 50,000 more examples. Under what conditions is that worth it?",
+    "A linear model underfits a clearly nonlinear relationship. Will doubling the dataset help? Why or why not?"
+   ]
+  },
+  {
+   "base": "How does regularization move you along the tradeoff?",
+   "draft": true,
+   "variants": [
+    "You increase the L2 penalty step by step. What happens to training and validation error along the way?",
+    "In XGBoost, which settings act as regularization, and which way do they push bias and variance?"
+   ]
+  }
+ ],
+ "ml-007": [
+  {
+   "base": "Fraud is 0.1% of transactions. ROC-AUC looks great at 0.97. Is it?",
+   "draft": true,
+   "variants": [
+    "One in 2,000 transactions is fraud. Your model's ROC-AUC is 0.96, but at your chosen threshold only 3% of flagged transactions are fraud. How can both be true?",
+    "Two fraud models have the same ROC-AUC but very different PR-AUC. Which number should drive your choice, and why?"
+   ]
+  },
+  {
+   "base": "How do you pick the decision threshold?",
+   "draft": true,
+   "variants": [
+    "Your fraud team can review 300 transactions a day. A missed fraud costs $500 on average and a false alarm costs $5 of analyst time. How do you set the threshold?",
+    "When you block a legitimate transaction, the customer leaves about 10% of the time. How does that change where you set the threshold?"
+   ]
+  },
+  {
+   "base": "Fraud labels arrive weeks late and some fraud is never caught. How does that affect evaluation?",
+   "draft": true,
+   "variants": [
+    "Chargebacks take up to 90 days to arrive. How do you evaluate a model you trained last month?",
+    "Your labels only include fraud that analysts caught. What does that do to your recall estimate?"
+   ]
+  }
+ ],
+ "ml-008": [
+  {
+   "base": "Your target is 'did the customer churn in the next 30 days'. Is a clean time split enough?",
+   "draft": true,
+   "variants": [
+    "Your target is 'will the invoice be paid within 60 days', and you split train and test at June 1. What can still leak?",
+    "You train on data up to March 31 and test from April 1, but your features use 90-day rolling windows. Is there a gap problem?"
+   ]
+  },
+  {
+   "base": "Expanding window or sliding window: how do you choose?",
+   "draft": true,
+   "variants": [
+    "Customer behavior changed sharply two years ago, and you have eight years of data. Expanding or sliding window, and why?",
+    "You have only 18 months of history. Which window scheme would you use for backtesting?"
+   ]
+  },
+  {
+   "base": "How do you tune hyperparameters without leaking the future?",
+   "draft": true,
+   "variants": [
+    "A colleague tuned hyperparameters with random 5-fold CV, then reported results on a time-based holdout. What's wrong with that?",
+    "How would you run early stopping for a gradient-boosted forecasting model without peeking at the test period?"
+   ]
+  }
+ ],
+ "ml-009": [
+  {
+   "base": "How would you know whether that 1% is real or noise?",
+   "draft": true,
+   "variants": [
+    "The test set has 1,500 rows and 80 positives, and the new model's AUC is 0.012 higher. How confident are you that it's better?",
+    "Across five cross-validation folds, the new model wins three and loses two. What do you conclude?"
+   ]
+  },
+  {
+   "base": "The business owner needs to explain each decision to customers. What changes?",
+   "draft": true,
+   "variants": [
+    "Regulators require a reason code for every declined loan. Does that rule out the boosted model?",
+    "The sales team wants to show customers why they got a particular price. How does that affect your choice between the two models?"
+   ]
+  },
+  {
+   "base": "What does the more complex model cost you after launch?",
+   "draft": true,
+   "variants": [
+    "The boosted model needs 40 features from five upstream tables, while the logistic regression needs 8 from one. How does that factor into the decision?",
+    "Your scoring service has a 20 ms latency budget. Besides accuracy, what do you compare between the two models?"
+   ]
+  }
+ ],
+ "ml-010": [
+  {
+   "base": "What is the difference between data missing at random and missing not at random? Give an example of the second.",
+   "draft": true,
+   "variants": [
+    "In a survey, high earners skip the income question more often. What kind of missingness is this, and why does it matter?",
+    "Sensor readings are missing whenever a machine is switched off for maintenance. Is that missing at random? How would you treat it?"
+   ]
+  },
+  {
+   "base": "Does your approach change between a tree-based model and a linear model?",
+   "draft": true,
+   "variants": [
+    "XGBoost handles missing values natively. Does that mean you can skip thinking about them?",
+    "You switch from a random forest to logistic regression. What preprocessing do you now need that you didn't before?"
+   ]
+  },
+  {
+   "base": "You find extreme values in income. Do you remove them?",
+   "draft": true,
+   "variants": [
+    "Some customers show 1,000 purchases in a single day. Do you drop them before training?",
+    "A few houses in your price data are listed at $1. What do you do with them?"
+   ]
+  }
+ ],
+ "ml-011": [
+  {
+   "base": "How would you tell whether more data would help?",
+   "draft": true,
+   "variants": [
+    "Labeling costs $2 per row. How would you decide whether it's worth buying another 20,000 rows?",
+    "If you trained on half your data and got the same validation accuracy, what would that tell you?"
+   ]
+  },
+  {
+   "base": "Which levers reduce the gap, and which do you try first?",
+   "draft": true,
+   "variants": [
+    "You have one afternoon to narrow the gap. What do you try first, and why that?",
+    "Your model is a single deep decision tree. Which settings would you change to reduce overfitting?"
+   ]
+  },
+  {
+   "base": "Could the validation set itself be the problem?",
+   "draft": true,
+   "variants": [
+    "The validation set was collected six months after the training set. Could that explain the gap?",
+    "The validation set has only 150 rows. How much can you trust the 71%?"
+   ]
+  }
+ ],
+ "ml-012": [
+  {
+   "base": "Which of the two is more sensitive to noisy labels?",
+   "draft": true,
+   "variants": [
+    "About 10% of your labels are wrong. Would you expect bagging or boosting to suffer more, and why?",
+    "Your boosted model's training loss keeps falling while validation loss rises after round 300. What might the later trees be fitting?"
+   ]
+  },
+  {
+   "base": "When would you choose a random forest over XGBoost?",
+   "draft": true,
+   "variants": [
+    "You need a strong baseline today with no time to tune. Random forest or XGBoost?",
+    "In what situations does a random forest match or beat a tuned gradient-boosted model?"
+   ]
+  },
+  {
+   "base": "What does the learning rate do in boosting?",
+   "draft": true,
+   "variants": [
+    "You halve the learning rate. What else do you need to change, and what do you gain?",
+    "A model with learning rate 0.3 and 100 trees overfits. What happens if you switch to 0.03 and 1,000 trees?"
+   ]
+  }
+ ],
+ "ml-013": [
+  {
+   "base": "When does ranking quality alone suffice, and when does the probability itself matter?",
+   "draft": true,
+   "variants": [
+    "Your model ranks leads for a sales team that calls the top 100 each day. Does calibration matter?",
+    "An insurer uses your model's probability directly to set premiums. Is a high AUC enough?"
+   ]
+  },
+  {
+   "base": "How would you detect and fix this?",
+   "draft": true,
+   "variants": [
+    "How would you check whether a score of 0.3 really means a 30% chance?",
+    "You have only 2,000 validation rows. Would you calibrate with Platt scaling or isotonic regression, and why?"
+   ]
+  },
+  {
+   "base": "Which model types tend to have this problem?",
+   "draft": true,
+   "variants": [
+    "Would you expect naive Bayes, a random forest or logistic regression to be best calibrated out of the box? Why?",
+    "A colleague says XGBoost is always well calibrated. Do you agree?"
+   ]
+  }
+ ],
+ "ml-014": [
+  {
+   "base": "What goes wrong with one-hot encoding here?",
+   "draft": true,
+   "variants": [
+    "You one-hot encode 30,000 product IDs for a logistic regression. What problems show up?",
+    "Why does one-hot encoding a feature with 50,000 values hurt tree models in particular?"
+   ]
+  },
+  {
+   "base": "How do you avoid leaking the target when you encode with target statistics?",
+   "draft": true,
+   "variants": [
+    "You replace each merchant ID with that merchant's fraud rate, computed on the full training set. Validation AUC jumps from 0.80 to 0.95. What happened?",
+    "A merchant appears only twice in training, both times as fraud. What does its target encoding look like, and how do you fix it?"
+   ]
+  },
+  {
+   "base": "What do you do with values never seen in training?",
+   "draft": true,
+   "variants": [
+    "New merchants sign up every day. How does your model handle a merchant ID it has never seen?",
+    "Your zip-code feature works well in testing, but the business is expanding to a new state. What happens, and how do you prepare?"
+   ]
+  }
+ ],
+ "ml-015": [
+  {
+   "base": "What happens to the coefficients of a linear model?",
+   "draft": true,
+   "variants": [
+    "You retrain a linear model on a new month of data, and the coefficients of two correlated features flip sign. Is the model broken?",
+    "Height in centimeters and height in inches are both in your linear model. What happens to their coefficients and standard errors?"
+   ]
+  },
+  {
+   "base": "What happens to SHAP values or feature importance?",
+   "draft": true,
+   "variants": [
+    "A stakeholder sees that income has low importance and concludes it doesn't matter. Monthly and annual income are both in the model. What do you say?",
+    "You drop one of two correlated features, and the other's SHAP importance roughly doubles. Why?"
+   ]
+  },
+  {
+   "base": "When would you remove one of them?",
+   "draft": true,
+   "variants": [
+    "Your only goal is prediction accuracy with XGBoost. Do you bother removing one of the two features?",
+    "One of the two correlated features costs money to collect each month. How do you decide whether to keep it?"
+   ]
+  }
+ ],
+ "ml-016": [
+  {
+   "base": "What inputs do you need beyond the model itself?",
+   "draft": true,
+   "variants": [
+    "The discount costs $20, a saved customer is worth $300, and only a third of flagged churners stay because of the offer. How do you turn that into a threshold?",
+    "What do you need to know about the offer itself, not just the model, before picking a threshold?"
+   ]
+  },
+  {
+   "base": "Why might 0.5 be a bad default?",
+   "draft": true,
+   "variants": [
+    "Only 4% of customers churn. What happens if you flag everyone above 0.5?",
+    "Your model was trained on a balanced sample of churners and non-churners. Why is 0.5 especially misleading now?"
+   ]
+  },
+  {
+   "base": "How would you revisit the threshold over time?",
+   "draft": true,
+   "variants": [
+    "Six months after launch, the churn rate has halved. Should the threshold change?",
+    "Marketing raises the discount from 10% to 25%. What happens to your best threshold?"
+   ]
+  }
+ ],
+ "ml-017": [
+  {
+   "base": "What does it do to your confidence intervals?",
+   "draft": true,
+   "variants": [
+    "Your model predicts house prices, and errors grow with price. A buyer of a $2M house asks how accurate the prediction is. What do your standard intervals get wrong?",
+    "You report the same plus-or-minus $10k interval for every prediction. For which predictions is that too wide, and for which is it too narrow?"
+   ]
+  },
+  {
+   "base": "What transformations or models would you try?",
+   "draft": true,
+   "variants": [
+    "Your target is revenue per customer, ranging from $10 to $10M. Which transformation would you try first, and what does it do to the errors?",
+    "After a log transform your residuals look fine, but you need predictions in dollars. What do you watch out for when transforming back?"
+   ]
+  },
+  {
+   "base": "Does it matter if you only care about point predictions?",
+   "draft": true,
+   "variants": [
+    "You only need to rank the predictions, not put intervals on them. Does the fanning matter at all?",
+    "You train with mean squared error. How do the few large-value cases influence what the model learns?"
+   ]
+  }
+ ],
+ "ml-018": [
+  {
+   "base": "What can go wrong with cross-validation on a small dataset?",
+   "draft": true,
+   "variants": [
+    "You tried 50 hyperparameter settings and reported the best cross-validation score. Why is that number optimistic?",
+    "With 400 examples, how much would you expect CV accuracy to change if you reshuffled the folds?"
+   ]
+  },
+  {
+   "base": "How would you get a more honest estimate?",
+   "draft": true,
+   "variants": [
+    "You can't collect more data. How do you report a number your manager can rely on?",
+    "Explain how nested cross-validation would change your process here."
+   ]
+  },
+  {
+   "base": "What would you check about the data itself?",
+   "draft": true,
+   "variants": [
+    "The 400 images come from 40 patients. What could make 98% misleading?",
+    "A simple model with three features also gets 97%. What would you look for in the data?"
+   ]
+  }
+ ],
+ "ml-019": [
+  {
+   "base": "What do the p, d and q mean?",
+   "draft": true,
+   "variants": [
+    "Explain what an ARIMA(2,1,0) model assumes about the series.",
+    "What does an ARIMA(0,1,1) model say about how today's value relates to the past?"
+   ]
+  },
+  {
+   "base": "Why does the series need to be stationary?",
+   "draft": true,
+   "variants": [
+    "Your series has a steady upward trend. What do you do before fitting ARIMA, and why?",
+    "After first differencing, the series still has a strong yearly pattern. What now?"
+   ]
+  },
+  {
+   "base": "How do you pick the orders?",
+   "draft": true,
+   "variants": [
+    "The PACF cuts off after lag 2 and the ACF decays slowly. What does that suggest?",
+    "auto_arima picked the model with the lowest AIC. Would you trust that choice on its own?"
+   ]
+  }
+ ],
+ "ml-020": [
+  {
+   "base": "What can boosting use that the classical models can't?",
+   "draft": true,
+   "variants": [
+    "Promotions and price changes drive much of the variation. Which approach can use that information, and how?",
+    "Half of the 200 products have less than a year of history. Which approach handles that best, and why?"
+   ]
+  },
+  {
+   "base": "How would you evaluate the choice?",
+   "draft": true,
+   "variants": [
+    "How would you set up a backtest to compare the three approaches fairly?",
+    "One model wins on average but loses badly on your 20 best-selling products. How do you decide?"
+   ]
+  },
+  {
+   "base": "What would you ship first?",
+   "draft": true,
+   "variants": [
+    "You have two weeks before the first forecast is due. What do you deliver?",
+    "What simple baseline must every candidate beat before you take it seriously?"
+   ]
+  }
+ ],
+ "ml-021": [
+  {
+   "base": "What is the difference between bottom-up and top-down?",
+   "draft": true,
+   "variants": [
+    "Store-level sales are noisy, but the company total is stable. Would you forecast bottom-up or top-down, and what do you lose?",
+    "A new store opened last month. How does that affect bottom-up versus top-down forecasting?"
+   ]
+  },
+  {
+   "base": "What does reconciliation do?",
+   "draft": true,
+   "variants": [
+    "Finance wants region forecasts that sum to the company number and store forecasts that sum to their regions. How do you get there without just forcing it at one level?",
+    "What does MinT reconciliation do differently from scaling the store forecasts to match the total?"
+   ]
+  },
+  {
+   "base": "How do you evaluate the result?",
+   "draft": true,
+   "variants": [
+    "Reconciliation improved the company-level forecast but made store forecasts slightly worse. Is that acceptable?",
+    "Which error metric would you use to compare levels with very different volumes?"
+   ]
+  }
+ ],
+ "ml-022": [
+  {
+   "base": "What happens to MAPE when actual values are near zero?",
+   "draft": true,
+   "variants": [
+    "Some products sell zero units in many weeks. What happens to MAPE, and what do you use instead?",
+    "MAPE treats over-forecasts and under-forecasts differently. Which does it punish more, and why does that matter for inventory?"
+   ]
+  },
+  {
+   "base": "Why might RMSE and MAE disagree on which model is better?",
+   "draft": true,
+   "variants": [
+    "Model A has lower MAE but higher RMSE than model B. What does that tell you about their errors?",
+    "One holiday week with a huge miss dominates your RMSE. How should that affect which model you pick?"
+   ]
+  },
+  {
+   "base": "How would you match the metric to the business cost?",
+   "draft": true,
+   "variants": [
+    "Running out of stock costs three times as much as overstocking. Which metric or loss would you use?",
+    "The planning team cares about total units across all products, not each product. Which metric fits?"
+   ]
+  }
+ ],
+ "ml-023": [
+  {
+   "base": "What happens for a brand-new item or user?",
+   "draft": true,
+   "variants": [
+    "A user signs up and hasn't clicked anything yet. What do you show them?",
+    "Your catalog adds 5,000 new products each week. How does matrix factorization cope, and what do you add?"
+   ]
+  },
+  {
+   "base": "Explicit ratings are rare. What do you use instead?",
+   "draft": true,
+   "variants": [
+    "You have clicks, add-to-carts and purchases but no ratings. How do you turn them into a training signal?",
+    "A user never clicked an item. Did they dislike it, or never see it? How do you handle that in training?"
+   ]
+  },
+  {
+   "base": "How do you evaluate offline and online?",
+   "draft": true,
+   "variants": [
+    "Your new recommender improves offline recall@10 by 8%, but the A/B test shows no revenue lift. What could explain it?",
+    "Which offline metric would you use, and how would you build the test set so it reflects real use?"
+   ]
+  }
+ ],
+ "ml-024": [
+  {
+   "base": "What goes wrong if you fit the scaler on all the data?",
+   "draft": true,
+   "variants": [
+    "You standardize the whole dataset before splitting into train and test. What's wrong, and does it matter much?",
+    "How do you make sure scaling happens correctly inside cross-validation?"
+   ]
+  },
+  {
+   "base": "Does scaling matter for lasso and ridge?",
+   "draft": true,
+   "variants": [
+    "One feature is in dollars and another in millions of dollars. Without scaling, what happens to their coefficients under lasso?",
+    "Why does ridge regression effectively penalize an unscaled feature with a tiny range more heavily?"
+   ]
+  },
+  {
+   "base": "When would you use standardization versus min-max?",
+   "draft": true,
+   "variants": [
+    "One feature has a few extreme outliers. Which scaling would you use, and why?",
+    "You're feeding pixel intensities between 0 and 255 into a neural network. Which scaling makes sense?"
+   ]
+  }
+ ]
+}

@@ -15,21 +15,19 @@ const TILE = {
 const BAR = { solid: 'bg-emerald-500', shaky: 'bg-amber-400', missed: 'bg-rose-400', unseen: 'bg-muted' }
 const NAME = { solid: 'Solid', shaky: 'Shaky', missed: 'Missed it', unseen: 'Not seen yet' }
 
-// One compact row per topic. Open a topic to see its questions as tiles, grouped by level.
-// Topics with questions due for review start open, so the pulsing tiles are visible without a tap.
 export default function MasteryMap({ progress, onStart }) {
-  const [focus, setFocus] = useState(null)
+  const [focusedQuestion, setFocusedQuestion] = useState(null)
   const topics = [...new Set(QUESTIONS.map((q) => q.topic))]
   const overall = summarize(QUESTIONS, progress)
   const dueIn = (t) => QUESTIONS.filter((q) => q.topic === t && isDue(progress[q.id])).length
   const [open, setOpen] = useState(() => new Set(topics.filter((t) => dueIn(t) > 0)))
   const toggle = (t) => setOpen((s) => { const n = new Set(s); n.has(t) ? n.delete(t) : n.add(t); return n })
 
-  const caption = focus
+  const caption = focusedQuestion
     ? (() => {
-        const e = progress[focus.id]
+        const e = progress[focusedQuestion.id]
         const st = e?.rating || 'unseen'
-        return { title: focus.question, meta: `${NAME[st]}${e ? `, ${describeDue(e)}` : ''}` }
+        return { title: focusedQuestion.question, meta: `${NAME[st]}${e ? `, ${describeDue(e)}` : ''}` }
       })()
     : null
 
@@ -102,13 +100,9 @@ export default function MasteryMap({ progress, onStart }) {
                             return (
                               <button
                                 key={q.id}
-                                onClick={() => onStart({ only: [q.id] })}
-                                onMouseEnter={() => setFocus(q)}
-                                onMouseLeave={() => setFocus(null)}
-                                onFocus={() => setFocus(q)}
-                                onBlur={() => setFocus(null)}
+                                onClick={() => setFocusedQuestion(focusedQuestion?.id === q.id ? null : q)}
                                 aria-label={`${q.question} ${NAME[st]}${isDueNow ? ', due for review' : ''}`}
-                                className={`tile-pop w-7 h-7 sm:w-8 sm:h-8 rounded-lg border transition-transform hover:scale-110 hover:-translate-y-0.5 active:scale-95 ${TILE[st]} ${isDueNow ? 'due-pulse' : ''}`}
+                                className={`tile-pop w-7 h-7 sm:w-8 sm:h-8 rounded-lg border transition-transform hover:scale-110 hover:-translate-y-0.5 active:scale-95 ${TILE[st]} ${isDueNow ? 'due-pulse' : ''} ${focusedQuestion?.id === q.id ? 'ring-2 ring-primary ring-offset-2 ring-offset-card' : ''}`}
                                 style={{ animationDelay: `${Math.min(order++, 20) * 14}ms` }}
                               />
                             )
@@ -117,6 +111,32 @@ export default function MasteryMap({ progress, onStart }) {
                       </div>
                     )
                   })}
+                  {caption && focusedQuestion.topic === t && (
+                    <div className="rounded-lg border border-border bg-muted/40 p-3.5 space-y-2.5 anim-msg">
+                      <div>
+                        <p className="font-medium text-sm leading-snug">{caption.title}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{caption.meta}</p>
+                      </div>
+                      {focusedQuestion.tags?.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5">
+                          {focusedQuestion.tags.slice(0, 3).map((tag) => (
+                            <span key={tag} className="px-2 py-0.5 rounded-full bg-muted text-xs text-muted-foreground">{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => { onStart({ only: [focusedQuestion.id] }); setFocusedQuestion(null) }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90"
+                        >
+                          <Play className="w-3.5 h-3.5 fill-current" /> Practice
+                        </button>
+                        <button onClick={() => setFocusedQuestion(null)} className="text-sm text-muted-foreground hover:text-foreground">
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -124,16 +144,7 @@ export default function MasteryMap({ progress, onStart }) {
         })}
       </div>
 
-      <div className="mt-3 min-h-[3.25rem] text-sm px-1" aria-live="polite">
-        {caption ? (
-          <>
-            <p className="font-medium leading-snug">{caption.title}</p>
-            <p className="text-muted-foreground mt-0.5">{caption.meta}</p>
-          </>
-        ) : (
-          <p className="text-muted-foreground">Open a topic to see its questions. Each tile is one question; pulsing tiles are due for review.</p>
-        )}
-      </div>
+      <p className="mt-3 text-sm text-muted-foreground px-1">Open a topic to see its questions. Each tile is one question; pulsing tiles are due for review.</p>
     </section>
   )
 }

@@ -112,6 +112,7 @@ export default function App() {
               onTag={openTag}
               onExit={() => { setSession(null); setView('dashboard') }}
               onAgain={() => start({ topic: session.topic })}
+              onRedo={(ids) => start({ topic: session.topic, only: ids })}
             />
           </div>
         )}

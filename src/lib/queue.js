@@ -9,8 +9,13 @@ export function summarize(questions, progress) {
 export const countDue = (questions, progress, now = Date.now()) =>
   questions.filter((q) => isDue(progress[q.id], now)).length
 
-// Priority: overdue reviews first, then unseen, then not-yet-due weak ones, and
-// solid-and-not-due last. Nudged toward weak topics, with a little randomness.
+// Unseen questions ramp up by level so a new learner starts with Foundations, then Core,
+// then Advanced. The gaps are larger than the random nudge, so a Foundations question always
+// outranks an unseen Advanced one in the same topic.
+const UNSEEN_LEVEL_BONUS = { easy: 0.6, medium: 0.3, hard: 0 }
+
+// Priority: overdue reviews first, then unseen (easier levels first), then not-yet-due weak
+// ones, and solid-and-not-due last. Nudged toward weak topics, with a little randomness.
 function scored(pool, progress, now, rand) {
   const weakness = {}
   for (const t of new Set(pool.map((q) => q.topic))) {
@@ -21,7 +26,7 @@ function scored(pool, progress, now, rand) {
     .map((q) => {
       const p = progress[q.id]
       let s
-      if (!p) s = 3
+      if (!p) s = 3 + (UNSEEN_LEVEL_BONUS[q.difficulty] ?? 0)
       else if (isDue(p, now)) s = 5 + Math.min(overdueDays(p, now), 10) * 0.2 + (p.rating === 'missed' ? 0.5 : 0)
       else s = p.rating === 'solid' ? 0.1 : 1.2
       return { q, s: s + weakness[q.topic] + rand() * 0.5 }
