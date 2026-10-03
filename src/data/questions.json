@@ -24,6 +24,67 @@
       "key_insight": "Duplicate detection isn't just a GROUP BY—it's about understanding what constitutes a duplicate in your business context"
     },
     {
+      "id": "sql-002",
+      "question": "You need to forecast cash collection for next 90 days. How would you structure the query to get historical payment patterns by customer segment?",
+      "topic": "SQL",
+      "difficulty": "hard",
+      "frequency": "asked 6x in last year",
+      "context": "FP&A / financial planning roles at fintech, B2B SaaS",
+      "follow_ups": [
+        {
+          "text": "How do you handle customers with zero historical payments or very new customers?",
+          "intent": "test handling of edge cases and missing data patterns"
+        },
+        {
+          "text": "Your query takes 15 minutes on 500M rows. How would you optimize it for daily runs?",
+          "intent": "test query optimization and indexing strategy"
+        },
+        {
+          "text": "What do you do if payment behavior changed dramatically post-COVID? Do you use all history or recent-only?",
+          "intent": "test judgment on data staleness and recency bias"
+        }
+      ],
+      "key_insight": "Financial forecasting queries need to handle missing data gracefully and acknowledge that historical patterns may no longer be relevant"
+    },
+    {
+      "id": "sql-003",
+      "question": "Write a window function query to find customers' longest gap between payments",
+      "topic": "SQL",
+      "difficulty": "medium",
+      "frequency": "asked 3x in last year",
+      "context": "Analytics roles across fintech and SaaS",
+      "follow_ups": [
+        {
+          "text": "How would you identify customers at churn risk using this metric?",
+          "intent": "test translation of SQL output to business insight"
+        },
+        {
+          "text": "Your calculation includes refunds (negative payments). Should they reset the gap counter?",
+          "intent": "test business logic thinking"
+        }
+      ],
+      "key_insight": "Window functions are powerful for temporal analysis, but the business context determines how to interpret null values and edge cases"
+    },
+    {
+      "id": "sql-004",
+      "question": "Write a query to compute cohort retention (e.g., customers acquired in Jan 2024, % still active in Mar 2024)",
+      "topic": "SQL",
+      "difficulty": "medium",
+      "frequency": "asked 4x in last year",
+      "context": "Growth analytics, retention analysis",
+      "follow_ups": [
+        {
+          "text": "How do you handle customers who were active, churned, then came back?",
+          "intent": "test definition of 'active' and handling of interruptions"
+        },
+        {
+          "text": "Your retention % for Jan cohort is higher than Dec. What could explain this (besides better product)?",
+          "intent": "test statistical thinking and confounding variable awareness"
+        }
+      ],
+      "key_insight": "Cohort analysis requires clear definitions of lifecycle events and careful handling of incomplete data (recent cohorts have less follow-up time)"
+    },
+    {
       "id": "ml-001",
       "question": "Build a churn prediction model—walk me through your approach",
       "topic": "ML",
@@ -70,6 +131,71 @@
       "key_insight": "Drift detection alone is useless—you need a decision framework for when to act and what action to take"
     },
     {
+      "id": "ml-003",
+      "question": "You need to forecast headcount needs for next 12 months. How would you approach this?",
+      "topic": "ML",
+      "difficulty": "hard",
+      "frequency": "asked 3x in last year",
+      "context": "FP&A, workforce planning at scaling companies",
+      "follow_ups": [
+        {
+          "text": "Your model predicts 150 hires for Q3, but Finance only budgeted 80. How do you handle this disagreement?",
+          "intent": "test stakeholder management and when to trust the model vs. domain knowledge"
+        },
+        {
+          "text": "Hiring has been paused for 2 months due to market conditions. How does this affect your forecast?",
+          "intent": "test handling of policy changes and regime shifts"
+        },
+        {
+          "text": "Should you use time series (ARIMA) or regression? What are the tradeoffs?",
+          "intent": "test model selection reasoning"
+        }
+      ],
+      "key_insight": "Forecasting organizational metrics requires integrating business constraints and forward-looking signals that don't exist in historical data"
+    },
+    {
+      "id": "ml-004",
+      "question": "Design a feature engineering pipeline for a cash collection forecasting model",
+      "topic": "ML",
+      "difficulty": "hard",
+      "frequency": "asked 5x in last year",
+      "context": "Production ML at fintech, lenders, B2B SaaS",
+      "follow_ups": [
+        {
+          "text": "You have 10,000 potential features (customer behavior, macro indicators, seasonality). How do you select the right ones?",
+          "intent": "test feature selection methodology and avoiding overfitting"
+        },
+        {
+          "text": "A feature (e.g., 'days since last payment') has look-ahead bias. How do you detect and fix it?",
+          "intent": "test understanding of temporal logic in ML pipelines"
+        },
+        {
+          "text": "Your feature 'customer credit score' is only available for 40% of customers. How do you handle missing values?",
+          "intent": "test pragmatism in handling incomplete data"
+        }
+      ],
+      "key_insight": "Feature engineering for financial predictions requires careful temporal thinking and business validation—the best statistical features can be meaningless or biased"
+    },
+    {
+      "id": "ml-005",
+      "question": "Your XGBoost model trained on 2023 data performs well in test set but fails in 2024 production. What do you investigate first?",
+      "topic": "ML",
+      "difficulty": "hard",
+      "frequency": "asked 4x in last year",
+      "context": "Production ML debugging",
+      "follow_ups": [
+        {
+          "text": "How do you distinguish between 'the world changed' vs. 'our model is broken'?",
+          "intent": "test systematic debugging approach"
+        },
+        {
+          "text": "You realize interest rates spiked in Q1 2024, which wasn't in your training data. Do you retrain or adjust?",
+          "intent": "test handling of out-of-distribution shifts"
+        }
+      ],
+      "key_insight": "Production failures are rarely about code—they're usually about assumptions baked into your training data that no longer hold"
+    },
+    {
       "id": "stats-001",
       "question": "Explain Type I vs Type II error with a real example from your work",
       "topic": "Statistics",
@@ -93,6 +219,48 @@
       "key_insight": "Statistical significance isn't a binary switch—it's a tool for decision-making, and you need to know what error costs you more"
     },
     {
+      "id": "stats-002",
+      "question": "You A/B test a new loan approval model. 90-day default rate is 2.1% (treatment) vs 2.0% (control). Is this significant?",
+      "topic": "Statistics",
+      "difficulty": "hard",
+      "frequency": "asked 3x in last year",
+      "context": "Risk, fintech experimentation",
+      "follow_ups": [
+        {
+          "text": "What's your sample size and how long would you need to run this test?",
+          "intent": "test power calculation thinking"
+        },
+        {
+          "text": "A 0.1% difference in default seems small, but what's the business cost?",
+          "intent": "test translation from statistical to financial impact"
+        },
+        {
+          "text": "Your test window is 30 days, but defaults are observed 90 days later. How do you handle this?",
+          "intent": "test understanding of delayed feedback loops"
+        }
+      ],
+      "key_insight": "Financial experiments have delayed feedback and compounding effects—statistical significance doesn't equal business impact"
+    },
+    {
+      "id": "stats-003",
+      "question": "Explain Simpson's Paradox with a fintech example (e.g., loan approval rates by segment)",
+      "topic": "Statistics",
+      "difficulty": "hard",
+      "frequency": "asked 2x in last year",
+      "context": "Senior analytics, risk management roles",
+      "follow_ups": [
+        {
+          "text": "How would you detect if Simpson's Paradox is present in your data?",
+          "intent": "test practical statistical thinking"
+        },
+        {
+          "text": "If you see this happening, which statistic do you report to the board?",
+          "intent": "test judgment and stakeholder communication"
+        }
+      ],
+      "key_insight": "Aggregated statistics can be misleading—you must segment carefully and question what each number represents"
+    },
+    {
       "id": "system-design-001",
       "question": "Design a real-time recommendation system",
       "topic": "System Design",
@@ -114,6 +282,193 @@
         }
       ],
       "key_insight": "Real-time systems are about constraints—latency, freshness, cost—and making principled tradeoffs across them"
+    },
+    {
+      "id": "system-design-002",
+      "question": "Design a system to forecast cash flow for 1000+ customers in real-time",
+      "topic": "System Design",
+      "difficulty": "hard",
+      "frequency": "asked 4x in last year",
+      "context": "FP&A systems, financial planning platforms",
+      "follow_ups": [
+        {
+          "text": "Users need forecasts updated daily. Do you batch or serve predictions on-demand?",
+          "intent": "test latency vs. freshness tradeoffs"
+        },
+        {
+          "text": "A customer's 90-day forecast suddenly drops 50%. Should you alert them? Why?",
+          "intent": "test judgment on system behavior"
+        },
+        {
+          "text": "How would you version your model changes without breaking live dashboards?",
+          "intent": "test operational maturity"
+        }
+      ],
+      "key_insight": "Financial systems need predictable, auditable behavior—the model accuracy matters less than explainability and stability"
+    },
+    {
+      "id": "system-design-003",
+      "question": "You're building an ML intake system for a company with 20+ ML teams. How do you structure it?",
+      "topic": "System Design",
+      "difficulty": "hard",
+      "frequency": "asked 2x in last year",
+      "context": "Platform engineering, ML infrastructure roles",
+      "follow_ups": [
+        {
+          "text": "How do you prevent the system from becoming a dumping ground for half-baked ideas?",
+          "intent": "test governance thinking"
+        },
+        {
+          "text": "Teams want different SLOs (some want real-time, some want batch). How do you standardize without being rigid?",
+          "intent": "test systems thinking with competing constraints"
+        }
+      ],
+      "key_insight": "ML infrastructure is really about standardizing decision-making, not just technology"
+    },
+    {
+      "id": "python-001",
+      "question": "Write a Python function to compute feature importance from an XGBoost model, with confidence intervals",
+      "topic": "Python",
+      "difficulty": "medium",
+      "frequency": "asked 3x in last year",
+      "context": "ML engineering roles",
+      "follow_ups": [
+        {
+          "text": "XGBoost's `feature_importances_` can be misleading for correlated features. How do you handle this?",
+          "intent": "test understanding of feature importance limitations"
+        },
+        {
+          "text": "You want to explain the model to non-technical stakeholders. Would you use SHAP or feature importance? Why?",
+          "intent": "test judgment on interpretation methods"
+        }
+      ],
+      "key_insight": "Feature importance is a useful starting point but incomplete—correlated features confound the signal"
+    },
+    {
+      "id": "python-002",
+      "question": "Design a data validation pipeline that catches data quality issues before they reach your model",
+      "topic": "Python",
+      "difficulty": "medium",
+      "frequency": "asked 3x in last year",
+      "context": "ML infrastructure, data engineering roles",
+      "follow_ups": [
+        {
+          "text": "A feature suddenly has 50% missing values. Do you fail the pipeline or impute?",
+          "intent": "test judgment on data quality thresholds"
+        },
+        {
+          "text": "How do you alert data producers (upstream teams) without creating notification fatigue?",
+          "intent": "test systems thinking and communication design"
+        }
+      ],
+      "key_insight": "Data quality is a contract between producers and consumers—validation is a conversation, not just a gate"
+    },
+    {
+      "id": "python-003",
+      "question": "Write a Python script to backtest a time-series forecasting model (e.g., cash collection forecasts) against historical data",
+      "topic": "Python",
+      "difficulty": "hard",
+      "frequency": "asked 2x in last year",
+      "context": "Financial forecasting, ML engineering",
+      "follow_ups": [
+        {
+          "text": "How do you avoid look-ahead bias when building features from future information?",
+          "intent": "test temporal reasoning in backtesting"
+        },
+        {
+          "text": "Your backtest RMSE is 0.05, but live forecasts are off by 0.2. What could explain this?",
+          "intent": "test understanding of train/test distribution shift"
+        }
+      ],
+      "key_insight": "Backtesting is hard because you must simulate exactly what the model sees at prediction time—any deviation invalidates the results"
+    },
+    {
+      "id": "prodml-001",
+      "question": "Your production ML model is degrading. Walk me through your debugging process",
+      "topic": "Production ML",
+      "difficulty": "hard",
+      "frequency": "asked 5x in last year",
+      "context": "Senior ML roles, production ML teams",
+      "follow_ups": [
+        {
+          "text": "Is it data drift, label drift, or concept drift? How do you distinguish?",
+          "intent": "test systematic debugging methodology"
+        },
+        {
+          "text": "You find the issue but fixing it requires retraining on all historical data (very expensive). What do you do?",
+          "intent": "test pragmatism and resource constraints"
+        }
+      ],
+      "key_insight": "Debugging production ML failures is detective work—you need clear telemetry and a hypothesis-testing mindset"
+    },
+    {
+      "id": "prodml-002",
+      "question": "Design a monitoring & alerting system for a critical ML model in production",
+      "topic": "Production ML",
+      "difficulty": "hard",
+      "frequency": "asked 4x in last year",
+      "context": "Production ML, ML ops roles",
+      "follow_ups": [
+        {
+          "text": "What metrics do you monitor? Accuracy? Fairness? Prediction distribution? All of the above?",
+          "intent": "test understanding of what 'health' means for different model types"
+        },
+        {
+          "text": "You get 100 drift alerts per week. How do you avoid alert fatigue?",
+          "intent": "test judgment on thresholds and signal quality"
+        },
+        {
+          "text": "Should you auto-retrain when drift is detected, or always get human approval?",
+          "intent": "test tradeoff between automation and safety"
+        }
+      ],
+      "key_insight": "Monitoring must be specific to your use case—a lending model and a recommendation engine need completely different alerting strategies"
+    },
+    {
+      "id": "prodml-003",
+      "question": "Your ML model is making unfair predictions (e.g., denying loans to certain demographic groups at higher rates). What do you do?",
+      "topic": "Production ML",
+      "difficulty": "hard",
+      "frequency": "asked 3x in last year",
+      "context": "Regulated industries (fintech, lending, insurance)",
+      "follow_ups": [
+        {
+          "text": "Is this due to your features, or is the underlying data reflecting real but unfair patterns?",
+          "intent": "test understanding of fairness vs. bias vs. discrimination"
+        },
+        {
+          "text": "You can't use 'protected attributes' as features, but the model is still making disparate predictions. How do you fix this?",
+          "intent": "test understanding of proxy variables and indirect discrimination"
+        },
+        {
+          "text": "Removing the bias hurts model accuracy. How do you decide if the tradeoff is acceptable?",
+          "intent": "test business judgment on fairness/accuracy tradeoffs"
+        }
+      ],
+      "key_insight": "Fairness is a business and ethical decision, not just a technical problem—you need domain expertise and stakeholder alignment"
+    },
+    {
+      "id": "prodml-004",
+      "question": "You're deploying a new forecasting model to replace the old one. How do you validate it before full rollout?",
+      "topic": "Production ML",
+      "difficulty": "hard",
+      "frequency": "asked 3x in last year",
+      "context": "Model deployment, A/B testing",
+      "follow_ups": [
+        {
+          "text": "Do you do a canary deployment (small % of traffic), shadow mode (run both models), or full rollout?",
+          "intent": "test deployment strategy thinking"
+        },
+        {
+          "text": "The new model is slightly less accurate overall but much better for certain segments. How do you evaluate this?",
+          "intent": "test nuanced evaluation beyond aggregate metrics"
+        },
+        {
+          "text": "How long do you need to monitor before deciding the deployment was successful?",
+          "intent": "test judgment on monitoring windows"
+        }
+      ],
+      "key_insight": "Model deployment is about managing risk—perfect is the enemy of good enough, and the cost of being wrong changes your decision"
     }
   ]
 }
