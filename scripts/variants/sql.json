@@ -1,0 +1,394 @@
+{
+ "sql-001": [
+  {
+   "base": "What if you needed to find users who created duplicate accounts across different time periods?",
+   "draft": true,
+   "variants": [
+    "The same person signed up again a year after closing their first account. Should that count as a duplicate, and how would your query find it?",
+    "Marketing wants accounts created by the same email within 24 hours of each other. How do you change the query?"
+   ]
+  },
+  {
+   "base": "How would you optimize this for a table with 100M rows?",
+   "draft": true,
+   "variants": [
+    "The users table grows by 2 million rows a day and the duplicate check runs hourly. How do you keep it fast?",
+    "Your duplicate query does a full table scan on 300M rows. What do you look at in the query plan, and what do you change?"
+   ]
+  },
+  {
+   "base": "Should you use GROUP BY or DISTINCT? When would each fail?",
+   "draft": true,
+   "variants": [
+    "A colleague writes SELECT DISTINCT email FROM users to find duplicates. What does that return, and why doesn't it answer the question?",
+    "When would GROUP BY with HAVING give you something DISTINCT never can?"
+   ]
+  }
+ ],
+ "sql-002": [
+  {
+   "base": "How do you handle customers with zero historical payments or very new customers?",
+   "draft": true,
+   "variants": [
+    "A third of customers in a segment joined in the last 60 days. How do they enter your historical payment patterns?",
+    "Some customers have invoices but have never paid one yet. How do you represent them in the query output?"
+   ]
+  },
+  {
+   "base": "Your query takes 15 minutes on 500M rows. How would you optimize it for daily runs?",
+   "draft": true,
+   "variants": [
+    "The query scans three years of payments every morning, but only yesterday's rows change. How do you restructure it?",
+    "The daily job joins 500M payments to a customer table on a computed segment column. Where is the time going, and what do you change?"
+   ]
+  },
+  {
+   "base": "What do you do if payment behavior changed dramatically post-COVID? Do you use all history or recent-only?",
+   "draft": true,
+   "variants": [
+    "Payment terms changed for all customers in 2022. Do you keep the earlier history in the patterns, and how?",
+    "Customers paid much faster during a two-month promotion last year. How do you stop that period distorting the patterns?"
+   ]
+  }
+ ],
+ "sql-003": [
+  {
+   "base": "How would you identify customers at churn risk using this metric?",
+   "draft": true,
+   "variants": [
+    "A customer's longest gap is 200 days, but it was three years ago and they pay monthly now. Is longest gap the right churn signal?",
+    "How would you turn the gap metric into a list the collections team can act on each week?"
+   ]
+  },
+  {
+   "base": "Your calculation includes refunds (negative payments). Should they reset the gap counter?",
+   "draft": true,
+   "variants": [
+    "Some payments are later reversed as chargebacks. Do they count when measuring the gap?",
+    "A customer pays one invoice in three installments on consecutive days. How should that affect the gap calculation?"
+   ]
+  }
+ ],
+ "sql-004": [
+  {
+   "base": "How do you handle customers who were active, churned, then came back?",
+   "draft": true,
+   "variants": [
+    "A customer is active in January, silent in February and back in March. Are they retained in March? How does your query decide?",
+    "How would you report retention so that customers who lapse and return are counted separately from those who never left?"
+   ]
+  },
+  {
+   "base": "Your retention % for Jan cohort is higher than Dec. What could explain this (besides better product)?",
+   "draft": true,
+   "variants": [
+    "The March cohort retains much better than February's. What would you check before calling it a product win?",
+    "The January cohort is half the size of December's but retains better. What non-product explanations would you look for?"
+   ]
+  }
+ ],
+ "sql-005": [
+  {
+   "base": "Two people tie for third place. Do you return both, and how does that change your query?",
+   "draft": true,
+   "variants": [
+    "Three people share the second-highest salary in a department. With ROW_NUMBER, RANK and DENSE_RANK, how many rows does each return?",
+    "HR says ties must all be included even if that returns five people. Which ranking function do you use, and why?"
+   ]
+  },
+  {
+   "base": "A department has only two employees. What does your query return?",
+   "draft": true,
+   "variants": [
+    "A department has a single employee with a NULL salary. What does your query return for that department?",
+    "The business wants exactly three rows per department, even when it has fewer staff. Can SQL do that, and should it?"
+   ]
+  },
+  {
+   "base": "Why can't you filter on the window function directly in the WHERE clause?",
+   "draft": true,
+   "variants": [
+    "Your query puts RANK() OVER (...) <= 3 in the WHERE clause and fails. Explain why, and show the fix.",
+    "Why does filtering on a window function need a subquery or CTE, but filtering on a regular column doesn't?"
+   ]
+  }
+ ],
+ "sql-006": [
+  {
+   "base": "Some days have no sales, so there is no row for them. What goes wrong?",
+   "draft": true,
+   "variants": [
+    "The store is closed every Sunday, so Sundays have no rows. What does ROWS BETWEEN 6 PRECEDING AND CURRENT ROW actually average over?",
+    "How would you make the rolling average treat missing days as zero revenue?"
+   ]
+  },
+  {
+   "base": "What is the difference between ROWS and RANGE in the window frame?",
+   "draft": true,
+   "variants": [
+    "Two rows share the same date. How do ROWS and RANGE frames treat them differently?",
+    "Your database supports RANGE with an interval, like RANGE BETWEEN INTERVAL '6 days' PRECEDING. What problem does that solve?"
+   ]
+  },
+  {
+   "base": "What should the first six days of the series show?",
+   "draft": true,
+   "variants": [
+    "The dashboard shows a 7-day average for the first day of data. Is that misleading? What would you show instead?",
+    "How would you flag or filter rows where fewer than 7 days fed into the average?"
+   ]
+  }
+ ],
+ "sql-007": [
+  {
+   "base": "How would you handle events that arrive late or out of order?",
+   "draft": true,
+   "variants": [
+    "Mobile events can arrive up to two hours late. How do you handle sessions that are already computed when a late event lands?",
+    "Two events have the same timestamp to the millisecond. How does that affect your ordering and session boundaries?"
+   ]
+  },
+  {
+   "base": "This table has 5 billion rows. How do you make it practical to run daily?",
+   "draft": true,
+   "variants": [
+    "Recomputing sessions over all history takes six hours. How do you process only new data each day without breaking sessions that cross midnight?",
+    "How would you partition the table so the daily sessionization job stays fast as data grows?"
+   ]
+  },
+  {
+   "base": "How do bots or very long sessions affect your numbers?",
+   "draft": true,
+   "variants": [
+    "One user has a single session lasting 40 hours. What might be going on, and how do you handle it in your metrics?",
+    "Average session length jumped 30% overnight. What would you check before reporting it?"
+   ]
+  }
+ ],
+ "sql-008": [
+  {
+   "base": "Your NOT IN query suddenly returns zero rows. What could have happened?",
+   "draft": true,
+   "variants": [
+    "The February table has a few rows with a NULL customer_id. What happens to WHERE customer_id NOT IN (SELECT customer_id FROM feb)?",
+    "Why does NOT EXISTS behave differently from NOT IN when the subquery contains NULLs?"
+   ]
+  },
+  {
+   "base": "NOT EXISTS, LEFT JOIN ... IS NULL, or NOT IN: how do you choose?",
+   "draft": true,
+   "variants": [
+    "The February table has 2 billion rows. Which of NOT EXISTS, LEFT JOIN ... IS NULL and NOT IN would you pick, and why?",
+    "A teammate finds NOT EXISTS hard to read and prefers LEFT JOIN ... IS NULL. Is there any difference in results?"
+   ]
+  },
+  {
+   "base": "How would you generalize this to 'bought in at least 3 of the last 6 months but not this month'?",
+   "draft": true,
+   "variants": [
+    "How would you find customers who bought every month last quarter but not this month?",
+    "Extend the query to customers whose spend dropped by more than half from January to February."
+   ]
+  }
+ ],
+ "sql-009": [
+  {
+   "base": "What should the query return if two people tie for the highest salary?",
+   "draft": true,
+   "variants": [
+    "Salaries are 100, 100 and 90. What should 'second highest' return, and which query gives that?",
+    "Your query uses LIMIT 1 OFFSET 1 after ORDER BY salary DESC. What does it return when the top salary is shared?"
+   ]
+  },
+  {
+   "base": "What if there is no second highest value at all?",
+   "draft": true,
+   "variants": [
+    "The table has one employee. What does your query return, and is that what the caller expects?",
+    "Should the query return NULL or no rows when there is no second highest salary? Why does it matter for the code calling it?"
+   ]
+  },
+  {
+   "base": "How would you generalize this to the Nth highest salary per department?",
+   "draft": true,
+   "variants": [
+    "How would you find the third highest salary in each department, including departments with fewer than three salaries?",
+    "Write the query for the Nth highest salary where N is a parameter. Which ranking function do you use?"
+   ]
+  }
+ ],
+ "sql-010": [
+  {
+   "base": "When does a filter belong in WHERE and when in HAVING, if both would give the same result?",
+   "draft": true,
+   "variants": [
+    "You filter WHERE region = 'EU' and HAVING region = 'EU'. Both give the same result. Which is better, and why?",
+    "On a 1-billion-row table, what is the cost of putting a non-aggregate condition in HAVING instead of WHERE?"
+   ]
+  },
+  {
+   "base": "What changes if you also want to exclude departments with fewer than 5 people?",
+   "draft": true,
+   "variants": [
+    "Now only include departments where the highest salary is under 200,000. Where does that condition go?",
+    "Return departments with an average salary above 50,000 and at least one employee hired this year. How do you write it?"
+   ]
+  }
+ ],
+ "sql-011": [
+  {
+   "base": "What should the first month for each product show?",
+   "draft": true,
+   "variants": [
+    "A product launched in March. What should its March growth figure be, and how does your query produce it?",
+    "Should the first month show NULL, 0% or be left out? Who reads this report, and how does that change your answer?"
+   ]
+  },
+  {
+   "base": "What if a product has no sales in some months?",
+   "draft": true,
+   "variants": [
+    "A product sold nothing in May. Your LAG compares June with April. Why is that wrong, and how do you fix it?",
+    "How would you build a complete product-by-month grid before calculating growth?"
+   ]
+  },
+  {
+   "base": "What if last month's revenue is zero?",
+   "draft": true,
+   "variants": [
+    "A product went from $0 to $5,000. What growth percentage do you report?",
+    "How do you stop a division by zero from failing the whole query?"
+   ]
+  }
+ ],
+ "sql-012": [
+  {
+   "base": "How would you find each user's longest streak ever?",
+   "draft": true,
+   "variants": [
+    "Return each user's current streak as of today. How does that differ from the longest streak?",
+    "How would you count how many separate 3-day streaks each user had this year?"
+   ]
+  },
+  {
+   "base": "What if a user has several events on the same day?",
+   "draft": true,
+   "variants": [
+    "A user logs 50 events on one day. Why does your streak logic break if you don't handle that first?",
+    "Should a day with only a background ping count as active? How would you encode that in the query?"
+   ]
+  },
+  {
+   "base": "What if 'day' depends on the user's time zone?",
+   "draft": true,
+   "variants": [
+    "Timestamps are stored in UTC, but users span 12 time zones. How do you assign events to days?",
+    "A user travels from New York to Tokyo mid-week. Whose calendar day defines their streak?"
+   ]
+  }
+ ],
+ "sql-013": [
+  {
+   "base": "How would you check for this before trusting a new join?",
+   "draft": true,
+   "variants": [
+    "Before shipping a new dashboard query with four joins, what quick checks do you run?",
+    "How do you confirm that a join key is unique on one side?"
+   ]
+  },
+  {
+   "base": "Show a fix when you need both item-level and payment-level figures.",
+   "draft": true,
+   "variants": [
+    "Write the query so total revenue comes from order_items and total paid comes from payments, with no double counting.",
+    "Why does aggregating each table to the order level before joining fix the problem?"
+   ]
+  },
+  {
+   "base": "Does the same problem appear with a LEFT JOIN?",
+   "draft": true,
+   "variants": [
+    "A colleague switches the payments join from INNER to LEFT to fix the doubling. Does that help?",
+    "Can the same doubling happen with a join on a dimension table? When?"
+   ]
+  }
+ ],
+ "sql-014": [
+  {
+   "base": "A column has 100 rows, 20 NULLs and 30 distinct non-null values. What do the three return?",
+   "draft": true,
+   "variants": [
+    "A column has 1,000 rows, all NULL. What do COUNT(*), COUNT(col) and COUNT(DISTINCT col) return?",
+    "A column has 50 rows: 10 NULL, and the rest are the values 'a' and 'b'. What do the three counts return?"
+   ]
+  },
+  {
+   "base": "How do NULLs affect AVG and SUM?",
+   "draft": true,
+   "variants": [
+    "Salaries are 100, 200 and NULL. What does AVG(salary) return, and what might a stakeholder expect instead?",
+    "SUM over a column that is entirely NULL: does it return 0 or NULL? Why does that matter in a report?"
+   ]
+  },
+  {
+   "base": "Does COUNT(DISTINCT) have a cost at scale?",
+   "draft": true,
+   "variants": [
+    "Counting distinct users per day over a year of clickstream is slow. What can you do?",
+    "When would an approximate distinct count be acceptable, and how much error does it typically add?"
+   ]
+  }
+ ],
+ "sql-015": [
+  {
+   "base": "How does your approach behave when a segment has an even number of orders?",
+   "draft": true,
+   "variants": [
+    "A segment has four orders: 10, 20, 40 and 100. What should the median be, and does your query return that?",
+    "Your query picks the middle row with ROW_NUMBER. What does it return for a segment with six orders?"
+   ]
+  },
+  {
+   "base": "Why might you report the median rather than the mean here?",
+   "draft": true,
+   "variants": [
+    "A few enterprise orders are 100 times larger than the rest. Which summary do you show leadership, and why?",
+    "When would the mean be the more useful number for this segment?"
+   ]
+  },
+  {
+   "base": "What does this cost on a billion-row table?",
+   "draft": true,
+   "variants": [
+    "Ranking every order in a billion-row table is too slow. What alternatives do you have?",
+    "Is an approximate percentile good enough for a weekly dashboard? How would you decide?"
+   ]
+  }
+ ],
+ "sql-016": [
+  {
+   "base": "Which definitions could legitimately differ?",
+   "draft": true,
+   "variants": [
+    "The two teams use different time windows to define a repeat purchase. What other differences would you look for?",
+    "Finance excludes refunded orders, and your dashboard includes them. List other choices that could explain a 7-point gap."
+   ]
+  },
+  {
+   "base": "How do you decide whose number is right?",
+   "draft": true,
+   "variants": [
+    "Both numbers are defensible. Who decides which one the company uses, and how?",
+    "The CFO asks which number is correct before a board meeting tomorrow. What do you say?"
+   ]
+  },
+  {
+   "base": "How do you stop it happening again?",
+   "draft": true,
+   "variants": [
+    "What would you put in place so the next new metric doesn't diverge the same way?",
+    "How would a single metrics layer or documented definition help, and what does it cost to maintain?"
+   ]
+  }
+ ]
+}

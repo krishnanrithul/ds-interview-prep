@@ -1,0 +1,384 @@
+{
+ "prodml-001": [
+  {
+   "base": "Is it data drift, label drift, or concept drift? How do you distinguish?",
+   "draft": true,
+   "variants": [
+    "Input feature distributions are unchanged, but the share of positive labels has doubled. Which kind of drift is that, and what does it imply for the model?",
+    "How would you work out whether the relationship between features and target has changed, rather than just the inputs?"
+   ]
+  },
+  {
+   "base": "You find the issue but fixing it requires retraining on all historical data (very expensive). What do you do?",
+   "draft": true,
+   "variants": [
+    "A full retrain costs $20,000 in compute and takes a week. What cheaper options do you try first?",
+    "Could you retrain on only recent data, or recalibrate the outputs instead? What are the risks of each?"
+   ]
+  }
+ ],
+ "prodml-002": [
+  {
+   "base": "What metrics do you monitor? Accuracy? Fairness? Prediction distribution? All of the above?",
+   "draft": true,
+   "variants": [
+    "The model's labels arrive 60 days late. What do you monitor in the meantime?",
+    "For a model that ranks search results, which health metrics matter, and how are they different from a credit model's?"
+   ]
+  },
+  {
+   "base": "You get 100 drift alerts per week. How do you avoid alert fatigue?",
+   "draft": true,
+   "variants": [
+    "Most drift alerts come from features with little effect on the model's predictions. How would you use that to cut noise?",
+    "How would you set drift thresholds so that an alert usually means something worth acting on?"
+   ]
+  },
+  {
+   "base": "Should you auto-retrain when drift is detected, or always get human approval?",
+   "draft": true,
+   "variants": [
+    "Automatic retraining kicked in after a data bug and the new model was worse. How should the process have been designed?",
+    "Which kinds of model would you let retrain automatically, and which always need a human sign-off?"
+   ]
+  }
+ ],
+ "prodml-003": [
+  {
+   "base": "Is this due to your features, or is the underlying data reflecting real but unfair patterns?",
+   "draft": true,
+   "variants": [
+    "Historical approval data reflects past lending decisions that disadvantaged a group. How does that end up in your model?",
+    "How would you tell whether a gap in approval rates comes from the model or from genuine differences in repayment?"
+   ]
+  },
+  {
+   "base": "You can't use 'protected attributes' as features, but the model is still making disparate predictions. How do you fix this?",
+   "draft": true,
+   "variants": [
+    "You removed gender as a feature, but approval rates still differ by gender. Which features might be acting as proxies, and how do you find them?",
+    "Zip code is highly predictive of default but also correlates with race. What do you do with it?"
+   ]
+  },
+  {
+   "base": "Removing the bias hurts model accuracy. How do you decide if the tradeoff is acceptable?",
+   "draft": true,
+   "variants": [
+    "The fairer model approves more applicants who later default, costing about $2M a year. Who decides whether that's acceptable, and how?",
+    "How would you present the fairness-accuracy trade-off to leadership so they can make a decision?"
+   ]
+  }
+ ],
+ "prodml-004": [
+  {
+   "base": "Do you do a canary deployment (small % of traffic), shadow mode (run both models), or full rollout?",
+   "draft": true,
+   "variants": [
+    "The forecast feeds a dashboard that finance uses once a month. Does a canary deployment make sense? What would you do instead?",
+    "When would shadow mode tell you nothing useful about the new model?"
+   ]
+  },
+  {
+   "base": "The new model is slightly less accurate overall but much better for certain segments. How do you evaluate this?",
+   "draft": true,
+   "variants": [
+    "The new model is 2% worse overall but 15% better for your largest customers. How do you decide?",
+    "How would you check whether a new model's improvement is concentrated in segments the business doesn't care about?"
+   ]
+  },
+  {
+   "base": "How long do you need to monitor before deciding the deployment was successful?",
+   "draft": true,
+   "variants": [
+    "The forecasts are monthly. How long do you run old and new side by side before deciding?",
+    "What would make you roll back after a week, even if overall accuracy looked fine?"
+   ]
+  }
+ ],
+ "prodml-005": [
+  {
+   "base": "How would you detect it after launch?",
+   "draft": true,
+   "variants": [
+    "Your model's online AUC is 0.70 but offline it was 0.82. What logs would you compare to check for skew?",
+    "How would you set up an automated check that serving-time features match what the training pipeline would compute?"
+   ]
+  },
+  {
+   "base": "Why do point-in-time correct joins matter when building training data?",
+   "draft": true,
+   "variants": [
+    "Your training set joins each loan to the customer's current income rather than income at application time. What does that do?",
+    "How would you build a training row so every feature reflects only what was known at prediction time?"
+   ]
+  },
+  {
+   "base": "Where does skew usually come from in practice?",
+   "draft": true,
+   "variants": [
+    "The data science team computes 'days since last login' in Python, and the engineering team reimplemented it in Java for serving. What can go wrong?",
+    "Which kinds of features are most prone to skew in your experience, and why?"
+   ]
+  }
+ ],
+ "prodml-006": [
+  {
+   "base": "Someone asks why last quarter's forecast said X. How would you answer?",
+   "draft": true,
+   "variants": [
+    "An auditor asks you to reproduce a prediction made eight months ago for a specific customer. What would you need to have saved?",
+    "Last quarter's forecast differs from what today's code produces for the same quarter. How do you find out why?"
+   ]
+  },
+  {
+   "base": "What can still make a run non-deterministic even with a fixed random seed?",
+   "draft": true,
+   "variants": [
+    "You fixed every seed, but training on a GPU gives slightly different results each run. Why?",
+    "Two runs with the same code and seed give different models on different machines. What could differ?"
+   ]
+  },
+  {
+   "base": "What would you version besides the code?",
+   "draft": true,
+   "variants": [
+    "Your code is in git. What else must be versioned so a training run can be repeated exactly?",
+    "How would you version a 500 GB training dataset without copying it each time?"
+   ]
+  }
+ ],
+ "prodml-007": [
+  {
+   "base": "How do you find where the time actually goes?",
+   "draft": true,
+   "variants": [
+    "Average latency is 80 ms but the 99th percentile is 900 ms. Where do you start looking?",
+    "How would you profile an inference service to see time spent on features, the model and network calls?"
+   ]
+  },
+  {
+   "base": "Which predictions could be precomputed instead of computed on request?",
+   "draft": true,
+   "variants": [
+    "Recommendations for most users only change once a day. What would you precompute, and what must stay online?",
+    "When does precomputing predictions for every user cost more than computing them on request?"
+   ]
+  },
+  {
+   "base": "How do you measure what you give up in accuracy for each speedup?",
+   "draft": true,
+   "variants": [
+    "Quantizing the model halves latency. How do you check what it costs in accuracy, and for which users?",
+    "You could drop the 20 slowest features. How would you decide which ones are worth their cost?"
+   ]
+  }
+ ],
+ "prodml-008": [
+  {
+   "base": "Which one can you detect without labels?",
+   "draft": true,
+   "variants": [
+    "You have no labels for the past three months. Which kind of drift can you still monitor, and how?",
+    "Customer demographics look unchanged, but buying behavior has shifted after a competitor's launch. Which kind of drift is this, and can you see it without labels?"
+   ]
+  },
+  {
+   "base": "Can a model be hurt by data drift without any concept drift?",
+   "draft": true,
+   "variants": [
+    "More applicants now come from a region your model saw little of in training. Can that hurt performance even if the region's behavior is the same?",
+    "Why can a shift in inputs hurt the model even when the underlying relationship hasn't changed?"
+   ]
+  },
+  {
+   "base": "What do you do differently when you see each?",
+   "draft": true,
+   "variants": [
+    "You confirm concept drift. Is retraining on more of the same history the right fix?",
+    "You confirm the inputs shifted but the relationship held. What actions make sense?"
+   ]
+  }
+ ],
+ "prodml-009": [
+  {
+   "base": "How would you measure the damage?",
+   "draft": true,
+   "variants": [
+    "How would you estimate how well the model would do on applicants it rejected?",
+    "How could a small random holdout of approvals help you measure the bias in your training data?"
+   ]
+  },
+  {
+   "base": "What would you change in how the data is collected?",
+   "draft": true,
+   "variants": [
+    "The business won't approve risky applicants at random. What other ways do you have to learn about rejected applicants?",
+    "What is reject inference, and why is it hard to get right?"
+   ]
+  },
+  {
+   "base": "What risk does this create in production over time?",
+   "draft": true,
+   "variants": [
+    "After several retraining cycles, the model approves an ever-narrower group. Why does that happen?",
+    "How would you monitor for a feedback loop like this before it does damage?"
+   ]
+  }
+ ],
+ "prodml-010": [
+  {
+   "base": "What signals would trigger a retrain?",
+   "draft": true,
+   "variants": [
+    "Which monitoring signals would justify an unscheduled retrain?",
+    "Labels for this model arrive 90 days late. How does that affect when you can retrain?"
+   ]
+  },
+  {
+   "base": "How do you make sure a retrained model is actually better?",
+   "draft": true,
+   "variants": [
+    "The retrained model scores better on a random test split. Why isn't that enough?",
+    "How would you run a champion-challenger comparison before switching models?"
+   ]
+  },
+  {
+   "base": "What can go wrong with retraining too often?",
+   "draft": true,
+   "variants": [
+    "Your model retrains every night, and its predictions for the same customer swing from day to day. What's the problem, and how do you fix it?",
+    "When does continuous retraining make a model chase noise rather than signal?"
+   ]
+  }
+ ],
+ "prodml-011": [
+  {
+   "base": "How do you choose the bins?",
+   "draft": true,
+   "variants": [
+    "Your PSI changes a lot when you switch from 10 bins to 20. Which do you trust?",
+    "How would you bin a feature that's mostly zeros with a long tail?"
+   ]
+  },
+  {
+   "base": "What does a high PSI tell you, and what doesn't it?",
+   "draft": true,
+   "variants": [
+    "A feature has PSI 0.4, but the model's accuracy hasn't moved. What does that tell you?",
+    "PSI on the model's score is high. What does that mean, and what doesn't it mean?"
+   ]
+  },
+  {
+   "base": "What would you use for a large set of features?",
+   "draft": true,
+   "variants": [
+    "You monitor 300 features. Is computing PSI on each one and alerting above 0.25 a good idea?",
+    "What drift measures would you use for categorical features with thousands of values?"
+   ]
+  }
+ ],
+ "prodml-012": [
+  {
+   "base": "What problems does it solve, and what does it cost?",
+   "draft": true,
+   "variants": [
+    "Your team has three models and each computes its own features. What would a feature store fix, and what new work would it create?",
+    "What does it cost to run a feature store well, beyond the software itself?"
+   ]
+  },
+  {
+   "base": "When would you say not yet?",
+   "draft": true,
+   "variants": [
+    "A startup with one model in production wants a feature store. Would you build one? What would you do instead?",
+    "What signs would tell you a team has outgrown simple feature pipelines?"
+   ]
+  },
+  {
+   "base": "How does it relate to training-serving skew?",
+   "draft": true,
+   "variants": [
+    "How does a shared feature definition for training and serving reduce training-serving skew?",
+    "Can a feature store still leave you with skew? How?"
+   ]
+  }
+ ],
+ "prodml-013": [
+  {
+   "base": "What do you check before touching the model?",
+   "draft": true,
+   "variants": [
+    "An upstream team deployed a change to transaction logging two days ago. How do you check whether it explains the drop?",
+    "What data checks would you run in the first hour, before looking at the model at all?"
+   ]
+  },
+  {
+   "base": "How do you tell a real change in fraud patterns from a data issue?",
+   "draft": true,
+   "variants": [
+    "The drop is concentrated in one merchant category and one country. Is that more likely fraud or a data problem? How do you confirm?",
+    "What evidence would convince you fraudsters changed tactics rather than your data changing?"
+   ]
+  },
+  {
+   "base": "What do you tell stakeholders in the first few hours?",
+   "draft": true,
+   "variants": [
+    "The head of risk asks whether to switch the model off. What do you tell them with only partial information?",
+    "How would you word a first status update when you don't yet know the cause?"
+   ]
+  }
+ ],
+ "prodml-014": [
+  {
+   "base": "Which signals are standard for every model, and which are model-specific?",
+   "draft": true,
+   "variants": [
+    "Which checks would every model get by default, and what would teams add themselves?",
+    "How do you give 10 teams consistent monitoring without forcing them all onto the same metrics?"
+   ]
+  },
+  {
+   "base": "How do you decide who gets paged?",
+   "draft": true,
+   "variants": [
+    "A model that sets prices drifts at 2 a.m. Who gets paged, and who gets an email?",
+    "How do you define severity levels for model alerts?"
+   ]
+  },
+  {
+   "base": "How do you know your alerts are any good?",
+   "draft": true,
+   "variants": [
+    "How would you measure whether your alerts are useful?",
+    "A team never acts on its alerts. What does that tell you, and what do you change?"
+   ]
+  }
+ ],
+ "prodml-015": [
+  {
+   "base": "What could a 30% override rate mean?",
+   "draft": true,
+   "variants": [
+    "Overrides are concentrated among two reviewers and one product type. What does that suggest?",
+    "Is a 30% override rate a sign the model is bad? What else could explain it?"
+   ]
+  },
+  {
+   "base": "How could the overrides become training data, and what are the risks?",
+   "draft": true,
+   "variants": [
+    "You want to retrain on reviewer decisions. What could go wrong with treating them as ground truth?",
+    "How would you check whether overrides were correct before using them as labels?"
+   ]
+  },
+  {
+   "base": "What if reviewers stop looking and just accept the model?",
+   "draft": true,
+   "variants": [
+    "Override rates drop to 2% after a few months. Good news, or a warning sign?",
+    "How would you check that reviewers are still exercising judgment?"
+   ]
+  }
+ ]
+}

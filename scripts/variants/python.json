@@ -1,0 +1,420 @@
+{
+ "python-001": [
+  {
+   "base": "XGBoost's `feature_importances_` can be misleading for correlated features. How do you handle this?",
+   "draft": true,
+   "variants": [
+    "Two features are 0.9 correlated, and one gets almost all the gain importance. What's happening, and how do you report it?",
+    "You rerun training with a different seed and the importance ranking changes. How do you produce a stable answer?"
+   ]
+  },
+  {
+   "base": "You want to explain the model to non-technical stakeholders. Would you use SHAP or feature importance? Why?",
+   "draft": true,
+   "variants": [
+    "A product manager asks why the model flagged one particular customer. Which method helps, and why?",
+    "Leadership wants the top 5 drivers of churn. What can feature importance tell them, and what can't it?"
+   ]
+  }
+ ],
+ "python-002": [
+  {
+   "base": "A feature suddenly has 50% missing values. Do you fail the pipeline or impute?",
+   "draft": true,
+   "variants": [
+    "A key feature arrives 20% NULL today, up from 1% yesterday. Do you block the model run?",
+    "How do you decide which data issues should stop the pipeline and which should only warn?"
+   ]
+  },
+  {
+   "base": "How do you alert data producers (upstream teams) without creating notification fatigue?",
+   "draft": true,
+   "variants": [
+    "Your checks find issues in an upstream table every day, but the owning team ignores the emails. What do you change?",
+    "How would you route data-quality alerts to the team that can actually fix them?"
+   ]
+  }
+ ],
+ "python-003": [
+  {
+   "base": "How do you avoid look-ahead bias when building features from future information?",
+   "draft": true,
+   "variants": [
+    "Your backtest uses customer attributes from today's snapshot. Why could that inflate the results?",
+    "How would you structure the backtest loop so each forecast only sees data available on its forecast date?"
+   ]
+  },
+  {
+   "base": "Your backtest RMSE is 0.05, but live forecasts are off by 0.2. What could explain this?",
+   "draft": true,
+   "variants": [
+    "The backtest looks great on 2021 to 2023 data, but live accuracy is poor this year. What would you investigate?",
+    "Your backtest used actual values for an input that is itself forecast in production. What does that do to the gap?"
+   ]
+  }
+ ],
+ "python-004": [
+  {
+   "base": "How do you check whether a key is unique before merging?",
+   "draft": true,
+   "variants": [
+    "Before merging orders onto customers, how do you confirm that customer_id is unique in the customer table?",
+    "Your merge key has trailing spaces in one table. What happens to the merge?"
+   ]
+  },
+  {
+   "base": "What does the validate argument do?",
+   "draft": true,
+   "variants": [
+    "What does validate='one_to_one' do, and what happens if it fails?",
+    "Which validate option would you use when merging transactions onto a customer lookup table?"
+   ]
+  },
+  {
+   "base": "How would an inner join versus a left join change which rows silently disappear?",
+   "draft": true,
+   "variants": [
+    "After an inner merge, 3% of orders are missing. How do you find out which ones and why?",
+    "When would you choose indicator=True in a merge, and what would you do with it?"
+   ]
+  }
+ ],
+ "python-005": [
+  {
+   "base": "How can you reduce memory use just by changing how you read the file?",
+   "draft": true,
+   "variants": [
+    "The CSV has 200 columns, but you need 12. What should you do when reading it?",
+    "A string column has only 50 distinct values across 100 million rows. How do you store it more cheaply?"
+   ]
+  },
+  {
+   "base": "Why would you convert it to Parquet?",
+   "draft": true,
+   "variants": [
+    "You'll query this data many times over the next month. Why store it as Parquet rather than keep the CSV?",
+    "Why are filters on a few columns much faster in Parquet than in CSV?"
+   ]
+  },
+  {
+   "base": "At what point would you move to Spark or a warehouse instead?",
+   "draft": true,
+   "variants": [
+    "Your chunked pandas job now takes four hours and needs joins across files. What would you switch to?",
+    "Would DuckDB or Polars change the answer before you reach for Spark?"
+   ]
+  }
+ ],
+ "python-006": [
+  {
+   "base": "How do you test code that involves randomness?",
+   "draft": true,
+   "variants": [
+    "Your train_test_split gives different results each run and a test fails intermittently. How do you fix the test?",
+    "How would you test a function that samples from a distribution?"
+   ]
+  },
+  {
+   "base": "Beyond unit tests, what checks would you run on the data itself?",
+   "draft": true,
+   "variants": [
+    "Unit tests pass, but last night's input file had negative ages. What kind of check should have caught it?",
+    "What checks would you run on a training dataset before every retrain?"
+   ]
+  },
+  {
+   "base": "How do you catch a change that silently makes the model worse?",
+   "draft": true,
+   "variants": [
+    "A refactor passes all unit tests, but the model's AUC drops from 0.81 to 0.78. How could a test have caught that?",
+    "How would you set tolerances for a test that checks model performance?"
+   ]
+  }
+ ],
+ "python-007": [
+  {
+   "base": "You need to check membership in a collection of a million items many times. What do you use, and why?",
+   "draft": true,
+   "variants": [
+    "You loop over a list of 1 million user IDs and check `if uid in banned_ids` each time, where banned_ids is a list. What's the problem?",
+    "You need to deduplicate a list while keeping the original order. Which data structures help?"
+   ]
+  },
+  {
+   "base": "Can a list be a dictionary key? Why or why not?",
+   "draft": true,
+   "variants": [
+    "Can a tuple that contains a list be used as a dictionary key? Why?",
+    "You want to cache results keyed by a set of parameters. Can you use a set as a dict key? What would you use instead?"
+   ]
+  },
+  {
+   "base": "When would a tuple be better than a list?",
+   "draft": true,
+   "variants": [
+    "Why might a function return a tuple of (mean, std) rather than a list?",
+    "When would you use a namedtuple or dataclass instead of a plain tuple?"
+   ]
+  }
+ ],
+ "python-008": [
+  {
+   "base": "How does this relate to views and copies?",
+   "draft": true,
+   "variants": [
+    "df2 = df[df['country'] == 'IN'] followed by df2['flag'] = 1. Does df change? Why might pandas warn?",
+    "How can you tell whether a pandas operation returned a view or a copy?"
+   ]
+  },
+  {
+   "base": "What is the safest pattern for conditional assignment?",
+   "draft": true,
+   "variants": [
+    "Set 'tier' to 'high' where spend > 1000 and 'low' otherwise, in one statement. How?",
+    "When would you use np.select instead of np.where?"
+   ]
+  },
+  {
+   "base": "What changes with copy-on-write in recent pandas versions?",
+   "draft": true,
+   "variants": [
+    "With copy-on-write turned on, what happens to code that relied on chained assignment?",
+    "How does copy-on-write change memory use when you slice DataFrames?"
+   ]
+  }
+ ],
+ "python-009": [
+  {
+   "base": "What should it return when there are no positive predictions?",
+   "draft": true,
+   "variants": [
+    "The model predicts no positives at all on a batch. What should precision be, and how should the caller know?",
+    "y_true has no positive labels. What should recall return?"
+   ]
+  },
+  {
+   "base": "How would you extend it to multiple classes?",
+   "draft": true,
+   "variants": [
+    "You have three classes, one of them rare. Would you report micro or macro averages, and why?",
+    "When would weighted averaging be misleading?"
+   ]
+  },
+  {
+   "base": "How would you test it?",
+   "draft": true,
+   "variants": [
+    "Which edge cases would you put in a unit test for this function?",
+    "How would you use scikit-learn to check your implementation without just copying its output?"
+   ]
+  }
+ ],
+ "python-011": [
+  {
+   "base": "What are the time and memory costs of your approach?",
+   "draft": true,
+   "variants": [
+    "Counting with a dict and then sorting everything: what does that cost, and how does a heap improve it?",
+    "How does Counter.most_common(k) work, and what are its time costs?"
+   ]
+  },
+  {
+   "base": "What if the stream has too many distinct items to store?",
+   "draft": true,
+   "variants": [
+    "The stream has billions of distinct items. How do you approximate the top k in fixed memory?",
+    "What error does a count-min sketch introduce, and in which direction?"
+   ]
+  },
+  {
+   "base": "How do you break ties?",
+   "draft": true,
+   "variants": [
+    "Several items tie for the k-th position. What should the function return?",
+    "Should the output order be deterministic when counts are equal? Why does that matter for tests?"
+   ]
+  }
+ ],
+ "python-012": [
+  {
+   "base": "How would you fix it?",
+   "draft": true,
+   "variants": [
+    "Show how you would rewrite the function so each call gets a fresh list.",
+    "Is `items=None` then `items = items or []` a safe fix? When does it go wrong?"
+   ]
+  },
+  {
+   "base": "Why does Python behave this way?",
+   "draft": true,
+   "variants": [
+    "When exactly is the default value created, and why does that cause shared state?",
+    "Does the same problem happen with a default of 0 or a string? Why not?"
+   ]
+  },
+  {
+   "base": "Where does the same trap show up with dataclasses?",
+   "draft": true,
+   "variants": [
+    "A dataclass has a field `tags: list = []`. What happens, and what's the right way?",
+    "How would you give a dataclass field a default empty dict?"
+   ]
+  }
+ ],
+ "python-013": [
+  {
+   "base": "What would you test, and how?",
+   "draft": true,
+   "variants": [
+    "Which parts of your cleaning code most need unit tests, and what would one look like?",
+    "How would you test cleaning code on data shapes you haven't seen yet?"
+   ]
+  },
+  {
+   "base": "How do you make sure training and production run the same code?",
+   "draft": true,
+   "variants": [
+    "The training notebook and the production API each have their own copy of the cleaning code. What goes wrong over time?",
+    "How would you package the cleaning logic so training and serving import the same function?"
+   ]
+  },
+  {
+   "base": "What do you do with the notebook itself?",
+   "draft": true,
+   "variants": [
+    "Should the original notebook be deleted, kept or maintained after you move the code?",
+    "How do you document the decisions you made in the notebook once the code moves to a module?"
+   ]
+  }
+ ],
+ "python-014": [
+  {
+   "base": "Why can threads fail to speed up CPU-bound Python code?",
+   "draft": true,
+   "variants": [
+    "You use a ThreadPoolExecutor for a pure-Python feature loop and see no speedup. Why?",
+    "When do threads help in Python despite the GIL?"
+   ]
+  },
+  {
+   "base": "What overhead does multiprocessing add?",
+   "draft": true,
+   "variants": [
+    "Your multiprocessing job uses more memory than the data itself and runs slower than expected. Why?",
+    "Each worker needs a 2 GB lookup table. How do you avoid copying it into every process?"
+   ]
+  },
+  {
+   "base": "When would you move off a single machine?",
+   "draft": true,
+   "variants": [
+    "At what data size or run time would you stop optimizing Python and move the work to a warehouse or Spark?",
+    "Could vectorizing with NumPy or pandas remove the need to parallelize at all?"
+   ]
+  }
+ ],
+ "python-010": [
+  {
+   "base": "What can you not do with a generator that you can do with a list?",
+   "draft": true,
+   "variants": [
+    "Can you call len() on a generator or slice it like a list? What do you do if you need those?",
+    "Why can't you go back to an earlier item in a generator?"
+   ]
+  },
+  {
+   "base": "How would you read and transform a huge file in stages without loading it?",
+   "draft": true,
+   "variants": [
+    "Write a pipeline that reads a large log file, filters error lines and parses them, without loading the file.",
+    "How would you batch items from a generator into groups of 1,000 for database inserts?"
+   ]
+  },
+  {
+   "base": "What bug appears if you iterate a generator twice?",
+   "draft": true,
+   "variants": [
+    "You compute the sum of a generator, then its max, and the max fails. Why?",
+    "A function returns a generator, and the caller iterates it twice in a test. What happens?"
+   ]
+  }
+ ],
+ "python-015": [
+  {
+   "base": "How would you vectorize the assignment step?",
+   "draft": true,
+   "variants": [
+    "How do you compute distances from every point to every centroid in one NumPy expression?",
+    "What does broadcasting do in that distance calculation, and what is the memory cost for a million points?"
+   ]
+  },
+  {
+   "base": "What do you do with an empty cluster?",
+   "draft": true,
+   "variants": [
+    "After an update step, one centroid has no points assigned. What are your options?",
+    "How does a bad initialization cause empty clusters, and how does k-means++ help?"
+   ]
+  },
+  {
+   "base": "How do you decide it has converged?",
+   "draft": true,
+   "variants": [
+    "Would you stop when assignments no longer change or when centroids move less than a tolerance? Why?",
+    "Your k-means runs for 300 iterations without converging. What might be happening?"
+   ]
+  }
+ ],
+ "python-016": [
+  {
+   "base": "Why does unscaled data make this slow or unstable?",
+   "draft": true,
+   "variants": [
+    "One feature is in dollars and another is a 0-or-1 flag. What does that do to gradient descent?",
+    "Your loss oscillates and grows each iteration. What's wrong, and what do you change?"
+   ]
+  },
+  {
+   "base": "How does this differ from the closed-form solution?",
+   "draft": true,
+   "variants": [
+    "When would you use the normal equation instead of gradient descent?",
+    "Why can the closed-form solution fail when features are highly correlated?"
+   ]
+  },
+  {
+   "base": "What changes for stochastic or mini-batch updates?",
+   "draft": true,
+   "variants": [
+    "How does the loss curve look different with mini-batches, and why?",
+    "Why do you usually need to reduce the learning rate over time with stochastic updates?"
+   ]
+  }
+ ],
+ "python-017": [
+  {
+   "base": "Why cosine similarity instead of Euclidean distance?",
+   "draft": true,
+   "variants": [
+    "Two documents cover the same topic, but one is ten times longer. How do cosine similarity and Euclidean distance rank them?",
+    "Why does normalizing TF-IDF vectors make dot product and cosine similarity the same?"
+   ]
+  },
+  {
+   "base": "How does it handle synonyms?",
+   "draft": true,
+   "variants": [
+    "A user searches for 'car' and a relevant document only says 'automobile'. What happens, and how would you fix it?",
+    "How would you combine TF-IDF with embeddings to handle synonyms?"
+   ]
+  },
+  {
+   "base": "How would it scale to millions of documents?",
+   "draft": true,
+   "variants": [
+    "Your TF-IDF matrix for 5 million documents doesn't fit in memory as a dense array. What do you do?",
+    "How would you avoid comparing a query against every one of millions of documents?"
+   ]
+  }
+ ]
+}

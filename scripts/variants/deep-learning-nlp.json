@@ -1,0 +1,314 @@
+{
+ "dl-001": [
+  {
+   "base": "What does backpropagation actually compute?",
+   "draft": true,
+   "variants": [
+    "A network has made a wrong prediction. How does backpropagation work out how much each weight contributed?",
+    "Why is the chain rule the key idea behind backpropagation?"
+   ]
+  },
+  {
+   "base": "Why do we need non-linear activation functions?",
+   "draft": true,
+   "variants": [
+    "What would a 10-layer network with no activation functions be able to learn?",
+    "Why did ReLU largely replace sigmoid in hidden layers?"
+   ]
+  },
+  {
+   "base": "What can go wrong during training?",
+   "draft": true,
+   "variants": [
+    "Your loss suddenly becomes NaN after 2,000 steps. What could have happened?",
+    "The loss in the early layers barely changes during training. What problem might that be?"
+   ]
+  }
+ ],
+ "dl-002": [
+  {
+   "base": "What do you see in the loss curve if the learning rate is too high or too low?",
+   "draft": true,
+   "variants": [
+    "Your loss jumps around and never settles. What does that suggest about the learning rate?",
+    "Your loss decreases very slowly and steadily. What would you try?"
+   ]
+  },
+  {
+   "base": "Why use mini-batches?",
+   "draft": true,
+   "variants": [
+    "Why not compute the gradient on the full dataset every step?",
+    "What happens to training if you increase the batch size from 32 to 4,096 without changing anything else?"
+   ]
+  },
+  {
+   "base": "Why might you still use SGD with momentum?",
+   "draft": true,
+   "variants": [
+    "Adam trains faster on your task, but SGD with momentum generalizes slightly better. How might you use both?",
+    "What does momentum add to plain SGD?"
+   ]
+  }
+ ],
+ "dl-003": [
+  {
+   "base": "What does squared error assume about outliers?",
+   "draft": true,
+   "variants": [
+    "Your delivery-time data has a few extreme delays. Would you train with MSE or MAE? Why?",
+    "How does the Huber loss behave for small errors versus large ones?"
+   ]
+  },
+  {
+   "base": "Why train with cross-entropy instead of accuracy?",
+   "draft": true,
+   "variants": [
+    "Why can't you train directly on accuracy with gradient descent?",
+    "What does cross-entropy reward that accuracy ignores?"
+   ]
+  },
+  {
+   "base": "When would you design a custom loss?",
+   "draft": true,
+   "variants": [
+    "Underpredicting demand costs four times more than overpredicting. How would you build that into the loss?",
+    "When would you train with a quantile loss?"
+   ]
+  }
+ ],
+ "dl-004": [
+  {
+   "base": "What does early stopping do?",
+   "draft": true,
+   "variants": [
+    "Validation loss starts rising after epoch 12. What does early stopping do, and which weights do you keep?",
+    "How would you set the patience for early stopping?"
+   ]
+  },
+  {
+   "base": "Why does data augmentation help?",
+   "draft": true,
+   "variants": [
+    "For a model that classifies product photos, which augmentations make sense and which could hurt?",
+    "Why can data augmentation reduce overfitting even though it adds no new real images?"
+   ]
+  },
+  {
+   "base": "Is batch normalization a regularizer?",
+   "draft": true,
+   "variants": [
+    "What was batch normalization originally designed to do?",
+    "Why does dropout behave differently during training and inference?"
+   ]
+  }
+ ],
+ "dl-005": [
+  {
+   "base": "Why do tree ensembles often win on tabular data?",
+   "draft": true,
+   "variants": [
+    "Your gradient-boosted baseline gets 0.78 AUC in an hour; the neural network gets 0.77 after a week of tuning. What do you conclude?",
+    "Why do tree models handle features with very different scales and types so easily?"
+   ]
+  },
+  {
+   "base": "When would a neural network make sense?",
+   "draft": true,
+   "variants": [
+    "You also have customers' transaction sequences and free-text notes. Does that change your answer?",
+    "When could learned embeddings for high-cardinality categories make a neural network worth it?"
+   ]
+  },
+  {
+   "base": "How would you run a fair comparison?",
+   "draft": true,
+   "variants": [
+    "How would you make sure the neural network and the boosted model got equal tuning effort?",
+    "What baseline would you insist on before comparing the two?"
+   ]
+  }
+ ],
+ "dl-006": [
+  {
+   "base": "What does a convolution filter do?",
+   "draft": true,
+   "variants": [
+    "What does a 3-by-3 edge-detection filter respond to in an image?",
+    "How do early layers and deeper layers of a CNN differ in what they detect?"
+   ]
+  },
+  {
+   "base": "Why is weight sharing important?",
+   "draft": true,
+   "variants": [
+    "A fully connected layer on a 224-by-224 image would need millions of weights. How does a convolution avoid that?",
+    "Why can a CNN recognize a cat whether it's in the top left or bottom right of the image?"
+   ]
+  },
+  {
+   "base": "When could you use a CNN on something that isn't an image?",
+   "draft": true,
+   "variants": [
+    "How would you apply a 1D CNN to sensor time series?",
+    "Why can a CNN work on audio spectrograms?"
+   ]
+  }
+ ],
+ "dl-007": [
+  {
+   "base": "What problem do LSTMs have with long sequences?",
+   "draft": true,
+   "variants": [
+    "An LSTM translating a long paragraph forgets the subject from the first sentence. Why?",
+    "What do LSTM gates help with compared with a plain RNN?"
+   ]
+  },
+  {
+   "base": "What is the cost of attention?",
+   "draft": true,
+   "variants": [
+    "Doubling the input length roughly quadruples the cost of attention. Why?",
+    "What approaches reduce attention's cost on very long documents?"
+   ]
+  },
+  {
+   "base": "When might you still use an RNN?",
+   "draft": true,
+   "variants": [
+    "You need a tiny model that processes sensor readings one at a time on a device. Would you use a transformer?",
+    "When does processing a sequence step by step have an advantage over attention?"
+   ]
+  }
+ ],
+ "dl-008": [
+  {
+   "base": "What are queries, keys and values?",
+   "draft": true,
+   "variants": [
+    "In the sentence 'The animal didn't cross the street because it was tired', what would the query for 'it' be looking for?",
+    "Explain queries, keys and values using a library search analogy."
+   ]
+  },
+  {
+   "base": "Why divide by the square root of the dimension?",
+   "draft": true,
+   "variants": [
+    "What happens to the softmax if the dot products become very large?",
+    "Why does the scaling factor depend on the dimension of the keys?"
+   ]
+  },
+  {
+   "base": "What is multi-head attention for?",
+   "draft": true,
+   "variants": [
+    "Why might one attention head track grammar and another track meaning?",
+    "What would you lose with a single large attention head instead of several smaller ones?"
+   ]
+  }
+ ],
+ "dl-009": [
+  {
+   "base": "What does it mean to fine-tune only the last layers?",
+   "draft": true,
+   "variants": [
+    "You freeze all layers of a pretrained ResNet except the last. What exactly is being trained?",
+    "When would you unfreeze more layers, and what learning rate would you use?"
+   ]
+  },
+  {
+   "base": "How do you stop it overfitting with so little data?",
+   "draft": true,
+   "variants": [
+    "Training accuracy hits 100% after three epochs, but validation accuracy is 70%. What do you try?",
+    "Which augmentations make sense for medical X-rays, and which could mislead the model?"
+   ]
+  },
+  {
+   "base": "How would you know the pretrained features suit your domain?",
+   "draft": true,
+   "variants": [
+    "Your images are microscope slides, and the pretrained model saw everyday photos. How do you check whether its features still help?",
+    "How would you compare fine-tuning with training from scratch on this data?"
+   ]
+  }
+ ],
+ "dl-010": [
+  {
+   "base": "What does TF-IDF capture and miss?",
+   "draft": true,
+   "variants": [
+    "Two tickets say 'can't log in' and 'unable to sign in'. How does TF-IDF see them?",
+    "Why does TF-IDF ignore word order, and when does that matter?"
+   ]
+  },
+  {
+   "base": "When would embeddings beat TF-IDF?",
+   "draft": true,
+   "variants": [
+    "Tickets are often one short line. Why might embeddings do better than TF-IDF here?",
+    "When could TF-IDF still beat embeddings for ticket classification?"
+   ]
+  },
+  {
+   "base": "How would you decide between the options?",
+   "draft": true,
+   "variants": [
+    "You have 2,000 labeled tickets and must classify 50,000 a day cheaply. Which option do you start with?",
+    "When would an LLM classifier be worth its cost and latency?"
+   ]
+  }
+ ],
+ "dl-011": [
+  {
+   "base": "Why do similar words end up close together?",
+   "draft": true,
+   "variants": [
+    "Why would 'coffee' and 'tea' end up close together after training on lots of text?",
+    "What is word2vec actually trained to predict?"
+   ]
+  },
+  {
+   "base": "What happens to words with several meanings?",
+   "draft": true,
+   "variants": [
+    "The word 'bank' gets a single vector. What problem does that cause?",
+    "How might a word with two common meanings end up positioned in the embedding space?"
+   ]
+  },
+  {
+   "base": "How do contextual embeddings differ?",
+   "draft": true,
+   "variants": [
+    "How does BERT give 'bank' a different vector in 'river bank' and 'bank loan'?",
+    "When would static word embeddings still be good enough?"
+   ]
+  }
+ ],
+ "dl-012": [
+  {
+   "base": "What is the difference between pretraining and instruction tuning?",
+   "draft": true,
+   "variants": [
+    "A pretrained model given 'Write a poem about rain' might continue with more instructions. Why, and how does instruction tuning fix it?",
+    "What kind of data is used for instruction tuning?"
+   ]
+  },
+  {
+   "base": "What is a reward model?",
+   "draft": true,
+   "variants": [
+    "How are human preferences turned into a reward model?",
+    "Why compare two answers rather than score one answer on an absolute scale?"
+   ]
+  },
+  {
+   "base": "What are the risks of optimizing against a reward model?",
+   "draft": true,
+   "variants": [
+    "After RLHF, the model agrees with users even when they're wrong. How might training have caused that?",
+    "What is reward hacking, and what's an example for a chat model?"
+   ]
+  }
+ ]
+}

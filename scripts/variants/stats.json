@@ -1,0 +1,488 @@
+{
+ "stats-001": [
+  {
+   "base": "In your example, which error is more expensive to your business?",
+   "draft": true,
+   "variants": [
+    "A fraud alert blocks a legitimate payment, or a real fraud goes through. Which is the Type I error here, and which costs more?",
+    "In a medical screening test, would you rather have more false positives or more false negatives? Why might a business answer differently?"
+   ]
+  },
+  {
+   "base": "How would you design your test to minimize the costlier error?",
+   "draft": true,
+   "variants": [
+    "Missing a real effect would cost far more than a false alarm. How do you change the test's design?",
+    "How would you trade off the significance level against power when the two errors cost very different amounts?"
+   ]
+  },
+  {
+   "base": "You run the experiment for 7 days and get p=0.08. Do you stop or keep running?",
+   "draft": true,
+   "variants": [
+    "After 7 days the p-value is 0.06 and the PM wants to run three more days to see if it drops below 0.05. What do you say?",
+    "You planned a 14-day test, and on day 14 you get p = 0.07. Do you extend it? What are the risks?"
+   ]
+  }
+ ],
+ "stats-002": [
+  {
+   "base": "What's your sample size and how long would you need to run this test?",
+   "draft": true,
+   "variants": [
+    "With a 2% baseline default rate, roughly how many loans per arm would you need to detect a 0.1-point difference? What does that imply?",
+    "You can only approve 5,000 loans a month through the new model. Is this test feasible at all?"
+   ]
+  },
+  {
+   "base": "A 0.1% difference in default seems small, but what's the business cost?",
+   "draft": true,
+   "variants": [
+    "A 0.1-point rise in defaults on a $500M loan book: how do you size that for the business?",
+    "The new model also approves 8% more applicants. How do you weigh higher volume against slightly higher defaults?"
+   ]
+  },
+  {
+   "base": "Your test window is 30 days, but defaults are observed 90 days later. How do you handle this?",
+   "draft": true,
+   "variants": [
+    "Leadership wants a decision after 30 days, but defaults take 90 days to show. What early signals could you use, and what are their risks?",
+    "Loans approved late in the test haven't had time to default. How do you avoid comparing groups with different exposure times?"
+   ]
+  }
+ ],
+ "stats-003": [
+  {
+   "base": "How would you detect if Simpson's Paradox is present in your data?",
+   "draft": true,
+   "variants": [
+    "Your overall approval rate fell, but it rose in every customer segment. How would you confirm that the mix shifted?",
+    "What would you check before trusting an aggregate trend across groups of very different sizes?"
+   ]
+  },
+  {
+   "base": "If you see this happening, which statistic do you report to the board?",
+   "draft": true,
+   "variants": [
+    "The segment-level and overall numbers point in opposite directions. Which one answers the board's question, and how do you present both?",
+    "The CEO wants one headline number. How do you avoid giving one that's technically correct but misleading?"
+   ]
+  }
+ ],
+ "stats-004": [
+  {
+   "base": "Leadership wants results in a week, but you'd need a month of traffic. What are your options?",
+   "draft": true,
+   "variants": [
+    "Your calculation says 400,000 users per arm, and you get 50,000 a week. What levers can you pull?",
+    "Leadership says to run it for three days and see. What do you lose by doing that?"
+   ]
+  },
+  {
+   "base": "Why does detecting a smaller effect require so many more users?",
+   "draft": true,
+   "variants": [
+    "You need 20,000 users per arm to detect a 4% lift. Roughly how many for a 2% lift?",
+    "Halving the minimum detectable effect roughly quadruples the sample size. Explain why in plain terms."
+   ]
+  },
+  {
+   "base": "What is CUPED and when does it help?",
+   "draft": true,
+   "variants": [
+    "Your main metric is revenue per user, and you have each user's revenue from the month before the test. How can that shorten the test?",
+    "When would CUPED barely help?"
+   ]
+  }
+ ],
+ "stats-005": [
+  {
+   "base": "Is it correct to say there's a 95% probability the true value is in this interval?",
+   "draft": true,
+   "variants": [
+    "The stakeholder says, 'So we're 95% sure the lift is between 2% and 6%.' How do you respond?",
+    "What is actually random in a frequentist confidence interval: the true value or the interval?"
+   ]
+  },
+  {
+   "base": "What happens to the interval if you quadruple the sample size?",
+   "draft": true,
+   "variants": [
+    "You need an interval half as wide. How much more data do you need?",
+    "Two teams report intervals for the same metric, and one is much wider. What could explain that besides sample size?"
+   ]
+  },
+  {
+   "base": "The stakeholder asks for one number. What do you say?",
+   "draft": true,
+   "variants": [
+    "The VP says, 'Just give me the number, no ranges.' How do you answer without hiding the uncertainty?",
+    "How would you show a 95% confidence interval on a slide for executives?"
+   ]
+  }
+ ],
+ "stats-006": [
+  {
+   "base": "Roughly how likely is at least one false positive across 20 independent tests at the 5% level?",
+   "draft": true,
+   "variants": [
+    "You test 50 independent metrics at the 5% level and nothing truly changed. How many significant results do you expect?",
+    "With 20 independent tests, why is the chance of at least one false positive about 64% rather than 5%?"
+   ]
+  },
+  {
+   "base": "How would you correct for this, and what does the correction cost you?",
+   "draft": true,
+   "variants": [
+    "You apply Bonferroni to 20 metrics. What threshold does each test now need, and what happens to power?",
+    "When would you control the false discovery rate instead of the family-wise error rate?"
+   ]
+  },
+  {
+   "base": "How could you have designed the experiment to avoid the problem?",
+   "draft": true,
+   "variants": [
+    "Before the next experiment, the PM lists 15 metrics they care about. How do you structure the analysis plan?",
+    "What is the difference between a primary metric, secondary metrics and guardrail metrics?"
+   ]
+  }
+ ],
+ "stats-007": [
+  {
+   "base": "Can you bootstrap a time series by resampling individual points?",
+   "draft": true,
+   "variants": [
+    "You bootstrap daily sales by resampling individual days. What structure does that destroy, and what would you do instead?",
+    "Your data has repeated measurements from the same users. How should you resample?"
+   ]
+  },
+  {
+   "base": "Would bootstrapping work well for estimating the maximum of a dataset?",
+   "draft": true,
+   "variants": [
+    "Would the bootstrap give a good confidence interval for the 99.9th percentile of response time with 500 observations?",
+    "Why does the bootstrap struggle with the minimum or maximum of a sample?"
+   ]
+  },
+  {
+   "base": "How many resamples do you need?",
+   "draft": true,
+   "variants": [
+    "Your bootstrap interval changes noticeably each time you rerun it. What does that tell you?",
+    "Is 200 resamples enough for a 95% interval? What about for a p-value near 0.01?"
+   ]
+  }
+ ],
+ "stats-008": [
+  {
+   "base": "What would change if it were 70 out of 100?",
+   "draft": true,
+   "variants": [
+    "What if it were 9 heads out of 10? Does that change your conclusion?",
+    "Someone flips 1,000 times and gets 530 heads. Is that stronger or weaker evidence than 7 out of 10?"
+   ]
+  },
+  {
+   "base": "What is the p-value here, and what does it mean?",
+   "draft": true,
+   "variants": [
+    "The p-value for 7 out of 10 is about 0.34. Explain what that number means to a non-statistician.",
+    "A colleague says p = 0.34 means there's a 34% chance the coin is fair. Is that right?"
+   ]
+  },
+  {
+   "base": "What if you had decided in advance to test only for too many heads?",
+   "draft": true,
+   "variants": [
+    "Why does switching from a two-sided to a one-sided test halve the p-value here, and when is that legitimate?",
+    "You look at the result first and then decide to test only for heads. What's wrong with that?"
+   ]
+  }
+ ],
+ "stats-009": [
+  {
+   "base": "When does the central limit theorem not help much?",
+   "draft": true,
+   "variants": [
+    "Revenue per user has a few accounts worth 1,000 times the median. Does the central limit theorem rescue your t-test with 500 users?",
+    "When would the sampling distribution of the mean still look clearly skewed?"
+   ]
+  },
+  {
+   "base": "How large does n need to be?",
+   "draft": true,
+   "variants": [
+    "A colleague says 30 samples is always enough for the CLT. When is that wrong?",
+    "How could you check by simulation whether your sample size is big enough for a normal approximation?"
+   ]
+  },
+  {
+   "base": "What is the standard error, and how does it relate?",
+   "draft": true,
+   "variants": [
+    "How does the standard error of a mean change as the sample size grows, and why does that matter for an A/B test?",
+    "What is the difference between the standard deviation of the data and the standard error of the mean?"
+   ]
+  }
+ ],
+ "stats-010": [
+  {
+   "base": "A few big spenders account for 40% of revenue. Which metric answers the business question?",
+   "draft": true,
+   "variants": [
+    "The goal is to grow total revenue. Does a test on median revenue per user answer that?",
+    "A change raises the median spend but lowers the mean. What could be happening, and which matters more?"
+   ]
+  },
+  {
+   "base": "Would you still use a t-test?",
+   "draft": true,
+   "variants": [
+    "Your t-test on revenue per user gives p = 0.2, but you suspect a few whales are adding noise. What do you try?",
+    "Would you log-transform revenue before testing? What question does the test then answer?"
+   ]
+  },
+  {
+   "base": "What is Mann-Whitney actually comparing?",
+   "draft": true,
+   "variants": [
+    "Mann-Whitney comes back significant. Can you tell the PM that the median increased?",
+    "When could Mann-Whitney be significant even though the medians of the two groups are equal?"
+   ]
+  }
+ ],
+ "stats-011": [
+  {
+   "base": "What does the p-value tell you, in plain words?",
+   "draft": true,
+   "variants": [
+    "The PM reads p = 0.03 as a 97% chance that B is better. How do you correct that gently?",
+    "In one sentence, what does p = 0.03 say about the data, assuming there's no real difference?"
+   ]
+  },
+  {
+   "base": "How would you actually compute the probability the PM wants?",
+   "draft": true,
+   "variants": [
+    "You switch to a Bayesian analysis with a Beta prior on each conversion rate. How do you get P(B > A)?",
+    "What would you choose as a prior, and how would you justify it to the PM?"
+   ]
+  },
+  {
+   "base": "What is the weakness of that answer?",
+   "draft": true,
+   "variants": [
+    "Two analysts use different priors and get P(B > A) of 0.91 and 0.97. What does that tell you?",
+    "With very little data, how much does the prior drive the answer?"
+   ]
+  }
+ ],
+ "stats-012": [
+  {
+   "base": "Roughly how much does the false-positive rate inflate?",
+   "draft": true,
+   "variants": [
+    "If you check daily for 30 days and stop at the first p < 0.05, is the real false-positive rate closer to 5%, 10% or 30%?",
+    "Why do repeated looks inflate false positives even when each look uses a valid test?"
+   ]
+  },
+  {
+   "base": "How would you design the test so early stopping is allowed?",
+   "draft": true,
+   "variants": [
+    "Leadership wants to stop early if the result is clearly good. How do you allow that without inflating false positives?",
+    "What is an alpha-spending function, in plain terms?"
+   ]
+  },
+  {
+   "base": "What if you have to decide on interim data anyway?",
+   "draft": true,
+   "variants": [
+    "On day 5 the new checkout is clearly hurting revenue. Do you stop the test? How do you justify it?",
+    "How would you set up rules in advance for stopping a test for harm versus for success?"
+   ]
+  }
+ ],
+ "stats-013": [
+  {
+   "base": "Why might discounted customers have retained better anyway?",
+   "draft": true,
+   "variants": [
+    "Discounts were offered to customers who complained. How does that change your reading of the 20% figure?",
+    "The sales team chose which customers got discounts. What bias does that introduce?"
+   ]
+  },
+  {
+   "base": "What observational methods would you consider?",
+   "draft": true,
+   "variants": [
+    "The discount launched in two regions in March but not in the others. Which method could use that?",
+    "You have rich data on each customer's behavior before the discount. How would you use it to build a fair comparison?"
+   ]
+  },
+  {
+   "base": "What would make you say the estimate is still not credible?",
+   "draft": true,
+   "variants": [
+    "Your matched analysis shows a 5% lift. What would make you doubt it?",
+    "How would you check how strong an unmeasured confounder would need to be to erase the effect?"
+   ]
+  }
+ ],
+ "stats-014": [
+  {
+   "base": "What are the assumptions behind that formula?",
+   "draft": true,
+   "variants": [
+    "Some users appear in both arms because they used two devices. Does your interval still hold?",
+    "When does the normal approximation for a difference in proportions break down?"
+   ]
+  },
+  {
+   "base": "What if randomization was by user but you count clicks per session?",
+   "draft": true,
+   "variants": [
+    "You randomized by user, but your analysis treats each page view as independent. What happens to your interval?",
+    "Heavy users generate 20% of sessions. Why does that matter when the unit of analysis is the session?"
+   ]
+  },
+  {
+   "base": "How would you check the result without a formula?",
+   "draft": true,
+   "variants": [
+    "How would you use the bootstrap to get the same interval? What do you resample?",
+    "How could you simulate the experiment to check that your formula gives intervals of the right width?"
+   ]
+  }
+ ],
+ "stats-015": [
+  {
+   "base": "What would the bias look like in a two-sided marketplace?",
+   "draft": true,
+   "variants": [
+    "In a ride-sharing test, treated riders get faster matches by taking drivers from control riders. Which way does that bias the estimate?",
+    "In a social feature, treated users share more, and their control-group friends see more content. Is the effect overstated or understated?"
+   ]
+  },
+  {
+   "base": "What design alternatives exist?",
+   "draft": true,
+   "variants": [
+    "You can't randomize individual sellers without them interacting. What experimental designs could you use instead?",
+    "When would a switchback design work better than a geo experiment?"
+   ]
+  },
+  {
+   "base": "How would you know the effect is leaking between groups?",
+   "draft": true,
+   "variants": [
+    "How could you test whether spillover between groups is present in your experiment?",
+    "The control group's metrics moved during the test even though nothing changed for them. What does that suggest?"
+   ]
+  }
+ ],
+ "stats-016": [
+  {
+   "base": "Why do we maximize the log-likelihood instead of the likelihood?",
+   "draft": true,
+   "variants": [
+    "You multiply 10,000 probabilities together and get exactly zero. What happened, and how does working in logs fix it?",
+    "Why is the maximum of the log-likelihood at the same parameter value as the maximum of the likelihood?"
+   ]
+  },
+  {
+   "base": "How does logistic regression's loss relate to likelihood?",
+   "draft": true,
+   "variants": [
+    "Show how minimizing cross-entropy loss is the same as maximizing a Bernoulli likelihood.",
+    "If you trained logistic regression with squared error instead, what would you lose?"
+   ]
+  },
+  {
+   "base": "When does maximum likelihood go wrong?",
+   "draft": true,
+   "variants": [
+    "Your logistic regression coefficients go to infinity during training. What's happening?",
+    "You fit a model by maximum likelihood on 20 data points and 15 parameters. What goes wrong?"
+   ]
+  }
+ ],
+ "stats-017": [
+  {
+   "base": "Why not run six pairwise tests?",
+   "draft": true,
+   "variants": [
+    "Comparing four channels in six pairwise tests at the 5% level, what is the chance of at least one false positive?",
+    "After a significant chi-square result, how do you find which channels differ without inflating errors?"
+   ]
+  },
+  {
+   "base": "What assumptions does a chi-square test make?",
+   "draft": true,
+   "variants": [
+    "One channel has only 30 users and 1 conversion. Is a chi-square test still valid?",
+    "The same customer can appear in several channels. What chi-square assumption does that break?"
+   ]
+  },
+  {
+   "base": "How would the approach change for a continuous outcome like revenue per user?",
+   "draft": true,
+   "variants": [
+    "The outcome is now revenue per user, which is skewed with many zeros. Would you use ANOVA?",
+    "What would you use instead of ANOVA if the variance differs a lot between channels?"
+   ]
+  }
+ ],
+ "stats-018": [
+  {
+   "base": "What do you give up compared with a fixed-horizon A/B test?",
+   "draft": true,
+   "variants": [
+    "After a bandit run, the product team asks for the exact lift with a confidence interval. Why is that harder than after an A/B test?",
+    "When is learning the precise effect size more important than maximizing conversions during the test?"
+   ]
+  },
+  {
+   "base": "How does Thompson sampling decide what to show?",
+   "draft": true,
+   "variants": [
+    "Explain how Thompson sampling decides which variant to show next.",
+    "Why does Thompson sampling naturally explore less as it gets more confident?"
+   ]
+  },
+  {
+   "base": "What goes wrong if the effect changes over time?",
+   "draft": true,
+   "variants": [
+    "Conversion rates differ on weekends, and your bandit shifted traffic on a Saturday. What can go wrong?",
+    "A variant performs well at launch because it's novel, then fades. How does a bandit handle that?"
+   ]
+  }
+ ],
+ "stats-019": [
+  {
+   "base": "What is censoring and why is it a problem for a simple average?",
+   "draft": true,
+   "variants": [
+    "A colleague computes average tenure using only customers who have already churned. What's wrong with that?",
+    "Half your customers signed up in the last three months. Why can't you just average their tenure so far?"
+   ]
+  },
+  {
+   "base": "What does a Kaplan-Meier curve show?",
+   "draft": true,
+   "variants": [
+    "The Kaplan-Meier curve drops steeply at month 12. What might cause that, and how do you read it?",
+    "How does Kaplan-Meier use customers who are still subscribed?"
+   ]
+  },
+  {
+   "base": "How would you include features like plan type?",
+   "draft": true,
+   "variants": [
+    "How would you test whether annual-plan customers churn more slowly than monthly ones while adjusting for other factors?",
+    "What does the proportional hazards assumption mean, and how would you check it?"
+   ]
+  }
+ ]
+}

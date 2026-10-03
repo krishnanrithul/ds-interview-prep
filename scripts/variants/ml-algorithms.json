@@ -1,0 +1,626 @@
+{
+ "algo-001": [
+  {
+   "base": "What do you do if the residuals show a pattern?",
+   "draft": true,
+   "variants": [
+    "The residual plot shows a clear U shape. What does that tell you, and what do you change?",
+    "Residuals look fine overall but are much larger for one customer segment. What would you try?"
+   ]
+  },
+  {
+   "base": "How do outliers affect it?",
+   "draft": true,
+   "variants": [
+    "Three data points with extreme values pull your fitted line noticeably. How do you handle them?",
+    "Why does least squares give outliers so much influence compared with absolute error?"
+   ]
+  },
+  {
+   "base": "What changes if you care about inference instead of prediction?",
+   "draft": true,
+   "variants": [
+    "Your stakeholder now wants to know how much price affects demand, not just to predict demand. Which assumptions suddenly matter more?",
+    "Two features are highly correlated. Does that hurt prediction, inference or both?"
+   ]
+  }
+ ],
+ "algo-002": [
+  {
+   "base": "Why does lasso set some coefficients exactly to zero while ridge does not?",
+   "draft": true,
+   "variants": [
+    "Draw the constraint regions for L1 and L2 penalties. Why does the L1 region produce zeros?",
+    "Ridge shrinks a coefficient from 3.0 to 0.1 but never to zero. Why?"
+   ]
+  },
+  {
+   "base": "What happens with a group of highly correlated features?",
+   "draft": true,
+   "variants": [
+    "Five features measure nearly the same thing. What does lasso do with them, and what does elastic net do?",
+    "Your lasso model picks a different feature from a correlated group each time you resample the data. What would you change?"
+   ]
+  },
+  {
+   "base": "How do you choose the penalty strength?",
+   "draft": true,
+   "variants": [
+    "How would you pick the lambda for ridge, and why must the features be scaled first?",
+    "Cross-validation gives a range of penalties with similar error. Which do you choose, and why?"
+   ]
+  }
+ ],
+ "algo-003": [
+  {
+   "base": "What is impurity and how is it measured?",
+   "draft": true,
+   "variants": [
+    "A node has 80 of one class and 20 of the other. Compute its Gini impurity, and explain what a split is trying to do to it.",
+    "Do Gini and entropy usually lead to different trees? Why or why not?"
+   ]
+  },
+  {
+   "base": "How can you stop a tree from overfitting?",
+   "draft": true,
+   "variants": [
+    "Your tree has 2,000 leaves, many with a single sample. Which settings would you change?",
+    "What is cost-complexity pruning, and how do you choose its strength?"
+   ]
+  },
+  {
+   "base": "Can a tree predict beyond the range of its training data?",
+   "draft": true,
+   "variants": [
+    "Your training data has house sizes up to 300 square meters. What does a tree predict for a 500-square-meter house?",
+    "Why are tree-based models a poor choice for extrapolating a trend into the future?"
+   ]
+  }
+ ],
+ "algo-004": [
+  {
+   "base": "What is out-of-bag error?",
+   "draft": true,
+   "variants": [
+    "How does a random forest estimate its error without a separate validation set?",
+    "When can out-of-bag error be misleading?"
+   ]
+  },
+  {
+   "base": "Why are impurity-based importances biased toward some features?",
+   "draft": true,
+   "variants": [
+    "A random ID-like feature with many unique values ranks high in impurity importance. Why?",
+    "Why do continuous features tend to look more important than binary ones in impurity importance?"
+   ]
+  },
+  {
+   "base": "What would you use instead?",
+   "draft": true,
+   "variants": [
+    "How does permutation importance work, and what goes wrong with correlated features?",
+    "When would you use SHAP values instead of permutation importance?"
+   ]
+  }
+ ],
+ "algo-005": [
+  {
+   "base": "How do their tree-growing strategies differ?",
+   "draft": true,
+   "variants": [
+    "LightGBM grows trees leaf-wise and XGBoost level-wise by default. What does that mean for overfitting on a small dataset?",
+    "Which parameter limits LightGBM's leaf-wise growth, and why does it matter?"
+   ]
+  },
+  {
+   "base": "How does each handle categorical variables?",
+   "draft": true,
+   "variants": [
+    "You have a categorical feature with 5,000 levels. How would each of the three libraries handle it?",
+    "Why does CatBoost's ordered target statistics approach reduce target leakage?"
+   ]
+  },
+  {
+   "base": "How would you compare them fairly?",
+   "draft": true,
+   "variants": [
+    "One library wins by 0.002 AUC but takes five times longer to train. How do you decide?",
+    "How do you make sure each library gets an equal tuning budget?"
+   ]
+  }
+ ],
+ "algo-006": [
+  {
+   "base": "What does the kernel trick do?",
+   "draft": true,
+   "variants": [
+    "The two classes form concentric circles. How can an SVM separate them?",
+    "What does an RBF kernel measure between two points?"
+   ]
+  },
+  {
+   "base": "What do C and gamma control?",
+   "draft": true,
+   "variants": [
+    "You raise C and training accuracy rises while validation accuracy falls. What's happening?",
+    "What happens to the decision boundary as gamma gets very large?"
+   ]
+  },
+  {
+   "base": "Why does an SVM scale poorly to millions of rows?",
+   "draft": true,
+   "variants": [
+    "Training an RBF SVM on 2 million rows hasn't finished after a day. Why, and what alternatives do you have?",
+    "When would a linear SVM still be practical at large scale?"
+   ]
+  }
+ ],
+ "algo-007": [
+  {
+   "base": "What is the epsilon-insensitive loss?",
+   "draft": true,
+   "variants": [
+    "Explain in plain words what the epsilon tube means for errors smaller than epsilon.",
+    "How does the choice of epsilon change the model?"
+   ]
+  },
+  {
+   "base": "What happens to points inside the tube?",
+   "draft": true,
+   "variants": [
+    "Why does SVR end up depending on only some of the training points?",
+    "If you make epsilon larger, what happens to the number of support vectors?"
+   ]
+  },
+  {
+   "base": "How does it compare with ridge for a typical tabular problem?",
+   "draft": true,
+   "variants": [
+    "Your dataset has 50 features and 100,000 rows. Would you try SVR or ridge first?",
+    "When might SVR's robustness to small errors be a real advantage?"
+   ]
+  }
+ ],
+ "algo-008": [
+  {
+   "base": "How do you choose k?",
+   "draft": true,
+   "variants": [
+    "With k = 1, training accuracy is 100%. Why is that not reassuring?",
+    "How does increasing k change bias and variance?"
+   ]
+  },
+  {
+   "base": "Why does it struggle in high dimensions?",
+   "draft": true,
+   "variants": [
+    "With 300 features, why do all points end up roughly the same distance apart?",
+    "How would you make k-NN usable on high-dimensional data?"
+   ]
+  },
+  {
+   "base": "Why must features be scaled?",
+   "draft": true,
+   "variants": [
+    "One feature is income in dollars and another is age in years. What happens to k-NN if you don't scale?",
+    "Would you use standardization or min-max scaling for k-NN, and why?"
+   ]
+  }
+ ],
+ "algo-009": [
+  {
+   "base": "Where does it fail?",
+   "draft": true,
+   "variants": [
+    "You include the same word feature twice. What does naive Bayes do with that?",
+    "Naive Bayes ranks spam well but its probabilities are near 0 or 1. Why?"
+   ]
+  },
+  {
+   "base": "What is smoothing for?",
+   "draft": true,
+   "variants": [
+    "A word never appeared in spam during training. What happens when it shows up in a new spam email without smoothing?",
+    "How does Laplace smoothing fix the zero-count problem?"
+   ]
+  },
+  {
+   "base": "How does it handle text?",
+   "draft": true,
+   "variants": [
+    "How do you represent an email as features for multinomial naive Bayes?",
+    "When would you choose naive Bayes over logistic regression for text classification?"
+   ]
+  }
+ ],
+ "algo-010": [
+  {
+   "base": "What does a coefficient of 0.7 mean?",
+   "draft": true,
+   "variants": [
+    "The coefficient on 'number of late payments' is 0.7. By how much do the odds of default change for each extra late payment?",
+    "How would you explain a negative coefficient on income to a credit officer?"
+   ]
+  },
+  {
+   "base": "What do you need to check about the features?",
+   "draft": true,
+   "variants": [
+    "Two features are strongly correlated and their coefficients have unexpected signs. What do you check?",
+    "Why should you scale features if you plan to regularize the logistic regression?"
+   ]
+  },
+  {
+   "base": "How do you capture non-linear effects?",
+   "draft": true,
+   "variants": [
+    "Default risk rises sharply for very young and very old borrowers. How would you capture that in a logistic regression?",
+    "When would you bin a continuous feature, and what do you lose?"
+   ]
+  }
+ ],
+ "algo-011": [
+  {
+   "base": "How does an isolation forest decide a point is unusual?",
+   "draft": true,
+   "variants": [
+    "Why does an unusual transaction tend to be isolated with fewer random splits?",
+    "What does the anomaly score of an isolation forest actually measure?"
+   ]
+  },
+  {
+   "base": "How do you set the alert threshold without labels?",
+   "draft": true,
+   "variants": [
+    "Analysts can review 200 transactions a day. How do you set the threshold?",
+    "How would you estimate precision when you only have analyst reviews of flagged cases?"
+   ]
+  },
+  {
+   "base": "How do you know it finds fraud and not just unusual-but-fine transactions?",
+   "draft": true,
+   "variants": [
+    "The model flags many large but legitimate corporate purchases. How do you reduce that?",
+    "How would you use analyst feedback to improve the system over time?"
+   ]
+  }
+ ],
+ "algo-012": [
+  {
+   "base": "What distribution suits count data?",
+   "draft": true,
+   "variants": [
+    "Why might a linear model predict a negative number of claims, and what does a Poisson model do instead?",
+    "What does a Poisson regression assume about the mean and variance of claims?"
+   ]
+  },
+  {
+   "base": "What do you do when the variance is much larger than the mean?",
+   "draft": true,
+   "variants": [
+    "Most customers have zero claims and a few have many. Which models would you consider?",
+    "How do you test whether a Poisson model is overdispersed?"
+   ]
+  },
+  {
+   "base": "How do you handle customers observed for different lengths of time?",
+   "draft": true,
+   "variants": [
+    "Some customers were insured for three months, others for a full year. How do you account for that?",
+    "What is an offset in a Poisson regression, and why use the log of exposure?"
+   ]
+  }
+ ],
+ "algo-013": [
+  {
+   "base": "Why does the result depend on initialization?",
+   "draft": true,
+   "variants": [
+    "You run k-means five times and get five different results. Why, and how do you get a stable answer?",
+    "What does k-means++ do differently when choosing starting centroids?"
+   ]
+  },
+  {
+   "base": "What kinds of cluster shapes does it handle poorly?",
+   "draft": true,
+   "variants": [
+    "Your data has one large cluster and two small ones. How does k-means handle that?",
+    "Why does k-means struggle with elongated or crescent-shaped clusters?"
+   ]
+  },
+  {
+   "base": "Do you need to scale the features?",
+   "draft": true,
+   "variants": [
+    "One feature is annual spend in dollars and another is number of visits. What happens without scaling?",
+    "After scaling, a feature you consider minor now influences the clusters as much as spend. Is that a problem?"
+   ]
+  }
+ ],
+ "algo-014": [
+  {
+   "base": "What do eps and min_samples control?",
+   "draft": true,
+   "variants": [
+    "You increase eps. What happens to the number of clusters and noise points?",
+    "How would you choose eps using a k-distance plot?"
+   ]
+  },
+  {
+   "base": "How does DBSCAN treat noise points?",
+   "draft": true,
+   "variants": [
+    "DBSCAN labels 30% of your points as noise. Is that a problem?",
+    "How is DBSCAN's treatment of outliers different from k-means'?"
+   ]
+  },
+  {
+   "base": "When does DBSCAN struggle?",
+   "draft": true,
+   "variants": [
+    "Your data has one dense cluster and one sparse cluster. Can a single eps capture both?",
+    "Why does DBSCAN become hard to tune with many features?"
+   ]
+  }
+ ],
+ "algo-015": [
+  {
+   "base": "What is the difference between single, complete and average linkage?",
+   "draft": true,
+   "variants": [
+    "Single linkage gives you one huge cluster that snakes through the data. Why?",
+    "When would you choose Ward's linkage?"
+   ]
+  },
+  {
+   "base": "How do you decide where to cut the tree?",
+   "draft": true,
+   "variants": [
+    "The dendrogram shows a large jump in merge height between 4 and 3 clusters. What does that suggest?",
+    "The business wants exactly five segments, but the dendrogram suggests three. What do you do?"
+   ]
+  },
+  {
+   "base": "Why is it hard to run on a million points?",
+   "draft": true,
+   "variants": [
+    "Why does agglomerative clustering need memory that grows with the square of the number of points?",
+    "How could you cluster a million customers hierarchically in practice?"
+   ]
+  }
+ ],
+ "algo-016": [
+  {
+   "base": "How is a mixture model fitted?",
+   "draft": true,
+   "variants": [
+    "Describe in plain words what the E step and the M step do.",
+    "Why can a mixture model get stuck in a poor solution, and what do you do about it?"
+   ]
+  },
+  {
+   "base": "What happens if you give the model too many components?",
+   "draft": true,
+   "variants": [
+    "How would you choose the number of components using BIC?",
+    "You fit 20 components to data with 3 real groups. What happens?"
+   ]
+  },
+  {
+   "base": "When would you prefer k-means anyway?",
+   "draft": true,
+   "variants": [
+    "The clusters are roughly round and you have 10 million points. Would you use a mixture model?",
+    "When are soft assignments worth the extra complexity?"
+   ]
+  }
+ ],
+ "algo-017": [
+  {
+   "base": "What do silhouette scores tell you, and what don't they?",
+   "draft": true,
+   "variants": [
+    "Silhouette is highest at k = 2, but the business wants more detail. How much weight do you put on the silhouette?",
+    "Why can silhouette scores favor round, evenly sized clusters?"
+   ]
+  },
+  {
+   "base": "How would you check stability?",
+   "draft": true,
+   "variants": [
+    "How would you check whether your clusters change if you resample the customers?",
+    "You rerun clustering on next month's data and the segments look different. What does that tell you?"
+   ]
+  },
+  {
+   "base": "What is the business test of a segmentation?",
+   "draft": true,
+   "variants": [
+    "Marketing says two of your segments behave the same in campaigns. What does that say about the segmentation?",
+    "How would you test whether the segments lead to different results when targeted?"
+   ]
+  }
+ ],
+ "algo-018": [
+  {
+   "base": "How do you combine numeric and categorical features?",
+   "draft": true,
+   "variants": [
+    "You have age, income, account type and region. How do you compute distances between customers?",
+    "One-hot encoding region creates 50 binary columns. What does that do to a distance-based clustering?"
+   ]
+  },
+  {
+   "base": "How would you make the segments explainable?",
+   "draft": true,
+   "variants": [
+    "The relationship managers ask what makes segment 3 different. How do you answer clearly?",
+    "How would a shallow decision tree help explain the segments?"
+   ]
+  },
+  {
+   "base": "How often should segments be refreshed?",
+   "draft": true,
+   "variants": [
+    "Customers keep moving between segments each month. Is that a problem?",
+    "How would you refresh segments without confusing teams that use them?"
+   ]
+  }
+ ],
+ "algo-019": [
+  {
+   "base": "How do you decide how many components to keep?",
+   "draft": true,
+   "variants": [
+    "The first 10 components explain 85% of the variance, the first 50 explain 95%. How do you choose?",
+    "When would you choose the number of components by downstream model performance instead of variance explained?"
+   ]
+  },
+  {
+   "base": "Can you interpret the components?",
+   "draft": true,
+   "variants": [
+    "A stakeholder asks what component 1 means. How do you answer?",
+    "The loadings of component 2 mix 30 features with similar weights. Can you interpret it?"
+   ]
+  },
+  {
+   "base": "When is PCA a bad idea?",
+   "draft": true,
+   "variants": [
+    "Would you apply PCA before training a gradient-boosted model? Why or why not?",
+    "Your data lies on a curved surface. What will PCA miss?"
+   ]
+  }
+ ],
+ "algo-020": [
+  {
+   "base": "What do distances between clusters in a t-SNE plot mean?",
+   "draft": true,
+   "variants": [
+    "Two clusters are far apart in the t-SNE plot. Does that mean they're very different?",
+    "Can you compare cluster sizes in a t-SNE plot?"
+   ]
+  },
+  {
+   "base": "How do perplexity and other settings change the picture?",
+   "draft": true,
+   "variants": [
+    "Changing perplexity from 30 to 5 turns three clusters into ten. What does that tell you?",
+    "Would you expect UMAP to show the same picture? Why might it differ?"
+   ]
+  },
+  {
+   "base": "How would you check that the clusters are real?",
+   "draft": true,
+   "variants": [
+    "How would you test whether the clusters in the plot exist in the original data?",
+    "Random noise data can still produce clusters in t-SNE. How would you use that as a check?"
+   ]
+  }
+ ],
+ "algo-021": [
+  {
+   "base": "What is the difference between filter, wrapper and embedded methods?",
+   "draft": true,
+   "variants": [
+    "Give an example of a filter method and a wrapper method. Which would you run on 2,000 features?",
+    "How does lasso count as an embedded feature selection method?"
+   ]
+  },
+  {
+   "base": "How can feature selection cause leakage?",
+   "draft": true,
+   "variants": [
+    "You pick the 50 features most correlated with the target on all 10,000 rows, then cross-validate. What's wrong?",
+    "How do you include feature selection inside cross-validation?"
+   ]
+  },
+  {
+   "base": "When would you not bother selecting?",
+   "draft": true,
+   "variants": [
+    "You're using a gradient-boosted model. Do you need feature selection at all?",
+    "When would you still remove features even if accuracy doesn't change?"
+   ]
+  }
+ ],
+ "algo-022": [
+  {
+   "base": "Why must the second-level model be trained on out-of-fold predictions?",
+   "draft": true,
+   "variants": [
+    "You train the meta-model on predictions the base models made on their own training data. What happens?",
+    "How do you generate the out-of-fold predictions for stacking?"
+   ]
+  },
+  {
+   "base": "How different do the base models need to be?",
+   "draft": true,
+   "variants": [
+    "You stack three gradient-boosted models with different seeds. Do you expect much gain? Why?",
+    "Which kinds of base models tend to combine well?"
+   ]
+  },
+  {
+   "base": "What does it cost in production?",
+   "draft": true,
+   "variants": [
+    "The stacked model adds 0.3% AUC but needs four models in production. How do you decide?",
+    "What does stacking do to latency and debugging?"
+   ]
+  }
+ ],
+ "algo-023": [
+  {
+   "base": "Why can SMOTE hurt if applied before splitting the data?",
+   "draft": true,
+   "variants": [
+    "You apply SMOTE to the whole dataset and then cross-validate. Why are the scores too optimistic?",
+    "Where in the pipeline should SMOTE go?"
+   ]
+  },
+  {
+   "base": "How does class imbalance change which metric you use?",
+   "draft": true,
+   "variants": [
+    "With 2% positives, a model gets 98% accuracy. Which metric would you report instead?",
+    "Why can ROC-AUC look good while precision at your chosen threshold is poor?"
+   ]
+  },
+  {
+   "base": "Which approach would you try first, and why?",
+   "draft": true,
+   "variants": [
+    "Which would you try first: SMOTE, class weights or threshold tuning? Why?",
+    "Class weights improve recall but your probabilities are now too high. What happened?"
+   ]
+  }
+ ],
+ "algo-024": [
+  {
+   "base": "Why is random search often better than grid search?",
+   "draft": true,
+   "variants": [
+    "You have six hyperparameters but only two really matter. Why does random search find good values faster than grid search?",
+    "With a budget of 60 trials, why might grid search waste most of them?"
+   ]
+  },
+  {
+   "base": "What does Bayesian optimization do differently?",
+   "draft": true,
+   "variants": [
+    "How does Bayesian optimization choose the next set of hyperparameters to try?",
+    "When is Bayesian optimization not worth it?"
+   ]
+  },
+  {
+   "base": "What is nested cross-validation for?",
+   "draft": true,
+   "variants": [
+    "You tuned on the validation set and report that validation score as your result. Why is it optimistic?",
+    "Explain the inner and outer loops of nested cross-validation."
+   ]
+  }
+ ]
+}

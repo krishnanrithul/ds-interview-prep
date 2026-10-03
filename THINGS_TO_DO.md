@@ -36,7 +36,7 @@ Living list for Gradient Ascent. What has already been built is recorded in `doc
 - A steady trickle of new questions.
 **Needs.** The same backend or bring-your-own-key decision as 1.2, plus a rule for what counts as a section being "strong" (for example every question in a topic Solid at least twice) and a way to review generated questions for quality.
 **Open question.** Who is the app for: personal prep and a portfolio piece, or a product people return to? The answer decides how much to invest here.
-**Status (2026-10-03).** Pre-generated variants started: ML done (see section 4). Follow-ups that react to the learner's answer moved to Mock (1.5).
+**Status (2026-10-03).** Pre-generated variants done for all topics (see section 4). Follow-ups that react to the learner's answer moved to Mock (1.5).
 
 ### 1.4 Junior and senior answers for every follow-up
 **Problem.** Junior and senior answers exist once per question. Follow-ups only have their text and what they test, so a learner cannot compare their reply to a follow-up with how a senior would handle that follow-up.
@@ -87,19 +87,18 @@ Proposed fix: a new "ML Algorithms" topic (supervised plus unsupervised, about 2
 ## 4. Status after the 2026-10-03 sessions
 Done (first session): collapsible map, 155 questions, 17 explainers, level and type filters.
 Done (second session):
-- Follow-up variants for ML: 142 variants (2 per follow-up, same intent, different scenario), marked draft, in `scripts/variants/ml.json`. Apply with `python3 scripts/apply_variants.py`; it refuses variants whose follow-up text has changed. Practice and Mock pick one wording per follow-up and avoid the one shown last time (`src/lib/variants.js`, localStorage key `ds-variant-seen`). The Practice debrief now shows the follow-up actually asked.
+- Follow-up variants for every topic: 910 variants (2 for each of the 455 follow-ups, same intent, different scenario), marked draft, one file per topic in `scripts/variants/`. Apply with `python3 scripts/apply_variants.py`; it refuses variants whose follow-up text has changed. Practice and Mock pick one wording per follow-up and avoid the one shown last time (`src/lib/variants.js`, localStorage key `ds-variant-seen`). The Practice debrief now shows the follow-up actually asked.
 - "Practice these again" on the end-of-session screen reruns the same questions with new follow-up wording.
 - Mastery map: clicking a tile opens a preview inside that topic, under its tiles, with Practice and Close.
 - Queue: unseen questions ramp by level (Foundations, then Core, then Advanced), so a new learner starts easy. No login needed: "new" just means no rating stored in this browser.
 - Decided: Practice keeps fixed follow-ups plus variants (stable for spaced repetition); Mock becomes the reactive mode (1.5). Match score should be automatic, not self-ticked: in-browser embeddings give real-time key-point coverage, with optional AI grading on submit for correctness (1.1, 1.2).
 
 Recommended next, in order:
-1. Push commit 75185bd (made locally; the sandbox has no GitHub credentials).
-2. Review the ML variants and flip `"draft"` to false for the good ones. This checks the format before writing about 1,200 more.
+1. Push the local commits (the sandbox has no GitHub credentials).
+2. Review the variants, topic by topic, and flip `"draft"` to false for the good ones. Start with ML and the 22 real-interview questions.
 3. Key points for every question (1.1), starting with the 24 ML questions and the 22 real-interview ones. Everything else depends on them: match score, AI feedback and reactive Mock.
 4. Real-time coverage score: embed key points at build time, embed the learner's answer in the browser (transformers.js, all-MiniLM-L6-v2), show "3 of 5 key points covered" live. Set the threshold from about 30 hand-labeled answers.
-5. Variants for the remaining topics, once the ML review confirms the format.
-6. Bring-your-own-key setting, then reactive Mock (1.5).
+5. Bring-your-own-key setting, then reactive Mock (1.5).
 
 Still open:
 - Logo: the current mark (dots, trend line, arrow) may resemble others. Plan: contour hill with climbing dots; keep `Logo.jsx` and `public/favicon.svg` in sync; run a real trademark and logo search before public launch.
@@ -108,4 +107,3 @@ Still open:
 - Optional explainers: class imbalance and threshold, hierarchical clustering, boosting residuals for LightGBM.
 - Per-follow-up junior and senior answers (1.4), Learn section, phone legends and PWA.
 - Mock layout: all follow-ups stack above one text box. Redo it as a back-and-forth when building 1.5.
-- Housekeeping: `src/components/QuestionBubble.jsx` is unused and untracked; delete it.

@@ -1,0 +1,358 @@
+{
+ "system-design-001": [
+  {
+   "base": "Walk me through your latency budget. Where do you spend it?",
+   "draft": true,
+   "variants": [
+    "The product team says the homepage must render in 150 ms, including recommendations. How do you split that time across retrieval, ranking and feature lookup?",
+    "Your ranking model alone takes 120 ms of a 200 ms budget. Where do you look for savings?"
+   ]
+  },
+  {
+   "base": "Your model training takes 6 hours. How do you keep recommendations fresh without retraining constantly?",
+   "draft": true,
+   "variants": [
+    "A user just bought a tent. How do your recommendations reflect that within minutes when the model retrains nightly?",
+    "Retraining is expensive, but item popularity shifts within hours during sales. What can you update without retraining the full model?"
+   ]
+  },
+  {
+   "base": "How would you A/B test this system without a madhouse of feature flags?",
+   "draft": true,
+   "variants": [
+    "Three teams want to test ranking changes at the same time on the same page. How do you set that up?",
+    "How do you test a new candidate-retrieval model when the ranker downstream was trained on the old retrieval's output?"
+   ]
+  }
+ ],
+ "system-design-002": [
+  {
+   "base": "Users need forecasts updated daily. Do you batch or serve predictions on-demand?",
+   "draft": true,
+   "variants": [
+    "Most customers look at their forecast once a week, but a few check it hourly. How does that shape whether you precompute?",
+    "Forecasts take 2 seconds per customer to compute. Is on-demand serving still viable?"
+   ]
+  },
+  {
+   "base": "A customer's 90-day forecast suddenly drops 50%. Should you alert them? Why?",
+   "draft": true,
+   "variants": [
+    "A forecast drops sharply because one large invoice was paid early. Would an alert help the customer or confuse them?",
+    "What checks would you run before showing a customer a forecast that changed by more than 30% overnight?"
+   ]
+  },
+  {
+   "base": "How would you version your model changes without breaking live dashboards?",
+   "draft": true,
+   "variants": [
+    "A new model version changes every customer's forecast by about 5%. How do you roll it out without users thinking something broke?",
+    "Finance compares this month's dashboard with last month's export. How do you keep those comparable across model versions?"
+   ]
+  }
+ ],
+ "system-design-003": [
+  {
+   "base": "How do you prevent the system from becoming a dumping ground for half-baked ideas?",
+   "draft": true,
+   "variants": [
+    "Half the requests submitted last quarter never had a clear business owner. What do you change in intake?",
+    "How would you decide which requests get a data scientist's time first?"
+   ]
+  },
+  {
+   "base": "Teams want different SLOs (some want real-time, some want batch). How do you standardize without being rigid?",
+   "draft": true,
+   "variants": [
+    "One team needs predictions in 50 ms and another is fine with a nightly file. What do you standardize, and what do you leave flexible?",
+    "Every team asks for an exception to the platform's defaults. How do you decide which exceptions to support?"
+   ]
+  }
+ ],
+ "system-design-004": [
+  {
+   "base": "How do you assign users to variants so that assignment is stable and independent across experiments?",
+   "draft": true,
+   "variants": [
+    "A user is in experiment A and starts experiment B tomorrow. How do you make sure B's assignment doesn't depend on A's?",
+    "Users log in on several devices. How do you keep them in the same variant?"
+   ]
+  },
+  {
+   "base": "Your 50/50 split shows 52/48 in the data. What does it mean and what do you do?",
+   "draft": true,
+   "variants": [
+    "Your 50/50 test shows 50.8% versus 49.2% with a million users. Is that a sample ratio mismatch?",
+    "The treatment arm has fewer users than expected only on mobile. What would you investigate?"
+   ]
+  },
+  {
+   "base": "How do you prevent two overlapping experiments from interfering with each other?",
+   "draft": true,
+   "variants": [
+    "The pricing team and the checkout team both want to run tests on the checkout page this month. How do you set it up?",
+    "How would you detect whether two simultaneous experiments interact?"
+   ]
+  }
+ ],
+ "system-design-005": [
+  {
+   "base": "How fresh do the features actually need to be, and who decides that?",
+   "draft": true,
+   "variants": [
+    "The fraud team says they need real-time features. How do you find out how fresh they really need to be?",
+    "What would it cost the business if a feature were 1 hour old instead of 1 second old? How would you estimate that?"
+   ]
+  },
+  {
+   "base": "How do you keep the batch and streaming versions of a feature consistent?",
+   "draft": true,
+   "variants": [
+    "The model was trained on features computed in a nightly batch, but in production they come from a stream. What can go wrong?",
+    "How would you test that the batch and streaming versions of 'transactions in the last hour' give the same values?"
+   ]
+  },
+  {
+   "base": "How do you handle late-arriving events in a streaming pipeline?",
+   "draft": true,
+   "variants": [
+    "Mobile events can arrive 20 minutes late. How does that affect a streaming 'clicks in the last 5 minutes' feature?",
+    "What is the difference between event time and processing time, and which should a window use?"
+   ]
+  }
+ ],
+ "system-design-006": [
+  {
+   "base": "The decision has to be made in under 100 milliseconds. How does that shape the design?",
+   "draft": true,
+   "variants": [
+    "Your best fraud features need a database query that takes 300 ms. How do you use them within a 100 ms decision?",
+    "Which features can you precompute, and which must be computed at transaction time?"
+   ]
+  },
+  {
+   "base": "Fraudsters adapt to your model. How does that change how you monitor and retrain?",
+   "draft": true,
+   "variants": [
+    "Fraud losses were stable for months, then tripled in one week while model scores looked normal. What happened, and how do you respond?",
+    "How would you detect that fraudsters are probing your model with small test transactions?"
+   ]
+  },
+  {
+   "base": "A false positive blocks a legitimate customer at checkout. How do you account for that?",
+   "draft": true,
+   "variants": [
+    "Blocking a legitimate $2,000 purchase loses the sale and possibly the customer. How does that factor into the decision rule?",
+    "Instead of approve or decline, what other actions could the system take for borderline cases?"
+   ]
+  }
+ ],
+ "system-design-007": [
+  {
+   "base": "Would you build one model or twenty? How do you decide?",
+   "draft": true,
+   "variants": [
+    "Five units have three years of history and the rest have under a year. One model or several?",
+    "What would a global model with a unit feature give you that twenty separate models wouldn't?"
+   ]
+  },
+  {
+   "base": "How do you keep unit forecasts consistent with the company total?",
+   "draft": true,
+   "variants": [
+    "The CFO looks only at the company total, while unit heads look at their own numbers. How do you keep both views consistent?",
+    "Unit forecasts add up to 8% more than the company forecast. Which do you adjust?"
+   ]
+  },
+  {
+   "base": "How would the finance team use and challenge the forecast?",
+   "draft": true,
+   "variants": [
+    "A unit head says the forecast is too low because a big contract is about to close. How does the system take in that knowledge?",
+    "What would you show finance so they can see why the forecast moved this week?"
+   ]
+  }
+ ],
+ "system-design-011": [
+  {
+   "base": "How do you detect and handle a schema change at one source?",
+   "draft": true,
+   "variants": [
+    "One source renamed a column overnight and your pipeline loaded NULLs for a whole day. How should the system have caught it?",
+    "How would you agree a data contract with five source teams who all change things on their own schedule?"
+   ]
+  },
+  {
+   "base": "What happens when a run fails halfway?",
+   "draft": true,
+   "variants": [
+    "The pipeline loaded three of five sources before failing. What happens when you rerun it?",
+    "How do you make the daily load safe to run twice?"
+   ]
+  },
+  {
+   "base": "How do you reconcile the five sources to the same numbers?",
+   "draft": true,
+   "variants": [
+    "Total transaction value differs by 2% between your warehouse and the source systems. How do you track down the gap?",
+    "Which reconciliation checks would you run every day, and which weekly?"
+   ]
+  }
+ ],
+ "system-design-012": [
+  {
+   "base": "How do you handle seasonality and holidays?",
+   "draft": true,
+   "variants": [
+    "Sales always drop 40% on public holidays. How do you stop the system alerting every time?",
+    "A metric has a strong weekly cycle and a slow upward trend. What baseline would you compare against?"
+   ]
+  },
+  {
+   "base": "How do you keep false alarms down?",
+   "draft": true,
+   "variants": [
+    "Analysts received 60 alerts last week and acted on 3. What do you change?",
+    "How would you use analysts' responses to alerts to improve the system over time?"
+   ]
+  },
+  {
+   "base": "What would you show alongside an alert?",
+   "draft": true,
+   "variants": [
+    "An alert says revenue is down 12% today. What context should come with it so an analyst can act quickly?",
+    "How would you point analysts toward which segment or region caused an anomaly?"
+   ]
+  }
+ ],
+ "system-design-013": [
+  {
+   "base": "How do you chunk and index the documents?",
+   "draft": true,
+   "variants": [
+    "Some documents are 300-page PDFs and others are one-line tickets. How do you chunk them?",
+    "What metadata would you store with each chunk, and why?"
+   ]
+  },
+  {
+   "base": "When does pure vector search fail, and what do you add?",
+   "draft": true,
+   "variants": [
+    "A user searches for an exact error code and vector search returns loosely related documents. What do you add?",
+    "Searches for product names and acronyms perform poorly. Why might embeddings struggle with them?"
+   ]
+  },
+  {
+   "base": "How do you handle permissions?",
+   "draft": true,
+   "variants": [
+    "An employee searches and sees a snippet from a document they aren't allowed to open. Where did the design go wrong?",
+    "Permissions change daily. How do you keep the search index in sync?"
+   ]
+  }
+ ],
+ "system-design-014": [
+  {
+   "base": "How do you make the forecast respond to assumptions the model has never seen?",
+   "draft": true,
+   "variants": [
+    "A user asks what happens if prices rise 15%, but prices have never moved more than 3% in your history. How does the tool answer?",
+    "Which parts of the scenario should come from the model and which from explicit business rules?"
+   ]
+  },
+  {
+   "base": "How do you show uncertainty?",
+   "draft": true,
+   "variants": [
+    "How would you show the range of outcomes for a scenario, not just one line?",
+    "Users compare two scenarios whose difference is smaller than the forecast's uncertainty. What do you show them?"
+   ]
+  },
+  {
+   "base": "How do you make sure users don't treat scenarios as predictions?",
+   "draft": true,
+   "variants": [
+    "A scenario showing 20% growth ends up in a board deck as the forecast. How could the tool have prevented that?",
+    "How would you label scenario outputs so they aren't mistaken for the official forecast?"
+   ]
+  }
+ ],
+ "system-design-008": [
+  {
+   "base": "How do you define churn so the label is usable?",
+   "draft": true,
+   "variants": [
+    "Customers on annual contracts can only churn at renewal. How do you define the label for them?",
+    "Should a customer who downgrades to the free plan count as churned? How do you decide?"
+   ]
+  },
+  {
+   "base": "How do you turn scores into actions the team can take?",
+   "draft": true,
+   "variants": [
+    "The team can contact 200 customers a week, but the model flags 1,500 as high risk. How do you prioritize?",
+    "Some high-risk customers can't be saved by any offer the team has. How should that affect the list?"
+   ]
+  },
+  {
+   "base": "How do you measure whether the interventions actually helped?",
+   "draft": true,
+   "variants": [
+    "Retention went up after launch. How do you know the interventions caused it?",
+    "How would you set up a holdout group, and how would you explain the need for it to the retention team?"
+   ]
+  }
+ ],
+ "system-design-009": [
+  {
+   "base": "How do you produce reasons for a decision that a customer can understand?",
+   "draft": true,
+   "variants": [
+    "A customer is declined and asks why. How do you turn SHAP values into a reason they can act on?",
+    "Two features with similar effects both appear in the explanation. Which do you show the customer?"
+   ]
+  },
+  {
+   "base": "How do you monitor the system for unfair outcomes?",
+   "draft": true,
+   "variants": [
+    "Approval rates differ by 10 points between two age groups. How do you decide whether that's a problem?",
+    "Which fairness metrics would you monitor, and why can't you satisfy all of them at once?"
+   ]
+  },
+  {
+   "base": "How do you approve and record a model change?",
+   "draft": true,
+   "variants": [
+    "A regulator asks which model version decided a loan 18 months ago and why. What does your system need to have stored?",
+    "Who signs off on a new model version, and what evidence do they need?"
+   ]
+  }
+ ],
+ "system-design-010": [
+  {
+   "base": "Where do metric definitions live, and who can change them?",
+   "draft": true,
+   "variants": [
+    "Marketing and finance both claim ownership of the 'active user' definition. How do you resolve it?",
+    "Where would you store metric definitions so analysts actually use them?"
+   ]
+  },
+  {
+   "base": "How do you handle a definition that needs to change?",
+   "draft": true,
+   "variants": [
+    "The business decides 'active user' should now exclude free-trial users. How do you roll that change out?",
+    "Historical dashboards will shift when a definition changes. How do you handle that?"
+   ]
+  },
+  {
+   "base": "How do you check that dashboards match the layer?",
+   "draft": true,
+   "variants": [
+    "A team's dashboard shows revenue 3% higher than the metrics layer. How would you catch that automatically?",
+    "What tests would you run on the metrics layer itself?"
+   ]
+  }
+ ]
+}
