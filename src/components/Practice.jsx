@@ -47,6 +47,7 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
   const [turns, setTurns] = useState([]) // your replies, one per message you sent
   const [revealed, setRevealed] = useState(0) // how many interviewer replies have landed
   const [text, setText] = useState('')
+  const [deepOpen, setDeepOpen] = useState(false) // an interactive explainer is open
   const [results, setResults] = useState([])
   const textRef = useRef(null)
   const endRef = useRef(null)
@@ -178,7 +179,7 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
           <h2 className="font-serif text-[1.65rem] sm:text-3xl leading-[1.4] font-medium">
             <span className="marker-text">{q.question}</span>
           </h2>
-          <KeyTerms key={q.id} terms={q.terms} onTag={onTag} />
+          <KeyTerms key={q.id} terms={q.terms} onTag={onTag} onDeepChange={setDeepOpen} />
         </div>
 
         {turns.map((t, k) => (
@@ -226,7 +227,7 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
         <div ref={endRef} style={{ scrollMarginBottom: '12rem' }} />
       </div>
 
-      <div className="sticky bottom-4 z-10">
+      <div className={deepOpen ? '' : 'sticky bottom-4 z-10'}>
         {!rating ? (
           <div className="rounded-2xl border border-border bg-card shadow-lg focus-within:border-primary transition-colors">
             <textarea

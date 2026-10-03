@@ -4,79 +4,79 @@
       "id": "gradient-boosting",
       "label": "XGBoost & gradient boosting",
       "kind": "subject",
-      "count": 4
+      "count": 5
     },
     {
       "id": "model-selection",
       "label": "Choosing a model",
       "kind": "subject",
-      "count": 4
+      "count": 7
     },
     {
       "id": "explainability",
       "label": "Explainability (SHAP)",
       "kind": "subject",
-      "count": 3
+      "count": 6
     },
     {
       "id": "time-series-forecasting",
       "label": "Time-series forecasting",
       "kind": "subject",
-      "count": 6
+      "count": 8
     },
     {
       "id": "validation-strategy",
       "label": "Train/test validation",
       "kind": "subject",
-      "count": 5
+      "count": 7
     },
     {
       "id": "data-leakage",
       "label": "Data leakage & look-ahead",
       "kind": "subject",
-      "count": 4
+      "count": 6
     },
     {
       "id": "distribution-shift",
       "label": "Drift & distribution shift",
       "kind": "subject",
-      "count": 5
+      "count": 7
     },
     {
       "id": "model-monitoring",
       "label": "Model monitoring",
       "kind": "subject",
-      "count": 5
+      "count": 10
     },
     {
       "id": "retraining",
       "label": "Retraining",
       "kind": "subject",
-      "count": 5
+      "count": 6
     },
     {
       "id": "feature-engineering",
       "label": "Feature engineering",
       "kind": "subject",
-      "count": 4
+      "count": 8
     },
     {
       "id": "missing-data-and-outliers",
       "label": "Missing data & outliers",
       "kind": "subject",
-      "count": 3
+      "count": 4
     },
     {
       "id": "bias-variance",
       "label": "Bias-variance & regularization",
       "kind": "subject",
-      "count": 1
+      "count": 2
     },
     {
       "id": "evaluation-metrics",
       "label": "Evaluation metrics",
       "kind": "subject",
-      "count": 4
+      "count": 7
     },
     {
       "id": "class-imbalance",
@@ -88,19 +88,19 @@
       "id": "cost-sensitive-decisions",
       "label": "Cost-sensitive decisions",
       "kind": "subject",
-      "count": 6
+      "count": 8
     },
     {
       "id": "fairness",
       "label": "Fairness",
       "kind": "subject",
-      "count": 1
+      "count": 2
     },
     {
       "id": "hypothesis-testing",
       "label": "Hypothesis testing",
       "kind": "subject",
-      "count": 4
+      "count": 7
     },
     {
       "id": "statistical-power",
@@ -112,13 +112,13 @@
       "id": "multiple-testing",
       "label": "Multiple testing",
       "kind": "subject",
-      "count": 1
+      "count": 2
     },
     {
       "id": "confidence-intervals",
       "label": "Confidence intervals",
       "kind": "subject",
-      "count": 3
+      "count": 6
     },
     {
       "id": "resampling",
@@ -130,13 +130,13 @@
       "id": "ab-testing",
       "label": "A/B testing",
       "kind": "subject",
-      "count": 6
+      "count": 11
     },
     {
       "id": "segment-analysis",
       "label": "Segment analysis & Simpson's paradox",
       "kind": "subject",
-      "count": 4
+      "count": 5
     },
     {
       "id": "label-delay",
@@ -148,73 +148,73 @@
       "id": "window-functions",
       "label": "SQL window functions",
       "kind": "subject",
-      "count": 4
+      "count": 8
     },
     {
       "id": "joins",
       "label": "Joins",
       "kind": "subject",
-      "count": 2
+      "count": 3
     },
     {
       "id": "null-semantics",
       "label": "NULL behavior",
       "kind": "subject",
-      "count": 2
+      "count": 3
     },
     {
       "id": "retention-cohorts",
       "label": "Retention & cohorts",
       "kind": "subject",
-      "count": 2
+      "count": 5
     },
     {
       "id": "performance-at-scale",
       "label": "Performance at scale",
       "kind": "subject",
-      "count": 4
+      "count": 7
     },
     {
       "id": "data-quality",
       "label": "Data quality & validation",
       "kind": "subject",
-      "count": 6
+      "count": 11
     },
     {
       "id": "software-testing",
       "label": "Testing code and pipelines",
       "kind": "subject",
-      "count": 2
+      "count": 4
     },
     {
       "id": "pandas",
       "label": "pandas",
       "kind": "subject",
-      "count": 2
+      "count": 3
     },
     {
       "id": "batch-vs-realtime",
       "label": "Batch vs real-time",
       "kind": "subject",
-      "count": 4
+      "count": 6
     },
     {
       "id": "latency-and-cost",
       "label": "Latency & serving cost",
       "kind": "subject",
-      "count": 3
+      "count": 6
     },
     {
       "id": "training-serving-skew",
       "label": "Training-serving skew",
       "kind": "subject",
-      "count": 2
+      "count": 3
     },
     {
       "id": "versioning-reproducibility",
       "label": "Versioning & reproducibility",
       "kind": "subject",
-      "count": 2
+      "count": 4
     },
     {
       "id": "model-deployment",
@@ -226,31 +226,31 @@
       "id": "governance-and-process",
       "label": "ML governance & process",
       "kind": "subject",
-      "count": 2
+      "count": 5
     },
     {
       "id": "alerting",
       "label": "Alerting",
       "kind": "subject",
-      "count": 3
+      "count": 5
     },
     {
       "id": "fraud-detection",
       "label": "Fraud detection",
       "kind": "subject",
-      "count": 2
+      "count": 3
     },
     {
       "id": "rag",
       "label": "RAG",
       "kind": "subject",
-      "count": 3
+      "count": 6
     },
     {
       "id": "llm-evaluation",
       "label": "LLM evaluation",
       "kind": "subject",
-      "count": 3
+      "count": 5
     },
     {
       "id": "prompting-vs-fine-tuning",
@@ -262,11 +262,77 @@
       "id": "ai-agents",
       "label": "AI agents",
       "kind": "subject",
-      "count": 1
+      "count": 2
     },
     {
       "id": "security-and-permissions",
       "label": "Security & permissions",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "embeddings-and-search",
+      "label": "Embeddings & semantic search",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "llm-output-control",
+      "label": "Controlling LLM output",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "llm-fundamentals",
+      "label": "LLM fundamentals",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "calibration",
+      "label": "Probability calibration",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "causal-inference",
+      "label": "Causal inference",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "feedback-loops",
+      "label": "Feedback loops & selection bias",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "python-fundamentals",
+      "label": "Python fundamentals",
+      "kind": "subject",
+      "count": 7
+    },
+    {
+      "id": "sql-fundamentals",
+      "label": "SQL fundamentals",
+      "kind": "subject",
+      "count": 6
+    },
+    {
+      "id": "summary-statistics",
+      "label": "Summary statistics",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "sampling-distributions",
+      "label": "Sampling & the CLT",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "bayesian-inference",
+      "label": "Bayesian thinking",
       "kind": "subject",
       "count": 2
     },
@@ -274,37 +340,37 @@
       "id": "debugging",
       "label": "Debugging",
       "kind": "skill",
-      "count": 6
+      "count": 14
     },
     {
       "id": "tradeoffs",
       "label": "Weighing tradeoffs",
       "kind": "skill",
-      "count": 10
+      "count": 20
     },
     {
       "id": "stakeholder-communication",
       "label": "Talking to stakeholders",
       "kind": "skill",
-      "count": 8
+      "count": 13
     },
     {
       "id": "edge-cases",
       "label": "Edge cases",
       "kind": "skill",
-      "count": 7
+      "count": 15
     },
     {
       "id": "designing-systems",
       "label": "Designing systems",
       "kind": "skill",
-      "count": 10
+      "count": 18
     },
     {
       "id": "explaining-concepts",
       "label": "Explaining a concept",
       "kind": "skill",
-      "count": 6
+      "count": 12
     }
   ]
 }

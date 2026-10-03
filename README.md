@@ -1,6 +1,8 @@
-# DS Interview Prep
+# Gradient Ascent
 
-A curated, structured interview prep tool for junior/mid-level data science candidates.
+Data science interview prep that pushes back. A curated, structured study tool: answer a question, take the follow-ups an interviewer would throw, compare with a junior and a senior answer, and let spaced repetition bring back what you got wrong.
+
+*(Formerly "DS Interview Prep". The repository and the saved-data format still use the old name so existing progress keeps working.)*
 
 ## The Problem
 

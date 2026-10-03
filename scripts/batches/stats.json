@@ -1,0 +1,342 @@
+{
+  "new_tags": {
+    "sampling-distributions": {
+      "label": "Sampling & the CLT",
+      "kind": "subject"
+    },
+    "causal-inference": {
+      "label": "Causal inference",
+      "kind": "subject"
+    },
+    "bayesian-inference": {
+      "label": "Bayesian thinking",
+      "kind": "subject"
+    },
+    "summary-statistics": {
+      "label": "Summary statistics",
+      "kind": "subject"
+    }
+  },
+  "new_terms": {
+    "median": {
+      "label": "Median",
+      "definition": "The middle value when observations are sorted: half the values fall below it and half above.",
+      "tag": "summary-statistics"
+    },
+    "central-limit-theorem": {
+      "label": "Central limit theorem",
+      "definition": "A theorem in probability about the averages of samples.",
+      "tag": "sampling-distributions"
+    },
+    "mean": {
+      "label": "Mean",
+      "definition": "The arithmetic average: the sum of values divided by how many there are.",
+      "tag": "summary-statistics"
+    },
+    "frequentist": {
+      "label": "Frequentist",
+      "definition": "An approach to inference in which probability describes long-run frequencies across repeated experiments.",
+      "tag": "hypothesis-testing"
+    },
+    "causation": {
+      "label": "Causation",
+      "definition": "A relationship in which changing one variable produces a change in another, rather than the two merely moving together.",
+      "tag": "causal-inference"
+    },
+    "control-group": {
+      "label": "Control group",
+      "definition": "The subjects who do not receive the treatment, used as the comparison for those who do.",
+      "tag": "ab-testing"
+    },
+    "standard-error": {
+      "label": "Standard error",
+      "definition": "A measure of how much a statistic, such as a sample mean, would vary across repeated samples.",
+      "tag": "sampling-distributions"
+    }
+  },
+  "questions": [
+    {
+      "id": "stats-008",
+      "question": "A coin lands heads 7 times out of 10. Is it biased?",
+      "topic": "Statistics",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, statistics fundamentals",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What would change if it were 70 out of 100?",
+          "intent": "test how sample size affects evidence"
+        },
+        {
+          "text": "What is the p-value here, and what does it mean?",
+          "intent": "test correct interpretation of p-values"
+        },
+        {
+          "text": "What if you had decided in advance to test only for too many heads?",
+          "intent": "test one-sided versus two-sided tests"
+        }
+      ],
+      "key_insight": "Seven out of ten is weak evidence. The same proportion in a larger sample would be strong, so evidence depends on sample size, not just the observed rate.",
+      "junior_answer": "7 out of 10 is more than 50%, so it's probably biased.",
+      "senior_answer": "Under a fair coin, 7 or more heads in 10 flips has probability about 17%, and the two-sided p-value (7 or more, or 3 or fewer) is about 0.34, so there is no evidence of bias. With 70 heads out of 100 the p-value is far below 0.001, which is strong evidence. The p-value is the probability of data this extreme if the coin is fair, not the probability that the coin is fair. I'd also report a confidence interval for the heads rate, which for 10 flips spans roughly 35% to 93%, to show how little 10 flips tell us. One-sided versus two-sided should be chosen before seeing the data.",
+      "tags": [
+        "hypothesis-testing",
+        "sampling-distributions",
+        "confidence-intervals"
+      ],
+      "terms": [
+        "p-value",
+        "sample-size"
+      ]
+    },
+    {
+      "id": "stats-009",
+      "question": "Explain the central limit theorem to a product manager. Why does it matter for A/B tests?",
+      "topic": "Statistics",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Stakeholder-facing DS interview",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "When does the central limit theorem not help much?",
+          "intent": "test limits: heavy tails, small samples, strong skew"
+        },
+        {
+          "text": "How large does n need to be?",
+          "intent": "test avoiding a rule-of-30 answer"
+        },
+        {
+          "text": "What is the standard error, and how does it relate?",
+          "intent": "test linking the theorem to standard error"
+        }
+      ],
+      "key_insight": "The theorem says averages behave predictably even when individual data does not, which is what makes ordinary test statistics usable on messy metrics.",
+      "junior_answer": "With enough samples, the data becomes normally distributed.",
+      "senior_answer": "I'd say: individual users' spending is messy and skewed, but if you repeatedly take samples and average them, those averages form a bell shape centered on the true mean, with a spread that shrinks as samples grow. That is why we can put a margin of error on an average and compare two groups with a standard test. The common misconception is that the data itself becomes normal; it is the distribution of the average. How large n must be depends on the skew: 30 is a rough rule for mild skew, but a metric dominated by rare big spenders may need thousands. With a heavy-tailed metric I'd check with a bootstrap.",
+      "tags": [
+        "sampling-distributions",
+        "explaining-concepts",
+        "ab-testing"
+      ],
+      "terms": [
+        "central-limit-theorem",
+        "standard-error"
+      ]
+    },
+    {
+      "id": "stats-010",
+      "question": "Revenue per user is heavily right-skewed. Do you report the mean or the median, and does it change how you test?",
+      "topic": "Statistics",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Experimentation DS interview",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "A few big spenders account for 40% of revenue. Which metric answers the business question?",
+          "intent": "test linking the metric to the decision"
+        },
+        {
+          "text": "Would you still use a t-test?",
+          "intent": "test choosing a test under skew: bootstrap, Mann-Whitney, log transform"
+        },
+        {
+          "text": "What is Mann-Whitney actually comparing?",
+          "intent": "test knowing it is not strictly a median test"
+        }
+      ],
+      "key_insight": "The mean answers 'how much money in total' and the median answers 'what does a typical user do'. Pick the one that matches the decision, then choose a test that compares that quantity.",
+      "junior_answer": "Use the median because the data is skewed.",
+      "senior_answer": "It depends on the decision. If we care about total revenue, the mean is the right quantity even though it is noisy, since totals are mean times users. If we care about a typical user's experience, the median or a trimmed mean is better. For testing the mean, the central limit theorem usually still rescues a t-test at large n, but with heavy tails I'd confirm with a bootstrap interval or reduce variance with CUPED or winsorizing, stating what that does to the quantity being estimated. Mann-Whitney tests whether one group tends to produce larger values, not specifically whether medians differ. I'd report both mean and median with intervals.",
+      "tags": [
+        "summary-statistics",
+        "ab-testing",
+        "missing-data-and-outliers"
+      ],
+      "terms": [
+        "mean",
+        "median",
+        "outliers"
+      ]
+    },
+    {
+      "id": "stats-011",
+      "question": "A PM asks: 'What's the probability that variant B is better than A?' Your frequentist test gives p = 0.03. Can you answer them?",
+      "topic": "Statistics",
+      "difficulty": "medium",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, stakeholder communication",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What does the p-value tell you, in plain words?",
+          "intent": "test correct interpretation"
+        },
+        {
+          "text": "How would you actually compute the probability the PM wants?",
+          "intent": "test Bayesian posterior and priors"
+        },
+        {
+          "text": "What is the weakness of that answer?",
+          "intent": "test prior sensitivity"
+        }
+      ],
+      "key_insight": "A p-value is the chance of data like this if there were no difference, not the chance that B is better. The PM's question needs a posterior.",
+      "junior_answer": "p = 0.03 means there is a 97% chance that B is better.",
+      "senior_answer": "No. p = 0.03 means that if A and B truly performed the same, data this extreme would show up about 3% of the time. It is not the probability that B is better. To answer the PM's actual question I'd fit a Bayesian model: put priors on each conversion rate (often weakly informative Beta priors), update with the data, and report P(B > A) from the posterior along with the expected lift and the expected loss if we choose wrong. The answer depends on the prior, which should be stated and tested for sensitivity. With lots of data and weak priors the two approaches usually agree closely. I'd frame it for the PM in terms of decision risk.",
+      "tags": [
+        "bayesian-inference",
+        "hypothesis-testing",
+        "stakeholder-communication"
+      ],
+      "terms": [
+        "p-value",
+        "frequentist"
+      ]
+    },
+    {
+      "id": "stats-012",
+      "question": "You check an A/B test dashboard every day and stop as soon as p < 0.05. What's wrong with that?",
+      "topic": "Statistics",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Experimentation DS interview",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "Roughly how much does the false-positive rate inflate?",
+          "intent": "test intuition about repeated looks"
+        },
+        {
+          "text": "How would you design the test so early stopping is allowed?",
+          "intent": "test sequential methods and alpha spending"
+        },
+        {
+          "text": "What if you have to decide on interim data anyway?",
+          "intent": "test practical governance"
+        }
+      ],
+      "key_insight": "Every extra look is another chance for noise to cross the threshold, so a 5% test checked daily rejects far more than 5% of true nulls.",
+      "junior_answer": "You should wait until the test is over.",
+      "senior_answer": "A fixed-horizon p-value is only valid if you look once, at the pre-planned sample size. Stopping when it first dips below 0.05 exploits random fluctuation: with daily looks over a few weeks, the real false-positive rate can reach 20 to 30%. Options: pre-commit to a sample size and read results once; or use a sequential design such as group-sequential or alpha-spending boundaries, always-valid p-values, or a Bayesian stopping rule with calibrated thresholds. If stakeholders need early reads, I'd allow monitoring for harm on guardrail metrics but not for declaring wins. Novelty effects and day-of-week cycles are another reason to run full weeks.",
+      "tags": [
+        "ab-testing",
+        "hypothesis-testing",
+        "multiple-testing",
+        "bayesian-inference"
+      ],
+      "terms": [
+        "p-value",
+        "type-i-error"
+      ]
+    },
+    {
+      "id": "stats-013",
+      "question": "Marketing says customers who got a discount retained 20% better, so discounts work. You can't run an experiment. How do you estimate whether the discount caused it?",
+      "topic": "Statistics",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, causal reasoning",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "Why might discounted customers have retained better anyway?",
+          "intent": "test selection bias reasoning"
+        },
+        {
+          "text": "What observational methods would you consider?",
+          "intent": "test matching, regression adjustment, difference-in-differences, instruments"
+        },
+        {
+          "text": "What would make you say the estimate is still not credible?",
+          "intent": "test sensitivity analysis and humility"
+        }
+      ],
+      "key_insight": "Customers who got discounts were not chosen at random, so the raw comparison mixes the discount's effect with who was selected.",
+      "junior_answer": "Control for other variables like age and spend in a regression.",
+      "senior_answer": "First I'd learn how discounts were assigned: if marketing targeted engaged customers, or at-risk customers, the groups differ before treatment. I'd map the likely causal structure, then compare like with like: propensity-score matching or weighting, or regression adjustment on pre-treatment covariates only. If there is a rollout date, a region or an eligibility cutoff, difference-in-differences or regression discontinuity gives a stronger estimate. I'd check covariate balance and run a sensitivity analysis for unmeasured factors. Adjustment only handles what we measured, so I'd say so and recommend a small holdout experiment going forward.",
+      "tags": [
+        "causal-inference",
+        "segment-analysis",
+        "tradeoffs"
+      ],
+      "terms": [
+        "causation",
+        "control-group",
+        "retention"
+      ]
+    },
+    {
+      "id": "stats-014",
+      "question": "Your A/B test has 100,000 users per arm and a 2% click rate. How do you compute a confidence interval for the difference in click rates?",
+      "topic": "Statistics",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Experimentation DS interview",
+      "kind": "implementation",
+      "follow_ups": [
+        {
+          "text": "What are the assumptions behind that formula?",
+          "intent": "test independence and the normal approximation"
+        },
+        {
+          "text": "What if randomization was by user but you count clicks per session?",
+          "intent": "test the unit of analysis"
+        },
+        {
+          "text": "How would you check the result without a formula?",
+          "intent": "test bootstrap or simulation"
+        }
+      ],
+      "key_insight": "The unit you randomize on must be the unit you analyze. Otherwise the standard error is too small.",
+      "junior_answer": "Compare 2% to the other arm's rate and see which is larger.",
+      "senior_answer": "With p1 and p2 as the arm rates, the standard error of the difference is sqrt(p1(1-p1)/n1 + p2(1-p2)/n2), and the 95% interval is the difference plus or minus 1.96 times that. For about 2% and 100,000 users per arm the standard error is roughly 0.063 percentage points, so differences under about 0.12 points are inside the noise. The formula assumes independent users and a large enough n for the normal approximation, both fine here. A common error is analyzing clicks or sessions while randomizing users, which understates variance; I'd analyze per user or use cluster-robust errors. A bootstrap is a good cross-check.",
+      "tags": [
+        "confidence-intervals",
+        "sampling-distributions",
+        "ab-testing"
+      ],
+      "terms": [
+        "standard-error",
+        "confidence-interval"
+      ]
+    },
+    {
+      "id": "stats-015",
+      "question": "Users in your experiment interact with each other, as in a marketplace or a social feature. Does a standard A/B test still work?",
+      "topic": "Statistics",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview at a marketplace or social company",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What would the bias look like in a two-sided marketplace?",
+          "intent": "test reasoning about spillover direction"
+        },
+        {
+          "text": "What design alternatives exist?",
+          "intent": "test cluster, switchback and geo experiments"
+        },
+        {
+          "text": "How would you know the effect is leaking between groups?",
+          "intent": "test diagnostics"
+        }
+      ],
+      "key_insight": "A standard test assumes one user's outcome does not depend on others' assignments. When users interact, control is contaminated and the measured lift is biased.",
+      "junior_answer": "Yes, just randomize users into two groups.",
+      "senior_answer": "It can mislead. A/B tests assume one user's outcome doesn't depend on anyone else's assignment. In a marketplace, treated buyers who grab limited inventory take it from control buyers, so the measured lift overstates what launching to everyone would deliver. In social products, treated users influence their control friends, which shrinks the measured effect. Better designs randomize at the level where the interaction happens: clusters of connected users, geographies or time-based switchbacks, accepting lower power. I'd compare cluster-level and user-level estimates as a diagnostic and consider modelling the equilibrium effect.",
+      "tags": [
+        "ab-testing",
+        "causal-inference",
+        "edge-cases"
+      ],
+      "terms": [
+        "control-group",
+        "ab-test"
+      ]
+    }
+  ]
+}

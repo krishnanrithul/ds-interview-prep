@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
-import { BookOpen, LayoutDashboard, GraduationCap, Timer, Library as LibraryIcon, Settings as SettingsIcon } from 'lucide-react'
+import { LayoutDashboard, GraduationCap, Timer, BarChart3, Library as LibraryIcon, Settings as SettingsIcon } from 'lucide-react'
 import { QUESTIONS } from './data/questions'
 import { useProgress } from './hooks/useProgress'
 import { useSettings } from './hooks/useSettings'
@@ -12,6 +12,8 @@ import Dashboard from './components/Dashboard'
 import Practice from './components/Practice'
 import Mock from './components/Mock'
 import Library from './components/Library'
+import Insights from './components/Insights'
+import Logo from './components/Logo'
 import Settings from './components/Settings'
 import './index.css'
 
@@ -19,6 +21,7 @@ const TABS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'practice', label: 'Practice', icon: GraduationCap },
   { id: 'mock', label: 'Mock', icon: Timer },
+  { id: 'insights', label: 'Insights', icon: BarChart3 },
   { id: 'library', label: 'Library', icon: LibraryIcon },
   { id: 'settings', label: 'Settings', icon: SettingsIcon },
 ]
@@ -67,10 +70,8 @@ export default function App() {
       <header className="sticky top-0 z-20 bg-card/90 backdrop-blur border-b border-border">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center gap-4">
           <div className="flex items-center gap-2.5 mr-2">
-            <div className="w-9 h-9 rounded-xl bg-ink flex items-center justify-center">
-              <BookOpen className="w-5 h-5 text-marker" />
-            </div>
-            <span className="font-serif font-semibold text-lg hidden md:block">DS Interview Prep</span>
+            <Logo />
+            <span className="font-serif font-semibold text-lg hidden md:block">Gradient Ascent</span>
           </div>
 
           <nav className="flex gap-1 flex-1 h-full">
@@ -118,6 +119,7 @@ export default function App() {
           <Mock progress={progress} byId={byId} active={view === 'mock'} onSave={saveMock} />
         </div>
 
+        {view === 'insights' && <Insights progress={progress} onStart={start} onTag={openTag} />}
         {view === 'library' && <Library progress={progress} notes={notes} onPractice={(id) => start({ only: [id] })} tags={libraryTags} setTags={setLibraryTags} onPracticeMany={(ids) => start({ only: ids })} />}
         {view === 'settings' && <Settings settings={settings} update={update} flash={flash} />}
       </main>

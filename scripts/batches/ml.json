@@ -1,0 +1,337 @@
+{
+  "new_tags": {
+    "calibration": {
+      "label": "Probability calibration",
+      "kind": "subject"
+    }
+  },
+  "new_terms": {
+    "precision-recall": {
+      "label": "Precision and recall",
+      "definition": "Precision is the share of predicted positives that are correct. Recall is the share of actual positives that were found.",
+      "tag": "evaluation-metrics"
+    },
+    "validation-set": {
+      "label": "Validation set",
+      "definition": "Data held out from training and used to evaluate a model while it is being developed.",
+      "tag": "validation-strategy"
+    },
+    "random-forest": {
+      "label": "Random forest",
+      "definition": "An ensemble of decision trees, each trained on a random sample of the data, whose predictions are combined.",
+      "tag": "model-selection"
+    },
+    "predicted-probability": {
+      "label": "Predicted probability",
+      "definition": "The number between 0 and 1 that a classifier outputs for how likely a case is to be positive.",
+      "tag": "calibration"
+    },
+    "high-cardinality": {
+      "label": "High cardinality",
+      "definition": "Describes a feature with a very large number of distinct values.",
+      "tag": "feature-engineering"
+    },
+    "multicollinearity": {
+      "label": "Multicollinearity",
+      "definition": "When two or more input features are strongly correlated with each other.",
+      "tag": "feature-engineering"
+    },
+    "decision-threshold": {
+      "label": "Decision threshold",
+      "definition": "The score above which a model's output is treated as a positive prediction.",
+      "tag": "cost-sensitive-decisions"
+    },
+    "residual": {
+      "label": "Residual",
+      "definition": "The difference between an observed value and the model's prediction for it.",
+      "tag": "model-selection"
+    },
+    "r-squared": {
+      "label": "R-squared",
+      "definition": "The share of variance in the outcome that a regression model explains.",
+      "tag": "model-selection"
+    }
+  },
+  "questions": [
+    {
+      "id": "ml-011",
+      "question": "Your model has 99% training accuracy and 71% validation accuracy. What's going on, and what do you try?",
+      "topic": "ML",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, ML fundamentals",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "How would you tell whether more data would help?",
+          "intent": "test learning curves"
+        },
+        {
+          "text": "Which levers reduce the gap, and which do you try first?",
+          "intent": "test prioritizing regularization, simpler models, features and data"
+        },
+        {
+          "text": "Could the validation set itself be the problem?",
+          "intent": "test suspicion of the split"
+        }
+      ],
+      "key_insight": "A large train-validation gap points to high variance, but check that the split is trustworthy before reaching for a fix.",
+      "junior_answer": "It's overfitting, so add regularization or dropout.",
+      "senior_answer": "That gap suggests the model has memorized training patterns that don't generalize, meaning high variance. Before changing the model I'd confirm the split is valid: no duplicates across sets, similar distributions, no leakage. Then I'd plot learning curves: if validation error keeps falling with more data, collecting more helps; if it plateaus, reduce complexity. I'd try, roughly in this order: a simpler model or stronger regularization, early stopping, feature pruning, more or augmented data, and cross-validation for a steadier estimate. Each change is judged on the validation gap and the validation score together.",
+      "tags": [
+        "bias-variance",
+        "validation-strategy",
+        "debugging"
+      ],
+      "terms": [
+        "accuracy",
+        "validation-set"
+      ]
+    },
+    {
+      "id": "ml-012",
+      "question": "Explain the difference between bagging and boosting. Why does a random forest tolerate deep trees while boosting usually uses shallow ones?",
+      "topic": "ML",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, ML fundamentals",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "Which of the two is more sensitive to noisy labels?",
+          "intent": "test boosting chasing noise"
+        },
+        {
+          "text": "When would you choose a random forest over XGBoost?",
+          "intent": "test practical model selection"
+        },
+        {
+          "text": "What does the learning rate do in boosting?",
+          "intent": "test shrinkage and its trade-off with the number of rounds"
+        }
+      ],
+      "key_insight": "Bagging averages many independent high-variance models to cut variance. Boosting adds weak models in sequence to cut bias.",
+      "junior_answer": "Bagging trains models in parallel and boosting trains them one after another.",
+      "senior_answer": "Bagging, as in a random forest, trains many deep, high-variance trees independently on bootstrap samples and averages them. Averaging cancels much of the variance, so the individual trees can be deep. Boosting builds trees sequentially, each fitting the errors of the ensemble so far, which reduces bias, so each tree can be shallow and weak; the learning rate scales how much each one contributes. Boosting usually reaches higher accuracy on tabular data but is more sensitive to noisy labels and needs more tuning. A random forest is a robust, low-tuning baseline that is hard to overfit badly. I'd start with a forest and move to XGBoost when accuracy matters.",
+      "tags": [
+        "gradient-boosting",
+        "model-selection",
+        "explaining-concepts"
+      ],
+      "terms": [
+        "random-forest",
+        "gradient-boosting"
+      ]
+    },
+    {
+      "id": "ml-013",
+      "question": "Your classifier has 0.92 AUC, but cases it scores at 0.8 are positive only 50% of the time. Does that matter?",
+      "topic": "ML",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "When does ranking quality alone suffice, and when does the probability itself matter?",
+          "intent": "test linking the metric to the decision"
+        },
+        {
+          "text": "How would you detect and fix this?",
+          "intent": "test reliability plots, Platt scaling and isotonic regression"
+        },
+        {
+          "text": "Which model types tend to have this problem?",
+          "intent": "test knowledge across model families"
+        }
+      ],
+      "key_insight": "AUC measures ranking. If anyone multiplies the score by a cost or reports it as a probability, whether it is trustworthy decides the outcome.",
+      "junior_answer": "AUC is high, so the model is good.",
+      "senior_answer": "It depends on how the score is used. If we only rank cases and take the top K, AUC is what matters. If we use the output as a probability, for expected loss, pricing or cost-based thresholds, a score of 0.8 that really means 50% leads to wrong decisions. I'd check with a reliability diagram and the Brier score, then recalibrate on a held-out set with Platt scaling or isotonic regression, which leaves AUC roughly unchanged. Boosted trees and naive Bayes often need it; logistic regression is usually better behaved. Calibration also drifts when class balance shifts, so I'd monitor it.",
+      "tags": [
+        "calibration",
+        "evaluation-metrics",
+        "tradeoffs"
+      ],
+      "terms": [
+        "auc",
+        "predicted-probability"
+      ]
+    },
+    {
+      "id": "ml-014",
+      "question": "A feature has 50,000 distinct values, such as merchant ID or zip code. How do you use it in a model?",
+      "topic": "ML",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What goes wrong with one-hot encoding here?",
+          "intent": "test dimensionality and sparsity"
+        },
+        {
+          "text": "How do you avoid leaking the target when you encode with target statistics?",
+          "intent": "test out-of-fold encoding"
+        },
+        {
+          "text": "What do you do with values never seen in training?",
+          "intent": "test handling unseen categories"
+        }
+      ],
+      "key_insight": "Encoding a high-cardinality feature is easy. Encoding it without leaking the target and with a plan for new values is the hard part.",
+      "junior_answer": "One-hot encode it.",
+      "senior_answer": "One-hot would create 50,000 sparse columns, slow training and overfit rare values. Options: frequency or count encoding; target encoding computed out of fold with smoothing toward the global mean so rare categories can't memorize the label; learned embeddings for neural models; hashing; or grouping rare values into 'other' and using a coarser hierarchy such as region instead of zip. CatBoost and LightGBM handle categories natively. I'd always plan for unseen values at serving with a default bucket, and validate with a time-based split to check that the encoding isn't leaking.",
+      "tags": [
+        "feature-engineering",
+        "data-leakage",
+        "edge-cases"
+      ],
+      "terms": [
+        "high-cardinality"
+      ]
+    },
+    {
+      "id": "ml-015",
+      "question": "Two of your features are 0.95 correlated. Does that matter for a linear model? For XGBoost? For explaining the model?",
+      "topic": "ML",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What happens to the coefficients of a linear model?",
+          "intent": "test coefficient instability and variance inflation"
+        },
+        {
+          "text": "What happens to SHAP values or feature importance?",
+          "intent": "test importance being split between correlated features"
+        },
+        {
+          "text": "When would you remove one of them?",
+          "intent": "test practical judgment"
+        }
+      ],
+      "key_insight": "Correlation hurts interpretation more than prediction. Predictions stay fine, but credit gets split arbitrarily between the correlated features.",
+      "junior_answer": "Remove one of them, since correlated features are bad.",
+      "senior_answer": "For prediction, mostly no: a regularized linear model and a boosted model predict about as well. In a linear model the coefficients become unstable with large standard errors, so individual signs and sizes can't be trusted even though the combined effect is fine; ridge regularization or dropping one helps. Trees use whichever feature gives the split first, so importance gets split or flips between runs. For explanation, SHAP divides credit between them, so I'd report them as a group or remove one. I drop a feature when interpretation, collection cost or stability matters, not as a reflex.",
+      "tags": [
+        "feature-engineering",
+        "explainability",
+        "model-selection"
+      ],
+      "terms": [
+        "multicollinearity",
+        "xgboost",
+        "feature-importance"
+      ]
+    },
+    {
+      "id": "ml-016",
+      "question": "You need to choose a decision threshold for a model that flags customers for a retention discount. How do you pick it?",
+      "topic": "ML",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, applied ML",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What inputs do you need beyond the model itself?",
+          "intent": "test costs and benefits: discount cost, saved-customer value, effect of the offer"
+        },
+        {
+          "text": "Why might 0.5 be a bad default?",
+          "intent": "test base rates and costs"
+        },
+        {
+          "text": "How would you revisit the threshold over time?",
+          "intent": "test monitoring and base-rate shifts"
+        }
+      ],
+      "key_insight": "The best threshold comes from business costs and benefits, not from the model's metrics alone.",
+      "junior_answer": "Pick the threshold that maximizes F1.",
+      "senior_answer": "I'd turn it into expected value: flagging a customer costs the discount, and pays off only if the customer would have churned and the discount saves them. So I need the cost of the offer, the value of a saved customer and the discount's actual effect on churn, ideally from an experiment, since a high churn probability doesn't mean a customer is persuadable. Then I sweep thresholds on held-out data using calibrated probabilities, choose the one that maximizes expected profit, and check capacity limits such as how many offers the team can send. 0.5 is arbitrary and F1 treats the two errors as equally costly. I'd re-tune when base rates or costs shift.",
+      "tags": [
+        "cost-sensitive-decisions",
+        "evaluation-metrics",
+        "calibration"
+      ],
+      "terms": [
+        "decision-threshold",
+        "precision-recall"
+      ]
+    },
+    {
+      "id": "ml-017",
+      "question": "Your regression model has a high R-squared, but the residuals fan out as predictions get larger. What does that mean, and what do you do?",
+      "topic": "ML",
+      "difficulty": "hard",
+      "frequency": "common in DS interviews",
+      "context": "Senior DS interview, regression focus",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What does it do to your confidence intervals?",
+          "intent": "test heteroscedasticity and inference"
+        },
+        {
+          "text": "What transformations or models would you try?",
+          "intent": "test log transform, weighted least squares, robust errors"
+        },
+        {
+          "text": "Does it matter if you only care about point predictions?",
+          "intent": "test linking diagnostics to purpose"
+        }
+      ],
+      "key_insight": "A high R-squared doesn't mean the model's assumptions hold. Fanning residuals mean error grows with the level, which breaks uncertainty estimates and signals missing structure.",
+      "junior_answer": "The model is overfitting.",
+      "senior_answer": "Fanning residuals mean the error variance rises with the predicted value, known as heteroscedasticity. Point predictions can stay unbiased, but standard errors and confidence and prediction intervals are wrong, and large values may be fit worse in relative terms. I'd plot residuals against fitted values and against each feature, then try modelling the log of the target (common for money), weighted least squares, robust standard errors, or a model that predicts spread too, such as quantile regression. If only point accuracy matters it may be tolerable, but I'd check that the metric reflects relative error and not just absolute error.",
+      "tags": [
+        "model-selection",
+        "debugging",
+        "confidence-intervals"
+      ],
+      "terms": [
+        "residual",
+        "r-squared"
+      ]
+    },
+    {
+      "id": "ml-018",
+      "question": "You have 200 labeled examples per class and cross-validation shows 98% accuracy. Do you trust it?",
+      "topic": "ML",
+      "difficulty": "hard",
+      "frequency": "common in DS interviews",
+      "context": "Senior DS interview, small-data problem",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What can go wrong with cross-validation on a small dataset?",
+          "intent": "test the variance of the estimate and tuning on the same folds"
+        },
+        {
+          "text": "How would you get a more honest estimate?",
+          "intent": "test nested CV, repeated CV and a final holdout"
+        },
+        {
+          "text": "What would you check about the data itself?",
+          "intent": "test duplicates, leakage and group structure"
+        }
+      ],
+      "key_insight": "A high score on a small dataset is more often a sign of leakage, duplicates or tuning on the evaluation folds than of a great model.",
+      "junior_answer": "98% is great, so deploy it.",
+      "senior_answer": "Not yet. With 400 examples a single cross-validation estimate is very uncertain, so I'd report an interval and use repeated or stratified CV. Scores that high on small data usually point to a problem: duplicate or near-duplicate rows across folds, grouped data (the same patient or customer) split across folds, a feature that encodes the label, or hyperparameters tuned on the same folds. I'd use grouped splits, nested CV for tuning and a final untouched holdout. I'd also compare with a trivial baseline, read the confusion matrix, and ask whether real-world data resembles this sample.",
+      "tags": [
+        "validation-strategy",
+        "data-leakage",
+        "edge-cases"
+      ],
+      "terms": [
+        "cross-validation",
+        "sample-size"
+      ]
+    }
+  ]
+}

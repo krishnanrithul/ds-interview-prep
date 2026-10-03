@@ -8,6 +8,7 @@ import Attempts from './Attempts'
 import DraftBadge from './DraftBadge'
 import TagChips, { TagChip } from './TagChips'
 import { TAGS, tagLabel } from '../lib/tags'
+import { LEVELS, KINDS, levelLabel, kindLabel } from '../lib/levels'
 
 const STATUS = ['all', 'unseen', 'due', 'missed', 'shaky', 'solid']
 
@@ -28,6 +29,8 @@ export default function Library({ progress, notes, onPractice, tags, setTags, on
   const [query, setQuery] = useState('')
   const [topic, setTopic] = useState('all')
   const [status, setStatus] = useState('all')
+  const [level, setLevel] = useState('all')
+  const [kind, setKind] = useState('all')
   const [open, setOpen] = useState(null)
   const [tagPanel, setTagPanel] = useState(false)
   const toggleTag = (id) => setTags(tags.includes(id) ? tags.filter((t) => t !== id) : [...tags, id])
@@ -41,6 +44,8 @@ export default function Library({ progress, notes, onPractice, tags, setTags, on
     return (
       (!query || q.question.toLowerCase().includes(query.toLowerCase())) &&
       (topic === 'all' || q.topic === topic) &&
+      (level === 'all' || q.difficulty === level) &&
+      (kind === 'all' || q.kind === kind) &&
       tags.every((t) => q.tags?.includes(t)) &&
       statusOk
     )
@@ -67,7 +72,15 @@ export default function Library({ progress, notes, onPractice, tags, setTags, on
         <Chip active={topic === 'all'} onClick={() => setTopic('all')}>All topics</Chip>
         {topics.map((t) => <Chip key={t} active={topic === t} onClick={() => setTopic(t)}>{t}</Chip>)}
       </div>
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 [scrollbar-width:none]">
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 [scrollbar-width:none]" role="group" aria-label="Level">
+        <Chip active={level === 'all'} onClick={() => setLevel('all')}>All levels</Chip>
+        {LEVELS.map((l) => <Chip key={l.id} active={level === l.id} onClick={() => setLevel(l.id)}>{l.label}</Chip>)}
+      </div>
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 [scrollbar-width:none]" role="group" aria-label="Question type">
+        <Chip active={kind === 'all'} onClick={() => setKind('all')}>All types</Chip>
+        {KINDS.map((k) => <Chip key={k.id} active={kind === k.id} onClick={() => setKind(k.id)}>{k.label}</Chip>)}
+      </div>
+      <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 [scrollbar-width:none]" role="group" aria-label="Status">
         {STATUS.map((s) => <Chip key={s} active={status === s} onClick={() => setStatus(s)}>{s}</Chip>)}
       </div>
 
@@ -122,6 +135,18 @@ export default function Library({ progress, notes, onPractice, tags, setTags, on
         </div>
       )}
 
+      {tags.length === 0 && (topic !== 'all' || level !== 'all' || kind !== 'all') && list.length > 0 && (
+        <div className="anim-msg flex items-center justify-between gap-3 rounded-2xl border border-border bg-card px-4 py-3">
+          <p className="text-sm font-medium">
+            {list.length} {list.length === 1 ? 'question' : 'questions'}
+            {[topic !== 'all' && topic, level !== 'all' && levelLabel(level), kind !== 'all' && kindLabel(kind)].filter(Boolean).map((x) => ` · ${x}`).join('')}
+          </p>
+          <button onClick={() => onPracticeMany(list.map((q) => q.id))} className="inline-flex items-center gap-2 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-xl hover:opacity-90 shrink-0">
+            <Play className="w-3.5 h-3.5 fill-current" /> Practice these
+          </button>
+        </div>
+      )}
+
       {list.length === 0 && <p className="text-center text-muted-foreground py-16">No questions match these filters.</p>}
 
       <div className="space-y-2.5">
@@ -137,7 +162,8 @@ export default function Library({ progress, notes, onPractice, tags, setTags, on
                     <span className="flex items-center gap-1.5 font-semibold text-foreground/80">
                       <span className={`w-2 h-2 rounded-full ${dot(q.topic)}`} />{q.topic}
                     </span>
-                    <span className={`px-2 py-0.5 rounded-md ring-1 capitalize font-medium ${DIFFICULTY[q.difficulty] || ''}`}>{q.difficulty}</span>
+                    <span className={`px-2 py-0.5 rounded-md ring-1 capitalize font-medium ${DIFFICULTY[q.difficulty] || ''}`}>{levelLabel(q.difficulty)}</span>
+                    {q.kind && <span className="text-muted-foreground">{kindLabel(q.kind)}</span>}
                     <DraftBadge q={q} />
                     {r
                       ? <span className={`px-2 py-0.5 rounded-md ring-1 font-medium ${RATINGS[r].badge}`}>{RATINGS[r].label}</span>

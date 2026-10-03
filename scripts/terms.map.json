@@ -1,129 +1,999 @@
 {
   "terms": {
-    "ab-test": {"label": "A/B test", "tag": "ab-testing", "definition": "A controlled experiment that randomly splits users into a control group and one or more treatment groups, then compares an outcome metric between them."},
-    "p-value": {"label": "p-value", "tag": "hypothesis-testing", "definition": "The probability of seeing a result at least as extreme as the one observed if there were truly no effect. It is not the probability that the result is a fluke."},
-    "lift": {"label": "Lift", "tag": "ab-testing", "definition": "The relative improvement of the treatment over control on a metric, for example (treatment minus control) divided by control."},
-    "statistical-significance": {"label": "Statistical significance", "tag": "hypothesis-testing", "definition": "A result is called significant when its p-value falls below a threshold chosen in advance, commonly 0.05. It says the data would be unlikely if there were no effect, not that the effect is large or important."},
-    "type-i-error": {"label": "Type I error", "tag": "hypothesis-testing", "definition": "A false positive: concluding there is an effect when there isn't one. The significance level sets how often you accept this."},
-    "type-ii-error": {"label": "Type II error", "tag": "statistical-power", "definition": "A false negative: missing an effect that is really there. Its rate is one minus the test's power."},
-    "sample-size": {"label": "Sample size", "tag": "statistical-power", "definition": "How many observations an experiment needs to reliably detect an effect of a chosen size. It depends on the baseline rate, the variance, and the error rates you accept."},
-    "default-rate": {"label": "Default rate", "definition": "The share of borrowers who fail to repay a loan within a defined period."},
-    "confidence-interval": {"label": "Confidence interval", "tag": "confidence-intervals", "definition": "A range computed with a procedure that, over many repeated studies, would contain the true value a stated share of the time, for example 95%."},
-    "bootstrapping": {"label": "Bootstrapping", "tag": "resampling", "definition": "Estimating uncertainty by repeatedly resampling your own data with replacement and recomputing a statistic each time."},
-    "simpsons-paradox": {"label": "Simpson's paradox", "tag": "segment-analysis", "definition": "A pattern where a trend that appears in several subgroups reverses or disappears when the groups are combined."},
-    "customer-segmentation": {"label": "Customer segment", "tag": "segment-analysis", "definition": "A group of customers treated as similar for analysis, for example by size, region or behavior."},
-    "xgboost": {"label": "XGBoost", "tag": "gradient-boosting", "definition": "A popular gradient-boosting library that builds many small decision trees in sequence, each one correcting the errors of the ones before it."},
-    "gradient-boosting": {"label": "Gradient boosting", "tag": "gradient-boosting", "definition": "An ensemble method that adds models one at a time, each trained to reduce the error that remains in the combined model so far."},
-    "logistic-regression": {"label": "Logistic regression", "tag": "model-selection", "definition": "A linear model for classification that outputs a probability. It is simple, fast and easy to explain."},
-    "auc": {"label": "AUC", "tag": "evaluation-metrics", "definition": "Area under the ROC curve: the chance that the model scores a random positive example above a random negative one. 0.5 is chance and 1.0 is perfect ranking."},
-    "test-set": {"label": "Test set", "tag": "validation-strategy", "definition": "Data held back from training and used only to estimate how the model will perform on new data."},
-    "production-model": {"label": "Model in production", "tag": "model-monitoring", "definition": "A model serving real predictions to real users or downstream systems, as opposed to being evaluated offline."},
-    "model-drift": {"label": "Model drift", "tag": "distribution-shift", "definition": "Decline in a deployed model's performance over time because the world, or the data it sees, has changed since it was trained."},
-    "model-degradation": {"label": "Model degradation", "tag": "model-monitoring", "definition": "A measurable drop in a deployed model's quality compared with when it launched, whatever the cause."},
-    "monitoring": {"label": "Model monitoring", "tag": "model-monitoring", "definition": "Tracking a deployed model's inputs, predictions and outcomes to catch problems early."},
-    "alerting": {"label": "Alerting", "tag": "alerting", "definition": "Automatic notifications when a monitored value crosses a threshold, so someone can act."},
-    "cash-collection-forecast": {"label": "Cash collection forecast", "tag": "time-series-forecasting", "definition": "A prediction of when, and how much of, the money owed on invoices will actually be received."},
-    "cash-flow-forecast": {"label": "Cash flow forecast", "tag": "time-series-forecasting", "definition": "A prediction of the money coming in and going out over a future period."},
-    "forecast-horizon": {"label": "Forecast horizon", "tag": "time-series-forecasting", "definition": "How far into the future a forecast looks, for example 90 days or 12 months. Accuracy generally worsens as the horizon grows."},
-    "forecasting": {"label": "Forecasting", "tag": "time-series-forecasting", "definition": "Predicting future values of a quantity from past data and known drivers."},
-    "time-series": {"label": "Time series", "tag": "time-series-forecasting", "definition": "Data recorded over time in order, where the sequence matters because observations are usually related to nearby ones."},
-    "backtesting": {"label": "Backtesting", "tag": "validation-strategy", "definition": "Evaluating a forecasting method by replaying history: at each past date, use only what was known then, predict forward, and compare with what happened."},
-    "cross-validation": {"label": "Cross-validation", "tag": "validation-strategy", "definition": "Estimating performance by training and evaluating on several different splits of the data and averaging the results."},
-    "k-fold": {"label": "k-fold", "tag": "validation-strategy", "definition": "A cross-validation scheme that splits the data into k parts and takes turns holding each one out for evaluation."},
-    "feature-engineering": {"label": "Feature engineering", "tag": "feature-engineering", "definition": "Turning raw data into inputs a model can learn from, such as ratios, counts over a time window or encoded categories."},
-    "feature-importance": {"label": "Feature importance", "tag": "explainability", "definition": "A score for how much each input feature contributes to a model's predictions. Different methods can rank the same features differently."},
-    "data-pipeline": {"label": "Data pipeline", "tag": "data-quality", "definition": "A sequence of automated steps that moves data from its sources, transforms it, and delivers it for use, such as model training."},
-    "data-validation": {"label": "Data validation", "tag": "data-quality", "definition": "Automated checks that data meets expectations (types, ranges, missing values, freshness) before it is used."},
-    "data-quality": {"label": "Data quality", "tag": "data-quality", "definition": "How well data fits its purpose: accurate, complete, consistent, timely and free of unwanted duplicates."},
-    "churn": {"label": "Churn", "tag": "retention-cohorts", "definition": "When a customer stops using or paying for a product. The churn rate is the share lost in a period."},
-    "cohort": {"label": "Cohort", "tag": "retention-cohorts", "definition": "A group of users who share a starting point, typically the period they signed up, tracked together over time."},
-    "retention": {"label": "Retention", "tag": "retention-cohorts", "definition": "The share of a group that is still active some time after they started."},
-    "window-function": {"label": "Window function", "tag": "window-functions", "definition": "A SQL function that computes a value for each row using a set of related rows (its window) without collapsing them into one row."},
-    "top-n-per-group": {"label": "Top N per group", "tag": "window-functions", "definition": "A common SQL pattern: keep only the N highest-ranked rows within each group, such as each department."},
-    "rolling-average": {"label": "Rolling average", "tag": "window-functions", "definition": "An average over a sliding window of recent values, used to smooth out day-to-day noise."},
-    "sessionization": {"label": "Sessionization", "tag": "window-functions", "definition": "Grouping a stream of user events into sessions, usually by starting a new one after a long enough gap."},
-    "anti-join": {"label": "Anti-join", "tag": "joins", "definition": "A query that returns the rows in one table that have no match in another."},
-    "pandas-merge": {"label": "pandas merge", "tag": "joins", "definition": "Combining two DataFrames on matching key columns, like a SQL join."},
-    "deduplication": {"label": "Duplicate records", "tag": "data-quality", "definition": "Multiple rows that refer to the same real-world entity. What counts as a duplicate depends on the business definition."},
-    "bias-variance-tradeoff": {"label": "Bias-variance tradeoff", "tag": "bias-variance", "definition": "The tension between a model too simple to capture the pattern (bias) and one so flexible that it fits noise in the training data (variance)."},
-    "evaluation-metric": {"label": "Evaluation metric", "tag": "evaluation-metrics", "definition": "A number that summarizes how well a model performs, such as accuracy, precision, recall or AUC. Each one rewards different behavior."},
-    "accuracy": {"label": "Accuracy", "tag": "evaluation-metrics", "definition": "The share of predictions that are correct."},
-    "fraud-detection": {"label": "Fraud detection", "tag": "fraud-detection", "definition": "Identifying transactions or accounts that are deliberately deceptive. Fraud is rare, and fraudsters adapt."},
-    "missing-data": {"label": "Missing data", "tag": "missing-data-and-outliers", "definition": "Values that are absent from a dataset. Why they are missing affects how they should be handled."},
-    "outliers": {"label": "Outliers", "tag": "missing-data-and-outliers", "definition": "Values far from the rest of the data. They can be errors or genuinely rare events."},
-    "experimentation-platform": {"label": "Experimentation platform", "tag": "ab-testing", "definition": "Shared infrastructure that assigns users to experiment variants, logs exposure and reports results, so teams can run A/B tests consistently."},
-    "batch-processing": {"label": "Batch processing", "tag": "batch-vs-realtime", "definition": "Computing over accumulated data on a schedule, such as nightly."},
-    "stream-processing": {"label": "Stream processing", "tag": "batch-vs-realtime", "definition": "Computing on events continuously as they arrive."},
-    "feature-pipeline": {"label": "Feature pipeline", "tag": "feature-engineering", "definition": "The data flow that computes the inputs a model uses, both for training and for live predictions."},
-    "real-time": {"label": "Real-time", "tag": "batch-vs-realtime", "definition": "Responding within a tight latency bound, typically milliseconds to a few seconds, as each request arrives."},
-    "recommendation-system": {"label": "Recommendation system", "definition": "A system that suggests items a user is likely to want, using their history and the behavior of similar users."},
-    "ml-intake": {"label": "ML intake process", "tag": "governance-and-process", "definition": "The way a company collects, evaluates, prioritizes and approves requests for machine learning work."},
-    "algorithmic-fairness": {"label": "Algorithmic fairness", "tag": "fairness", "definition": "Whether a model's decisions treat groups of people equitably. There are several competing definitions, and they cannot all be satisfied at once."},
-    "disparate-impact": {"label": "Disparate impact", "tag": "fairness", "definition": "When a decision process affects one group at a materially different rate than another, even without using a protected attribute directly."},
-    "model-rollout": {"label": "Model rollout", "tag": "model-deployment", "definition": "Moving a new model into live use, from limited exposure up to full traffic."},
-    "unit-testing": {"label": "Unit test", "tag": "software-testing", "definition": "An automated test of one small piece of code against an expected result."},
-    "training-serving-skew": {"label": "Training-serving skew", "tag": "training-serving-skew", "definition": "A mismatch between how features are computed or distributed during training and during live prediction."},
-    "reproducibility": {"label": "Reproducibility", "tag": "versioning-reproducibility", "definition": "Being able to rerun an analysis or model and obtain the same result."},
-    "model-serving": {"label": "Model serving", "tag": "latency-and-cost", "definition": "Running a trained model so that other systems can request predictions from it."},
-    "latency": {"label": "Latency", "tag": "latency-and-cost", "definition": "The time between a request and its response."},
-    "memory-footprint": {"label": "Memory footprint", "tag": "performance-at-scale", "definition": "How much RAM a program needs while it runs."},
-    "rag": {"label": "RAG", "tag": "rag", "definition": "Retrieval-augmented generation: look up relevant documents first, then give them to a language model to base its answer on."},
-    "llm-evaluation": {"label": "LLM evaluation", "tag": "llm-evaluation", "definition": "Measuring how good a language-model application's outputs are, often with rubrics, human labels or another model acting as judge."},
-    "prompt-engineering": {"label": "Prompt engineering", "tag": "prompting-vs-fine-tuning", "definition": "Shaping a language model's behavior by changing its instructions and examples, without changing the model itself."},
-    "fine-tuning": {"label": "Fine-tuning", "tag": "prompting-vs-fine-tuning", "definition": "Further training a pre-trained model on your own examples so that its behavior or style changes."},
-    "hallucination": {"label": "Hallucination", "tag": "rag", "definition": "When a language model states something fluent and confident that is false or unsupported."},
-    "ai-agent": {"label": "AI agent", "tag": "ai-agents", "definition": "A language-model system that decides for itself which tools to call and which steps to take toward a goal."},
-    "tool-calling": {"label": "Tool calling", "tag": "ai-agents", "definition": "A model asking for external code to run, such as a search or database query, and then using the result."}
+    "ab-test": {
+      "label": "A/B test",
+      "tag": "ab-testing",
+      "definition": "A controlled experiment that randomly splits users into a control group and one or more treatment groups, then compares an outcome metric between them."
+    },
+    "p-value": {
+      "label": "p-value",
+      "tag": "hypothesis-testing",
+      "definition": "The probability of seeing a result at least as extreme as the one observed if there were truly no effect. It is not the probability that the result is a fluke.",
+      "deeper": "false-positives"
+    },
+    "lift": {
+      "label": "Lift",
+      "tag": "ab-testing",
+      "definition": "The relative improvement of the treatment over control on a metric, for example (treatment minus control) divided by control."
+    },
+    "statistical-significance": {
+      "label": "Statistical significance",
+      "tag": "hypothesis-testing",
+      "definition": "A result is called significant when its p-value falls below a threshold chosen in advance, commonly 0.05. It says the data would be unlikely if there were no effect, not that the effect is large or important."
+    },
+    "type-i-error": {
+      "label": "Type I error",
+      "tag": "hypothesis-testing",
+      "definition": "A false positive: concluding there is an effect when there isn't one. The significance level sets how often you accept this.",
+      "deeper": "false-positives"
+    },
+    "type-ii-error": {
+      "label": "Type II error",
+      "tag": "statistical-power",
+      "definition": "A false negative: missing an effect that is really there. Its rate is one minus the test's power."
+    },
+    "sample-size": {
+      "label": "Sample size",
+      "tag": "statistical-power",
+      "definition": "How many observations an experiment needs to reliably detect an effect of a chosen size. It depends on the baseline rate, the variance, and the error rates you accept."
+    },
+    "default-rate": {
+      "label": "Default rate",
+      "definition": "The share of borrowers who fail to repay a loan within a defined period."
+    },
+    "confidence-interval": {
+      "label": "Confidence interval",
+      "tag": "confidence-intervals",
+      "definition": "A range computed with a procedure that, over many repeated studies, would contain the true value a stated share of the time, for example 95%."
+    },
+    "bootstrapping": {
+      "label": "Bootstrapping",
+      "tag": "resampling",
+      "definition": "Estimating uncertainty by repeatedly resampling your own data with replacement and recomputing a statistic each time."
+    },
+    "simpsons-paradox": {
+      "label": "Simpson's paradox",
+      "tag": "segment-analysis",
+      "definition": "A pattern where a trend that appears in several subgroups reverses or disappears when the groups are combined."
+    },
+    "customer-segmentation": {
+      "label": "Customer segment",
+      "tag": "segment-analysis",
+      "definition": "A group of customers treated as similar for analysis, for example by size, region or behavior."
+    },
+    "xgboost": {
+      "label": "XGBoost",
+      "tag": "gradient-boosting",
+      "definition": "A popular gradient-boosting library that builds many small decision trees in sequence, each one correcting the errors of the ones before it.",
+      "deeper": "boosting"
+    },
+    "gradient-boosting": {
+      "label": "Gradient boosting",
+      "tag": "gradient-boosting",
+      "definition": "An ensemble method that adds models one at a time, each trained to reduce the error that remains in the combined model so far.",
+      "deeper": "boosting"
+    },
+    "logistic-regression": {
+      "label": "Logistic regression",
+      "tag": "model-selection",
+      "definition": "A linear model for classification that outputs a probability. It is simple, fast and easy to explain."
+    },
+    "auc": {
+      "label": "AUC",
+      "tag": "evaluation-metrics",
+      "definition": "Area under the ROC curve: the chance that the model scores a random positive example above a random negative one. 0.5 is chance and 1.0 is perfect ranking."
+    },
+    "test-set": {
+      "label": "Test set",
+      "tag": "validation-strategy",
+      "definition": "Data held back from training and used only to estimate how the model will perform on new data."
+    },
+    "production-model": {
+      "label": "Model in production",
+      "tag": "model-monitoring",
+      "definition": "A model serving real predictions to real users or downstream systems, as opposed to being evaluated offline.",
+      "deeper": "drift"
+    },
+    "model-drift": {
+      "label": "Model drift",
+      "tag": "distribution-shift",
+      "definition": "Decline in a deployed model's performance over time because the world, or the data it sees, has changed since it was trained.",
+      "deeper": "drift"
+    },
+    "model-degradation": {
+      "label": "Model degradation",
+      "tag": "model-monitoring",
+      "definition": "A measurable drop in a deployed model's quality compared with when it launched, whatever the cause."
+    },
+    "monitoring": {
+      "label": "Model monitoring",
+      "tag": "model-monitoring",
+      "definition": "Tracking a deployed model's inputs, predictions and outcomes to catch problems early."
+    },
+    "alerting": {
+      "label": "Alerting",
+      "tag": "alerting",
+      "definition": "Automatic notifications when a monitored value crosses a threshold, so someone can act."
+    },
+    "cash-collection-forecast": {
+      "label": "Cash collection forecast",
+      "tag": "time-series-forecasting",
+      "definition": "A prediction of when, and how much of, the money owed on invoices will actually be received."
+    },
+    "cash-flow-forecast": {
+      "label": "Cash flow forecast",
+      "tag": "time-series-forecasting",
+      "definition": "A prediction of the money coming in and going out over a future period."
+    },
+    "forecast-horizon": {
+      "label": "Forecast horizon",
+      "tag": "time-series-forecasting",
+      "definition": "How far into the future a forecast looks, for example 90 days or 12 months. Accuracy generally worsens as the horizon grows."
+    },
+    "forecasting": {
+      "label": "Forecasting",
+      "tag": "time-series-forecasting",
+      "definition": "Predicting future values of a quantity from past data and known drivers."
+    },
+    "time-series": {
+      "label": "Time series",
+      "tag": "time-series-forecasting",
+      "definition": "Data recorded over time in order, where the sequence matters because observations are usually related to nearby ones.",
+      "deeper": "time-split"
+    },
+    "backtesting": {
+      "label": "Backtesting",
+      "tag": "validation-strategy",
+      "definition": "Evaluating a forecasting method by replaying history: at each past date, use only what was known then, predict forward, and compare with what happened.",
+      "deeper": "time-split"
+    },
+    "cross-validation": {
+      "label": "Cross-validation",
+      "tag": "validation-strategy",
+      "definition": "Estimating performance by training and evaluating on several different splits of the data and averaging the results."
+    },
+    "k-fold": {
+      "label": "k-fold",
+      "tag": "validation-strategy",
+      "definition": "A cross-validation scheme that splits the data into k parts and takes turns holding each one out for evaluation."
+    },
+    "feature-engineering": {
+      "label": "Feature engineering",
+      "tag": "feature-engineering",
+      "definition": "Turning raw data into inputs a model can learn from, such as ratios, counts over a time window or encoded categories."
+    },
+    "feature-importance": {
+      "label": "Feature importance",
+      "tag": "explainability",
+      "definition": "A score for how much each input feature contributes to a model's predictions. Different methods can rank the same features differently."
+    },
+    "data-pipeline": {
+      "label": "Data pipeline",
+      "tag": "data-quality",
+      "definition": "A sequence of automated steps that moves data from its sources, transforms it, and delivers it for use, such as model training."
+    },
+    "data-validation": {
+      "label": "Data validation",
+      "tag": "data-quality",
+      "definition": "Automated checks that data meets expectations (types, ranges, missing values, freshness) before it is used."
+    },
+    "data-quality": {
+      "label": "Data quality",
+      "tag": "data-quality",
+      "definition": "How well data fits its purpose: accurate, complete, consistent, timely and free of unwanted duplicates."
+    },
+    "churn": {
+      "label": "Churn",
+      "tag": "retention-cohorts",
+      "definition": "When a customer stops using or paying for a product. The churn rate is the share lost in a period."
+    },
+    "cohort": {
+      "label": "Cohort",
+      "tag": "retention-cohorts",
+      "definition": "A group of users who share a starting point, typically the period they signed up, tracked together over time."
+    },
+    "retention": {
+      "label": "Retention",
+      "tag": "retention-cohorts",
+      "definition": "The share of a group that is still active some time after they started."
+    },
+    "window-function": {
+      "label": "Window function",
+      "tag": "window-functions",
+      "definition": "A SQL function that computes a value for each row using a set of related rows (its window) without collapsing them into one row."
+    },
+    "top-n-per-group": {
+      "label": "Top N per group",
+      "tag": "window-functions",
+      "definition": "A common SQL pattern: keep only the N highest-ranked rows within each group, such as each department."
+    },
+    "rolling-average": {
+      "label": "Rolling average",
+      "tag": "window-functions",
+      "definition": "An average over a sliding window of recent values, used to smooth out day-to-day noise."
+    },
+    "sessionization": {
+      "label": "Sessionization",
+      "tag": "window-functions",
+      "definition": "Grouping a stream of user events into sessions, usually by starting a new one after a long enough gap."
+    },
+    "anti-join": {
+      "label": "Anti-join",
+      "tag": "joins",
+      "definition": "A query that returns the rows in one table that have no match in another."
+    },
+    "pandas-merge": {
+      "label": "pandas merge",
+      "tag": "joins",
+      "definition": "Combining two DataFrames on matching key columns, like a SQL join."
+    },
+    "deduplication": {
+      "label": "Duplicate records",
+      "tag": "data-quality",
+      "definition": "Multiple rows that refer to the same real-world entity. What counts as a duplicate depends on the business definition."
+    },
+    "bias-variance-tradeoff": {
+      "label": "Bias-variance tradeoff",
+      "tag": "bias-variance",
+      "definition": "The tension between a model too simple to capture the pattern (bias) and one so flexible that it fits noise in the training data (variance).",
+      "deeper": "bias-variance"
+    },
+    "evaluation-metric": {
+      "label": "Evaluation metric",
+      "tag": "evaluation-metrics",
+      "definition": "A number that summarizes how well a model performs, such as accuracy, precision, recall or AUC. Each one rewards different behavior."
+    },
+    "accuracy": {
+      "label": "Accuracy",
+      "tag": "evaluation-metrics",
+      "definition": "The share of predictions that are correct."
+    },
+    "fraud-detection": {
+      "label": "Fraud detection",
+      "tag": "fraud-detection",
+      "definition": "Identifying transactions or accounts that are deliberately deceptive. Fraud is rare, and fraudsters adapt."
+    },
+    "missing-data": {
+      "label": "Missing data",
+      "tag": "missing-data-and-outliers",
+      "definition": "Values that are absent from a dataset. Why they are missing affects how they should be handled."
+    },
+    "outliers": {
+      "label": "Outliers",
+      "tag": "missing-data-and-outliers",
+      "definition": "Values far from the rest of the data. They can be errors or genuinely rare events."
+    },
+    "experimentation-platform": {
+      "label": "Experimentation platform",
+      "tag": "ab-testing",
+      "definition": "Shared infrastructure that assigns users to experiment variants, logs exposure and reports results, so teams can run A/B tests consistently."
+    },
+    "batch-processing": {
+      "label": "Batch processing",
+      "tag": "batch-vs-realtime",
+      "definition": "Computing over accumulated data on a schedule, such as nightly."
+    },
+    "stream-processing": {
+      "label": "Stream processing",
+      "tag": "batch-vs-realtime",
+      "definition": "Computing on events continuously as they arrive."
+    },
+    "feature-pipeline": {
+      "label": "Feature pipeline",
+      "tag": "feature-engineering",
+      "definition": "The data flow that computes the inputs a model uses, both for training and for live predictions."
+    },
+    "real-time": {
+      "label": "Real-time",
+      "tag": "batch-vs-realtime",
+      "definition": "Responding within a tight latency bound, typically milliseconds to a few seconds, as each request arrives."
+    },
+    "recommendation-system": {
+      "label": "Recommendation system",
+      "definition": "A system that suggests items a user is likely to want, using their history and the behavior of similar users."
+    },
+    "ml-intake": {
+      "label": "ML intake process",
+      "tag": "governance-and-process",
+      "definition": "The way a company collects, evaluates, prioritizes and approves requests for machine learning work."
+    },
+    "algorithmic-fairness": {
+      "label": "Algorithmic fairness",
+      "tag": "fairness",
+      "definition": "Whether a model's decisions treat groups of people equitably. There are several competing definitions, and they cannot all be satisfied at once."
+    },
+    "disparate-impact": {
+      "label": "Disparate impact",
+      "tag": "fairness",
+      "definition": "When a decision process affects one group at a materially different rate than another, even without using a protected attribute directly."
+    },
+    "model-rollout": {
+      "label": "Model rollout",
+      "tag": "model-deployment",
+      "definition": "Moving a new model into live use, from limited exposure up to full traffic."
+    },
+    "unit-testing": {
+      "label": "Unit test",
+      "tag": "software-testing",
+      "definition": "An automated test of one small piece of code against an expected result."
+    },
+    "training-serving-skew": {
+      "label": "Training-serving skew",
+      "tag": "training-serving-skew",
+      "definition": "A mismatch between how features are computed or distributed during training and during live prediction."
+    },
+    "reproducibility": {
+      "label": "Reproducibility",
+      "tag": "versioning-reproducibility",
+      "definition": "Being able to rerun an analysis or model and obtain the same result."
+    },
+    "model-serving": {
+      "label": "Model serving",
+      "tag": "latency-and-cost",
+      "definition": "Running a trained model so that other systems can request predictions from it."
+    },
+    "latency": {
+      "label": "Latency",
+      "tag": "latency-and-cost",
+      "definition": "The time between a request and its response."
+    },
+    "memory-footprint": {
+      "label": "Memory footprint",
+      "tag": "performance-at-scale",
+      "definition": "How much RAM a program needs while it runs."
+    },
+    "rag": {
+      "label": "RAG",
+      "tag": "rag",
+      "definition": "Retrieval-augmented generation: look up relevant documents first, then give them to a language model to base its answer on."
+    },
+    "llm-evaluation": {
+      "label": "LLM evaluation",
+      "tag": "llm-evaluation",
+      "definition": "Measuring how good a language-model application's outputs are, often with rubrics, human labels or another model acting as judge."
+    },
+    "prompt-engineering": {
+      "label": "Prompt engineering",
+      "tag": "prompting-vs-fine-tuning",
+      "definition": "Shaping a language model's behavior by changing its instructions and examples, without changing the model itself."
+    },
+    "fine-tuning": {
+      "label": "Fine-tuning",
+      "tag": "prompting-vs-fine-tuning",
+      "definition": "Further training a pre-trained model on your own examples so that its behavior or style changes."
+    },
+    "hallucination": {
+      "label": "Hallucination",
+      "tag": "rag",
+      "definition": "When a language model states something fluent and confident that is false or unsupported."
+    },
+    "ai-agent": {
+      "label": "AI agent",
+      "tag": "ai-agents",
+      "definition": "A language-model system that decides for itself which tools to call and which steps to take toward a goal."
+    },
+    "tool-calling": {
+      "label": "Tool calling",
+      "tag": "ai-agents",
+      "definition": "A model asking for external code to run, such as a search or database query, and then using the result."
+    },
+    "json": {
+      "label": "JSON",
+      "definition": "A text format for structured data using key-value pairs and arrays.",
+      "tag": "llm-output-control"
+    },
+    "token": {
+      "label": "Token",
+      "definition": "A chunk of text, often a word fragment, that a language model reads and generates one at a time.",
+      "tag": "llm-fundamentals"
+    },
+    "temperature": {
+      "label": "Temperature",
+      "definition": "A sampling setting on LLM requests, usually between 0 and 2.",
+      "tag": "llm-output-control"
+    },
+    "top-p": {
+      "label": "Top-p",
+      "definition": "Another sampling setting on LLM requests, between 0 and 1.",
+      "tag": "llm-output-control"
+    },
+    "system-prompt": {
+      "label": "System prompt",
+      "definition": "Instructions given to a language model ahead of the user's input to set its behavior.",
+      "tag": "security-and-permissions"
+    },
+    "chunk": {
+      "label": "Chunk",
+      "definition": "A segment of a document split out for indexing and retrieval.",
+      "tag": "rag"
+    },
+    "ground-truth": {
+      "label": "Ground truth",
+      "definition": "The verified correct answers against which a system's outputs are compared.",
+      "tag": "llm-evaluation"
+    },
+    "precision-recall": {
+      "label": "Precision and recall",
+      "definition": "Precision is the share of predicted positives that are correct. Recall is the share of actual positives that were found.",
+      "tag": "evaluation-metrics"
+    },
+    "validation-set": {
+      "label": "Validation set",
+      "definition": "Data held out from training and used to evaluate a model while it is being developed.",
+      "tag": "validation-strategy"
+    },
+    "random-forest": {
+      "label": "Random forest",
+      "definition": "An ensemble of decision trees, each trained on a random sample of the data, whose predictions are combined.",
+      "tag": "model-selection"
+    },
+    "predicted-probability": {
+      "label": "Predicted probability",
+      "definition": "The number between 0 and 1 that a classifier outputs for how likely a case is to be positive.",
+      "tag": "calibration"
+    },
+    "high-cardinality": {
+      "label": "High cardinality",
+      "definition": "Describes a feature with a very large number of distinct values.",
+      "tag": "feature-engineering"
+    },
+    "multicollinearity": {
+      "label": "Multicollinearity",
+      "definition": "When two or more input features are strongly correlated with each other.",
+      "tag": "feature-engineering"
+    },
+    "decision-threshold": {
+      "label": "Decision threshold",
+      "definition": "The score above which a model's output is treated as a positive prediction.",
+      "tag": "cost-sensitive-decisions"
+    },
+    "residual": {
+      "label": "Residual",
+      "definition": "The difference between an observed value and the model's prediction for it.",
+      "tag": "model-selection"
+    },
+    "r-squared": {
+      "label": "R-squared",
+      "definition": "The share of variance in the outcome that a regression model explains.",
+      "tag": "model-selection"
+    },
+    "training-data": {
+      "label": "Training data",
+      "definition": "The historical examples a model learns from.",
+      "tag": "feedback-loops"
+    },
+    "retraining": {
+      "label": "Retraining",
+      "definition": "Fitting a model again on newer data to replace the version in production.",
+      "tag": "retraining"
+    },
+    "psi": {
+      "label": "PSI",
+      "definition": "Population Stability Index: a score that compares the binned distribution of a variable between two periods.",
+      "tag": "distribution-shift",
+      "deeper": "drift"
+    },
+    "feature-store": {
+      "label": "Feature store",
+      "definition": "A shared system that stores, computes and serves model input features.",
+      "tag": "feature-engineering"
+    },
+    "human-review": {
+      "label": "Human review",
+      "definition": "A step in which a person checks or overrides a model's output before action is taken.",
+      "tag": "feedback-loops"
+    },
+    "data-structure": {
+      "label": "Data structure",
+      "definition": "A way of organizing data in memory so it can be accessed or changed efficiently.",
+      "tag": "python-fundamentals"
+    },
+    "dataframe": {
+      "label": "DataFrame",
+      "definition": "A table of rows and labeled columns, as used in pandas.",
+      "tag": "pandas"
+    },
+    "default-argument": {
+      "label": "Default argument",
+      "definition": "A value a function parameter takes when the caller does not supply one.",
+      "tag": "python-fundamentals"
+    },
+    "parallelism": {
+      "label": "Parallelism",
+      "definition": "Running several computations at the same time on separate CPU cores or machines.",
+      "tag": "performance-at-scale"
+    },
+    "ranking": {
+      "label": "Ranking",
+      "definition": "Ordering rows by a value and assigning each a position, such as 1st or 2nd.",
+      "tag": "window-functions"
+    },
+    "aggregate-function": {
+      "label": "Aggregate function",
+      "definition": "A function such as COUNT, SUM or AVG that collapses many rows into one value.",
+      "tag": "sql-fundamentals"
+    },
+    "growth-rate": {
+      "label": "Growth rate",
+      "definition": "The change in a metric between two periods, usually shown as a percentage of the earlier period.",
+      "tag": "window-functions"
+    },
+    "streak": {
+      "label": "Streak",
+      "definition": "A run of consecutive days (or other periods) with the same behavior.",
+      "tag": "window-functions"
+    },
+    "join": {
+      "label": "Join",
+      "definition": "An operation that combines rows from two tables using a matching condition.",
+      "tag": "joins"
+    },
+    "null-value": {
+      "label": "NULL",
+      "definition": "A marker meaning a value is missing or unknown. It is not the same as zero or an empty string.",
+      "tag": "null-semantics"
+    },
+    "median": {
+      "label": "Median",
+      "definition": "The middle value when observations are sorted: half the values fall below it and half above.",
+      "tag": "summary-statistics"
+    },
+    "repeat-purchase-rate": {
+      "label": "Repeat purchase rate",
+      "definition": "The share of customers who buy more than once.",
+      "tag": "retention-cohorts"
+    },
+    "central-limit-theorem": {
+      "label": "Central limit theorem",
+      "definition": "A theorem in probability about the averages of samples.",
+      "tag": "sampling-distributions",
+      "deeper": "clt"
+    },
+    "mean": {
+      "label": "Mean",
+      "definition": "The arithmetic average: the sum of values divided by how many there are.",
+      "tag": "summary-statistics"
+    },
+    "frequentist": {
+      "label": "Frequentist",
+      "definition": "An approach to inference in which probability describes long-run frequencies across repeated experiments.",
+      "tag": "hypothesis-testing"
+    },
+    "causation": {
+      "label": "Causation",
+      "definition": "A relationship in which changing one variable produces a change in another, rather than the two merely moving together.",
+      "tag": "causal-inference"
+    },
+    "control-group": {
+      "label": "Control group",
+      "definition": "The subjects who do not receive the treatment, used as the comparison for those who do.",
+      "tag": "ab-testing"
+    },
+    "standard-error": {
+      "label": "Standard error",
+      "definition": "A measure of how much a statistic, such as a sample mean, would vary across repeated samples.",
+      "tag": "sampling-distributions",
+      "deeper": "clt"
+    },
+    "anomaly-detection": {
+      "label": "Anomaly detection",
+      "definition": "Identifying observations that deviate markedly from the expected pattern.",
+      "tag": "model-monitoring"
+    },
+    "scenario-analysis": {
+      "label": "Scenario analysis",
+      "definition": "Examining how an outcome changes under different sets of assumptions.",
+      "tag": "time-series-forecasting"
+    },
+    "embedding": {
+      "label": "Embedding",
+      "definition": "A list of numbers representing a piece of text (or other data) so that similar items sit close together.",
+      "tag": "embeddings-and-search"
+    }
   },
   "questions": {
-    "sql-001": ["deduplication"],
-    "sql-002": ["cash-collection-forecast", "forecast-horizon", "customer-segmentation"],
-    "sql-003": ["window-function"],
-    "sql-004": ["cohort", "retention"],
-    "ml-001": ["churn"],
-    "ml-002": ["model-drift", "production-model"],
-    "ml-003": ["forecasting", "forecast-horizon"],
-    "ml-004": ["feature-engineering", "data-pipeline", "cash-collection-forecast"],
-    "ml-005": ["xgboost", "test-set", "production-model"],
-    "stats-001": ["type-i-error", "type-ii-error"],
-    "stats-002": ["ab-test", "default-rate", "statistical-significance"],
-    "stats-003": ["simpsons-paradox", "customer-segmentation"],
-    "system-design-001": ["recommendation-system", "real-time"],
-    "system-design-002": ["cash-flow-forecast", "real-time"],
-    "system-design-003": ["ml-intake"],
-    "python-001": ["feature-importance", "xgboost", "confidence-interval"],
-    "python-002": ["data-validation", "data-quality"],
-    "python-003": ["backtesting", "time-series"],
-    "prodml-001": ["model-degradation", "production-model"],
-    "prodml-002": ["monitoring", "alerting", "production-model"],
-    "prodml-003": ["algorithmic-fairness", "disparate-impact"],
-    "prodml-004": ["model-rollout", "forecasting"],
-    "sql-005": ["top-n-per-group"],
-    "sql-006": ["rolling-average"],
-    "sql-007": ["sessionization"],
-    "sql-008": ["anti-join"],
-    "ml-006": ["bias-variance-tradeoff"],
-    "ml-007": ["evaluation-metric", "accuracy", "fraud-detection"],
-    "ml-008": ["cross-validation", "k-fold", "time-series"],
-    "ml-009": ["gradient-boosting", "logistic-regression", "auc"],
-    "ml-010": ["missing-data", "outliers"],
-    "stats-004": ["ab-test", "sample-size"],
-    "stats-005": ["confidence-interval"],
-    "stats-006": ["ab-test", "p-value", "lift", "statistical-significance"],
-    "stats-007": ["bootstrapping"],
-    "system-design-004": ["ab-test", "experimentation-platform"],
-    "system-design-005": ["batch-processing", "stream-processing", "feature-pipeline"],
-    "system-design-006": ["fraud-detection", "real-time"],
-    "python-004": ["pandas-merge"],
-    "python-005": ["memory-footprint"],
-    "python-006": ["unit-testing", "data-pipeline"],
-    "prodml-005": ["training-serving-skew"],
-    "prodml-006": ["reproducibility"],
-    "prodml-007": ["model-serving", "latency"],
-    "llm-001": ["rag"],
-    "llm-002": ["llm-evaluation"],
-    "llm-003": ["prompt-engineering", "rag", "fine-tuning"],
-    "llm-004": ["hallucination"],
-    "llm-005": ["ai-agent", "tool-calling"]
+    "sql-001": [
+      "deduplication"
+    ],
+    "sql-002": [
+      "cash-collection-forecast",
+      "forecast-horizon",
+      "customer-segmentation"
+    ],
+    "sql-003": [
+      "window-function"
+    ],
+    "sql-004": [
+      "cohort",
+      "retention"
+    ],
+    "ml-001": [
+      "churn"
+    ],
+    "ml-002": [
+      "model-drift",
+      "production-model"
+    ],
+    "ml-003": [
+      "forecasting",
+      "forecast-horizon"
+    ],
+    "ml-004": [
+      "feature-engineering",
+      "data-pipeline",
+      "cash-collection-forecast"
+    ],
+    "ml-005": [
+      "xgboost",
+      "test-set",
+      "production-model"
+    ],
+    "stats-001": [
+      "type-i-error",
+      "type-ii-error"
+    ],
+    "stats-002": [
+      "ab-test",
+      "default-rate",
+      "statistical-significance"
+    ],
+    "stats-003": [
+      "simpsons-paradox",
+      "customer-segmentation"
+    ],
+    "system-design-001": [
+      "recommendation-system",
+      "real-time"
+    ],
+    "system-design-002": [
+      "cash-flow-forecast",
+      "real-time"
+    ],
+    "system-design-003": [
+      "ml-intake"
+    ],
+    "python-001": [
+      "feature-importance",
+      "xgboost",
+      "confidence-interval"
+    ],
+    "python-002": [
+      "data-validation",
+      "data-quality"
+    ],
+    "python-003": [
+      "backtesting",
+      "time-series"
+    ],
+    "prodml-001": [
+      "model-degradation",
+      "production-model"
+    ],
+    "prodml-002": [
+      "monitoring",
+      "alerting",
+      "production-model"
+    ],
+    "prodml-003": [
+      "algorithmic-fairness",
+      "disparate-impact"
+    ],
+    "prodml-004": [
+      "model-rollout",
+      "forecasting"
+    ],
+    "sql-005": [
+      "top-n-per-group"
+    ],
+    "sql-006": [
+      "rolling-average"
+    ],
+    "sql-007": [
+      "sessionization"
+    ],
+    "sql-008": [
+      "anti-join"
+    ],
+    "ml-006": [
+      "bias-variance-tradeoff"
+    ],
+    "ml-007": [
+      "evaluation-metric",
+      "accuracy",
+      "fraud-detection"
+    ],
+    "ml-008": [
+      "cross-validation",
+      "k-fold",
+      "time-series"
+    ],
+    "ml-009": [
+      "gradient-boosting",
+      "logistic-regression",
+      "auc"
+    ],
+    "ml-010": [
+      "missing-data",
+      "outliers"
+    ],
+    "stats-004": [
+      "ab-test",
+      "sample-size"
+    ],
+    "stats-005": [
+      "confidence-interval"
+    ],
+    "stats-006": [
+      "ab-test",
+      "p-value",
+      "lift",
+      "statistical-significance"
+    ],
+    "stats-007": [
+      "bootstrapping"
+    ],
+    "system-design-004": [
+      "ab-test",
+      "experimentation-platform"
+    ],
+    "system-design-005": [
+      "batch-processing",
+      "stream-processing",
+      "feature-pipeline"
+    ],
+    "system-design-006": [
+      "fraud-detection",
+      "real-time"
+    ],
+    "python-004": [
+      "pandas-merge"
+    ],
+    "python-005": [
+      "memory-footprint"
+    ],
+    "python-006": [
+      "unit-testing",
+      "data-pipeline"
+    ],
+    "prodml-005": [
+      "training-serving-skew"
+    ],
+    "prodml-006": [
+      "reproducibility"
+    ],
+    "prodml-007": [
+      "model-serving",
+      "latency"
+    ],
+    "llm-001": [
+      "rag"
+    ],
+    "llm-002": [
+      "llm-evaluation"
+    ],
+    "llm-003": [
+      "prompt-engineering",
+      "rag",
+      "fine-tuning"
+    ],
+    "llm-004": [
+      "hallucination"
+    ],
+    "llm-005": [
+      "ai-agent",
+      "tool-calling"
+    ],
+    "llm-006": [
+      "token",
+      "latency"
+    ],
+    "llm-007": [
+      "temperature",
+      "top-p"
+    ],
+    "llm-008": [
+      "json",
+      "tool-calling"
+    ],
+    "llm-009": [
+      "system-prompt"
+    ],
+    "llm-010": [
+      "rag",
+      "chunk"
+    ],
+    "llm-011": [
+      "hallucination",
+      "llm-evaluation"
+    ],
+    "llm-012": [
+      "llm-evaluation",
+      "ground-truth"
+    ],
+    "ml-011": [
+      "accuracy",
+      "validation-set"
+    ],
+    "ml-012": [
+      "random-forest",
+      "gradient-boosting"
+    ],
+    "ml-013": [
+      "auc",
+      "predicted-probability"
+    ],
+    "ml-014": [
+      "high-cardinality"
+    ],
+    "ml-015": [
+      "multicollinearity",
+      "xgboost",
+      "feature-importance"
+    ],
+    "ml-016": [
+      "decision-threshold",
+      "precision-recall"
+    ],
+    "ml-017": [
+      "residual",
+      "r-squared"
+    ],
+    "ml-018": [
+      "cross-validation",
+      "sample-size"
+    ],
+    "prodml-008": [
+      "model-drift"
+    ],
+    "prodml-009": [
+      "training-data"
+    ],
+    "prodml-010": [
+      "retraining",
+      "model-drift"
+    ],
+    "prodml-011": [
+      "psi"
+    ],
+    "prodml-012": [
+      "feature-store",
+      "training-serving-skew"
+    ],
+    "prodml-013": [
+      "fraud-detection",
+      "precision-recall"
+    ],
+    "prodml-014": [
+      "alerting",
+      "monitoring"
+    ],
+    "prodml-015": [
+      "human-review"
+    ],
+    "python-007": [
+      "data-structure"
+    ],
+    "python-008": [
+      "dataframe"
+    ],
+    "python-009": [
+      "precision-recall"
+    ],
+    "python-011": [
+      "stream-processing"
+    ],
+    "python-012": [
+      "default-argument"
+    ],
+    "python-013": [
+      "unit-testing",
+      "data-validation"
+    ],
+    "python-014": [
+      "parallelism"
+    ],
+    "sql-009": [
+      "ranking"
+    ],
+    "sql-010": [
+      "aggregate-function"
+    ],
+    "sql-011": [
+      "growth-rate",
+      "window-function"
+    ],
+    "sql-012": [
+      "streak"
+    ],
+    "sql-013": [
+      "join"
+    ],
+    "sql-014": [
+      "aggregate-function",
+      "null-value"
+    ],
+    "sql-015": [
+      "median",
+      "ranking"
+    ],
+    "sql-016": [
+      "repeat-purchase-rate",
+      "cohort"
+    ],
+    "stats-008": [
+      "p-value",
+      "sample-size"
+    ],
+    "stats-009": [
+      "central-limit-theorem",
+      "standard-error"
+    ],
+    "stats-010": [
+      "mean",
+      "median",
+      "outliers"
+    ],
+    "stats-011": [
+      "p-value",
+      "frequentist"
+    ],
+    "stats-012": [
+      "p-value",
+      "type-i-error"
+    ],
+    "stats-013": [
+      "causation",
+      "control-group",
+      "retention"
+    ],
+    "stats-014": [
+      "standard-error",
+      "confidence-interval"
+    ],
+    "stats-015": [
+      "control-group",
+      "ab-test"
+    ],
+    "system-design-007": [
+      "forecasting",
+      "forecast-horizon"
+    ],
+    "system-design-011": [
+      "data-pipeline",
+      "data-validation"
+    ],
+    "system-design-012": [
+      "anomaly-detection",
+      "monitoring"
+    ],
+    "system-design-013": [
+      "embedding",
+      "latency"
+    ],
+    "system-design-014": [
+      "scenario-analysis",
+      "forecasting"
+    ],
+    "llm-013": [
+      "token",
+      "model-serving"
+    ],
+    "python-010": [
+      "memory-footprint",
+      "data-pipeline"
+    ],
+    "system-design-008": [
+      "churn",
+      "retention"
+    ],
+    "system-design-009": [
+      "feature-importance",
+      "algorithmic-fairness",
+      "disparate-impact"
+    ],
+    "system-design-010": [
+      "churn",
+      "data-pipeline"
+    ]
   }
 }

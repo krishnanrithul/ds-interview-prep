@@ -1,0 +1,312 @@
+{
+  "new_tags": {
+    "embeddings-and-search": {
+      "label": "Embeddings & semantic search",
+      "kind": "subject"
+    }
+  },
+  "new_terms": {
+    "anomaly-detection": {
+      "label": "Anomaly detection",
+      "definition": "Identifying observations that deviate markedly from the expected pattern.",
+      "tag": "model-monitoring"
+    },
+    "scenario-analysis": {
+      "label": "Scenario analysis",
+      "definition": "Examining how an outcome changes under different sets of assumptions.",
+      "tag": "time-series-forecasting"
+    },
+    "embedding": {
+      "label": "Embedding",
+      "definition": "A list of numbers representing a piece of text (or other data) so that similar items sit close together.",
+      "tag": "embeddings-and-search"
+    }
+  },
+  "questions": [
+    {
+      "id": "system-design-007",
+      "question": "Design a system that forecasts weekly cash collections for 20 business units.",
+      "topic": "System Design",
+      "difficulty": "medium",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, finance analytics",
+      "kind": "design",
+      "follow_ups": [
+        {
+          "text": "Would you build one model or twenty? How do you decide?",
+          "intent": "test global versus per-unit models and hierarchy"
+        },
+        {
+          "text": "How do you keep unit forecasts consistent with the company total?",
+          "intent": "test hierarchical reconciliation"
+        },
+        {
+          "text": "How would the finance team use and challenge the forecast?",
+          "intent": "test explainability and workflow"
+        }
+      ],
+      "key_insight": "The model is the smaller part. Hierarchy, backtesting, data freshness and how finance will challenge the numbers drive the design.",
+      "junior_answer": "Train a time-series model for each business unit and run it weekly.",
+      "senior_answer": "I'd start with the decision: the horizon, the accuracy needed and who acts on it. Data: invoices, payment terms, collection history and calendar effects, from a pipeline with freshness and quality checks. Modelling: a global gradient-boosted model with unit features usually beats twenty small series, with a simple per-unit baseline to compare against; hierarchical reconciliation keeps unit forecasts summing to the total. Evaluation: rolling-origin backtests by horizon, tracking error by unit. Serving: a weekly batch with forecast intervals, versioned outputs, and a view where finance can see drivers and adjust assumptions. Monitoring compares forecasts to actuals as they land and alerts on drift.",
+      "tags": [
+        "time-series-forecasting",
+        "designing-systems",
+        "batch-vs-realtime"
+      ],
+      "terms": [
+        "forecasting",
+        "forecast-horizon"
+      ]
+    },
+    {
+      "id": "system-design-008",
+      "question": "Design a customer churn early-warning system that a retention team uses every week.",
+      "topic": "System Design",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "DS interview, subscription or fintech company",
+      "kind": "design",
+      "follow_ups": [
+        {
+          "text": "How do you define churn so the label is usable?",
+          "intent": "test label definition and prediction window"
+        },
+        {
+          "text": "How do you turn scores into actions the team can take?",
+          "intent": "test linking predictions to interventions and capacity"
+        },
+        {
+          "text": "How do you measure whether the interventions actually helped?",
+          "intent": "test holdouts and uplift thinking"
+        }
+      ],
+      "key_insight": "A churn score is only useful if it is tied to an action and a measured result. The prediction is the smallest part of the system.",
+      "junior_answer": "Train a churn classifier on past customers and send the retention team the top scores.",
+      "senior_answer": "I'd start with the decision: what can the retention team do, how many customers per week, and how early they need warning. That fixes the churn definition (for example no activity for 60 days) and the prediction window, so labels are usable and not leaked. Features come from usage, billing and support history, built point-in-time in a weekly batch. The model outputs calibrated probabilities, and a layer on top ranks customers by expected value (likelihood times customer value) within the team's capacity, with reasons for each flag. A random holdout group receives no outreach so we can measure real impact, and results feed back into evaluation. Monitoring covers drift, calibration and the outreach results.",
+      "tags": [
+        "retention-cohorts",
+        "designing-systems",
+        "batch-vs-realtime",
+        "cost-sensitive-decisions"
+      ],
+      "terms": [
+        "churn",
+        "retention"
+      ]
+    },
+    {
+      "id": "system-design-009",
+      "question": "Design a credit limit decision system whose decisions must be explainable to customers and regulators.",
+      "topic": "System Design",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, lending or regulated industry",
+      "kind": "design",
+      "follow_ups": [
+        {
+          "text": "How do you produce reasons for a decision that a customer can understand?",
+          "intent": "test explanation methods and their limits"
+        },
+        {
+          "text": "How do you monitor the system for unfair outcomes?",
+          "intent": "test fairness monitoring across groups"
+        },
+        {
+          "text": "How do you approve and record a model change?",
+          "intent": "test governance, versioning and audit trails"
+        }
+      ],
+      "key_insight": "In a regulated setting the model is only one component. Reasons, fairness checks, change approval and an audit trail are part of the product.",
+      "junior_answer": "Use a gradient-boosted model and explain it with SHAP.",
+      "senior_answer": "I'd start with constraints: which inputs are legally allowed, what reasons must be given, and who has to approve changes. Modelling choice is a trade: a constrained or monotonic model (or a scorecard) is easier to defend, while a boosted model with post-hoc explanations may perform better but needs validation that explanations are stable and honest. Each decision stores the inputs, model version, score and top reasons, so any outcome can be reproduced and explained. I'd monitor approval rates and errors across protected groups, plus drift and calibration, and set review gates for model changes with documentation and sign-off from risk and compliance. A human override path handles exceptions.",
+      "tags": [
+        "explainability",
+        "fairness",
+        "governance-and-process",
+        "designing-systems"
+      ],
+      "terms": [
+        "feature-importance",
+        "algorithmic-fairness",
+        "disparate-impact"
+      ]
+    },
+    {
+      "id": "system-design-010",
+      "question": "Design a metrics layer so every team computes revenue, active users and churn the same way.",
+      "topic": "System Design",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "DS or analytics engineering interview",
+      "kind": "design",
+      "follow_ups": [
+        {
+          "text": "Where do metric definitions live, and who can change them?",
+          "intent": "test ownership and review of definitions"
+        },
+        {
+          "text": "How do you handle a definition that needs to change?",
+          "intent": "test versioning and communicating changes"
+        },
+        {
+          "text": "How do you check that dashboards match the layer?",
+          "intent": "test reconciliation and tests"
+        }
+      ],
+      "key_insight": "A metrics layer is a governance problem as much as a technical one. One reviewed definition per metric, versioned, with tests that catch disagreement.",
+      "junior_answer": "Create a shared table with the metrics so everyone queries the same numbers.",
+      "senior_answer": "I'd define each metric once, as code in version control, with its grain, filters, time logic and owner, and have dashboards, notebooks and models read through that layer rather than rewriting the SQL. Changes go through review by the owner and the main consumers, and are versioned, with a changelog and a transition period so historical comparisons are not silently broken. Automated tests check the definitions against known totals and compare dashboard outputs to the layer. The layer also handles shared dimensions such as customer segment and time zone. I'd start with the five metrics that cause the most disagreement and expand once teams trust them.",
+      "tags": [
+        "data-quality",
+        "governance-and-process",
+        "designing-systems"
+      ],
+      "terms": [
+        "churn",
+        "data-pipeline"
+      ]
+    },
+    {
+      "id": "system-design-011",
+      "question": "Design a daily pipeline that ingests transactions from five source systems with inconsistent schemas.",
+      "topic": "System Design",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "DS or data engineering interview",
+      "kind": "design",
+      "follow_ups": [
+        {
+          "text": "How do you detect and handle a schema change at one source?",
+          "intent": "test schema validation and data contracts"
+        },
+        {
+          "text": "What happens when a run fails halfway?",
+          "intent": "test idempotency and retries"
+        },
+        {
+          "text": "How do you reconcile the five sources to the same numbers?",
+          "intent": "test reconciliation and quality checks"
+        }
+      ],
+      "key_insight": "Reliability comes from idempotent loads, validation at the boundary and reconciliation, not from the transformation logic.",
+      "junior_answer": "Write a script per source and combine them into one table.",
+      "senior_answer": "Land each source's raw data unchanged in a staging area, then transform it into a common canonical schema with explicit mappings and tests. Validate at the boundary: schema, types, null rates, ranges and row counts against expectations, quarantining bad records instead of failing the whole run. Make loads idempotent (partition overwrite or merge on a key) so reruns are safe, orchestrate with retries and alerting, and keep backfills possible. Add reconciliation checks, such as daily totals against each source's control totals, and data contracts with source owners so schema changes are announced. Version the mappings and document lineage.",
+      "tags": [
+        "data-quality",
+        "versioning-reproducibility",
+        "designing-systems"
+      ],
+      "terms": [
+        "data-pipeline",
+        "data-validation"
+      ]
+    },
+    {
+      "id": "system-design-012",
+      "question": "Design an anomaly detection system for key business metrics that analysts will actually trust.",
+      "topic": "System Design",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, analytics platform",
+      "kind": "design",
+      "follow_ups": [
+        {
+          "text": "How do you handle seasonality and holidays?",
+          "intent": "test baselines that account for them"
+        },
+        {
+          "text": "How do you keep false alarms down?",
+          "intent": "test thresholds and feedback"
+        },
+        {
+          "text": "What would you show alongside an alert?",
+          "intent": "test explanation and root-cause hints"
+        }
+      ],
+      "key_insight": "Trust comes from low false alarms and context. An alert that says where the change is and whether it was expected gets used, and a bare red flag gets muted.",
+      "junior_answer": "Use a z-score and alert when a metric is three standard deviations from the mean.",
+      "senior_answer": "Start with which metrics matter and the cost of a miss versus a false alarm. Model an expected value that accounts for trend, weekly and yearly seasonality and holidays, such as a forecast with prediction intervals instead of a flat mean, and flag points outside the interval. Reduce noise with minimum-impact thresholds, persistence requirements and grouping of related alerts. With each alert show the metric against its expected range, the segments driving the change (dimension drill-down) and recent related changes such as deployments or data delays, because many anomalies are broken pipelines. Add a feedback button to mark alerts useful or not, track alert precision, and review regularly.",
+      "tags": [
+        "model-monitoring",
+        "alerting",
+        "tradeoffs"
+      ],
+      "terms": [
+        "anomaly-detection",
+        "monitoring"
+      ]
+    },
+    {
+      "id": "system-design-013",
+      "question": "Design a semantic search system over 5 million internal documents.",
+      "topic": "System Design",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS or ML engineer interview, LLM applications",
+      "kind": "design",
+      "follow_ups": [
+        {
+          "text": "How do you chunk and index the documents?",
+          "intent": "test chunking, metadata and embeddings"
+        },
+        {
+          "text": "When does pure vector search fail, and what do you add?",
+          "intent": "test hybrid search with keywords and reranking"
+        },
+        {
+          "text": "How do you handle permissions?",
+          "intent": "test per-user access control"
+        }
+      ],
+      "key_insight": "Retrieval quality depends on chunking, hybrid ranking and access control more than on the choice of vector database.",
+      "junior_answer": "Embed the documents and store them in a vector database.",
+      "senior_answer": "Ingest: parse documents, split them into chunks that preserve meaning with some overlap and metadata (title, source, date, owner), embed each chunk, and store vectors in an approximate nearest-neighbor index alongside the text. Query: embed the query, retrieve candidates, and combine with keyword search (BM25), since exact terms, codes and names are handled poorly by embeddings alone; rerank the top results with a cross-encoder. Enforce permissions at retrieval by filtering on access metadata, not after generation. Keep the index fresh with incremental updates. Evaluate with a labeled set of queries (recall at k, mean reciprocal rank) plus user feedback. Latency and cost scale with index size and reranking depth.",
+      "tags": [
+        "embeddings-and-search",
+        "rag",
+        "designing-systems",
+        "latency-and-cost"
+      ],
+      "terms": [
+        "embedding",
+        "latency"
+      ]
+    },
+    {
+      "id": "system-design-014",
+      "question": "Design a what-if scenario tool that lets finance teams see how a forecast changes under different assumptions.",
+      "topic": "System Design",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "DS interview, finance analytics",
+      "kind": "design",
+      "follow_ups": [
+        {
+          "text": "How do you make the forecast respond to assumptions the model has never seen?",
+          "intent": "test combining models with driver-based rules"
+        },
+        {
+          "text": "How do you show uncertainty?",
+          "intent": "test intervals and ranges"
+        },
+        {
+          "text": "How do you make sure users don't treat scenarios as predictions?",
+          "intent": "test communication"
+        }
+      ],
+      "key_insight": "A what-if tool is an explanation tool. Users must see which drivers move the number and understand that scenarios aren't predictions.",
+      "junior_answer": "Let users change the inputs and rerun the model.",
+      "senior_answer": "Separate the baseline forecast from a scenario layer: a driver-based structure (volume, price, payment terms, collection rates) that the ML forecast feeds or calibrates, so users change meaningful business levers rather than raw model features, which can produce nonsense outside the training range. Changes are saved as named, versioned scenarios, compared against the baseline, with a waterfall showing each driver's contribution. Show forecast intervals and flag assumptions outside historical ranges. Make recomputation fast with precomputed components or a lightweight surrogate. Label scenarios as 'if' statements, record who changed what, and let finance override with comments.",
+      "tags": [
+        "time-series-forecasting",
+        "explainability",
+        "designing-systems",
+        "stakeholder-communication"
+      ],
+      "terms": [
+        "scenario-analysis",
+        "forecasting"
+      ]
+    }
+  ]
+}

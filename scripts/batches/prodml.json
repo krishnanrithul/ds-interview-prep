@@ -1,0 +1,321 @@
+{
+  "new_tags": {
+    "causal-inference": {
+      "label": "Causal inference",
+      "kind": "subject"
+    },
+    "feedback-loops": {
+      "label": "Feedback loops & selection bias",
+      "kind": "subject"
+    }
+  },
+  "new_terms": {
+    "precision-recall": {
+      "label": "Precision and recall",
+      "definition": "Precision is the share of predicted positives that are correct. Recall is the share of actual positives that were found.",
+      "tag": "evaluation-metrics"
+    },
+    "training-data": {
+      "label": "Training data",
+      "definition": "The historical examples a model learns from.",
+      "tag": "feedback-loops"
+    },
+    "retraining": {
+      "label": "Retraining",
+      "definition": "Fitting a model again on newer data to replace the version in production.",
+      "tag": "retraining"
+    },
+    "psi": {
+      "label": "PSI",
+      "definition": "Population Stability Index: a score that compares the binned distribution of a variable between two periods.",
+      "tag": "distribution-shift"
+    },
+    "feature-store": {
+      "label": "Feature store",
+      "definition": "A shared system that stores, computes and serves model input features.",
+      "tag": "feature-engineering"
+    },
+    "human-review": {
+      "label": "Human review",
+      "definition": "A step in which a person checks or overrides a model's output before action is taken.",
+      "tag": "feedback-loops"
+    }
+  },
+  "questions": [
+    {
+      "id": "prodml-008",
+      "question": "What's the difference between data drift and concept drift? Give a real example of each.",
+      "topic": "Production ML",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, ML in production",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "Which one can you detect without labels?",
+          "intent": "test that input drift is visible from inputs alone while concept drift needs labels or proxies"
+        },
+        {
+          "text": "Can a model be hurt by data drift without any concept drift?",
+          "intent": "test nuance about where the model is weak"
+        },
+        {
+          "text": "What do you do differently when you see each?",
+          "intent": "test mapping the diagnosis to an action"
+        }
+      ],
+      "key_insight": "Data drift changes the inputs. Concept drift changes the relationship between inputs and outcome. They call for different checks and different fixes.",
+      "junior_answer": "Data drift is when the data changes and concept drift is when the concept changes.",
+      "senior_answer": "Data (covariate) drift: the distribution of inputs shifts, for instance a lending model sees more young applicants after a marketing campaign. Concept drift: the same inputs now imply a different outcome, for instance the same applicant profile defaults more often after a rate rise. Data drift is visible from inputs alone with PSI or KS tests; concept drift needs labels or a proxy, so it shows up later. Data drift only hurts if the model lands in a region where it is weak, while concept drift always hurts. For data drift I'd check segment performance and consider reweighting or retraining; for concept drift I'd retrain on recent data and revisit the features.",
+      "tags": [
+        "distribution-shift",
+        "explaining-concepts"
+      ],
+      "terms": [
+        "model-drift"
+      ]
+    },
+    {
+      "id": "prodml-009",
+      "question": "A loan approval model only observes repayment for the people it approved. Months later you retrain on that data. What goes wrong?",
+      "topic": "Production ML",
+      "difficulty": "medium",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, lending or risk",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "How would you measure the damage?",
+          "intent": "test counterfactual evaluation and holdouts"
+        },
+        {
+          "text": "What would you change in how the data is collected?",
+          "intent": "test exploration, random approvals and reject inference"
+        },
+        {
+          "text": "What risk does this create in production over time?",
+          "intent": "test feedback loops and compounding"
+        }
+      ],
+      "key_insight": "The model's own decisions determine which outcomes you ever see, so training on those outcomes bakes in its past blind spots.",
+      "junior_answer": "The data is biased, so we should collect more of it.",
+      "senior_answer": "The training set only contains applicants the old model liked, so the new model never learns what happens to the ones it rejected, and its estimates for that region are extrapolation. If the old model wrongly rejected good applicants, you will never find out, and the loop reinforces itself. Mitigations: approve a small random slice of borderline applicants (exploration within risk limits) to get unbiased labels; use reject inference techniques with clear caveats; evaluate on that random holdout instead of on approved-only data; and track population coverage. I'd also tell the business what is unknowable and what that costs.",
+      "tags": [
+        "feedback-loops",
+        "causal-inference",
+        "edge-cases"
+      ],
+      "terms": [
+        "training-data"
+      ]
+    },
+    {
+      "id": "prodml-010",
+      "question": "Do you retrain a production model on a schedule, on a trigger, or continuously? How do you decide?",
+      "topic": "Production ML",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, ML in production",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What signals would trigger a retrain?",
+          "intent": "test monitoring-based triggers"
+        },
+        {
+          "text": "How do you make sure a retrained model is actually better?",
+          "intent": "test champion-challenger and time-forward backtests"
+        },
+        {
+          "text": "What can go wrong with retraining too often?",
+          "intent": "test instability, chasing noise and cost"
+        }
+      ],
+      "key_insight": "Retraining cadence is a trade between staleness, cost and risk. Whatever the cadence, the new model must beat the current one on fresh data before it ships.",
+      "junior_answer": "Retrain monthly.",
+      "senior_answer": "I'd choose by how fast the world changes versus how costly retraining and validation are. A schedule is simple and predictable and works when drift is gradual; a trigger (drift metric, performance drop, new data volume) saves cost when changes are irregular; continuous learning fits fast-changing, low-risk domains but is the hardest to control. Whatever the policy, a retrained model should be validated against the current one on a time-forward holdout, shadowed or canaried, and promoted only if better, with rollback ready. Retraining too often adds noise, cost and instability, so I'd start with a schedule plus alerts and adapt.",
+      "tags": [
+        "retraining",
+        "tradeoffs",
+        "model-monitoring"
+      ],
+      "terms": [
+        "retraining",
+        "model-drift"
+      ]
+    },
+    {
+      "id": "prodml-011",
+      "question": "Explain how you'd use PSI to detect drift on a feature. What thresholds would you use, and where does it fall short?",
+      "topic": "Production ML",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, monitoring",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "How do you choose the bins?",
+          "intent": "test sensitivity to binning"
+        },
+        {
+          "text": "What does a high PSI tell you, and what doesn't it?",
+          "intent": "test not equating drift with harm"
+        },
+        {
+          "text": "What would you use for a large set of features?",
+          "intent": "test alternatives and aggregation"
+        }
+      ],
+      "key_insight": "PSI tells you an input distribution moved, not whether the model got worse. Thresholds are conventions, not laws.",
+      "junior_answer": "PSI above 0.2 means there is drift, so retrain.",
+      "senior_answer": "Bin the feature using the training distribution (quantiles for numeric features), compute the proportion in each bin for training and for the recent window, and sum (current minus reference) times ln(current over reference). The usual rule of thumb is under 0.1 stable, 0.1 to 0.25 moderate, above 0.25 large, but these are heuristics that depend on the bins and the sample size. PSI is blind to shifts within a bin, unstable for sparse bins, and says nothing about whether performance suffered. I'd combine it with a KS test or Wasserstein distance, weight by feature importance, monitor the prediction distribution too, and investigate before retraining.",
+      "tags": [
+        "distribution-shift",
+        "model-monitoring",
+        "tradeoffs"
+      ],
+      "terms": [
+        "psi"
+      ]
+    },
+    {
+      "id": "prodml-012",
+      "question": "A teammate proposes a feature store. How do you decide whether it's worth building?",
+      "topic": "Production ML",
+      "difficulty": "medium",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, ML platform",
+      "kind": "design",
+      "follow_ups": [
+        {
+          "text": "What problems does it solve, and what does it cost?",
+          "intent": "test benefits versus operational overhead"
+        },
+        {
+          "text": "When would you say not yet?",
+          "intent": "test pragmatic restraint"
+        },
+        {
+          "text": "How does it relate to training-serving skew?",
+          "intent": "test linking to skew"
+        }
+      ],
+      "key_insight": "A feature store pays off when many models share features or when online and offline features must match. For one batch model it is overhead.",
+      "junior_answer": "Yes, feature stores are best practice.",
+      "senior_answer": "I'd ask what pain we have today: features recomputed by several teams, inconsistent definitions, training-serving skew from separate offline and online code, or slow onboarding of new models. A feature store addresses these with shared definitions, point-in-time correct training data and consistent online serving. The costs are real: infrastructure, ownership, backfills and migration effort. For a few batch models on one team, well-organized warehouse tables and shared code are enough. I'd recommend one when there are several models, real-time serving needs or repeated skew incidents, and start with a pilot on one high-value feature set.",
+      "tags": [
+        "training-serving-skew",
+        "feature-engineering",
+        "tradeoffs"
+      ],
+      "terms": [
+        "feature-store",
+        "training-serving-skew"
+      ]
+    },
+    {
+      "id": "prodml-013",
+      "question": "Your fraud model's precision falls from 80% to 55% within a week, with no code changes. Walk me through the first 24 hours.",
+      "topic": "Production ML",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, incident response",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What do you check before touching the model?",
+          "intent": "test looking at data pipelines and upstream changes first"
+        },
+        {
+          "text": "How do you tell a real change in fraud patterns from a data issue?",
+          "intent": "test separating causes"
+        },
+        {
+          "text": "What do you tell stakeholders in the first few hours?",
+          "intent": "test communication under uncertainty"
+        }
+      ],
+      "key_insight": "Start from the cheapest explanations, upstream data and labeling changes, before model drift. Keep the business informed while you investigate.",
+      "junior_answer": "Retrain the model on recent data.",
+      "senior_answer": "First hour: confirm the drop is real. Has the label or metric definition changed, and how mature are the labels? Then check upstream: schema changes, null rates and distributions of key features, new data sources, broken joins and traffic mix. Next, slice precision by segment, channel, merchant and time to find where it dropped; a sharp step on one day suggests a pipeline or product change, a gradual slide suggests adversaries adapting. Meanwhile I'd tell stakeholders the impact (extra false positives and customer friction) and an interim mitigation such as raising the threshold. Only after diagnosing would I retrain.",
+      "tags": [
+        "fraud-detection",
+        "model-monitoring",
+        "debugging"
+      ],
+      "terms": [
+        "fraud-detection",
+        "precision-recall"
+      ]
+    },
+    {
+      "id": "prodml-014",
+      "question": "How would you design monitoring for 40 models owned by 10 teams without drowning everyone in alerts?",
+      "topic": "Production ML",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior or staff DS interview, ML platform",
+      "kind": "design",
+      "follow_ups": [
+        {
+          "text": "Which signals are standard for every model, and which are model-specific?",
+          "intent": "test tiered monitoring"
+        },
+        {
+          "text": "How do you decide who gets paged?",
+          "intent": "test ownership and severity"
+        },
+        {
+          "text": "How do you know your alerts are any good?",
+          "intent": "test measuring alert quality"
+        }
+      ],
+      "key_insight": "Alerting is a product with users. Standard defaults, clear ownership and severity tiers matter more than the number of metrics tracked.",
+      "junior_answer": "Set up dashboards and alerts for accuracy and drift on every model.",
+      "senior_answer": "I'd define a shared baseline for all models: data freshness and volume, schema and null checks, prediction distribution, latency and error rate, and performance once labels arrive. Models then add their own business metrics. Alerts get severity tiers: page only for outages or clear customer harm, ticket for slow degradation, dashboard for the rest, each with a named owner and a runbook. To avoid fatigue I'd tune thresholds on history, group related alerts, and review alert precision (what fraction needed action) each quarter, retiring noisy ones. A central platform, with team-owned response.",
+      "tags": [
+        "alerting",
+        "governance-and-process",
+        "designing-systems"
+      ],
+      "terms": [
+        "alerting",
+        "monitoring"
+      ]
+    },
+    {
+      "id": "prodml-015",
+      "question": "Reviewers override your model's recommendation 30% of the time. What do you do with that signal?",
+      "topic": "Production ML",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, human-in-the-loop systems",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What could a 30% override rate mean?",
+          "intent": "test generating several interpretations"
+        },
+        {
+          "text": "How could the overrides become training data, and what are the risks?",
+          "intent": "test label quality and feedback loops"
+        },
+        {
+          "text": "What if reviewers stop looking and just accept the model?",
+          "intent": "test automation bias"
+        }
+      ],
+      "key_insight": "Overrides are valuable but ambiguous. They could be model errors, reviewer preferences or missing context, so investigate before treating them as labels.",
+      "junior_answer": "Retrain the model using the overrides as labels.",
+      "senior_answer": "First I'd work out what the overrides mean by slicing them by reviewer, case type and model confidence. Heavy overrides concentrated in one segment suggest the model is wrong there; scattered overrides from a few reviewers suggest preference or inconsistency; overrides explained by information the model doesn't see suggest a missing feature. I'd audit a sample against real outcomes, where they exist, to see who is right. Using overrides as labels is useful but risky: they carry reviewer biases, and if reviewers anchor on the model the signal is contaminated. I'd also watch the opposite failure, rubber-stamping, by measuring agreement on cases where the model is known to be wrong.",
+      "tags": [
+        "feedback-loops",
+        "model-monitoring",
+        "stakeholder-communication"
+      ],
+      "terms": [
+        "human-review"
+      ]
+    }
+  ]
+}

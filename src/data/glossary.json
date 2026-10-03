@@ -10,7 +10,8 @@
       "id": "p-value",
       "label": "p-value",
       "tag": "hypothesis-testing",
-      "definition": "The probability of seeing a result at least as extreme as the one observed if there were truly no effect. It is not the probability that the result is a fluke."
+      "definition": "The probability of seeing a result at least as extreme as the one observed if there were truly no effect. It is not the probability that the result is a fluke.",
+      "deeper": "false-positives"
     },
     {
       "id": "lift",
@@ -28,7 +29,8 @@
       "id": "type-i-error",
       "label": "Type I error",
       "tag": "hypothesis-testing",
-      "definition": "A false positive: concluding there is an effect when there isn't one. The significance level sets how often you accept this."
+      "definition": "A false positive: concluding there is an effect when there isn't one. The significance level sets how often you accept this.",
+      "deeper": "false-positives"
     },
     {
       "id": "type-ii-error",
@@ -75,13 +77,15 @@
       "id": "xgboost",
       "label": "XGBoost",
       "tag": "gradient-boosting",
-      "definition": "A popular gradient-boosting library that builds many small decision trees in sequence, each one correcting the errors of the ones before it."
+      "definition": "A popular gradient-boosting library that builds many small decision trees in sequence, each one correcting the errors of the ones before it.",
+      "deeper": "boosting"
     },
     {
       "id": "gradient-boosting",
       "label": "Gradient boosting",
       "tag": "gradient-boosting",
-      "definition": "An ensemble method that adds models one at a time, each trained to reduce the error that remains in the combined model so far."
+      "definition": "An ensemble method that adds models one at a time, each trained to reduce the error that remains in the combined model so far.",
+      "deeper": "boosting"
     },
     {
       "id": "logistic-regression",
@@ -105,13 +109,15 @@
       "id": "production-model",
       "label": "Model in production",
       "tag": "model-monitoring",
-      "definition": "A model serving real predictions to real users or downstream systems, as opposed to being evaluated offline."
+      "definition": "A model serving real predictions to real users or downstream systems, as opposed to being evaluated offline.",
+      "deeper": "drift"
     },
     {
       "id": "model-drift",
       "label": "Model drift",
       "tag": "distribution-shift",
-      "definition": "Decline in a deployed model's performance over time because the world, or the data it sees, has changed since it was trained."
+      "definition": "Decline in a deployed model's performance over time because the world, or the data it sees, has changed since it was trained.",
+      "deeper": "drift"
     },
     {
       "id": "model-degradation",
@@ -159,13 +165,15 @@
       "id": "time-series",
       "label": "Time series",
       "tag": "time-series-forecasting",
-      "definition": "Data recorded over time in order, where the sequence matters because observations are usually related to nearby ones."
+      "definition": "Data recorded over time in order, where the sequence matters because observations are usually related to nearby ones.",
+      "deeper": "time-split"
     },
     {
       "id": "backtesting",
       "label": "Backtesting",
       "tag": "validation-strategy",
-      "definition": "Evaluating a forecasting method by replaying history: at each past date, use only what was known then, predict forward, and compare with what happened."
+      "definition": "Evaluating a forecasting method by replaying history: at each past date, use only what was known then, predict forward, and compare with what happened.",
+      "deeper": "time-split"
     },
     {
       "id": "cross-validation",
@@ -273,7 +281,8 @@
       "id": "bias-variance-tradeoff",
       "label": "Bias-variance tradeoff",
       "tag": "bias-variance",
-      "definition": "The tension between a model too simple to capture the pattern (bias) and one so flexible that it fits noise in the training data (variance)."
+      "definition": "The tension between a model too simple to capture the pattern (bias) and one so flexible that it fits noise in the training data (variance).",
+      "deeper": "bias-variance"
     },
     {
       "id": "evaluation-metric",
@@ -441,6 +450,261 @@
       "label": "Tool calling",
       "tag": "ai-agents",
       "definition": "A model asking for external code to run, such as a search or database query, and then using the result."
+    },
+    {
+      "id": "json",
+      "label": "JSON",
+      "definition": "A text format for structured data using key-value pairs and arrays.",
+      "tag": "llm-output-control"
+    },
+    {
+      "id": "token",
+      "label": "Token",
+      "definition": "A chunk of text, often a word fragment, that a language model reads and generates one at a time.",
+      "tag": "llm-fundamentals"
+    },
+    {
+      "id": "temperature",
+      "label": "Temperature",
+      "definition": "A sampling setting on LLM requests, usually between 0 and 2.",
+      "tag": "llm-output-control"
+    },
+    {
+      "id": "top-p",
+      "label": "Top-p",
+      "definition": "Another sampling setting on LLM requests, between 0 and 1.",
+      "tag": "llm-output-control"
+    },
+    {
+      "id": "system-prompt",
+      "label": "System prompt",
+      "definition": "Instructions given to a language model ahead of the user's input to set its behavior.",
+      "tag": "security-and-permissions"
+    },
+    {
+      "id": "chunk",
+      "label": "Chunk",
+      "definition": "A segment of a document split out for indexing and retrieval.",
+      "tag": "rag"
+    },
+    {
+      "id": "ground-truth",
+      "label": "Ground truth",
+      "definition": "The verified correct answers against which a system's outputs are compared.",
+      "tag": "llm-evaluation"
+    },
+    {
+      "id": "precision-recall",
+      "label": "Precision and recall",
+      "definition": "Precision is the share of predicted positives that are correct. Recall is the share of actual positives that were found.",
+      "tag": "evaluation-metrics"
+    },
+    {
+      "id": "validation-set",
+      "label": "Validation set",
+      "definition": "Data held out from training and used to evaluate a model while it is being developed.",
+      "tag": "validation-strategy"
+    },
+    {
+      "id": "random-forest",
+      "label": "Random forest",
+      "definition": "An ensemble of decision trees, each trained on a random sample of the data, whose predictions are combined.",
+      "tag": "model-selection"
+    },
+    {
+      "id": "predicted-probability",
+      "label": "Predicted probability",
+      "definition": "The number between 0 and 1 that a classifier outputs for how likely a case is to be positive.",
+      "tag": "calibration"
+    },
+    {
+      "id": "high-cardinality",
+      "label": "High cardinality",
+      "definition": "Describes a feature with a very large number of distinct values.",
+      "tag": "feature-engineering"
+    },
+    {
+      "id": "multicollinearity",
+      "label": "Multicollinearity",
+      "definition": "When two or more input features are strongly correlated with each other.",
+      "tag": "feature-engineering"
+    },
+    {
+      "id": "decision-threshold",
+      "label": "Decision threshold",
+      "definition": "The score above which a model's output is treated as a positive prediction.",
+      "tag": "cost-sensitive-decisions"
+    },
+    {
+      "id": "residual",
+      "label": "Residual",
+      "definition": "The difference between an observed value and the model's prediction for it.",
+      "tag": "model-selection"
+    },
+    {
+      "id": "r-squared",
+      "label": "R-squared",
+      "definition": "The share of variance in the outcome that a regression model explains.",
+      "tag": "model-selection"
+    },
+    {
+      "id": "training-data",
+      "label": "Training data",
+      "definition": "The historical examples a model learns from.",
+      "tag": "feedback-loops"
+    },
+    {
+      "id": "retraining",
+      "label": "Retraining",
+      "definition": "Fitting a model again on newer data to replace the version in production.",
+      "tag": "retraining"
+    },
+    {
+      "id": "psi",
+      "label": "PSI",
+      "definition": "Population Stability Index: a score that compares the binned distribution of a variable between two periods.",
+      "tag": "distribution-shift",
+      "deeper": "drift"
+    },
+    {
+      "id": "feature-store",
+      "label": "Feature store",
+      "definition": "A shared system that stores, computes and serves model input features.",
+      "tag": "feature-engineering"
+    },
+    {
+      "id": "human-review",
+      "label": "Human review",
+      "definition": "A step in which a person checks or overrides a model's output before action is taken.",
+      "tag": "feedback-loops"
+    },
+    {
+      "id": "data-structure",
+      "label": "Data structure",
+      "definition": "A way of organizing data in memory so it can be accessed or changed efficiently.",
+      "tag": "python-fundamentals"
+    },
+    {
+      "id": "dataframe",
+      "label": "DataFrame",
+      "definition": "A table of rows and labeled columns, as used in pandas.",
+      "tag": "pandas"
+    },
+    {
+      "id": "default-argument",
+      "label": "Default argument",
+      "definition": "A value a function parameter takes when the caller does not supply one.",
+      "tag": "python-fundamentals"
+    },
+    {
+      "id": "parallelism",
+      "label": "Parallelism",
+      "definition": "Running several computations at the same time on separate CPU cores or machines.",
+      "tag": "performance-at-scale"
+    },
+    {
+      "id": "ranking",
+      "label": "Ranking",
+      "definition": "Ordering rows by a value and assigning each a position, such as 1st or 2nd.",
+      "tag": "window-functions"
+    },
+    {
+      "id": "aggregate-function",
+      "label": "Aggregate function",
+      "definition": "A function such as COUNT, SUM or AVG that collapses many rows into one value.",
+      "tag": "sql-fundamentals"
+    },
+    {
+      "id": "growth-rate",
+      "label": "Growth rate",
+      "definition": "The change in a metric between two periods, usually shown as a percentage of the earlier period.",
+      "tag": "window-functions"
+    },
+    {
+      "id": "streak",
+      "label": "Streak",
+      "definition": "A run of consecutive days (or other periods) with the same behavior.",
+      "tag": "window-functions"
+    },
+    {
+      "id": "join",
+      "label": "Join",
+      "definition": "An operation that combines rows from two tables using a matching condition.",
+      "tag": "joins"
+    },
+    {
+      "id": "null-value",
+      "label": "NULL",
+      "definition": "A marker meaning a value is missing or unknown. It is not the same as zero or an empty string.",
+      "tag": "null-semantics"
+    },
+    {
+      "id": "median",
+      "label": "Median",
+      "definition": "The middle value when observations are sorted: half the values fall below it and half above.",
+      "tag": "summary-statistics"
+    },
+    {
+      "id": "repeat-purchase-rate",
+      "label": "Repeat purchase rate",
+      "definition": "The share of customers who buy more than once.",
+      "tag": "retention-cohorts"
+    },
+    {
+      "id": "central-limit-theorem",
+      "label": "Central limit theorem",
+      "definition": "A theorem in probability about the averages of samples.",
+      "tag": "sampling-distributions",
+      "deeper": "clt"
+    },
+    {
+      "id": "mean",
+      "label": "Mean",
+      "definition": "The arithmetic average: the sum of values divided by how many there are.",
+      "tag": "summary-statistics"
+    },
+    {
+      "id": "frequentist",
+      "label": "Frequentist",
+      "definition": "An approach to inference in which probability describes long-run frequencies across repeated experiments.",
+      "tag": "hypothesis-testing"
+    },
+    {
+      "id": "causation",
+      "label": "Causation",
+      "definition": "A relationship in which changing one variable produces a change in another, rather than the two merely moving together.",
+      "tag": "causal-inference"
+    },
+    {
+      "id": "control-group",
+      "label": "Control group",
+      "definition": "The subjects who do not receive the treatment, used as the comparison for those who do.",
+      "tag": "ab-testing"
+    },
+    {
+      "id": "standard-error",
+      "label": "Standard error",
+      "definition": "A measure of how much a statistic, such as a sample mean, would vary across repeated samples.",
+      "tag": "sampling-distributions",
+      "deeper": "clt"
+    },
+    {
+      "id": "anomaly-detection",
+      "label": "Anomaly detection",
+      "definition": "Identifying observations that deviate markedly from the expected pattern.",
+      "tag": "model-monitoring"
+    },
+    {
+      "id": "scenario-analysis",
+      "label": "Scenario analysis",
+      "definition": "Examining how an outcome changes under different sets of assumptions.",
+      "tag": "time-series-forecasting"
+    },
+    {
+      "id": "embedding",
+      "label": "Embedding",
+      "definition": "A list of numbers representing a piece of text (or other data) so that similar items sit close together.",
+      "tag": "embeddings-and-search"
     }
   ]
 }

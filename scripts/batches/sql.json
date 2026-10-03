@@ -1,0 +1,326 @@
+{
+  "new_tags": {
+    "sql-fundamentals": {
+      "label": "SQL fundamentals",
+      "kind": "subject"
+    },
+    "summary-statistics": {
+      "label": "Summary statistics",
+      "kind": "subject"
+    }
+  },
+  "new_terms": {
+    "ranking": {
+      "label": "Ranking",
+      "definition": "Ordering rows by a value and assigning each a position, such as 1st or 2nd.",
+      "tag": "window-functions"
+    },
+    "aggregate-function": {
+      "label": "Aggregate function",
+      "definition": "A function such as COUNT, SUM or AVG that collapses many rows into one value.",
+      "tag": "sql-fundamentals"
+    },
+    "growth-rate": {
+      "label": "Growth rate",
+      "definition": "The change in a metric between two periods, usually shown as a percentage of the earlier period.",
+      "tag": "window-functions"
+    },
+    "streak": {
+      "label": "Streak",
+      "definition": "A run of consecutive days (or other periods) with the same behavior.",
+      "tag": "window-functions"
+    },
+    "join": {
+      "label": "Join",
+      "definition": "An operation that combines rows from two tables using a matching condition.",
+      "tag": "joins"
+    },
+    "null-value": {
+      "label": "NULL",
+      "definition": "A marker meaning a value is missing or unknown. It is not the same as zero or an empty string.",
+      "tag": "null-semantics"
+    },
+    "median": {
+      "label": "Median",
+      "definition": "The middle value when observations are sorted: half the values fall below it and half above.",
+      "tag": "summary-statistics"
+    },
+    "repeat-purchase-rate": {
+      "label": "Repeat purchase rate",
+      "definition": "The share of customers who buy more than once.",
+      "tag": "retention-cohorts"
+    }
+  },
+  "questions": [
+    {
+      "id": "sql-009",
+      "question": "Write a query to find the second highest salary in an employees table.",
+      "topic": "SQL",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, data analyst or data scientist",
+      "kind": "implementation",
+      "follow_ups": [
+        {
+          "text": "What should the query return if two people tie for the highest salary?",
+          "intent": "test awareness of ties and ranking functions"
+        },
+        {
+          "text": "What if there is no second highest value at all?",
+          "intent": "test NULL handling and empty-result edge cases"
+        },
+        {
+          "text": "How would you generalize this to the Nth highest salary per department?",
+          "intent": "test generalizing with window functions"
+        }
+      ],
+      "key_insight": "The query is easy. The real test is whether you ask what 'second highest' means when salaries tie.",
+      "junior_answer": "SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees).",
+      "senior_answer": "I'd first confirm whether 'second highest' means the second distinct value or the second row. For distinct values I use DENSE_RANK() OVER (ORDER BY salary DESC) and keep rank 2, wrapped so an empty result returns NULL if the interviewer wants a row back. The MAX-of-smaller-values version works but does not generalize. For the Nth per department I add PARTITION BY department and filter on the rank. I'd also say what ROW_NUMBER and RANK would do under ties, so the choice is deliberate.",
+      "tags": [
+        "sql-fundamentals",
+        "window-functions",
+        "edge-cases"
+      ],
+      "terms": [
+        "ranking"
+      ]
+    },
+    {
+      "id": "sql-010",
+      "question": "Why does this query fail, and how would you fix it? SELECT dept, AVG(salary) FROM employees WHERE AVG(salary) > 50000 GROUP BY dept",
+      "topic": "SQL",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, SQL fundamentals",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "When does a filter belong in WHERE and when in HAVING, if both would give the same result?",
+          "intent": "test performance reasoning about filtering before aggregation"
+        },
+        {
+          "text": "What changes if you also want to exclude departments with fewer than 5 people?",
+          "intent": "test combining aggregate conditions"
+        }
+      ],
+      "key_insight": "A filter on an aggregate cannot run before the groups exist. Knowing the order SQL evaluates clauses removes a whole class of errors.",
+      "junior_answer": "Use HAVING instead of WHERE for aggregates.",
+      "senior_answer": "WHERE filters individual rows before grouping, so an aggregate like AVG(salary) does not exist yet and the query errors. HAVING filters groups after aggregation, so the fix is GROUP BY dept HAVING AVG(salary) > 50000. Conditions on raw columns, such as excluding terminated employees, should stay in WHERE because they cut rows early and can use indexes. Using both is normal: WHERE for row filters, HAVING for group filters, for example HAVING COUNT(*) >= 5 for a minimum team size.",
+      "tags": [
+        "sql-fundamentals",
+        "explaining-concepts"
+      ],
+      "terms": [
+        "aggregate-function"
+      ]
+    },
+    {
+      "id": "sql-011",
+      "question": "Calculate month-over-month revenue growth for each product.",
+      "topic": "SQL",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Analytics DS interview",
+      "kind": "implementation",
+      "follow_ups": [
+        {
+          "text": "What should the first month for each product show?",
+          "intent": "test NULL handling for the first period"
+        },
+        {
+          "text": "What if a product has no sales in some months?",
+          "intent": "test handling gaps in a time series"
+        },
+        {
+          "text": "What if last month's revenue is zero?",
+          "intent": "test divide-by-zero handling"
+        }
+      ],
+      "key_insight": "LAG is the easy part. Missing months and zero denominators decide whether the numbers can be trusted.",
+      "junior_answer": "Use LAG(revenue) OVER (PARTITION BY product ORDER BY month) and compute (revenue - previous) / previous.",
+      "senior_answer": "Aggregate to product-month first, then use LAG partitioned by product and ordered by month. Two traps. A month with no sales has no row, so LAG would compare against the wrong month; I'd join to a calendar of months and fill gaps with zero before taking LAG. And I'd divide with NULLIF(previous, 0) so a zero base returns NULL instead of an error or infinite growth. The first month per product has no prior value and should show NULL, not 0%. I'd also ask what the stakeholder wants for tiny bases, since going from 5 to 50 dollars is a 900% jump that means little.",
+      "tags": [
+        "window-functions",
+        "sql-fundamentals",
+        "edge-cases"
+      ],
+      "terms": [
+        "growth-rate",
+        "window-function"
+      ]
+    },
+    {
+      "id": "sql-012",
+      "question": "Find users who were active on three or more consecutive days.",
+      "topic": "SQL",
+      "difficulty": "hard",
+      "frequency": "common in DS interviews",
+      "context": "Product analytics DS interview",
+      "kind": "implementation",
+      "follow_ups": [
+        {
+          "text": "How would you find each user's longest streak ever?",
+          "intent": "test generalizing the consecutive-days pattern"
+        },
+        {
+          "text": "What if a user has several events on the same day?",
+          "intent": "test deduplicating before the streak logic"
+        },
+        {
+          "text": "What if 'day' depends on the user's time zone?",
+          "intent": "test real-world date handling"
+        }
+      ],
+      "key_insight": "Subtracting a row number from the date turns each run of consecutive days into a constant, which a plain GROUP BY can then count.",
+      "junior_answer": "Self-join the table on date + 1 and date + 2.",
+      "senior_answer": "Deduplicate to distinct user-day first. Then number each user's days with ROW_NUMBER() ordered by date. The date minus the row number is constant within a run of consecutive days, so grouping by user and that constant gives each streak, and HAVING COUNT(*) >= 3 keeps the qualifying ones. The longest streak is the maximum count per user. Self-joins work for a fixed length of 3 but break when the length changes. I'd also confirm how 'day' is defined, since time zones can split or merge a late-night session.",
+      "tags": [
+        "window-functions",
+        "retention-cohorts",
+        "sql-fundamentals"
+      ],
+      "terms": [
+        "streak"
+      ]
+    },
+    {
+      "id": "sql-013",
+      "question": "You join orders to order_items to compute revenue, then add a join to payments. Total revenue suddenly doubles. What happened, and how do you prevent it?",
+      "topic": "SQL",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, analytics-heavy company",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "How would you check for this before trusting a new join?",
+          "intent": "test validation habits such as row counts and key uniqueness"
+        },
+        {
+          "text": "Show a fix when you need both item-level and payment-level figures.",
+          "intent": "test pre-aggregating before joining"
+        },
+        {
+          "text": "Does the same problem appear with a LEFT JOIN?",
+          "intent": "test understanding that join type does not prevent duplication"
+        }
+      ],
+      "key_insight": "A join multiplies rows whenever the key is not unique on both sides, so sums taken after the join silently inflate.",
+      "junior_answer": "There are probably duplicates in the data, so I'd add DISTINCT.",
+      "senior_answer": "Payments are one-to-many per order (split payments, retries), so each order row is repeated once per payment before the SUM runs. DISTINCT only hides it when rows are identical and can delete legitimate duplicates. The fix is to aggregate each table to one row per order before joining, or to compute each measure in its own CTE and join the results on order_id. To prevent it, I check row counts and key uniqueness before and after every join (COUNT(*) versus COUNT(DISTINCT order_id)) and reconcile totals against the source table. A LEFT JOIN does not help, because the duplication comes from matches, not from unmatched rows.",
+      "tags": [
+        "joins",
+        "debugging",
+        "data-quality"
+      ],
+      "terms": [
+        "join"
+      ]
+    },
+    {
+      "id": "sql-014",
+      "question": "What's the difference between COUNT(*), COUNT(column) and COUNT(DISTINCT column)? When do they give different answers?",
+      "topic": "SQL",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, SQL fundamentals",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "A column has 100 rows, 20 NULLs and 30 distinct non-null values. What do the three return?",
+          "intent": "test applying the rules to concrete numbers"
+        },
+        {
+          "text": "How do NULLs affect AVG and SUM?",
+          "intent": "test NULL semantics in other aggregates"
+        },
+        {
+          "text": "Does COUNT(DISTINCT) have a cost at scale?",
+          "intent": "test awareness of performance"
+        }
+      ],
+      "key_insight": "COUNT(*) counts rows and COUNT(column) counts non-NULL values. The gap between them is a data-quality signal in its own right.",
+      "junior_answer": "COUNT(*) counts everything and COUNT(DISTINCT) counts unique values.",
+      "senior_answer": "COUNT(*) counts rows regardless of content, COUNT(col) counts rows where col is not NULL, and COUNT(DISTINCT col) counts distinct non-NULL values. With 100 rows, 20 NULLs and 30 distinct values, that is 100, 80 and 30. AVG and SUM skip NULLs, so AVG(col) divides by 80, not 100, which is why a NULL-heavy column can shift an average. COUNT(DISTINCT) is expensive on large tables because it has to deduplicate, so at scale I'd consider an approximate distinct count when exactness is not required. Comparing COUNT(*) with COUNT(col) is also a quick completeness check.",
+      "tags": [
+        "null-semantics",
+        "sql-fundamentals"
+      ],
+      "terms": [
+        "aggregate-function",
+        "null-value"
+      ]
+    },
+    {
+      "id": "sql-015",
+      "question": "Compute the median order value per customer segment. Your warehouse has no MEDIAN function.",
+      "topic": "SQL",
+      "difficulty": "hard",
+      "frequency": "common in DS interviews",
+      "context": "Senior analytics interview",
+      "kind": "implementation",
+      "follow_ups": [
+        {
+          "text": "How does your approach behave when a segment has an even number of orders?",
+          "intent": "test the even-count definition of the median"
+        },
+        {
+          "text": "Why might you report the median rather than the mean here?",
+          "intent": "test choosing summary statistics"
+        },
+        {
+          "text": "What does this cost on a billion-row table?",
+          "intent": "test scalability thinking and approximate percentiles"
+        }
+      ],
+      "key_insight": "A median needs an ordering within each group. The even-count case and the cost of sorting separate a working answer from a correct one.",
+      "junior_answer": "Sort the orders and pick the middle row.",
+      "senior_answer": "If PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY amount) exists I'd use it. Otherwise I'd rank rows within each segment with ROW_NUMBER() and compute the segment's row count with a window, then average the one or two middle rows (where the rank is floor((n+1)/2) or ceil((n+1)/2)). That handles even counts by averaging the two middle values. The median resists whales and skew, which suits order value. At a billion rows a full sort per segment is costly, so I'd use an approximate percentile function if exactness is not required, or sample.",
+      "tags": [
+        "summary-statistics",
+        "window-functions",
+        "sql-fundamentals"
+      ],
+      "terms": [
+        "median",
+        "ranking"
+      ]
+    },
+    {
+      "id": "sql-016",
+      "question": "Your dashboard says the repeat purchase rate is 38%, but finance reports 31% from the same orders table. How do you reconcile them?",
+      "topic": "SQL",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, stakeholder-facing role",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "Which definitions could legitimately differ?",
+          "intent": "test enumerating metric-definition differences"
+        },
+        {
+          "text": "How do you decide whose number is right?",
+          "intent": "test stakeholder alignment and metric governance"
+        },
+        {
+          "text": "How do you stop it happening again?",
+          "intent": "test process thinking: documented definitions and one source"
+        }
+      ],
+      "key_insight": "Two correct queries can disagree because the metric was defined differently. The fix is agreeing on a definition, not picking a winner.",
+      "junior_answer": "One of the queries must be wrong, so I'd compare the SQL.",
+      "senior_answer": "I'd first line up the definitions: the denominator (all customers, or customers acquired in a period), the numerator window (a second purchase within 30 days versus ever), the treatment of cancelled, refunded, test and internal orders, guest checkouts, currency, and time zone cut-offs. Then I'd reproduce both numbers step by step from the same filtered base to see which step opens the gap; a few counts usually explain it. Neither is wrong until we agree what decision the metric supports. Afterwards I'd put one definition in a documented metrics layer so dashboards and finance read the same source.",
+      "tags": [
+        "retention-cohorts",
+        "data-quality",
+        "stakeholder-communication"
+      ],
+      "terms": [
+        "repeat-purchase-rate",
+        "cohort"
+      ]
+    }
+  ]
+}

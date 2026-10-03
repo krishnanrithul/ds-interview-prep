@@ -1,57 +1,676 @@
 {
   "subject": {
-    "gradient-boosting": {"label": "XGBoost & gradient boosting", "questions": ["ml-001","ml-005","ml-009","python-001"]},
-    "model-selection": {"label": "Choosing a model", "questions": ["ml-001","ml-003","ml-009","ml-010"]},
-    "explainability": {"label": "Explainability (SHAP)", "questions": ["python-001","ml-009","system-design-002"]},
-    "time-series-forecasting": {"label": "Time-series forecasting", "questions": ["sql-002","ml-003","ml-008","python-003","system-design-002","prodml-004"]},
-    "validation-strategy": {"label": "Train/test validation", "questions": ["ml-005","ml-008","python-003","prodml-004","ml-001"]},
-    "data-leakage": {"label": "Data leakage & look-ahead", "questions": ["ml-004","ml-008","python-003","prodml-005"]},
-    "distribution-shift": {"label": "Drift & distribution shift", "questions": ["ml-002","ml-005","prodml-001","prodml-002","sql-002"]},
-    "model-monitoring": {"label": "Model monitoring", "questions": ["ml-002","prodml-001","prodml-002","system-design-006","prodml-004"]},
-    "retraining": {"label": "Retraining", "questions": ["ml-002","ml-005","prodml-001","prodml-002","system-design-001"]},
-    "feature-engineering": {"label": "Feature engineering", "questions": ["ml-004","ml-010","prodml-005","system-design-005"]},
-    "missing-data-and-outliers": {"label": "Missing data & outliers", "questions": ["ml-010","ml-004","python-002"]},
-    "bias-variance": {"label": "Bias-variance & regularization", "questions": ["ml-006"]},
-    "evaluation-metrics": {"label": "Evaluation metrics", "questions": ["ml-001","ml-007","ml-009","prodml-004"]},
-    "class-imbalance": {"label": "Class imbalance", "questions": ["ml-007","system-design-006","ml-001"]},
-    "cost-sensitive-decisions": {"label": "Cost-sensitive decisions", "questions": ["ml-001","ml-007","system-design-006","stats-001","stats-002","prodml-003"]},
-    "fairness": {"label": "Fairness", "questions": ["prodml-003"]},
-    "hypothesis-testing": {"label": "Hypothesis testing", "questions": ["stats-001","stats-002","stats-004","stats-006"]},
-    "statistical-power": {"label": "Sample size & power", "questions": ["stats-004","stats-001","stats-002"]},
-    "multiple-testing": {"label": "Multiple testing", "questions": ["stats-006"]},
-    "confidence-intervals": {"label": "Confidence intervals", "questions": ["stats-005","stats-007","python-001"]},
-    "resampling": {"label": "Bootstrapping & resampling", "questions": ["stats-007","python-001","ml-009"]},
-    "ab-testing": {"label": "A/B testing", "questions": ["stats-001","stats-002","stats-004","stats-006","system-design-001","system-design-004"]},
-    "segment-analysis": {"label": "Segment analysis & Simpson's paradox", "questions": ["stats-003","sql-002","sql-004","prodml-004"]},
-    "label-delay": {"label": "Delayed labels", "questions": ["stats-002","ml-007","system-design-006","ml-008"]},
-    "window-functions": {"label": "SQL window functions", "questions": ["sql-003","sql-005","sql-006","sql-007"]},
-    "joins": {"label": "Joins", "questions": ["sql-008","python-004"]},
-    "null-semantics": {"label": "NULL behavior", "questions": ["sql-008","sql-003"]},
-    "retention-cohorts": {"label": "Retention & cohorts", "questions": ["sql-004","sql-003"]},
-    "performance-at-scale": {"label": "Performance at scale", "questions": ["sql-001","sql-002","sql-007","python-005"]},
-    "data-quality": {"label": "Data quality & validation", "questions": ["python-002","python-004","python-006","sql-001","ml-010","prodml-005"]},
-    "software-testing": {"label": "Testing code and pipelines", "questions": ["python-006","python-002"]},
-    "pandas": {"label": "pandas", "questions": ["python-004","python-005"]},
-    "batch-vs-realtime": {"label": "Batch vs real-time", "questions": ["system-design-001","system-design-002","system-design-005","system-design-006"]},
-    "latency-and-cost": {"label": "Latency & serving cost", "questions": ["system-design-001","system-design-006","prodml-007"]},
-    "training-serving-skew": {"label": "Training-serving skew", "questions": ["prodml-005","system-design-005"]},
-    "versioning-reproducibility": {"label": "Versioning & reproducibility", "questions": ["prodml-006","system-design-002"]},
-    "model-deployment": {"label": "Deployment & rollout", "questions": ["prodml-004","prodml-007","system-design-002"]},
-    "governance-and-process": {"label": "ML governance & process", "questions": ["system-design-003","prodml-003"]},
-    "alerting": {"label": "Alerting", "questions": ["ml-002","prodml-002","python-002"]},
-    "fraud-detection": {"label": "Fraud detection", "questions": ["ml-007","system-design-006"]},
-    "rag": {"label": "RAG", "questions": ["llm-001","llm-003","llm-004"]},
-    "llm-evaluation": {"label": "LLM evaluation", "questions": ["llm-002","llm-001","llm-004"]},
-    "prompting-vs-fine-tuning": {"label": "Prompting vs fine-tuning", "questions": ["llm-003","llm-004"]},
-    "ai-agents": {"label": "AI agents", "questions": ["llm-005"]},
-    "security-and-permissions": {"label": "Security & permissions", "questions": ["llm-005","llm-001"]}
+    "gradient-boosting": {
+      "label": "XGBoost & gradient boosting",
+      "questions": [
+        "ml-001",
+        "ml-005",
+        "ml-009",
+        "python-001",
+        "ml-012"
+      ]
+    },
+    "model-selection": {
+      "label": "Choosing a model",
+      "questions": [
+        "ml-001",
+        "ml-003",
+        "ml-009",
+        "ml-010",
+        "ml-012",
+        "ml-015",
+        "ml-017"
+      ]
+    },
+    "explainability": {
+      "label": "Explainability (SHAP)",
+      "questions": [
+        "python-001",
+        "ml-009",
+        "system-design-002",
+        "ml-015",
+        "system-design-014",
+        "system-design-009"
+      ]
+    },
+    "time-series-forecasting": {
+      "label": "Time-series forecasting",
+      "questions": [
+        "sql-002",
+        "ml-003",
+        "ml-008",
+        "python-003",
+        "system-design-002",
+        "prodml-004",
+        "system-design-007",
+        "system-design-014"
+      ]
+    },
+    "validation-strategy": {
+      "label": "Train/test validation",
+      "questions": [
+        "ml-005",
+        "ml-008",
+        "python-003",
+        "prodml-004",
+        "ml-001",
+        "ml-011",
+        "ml-018"
+      ]
+    },
+    "data-leakage": {
+      "label": "Data leakage & look-ahead",
+      "questions": [
+        "ml-004",
+        "ml-008",
+        "python-003",
+        "prodml-005",
+        "ml-014",
+        "ml-018"
+      ]
+    },
+    "distribution-shift": {
+      "label": "Drift & distribution shift",
+      "questions": [
+        "ml-002",
+        "ml-005",
+        "prodml-001",
+        "prodml-002",
+        "sql-002",
+        "prodml-008",
+        "prodml-011"
+      ]
+    },
+    "model-monitoring": {
+      "label": "Model monitoring",
+      "questions": [
+        "ml-002",
+        "prodml-001",
+        "prodml-002",
+        "system-design-006",
+        "prodml-004",
+        "prodml-010",
+        "prodml-011",
+        "prodml-013",
+        "prodml-015",
+        "system-design-012"
+      ]
+    },
+    "retraining": {
+      "label": "Retraining",
+      "questions": [
+        "ml-002",
+        "ml-005",
+        "prodml-001",
+        "prodml-002",
+        "system-design-001",
+        "prodml-010"
+      ]
+    },
+    "feature-engineering": {
+      "label": "Feature engineering",
+      "questions": [
+        "ml-004",
+        "ml-010",
+        "prodml-005",
+        "system-design-005",
+        "ml-014",
+        "ml-015",
+        "prodml-012",
+        "python-014"
+      ]
+    },
+    "missing-data-and-outliers": {
+      "label": "Missing data & outliers",
+      "questions": [
+        "ml-010",
+        "ml-004",
+        "python-002",
+        "stats-010"
+      ]
+    },
+    "bias-variance": {
+      "label": "Bias-variance & regularization",
+      "questions": [
+        "ml-006",
+        "ml-011"
+      ]
+    },
+    "evaluation-metrics": {
+      "label": "Evaluation metrics",
+      "questions": [
+        "ml-001",
+        "ml-007",
+        "ml-009",
+        "prodml-004",
+        "ml-013",
+        "ml-016",
+        "python-009"
+      ]
+    },
+    "class-imbalance": {
+      "label": "Class imbalance",
+      "questions": [
+        "ml-007",
+        "system-design-006",
+        "ml-001"
+      ]
+    },
+    "cost-sensitive-decisions": {
+      "label": "Cost-sensitive decisions",
+      "questions": [
+        "ml-001",
+        "ml-007",
+        "system-design-006",
+        "stats-001",
+        "stats-002",
+        "prodml-003",
+        "ml-016",
+        "system-design-008"
+      ]
+    },
+    "fairness": {
+      "label": "Fairness",
+      "questions": [
+        "prodml-003",
+        "system-design-009"
+      ]
+    },
+    "hypothesis-testing": {
+      "label": "Hypothesis testing",
+      "questions": [
+        "stats-001",
+        "stats-002",
+        "stats-004",
+        "stats-006",
+        "stats-008",
+        "stats-011",
+        "stats-012"
+      ]
+    },
+    "statistical-power": {
+      "label": "Sample size & power",
+      "questions": [
+        "stats-004",
+        "stats-001",
+        "stats-002"
+      ]
+    },
+    "multiple-testing": {
+      "label": "Multiple testing",
+      "questions": [
+        "stats-006",
+        "stats-012"
+      ]
+    },
+    "confidence-intervals": {
+      "label": "Confidence intervals",
+      "questions": [
+        "stats-005",
+        "stats-007",
+        "python-001",
+        "ml-017",
+        "stats-008",
+        "stats-014"
+      ]
+    },
+    "resampling": {
+      "label": "Bootstrapping & resampling",
+      "questions": [
+        "stats-007",
+        "python-001",
+        "ml-009"
+      ]
+    },
+    "ab-testing": {
+      "label": "A/B testing",
+      "questions": [
+        "stats-001",
+        "stats-002",
+        "stats-004",
+        "stats-006",
+        "system-design-001",
+        "system-design-004",
+        "stats-009",
+        "stats-010",
+        "stats-012",
+        "stats-014",
+        "stats-015"
+      ]
+    },
+    "segment-analysis": {
+      "label": "Segment analysis & Simpson's paradox",
+      "questions": [
+        "stats-003",
+        "sql-002",
+        "sql-004",
+        "prodml-004",
+        "stats-013"
+      ]
+    },
+    "label-delay": {
+      "label": "Delayed labels",
+      "questions": [
+        "stats-002",
+        "ml-007",
+        "system-design-006",
+        "ml-008"
+      ]
+    },
+    "window-functions": {
+      "label": "SQL window functions",
+      "questions": [
+        "sql-003",
+        "sql-005",
+        "sql-006",
+        "sql-007",
+        "sql-009",
+        "sql-011",
+        "sql-012",
+        "sql-015"
+      ]
+    },
+    "joins": {
+      "label": "Joins",
+      "questions": [
+        "sql-008",
+        "python-004",
+        "sql-013"
+      ]
+    },
+    "null-semantics": {
+      "label": "NULL behavior",
+      "questions": [
+        "sql-008",
+        "sql-003",
+        "sql-014"
+      ]
+    },
+    "retention-cohorts": {
+      "label": "Retention & cohorts",
+      "questions": [
+        "sql-004",
+        "sql-003",
+        "sql-012",
+        "sql-016",
+        "system-design-008"
+      ]
+    },
+    "performance-at-scale": {
+      "label": "Performance at scale",
+      "questions": [
+        "sql-001",
+        "sql-002",
+        "sql-007",
+        "python-005",
+        "python-011",
+        "python-014",
+        "python-010"
+      ]
+    },
+    "data-quality": {
+      "label": "Data quality & validation",
+      "questions": [
+        "python-002",
+        "python-004",
+        "python-006",
+        "sql-001",
+        "ml-010",
+        "prodml-005",
+        "python-013",
+        "sql-013",
+        "sql-016",
+        "system-design-011",
+        "system-design-010"
+      ]
+    },
+    "software-testing": {
+      "label": "Testing code and pipelines",
+      "questions": [
+        "python-006",
+        "python-002",
+        "python-009",
+        "python-013"
+      ]
+    },
+    "pandas": {
+      "label": "pandas",
+      "questions": [
+        "python-004",
+        "python-005",
+        "python-008"
+      ]
+    },
+    "batch-vs-realtime": {
+      "label": "Batch vs real-time",
+      "questions": [
+        "system-design-001",
+        "system-design-002",
+        "system-design-005",
+        "system-design-006",
+        "system-design-007",
+        "system-design-008"
+      ]
+    },
+    "latency-and-cost": {
+      "label": "Latency & serving cost",
+      "questions": [
+        "system-design-001",
+        "system-design-006",
+        "prodml-007",
+        "llm-006",
+        "system-design-013",
+        "llm-013"
+      ]
+    },
+    "training-serving-skew": {
+      "label": "Training-serving skew",
+      "questions": [
+        "prodml-005",
+        "system-design-005",
+        "prodml-012"
+      ]
+    },
+    "versioning-reproducibility": {
+      "label": "Versioning & reproducibility",
+      "questions": [
+        "prodml-006",
+        "system-design-002",
+        "python-013",
+        "system-design-011"
+      ]
+    },
+    "model-deployment": {
+      "label": "Deployment & rollout",
+      "questions": [
+        "prodml-004",
+        "prodml-007",
+        "system-design-002"
+      ]
+    },
+    "governance-and-process": {
+      "label": "ML governance & process",
+      "questions": [
+        "system-design-003",
+        "prodml-003",
+        "prodml-014",
+        "system-design-009",
+        "system-design-010"
+      ]
+    },
+    "alerting": {
+      "label": "Alerting",
+      "questions": [
+        "ml-002",
+        "prodml-002",
+        "python-002",
+        "prodml-014",
+        "system-design-012"
+      ]
+    },
+    "fraud-detection": {
+      "label": "Fraud detection",
+      "questions": [
+        "ml-007",
+        "system-design-006",
+        "prodml-013"
+      ]
+    },
+    "rag": {
+      "label": "RAG",
+      "questions": [
+        "llm-001",
+        "llm-003",
+        "llm-004",
+        "llm-010",
+        "llm-011",
+        "system-design-013"
+      ]
+    },
+    "llm-evaluation": {
+      "label": "LLM evaluation",
+      "questions": [
+        "llm-002",
+        "llm-001",
+        "llm-004",
+        "llm-011",
+        "llm-012"
+      ]
+    },
+    "prompting-vs-fine-tuning": {
+      "label": "Prompting vs fine-tuning",
+      "questions": [
+        "llm-003",
+        "llm-004"
+      ]
+    },
+    "ai-agents": {
+      "label": "AI agents",
+      "questions": [
+        "llm-005",
+        "llm-009"
+      ]
+    },
+    "security-and-permissions": {
+      "label": "Security & permissions",
+      "questions": [
+        "llm-005",
+        "llm-001",
+        "llm-009"
+      ]
+    },
+    "embeddings-and-search": {
+      "label": "Embeddings & semantic search",
+      "questions": [
+        "llm-010",
+        "system-design-013"
+      ]
+    },
+    "llm-output-control": {
+      "label": "Controlling LLM output",
+      "questions": [
+        "llm-007",
+        "llm-008"
+      ]
+    },
+    "llm-fundamentals": {
+      "label": "LLM fundamentals",
+      "questions": [
+        "llm-006",
+        "llm-007",
+        "llm-013"
+      ]
+    },
+    "calibration": {
+      "label": "Probability calibration",
+      "questions": [
+        "ml-013",
+        "ml-016"
+      ]
+    },
+    "causal-inference": {
+      "label": "Causal inference",
+      "questions": [
+        "prodml-009",
+        "stats-013",
+        "stats-015"
+      ]
+    },
+    "feedback-loops": {
+      "label": "Feedback loops & selection bias",
+      "questions": [
+        "prodml-009",
+        "prodml-015"
+      ]
+    },
+    "python-fundamentals": {
+      "label": "Python fundamentals",
+      "questions": [
+        "python-007",
+        "python-008",
+        "python-009",
+        "python-011",
+        "python-012",
+        "python-014",
+        "python-010"
+      ]
+    },
+    "sql-fundamentals": {
+      "label": "SQL fundamentals",
+      "questions": [
+        "sql-009",
+        "sql-010",
+        "sql-011",
+        "sql-012",
+        "sql-014",
+        "sql-015"
+      ]
+    },
+    "summary-statistics": {
+      "label": "Summary statistics",
+      "questions": [
+        "sql-015",
+        "stats-010"
+      ]
+    },
+    "sampling-distributions": {
+      "label": "Sampling & the CLT",
+      "questions": [
+        "stats-008",
+        "stats-009",
+        "stats-014"
+      ]
+    },
+    "bayesian-inference": {
+      "label": "Bayesian thinking",
+      "questions": [
+        "stats-011",
+        "stats-012"
+      ]
+    }
   },
   "skill": {
-    "debugging": {"label": "Debugging", "questions": ["ml-005","prodml-001","sql-008","python-004","python-003","prodml-005"]},
-    "tradeoffs": {"label": "Weighing tradeoffs", "questions": ["ml-001","ml-009","system-design-001","system-design-003","system-design-005","prodml-004","prodml-007","llm-003","prodml-003","system-design-006"]},
-    "stakeholder-communication": {"label": "Talking to stakeholders", "questions": ["stats-005","ml-003","system-design-002","prodml-003","ml-009","stats-004","python-001","stats-003"]},
-    "edge-cases": {"label": "Edge cases", "questions": ["sql-005","sql-006","sql-008","sql-003","ml-004","python-004","sql-004"]},
-    "designing-systems": {"label": "Designing systems", "questions": ["system-design-001","system-design-002","system-design-003","system-design-004","system-design-005","system-design-006","prodml-002","python-002","llm-001","llm-005"]},
-    "explaining-concepts": {"label": "Explaining a concept", "questions": ["stats-001","stats-003","stats-005","ml-006","prodml-005","stats-007"]}
+    "debugging": {
+      "label": "Debugging",
+      "questions": [
+        "ml-005",
+        "prodml-001",
+        "sql-008",
+        "python-004",
+        "python-003",
+        "prodml-005",
+        "llm-008",
+        "llm-011",
+        "ml-011",
+        "ml-017",
+        "prodml-013",
+        "python-008",
+        "python-012",
+        "sql-013"
+      ]
+    },
+    "tradeoffs": {
+      "label": "Weighing tradeoffs",
+      "questions": [
+        "ml-001",
+        "ml-009",
+        "system-design-001",
+        "system-design-003",
+        "system-design-005",
+        "prodml-004",
+        "prodml-007",
+        "llm-003",
+        "prodml-003",
+        "system-design-006",
+        "llm-007",
+        "llm-010",
+        "llm-012",
+        "ml-013",
+        "prodml-010",
+        "prodml-011",
+        "prodml-012",
+        "stats-013",
+        "system-design-012",
+        "llm-013"
+      ]
+    },
+    "stakeholder-communication": {
+      "label": "Talking to stakeholders",
+      "questions": [
+        "stats-005",
+        "ml-003",
+        "system-design-002",
+        "prodml-003",
+        "ml-009",
+        "stats-004",
+        "python-001",
+        "stats-003",
+        "llm-012",
+        "prodml-015",
+        "sql-016",
+        "stats-011",
+        "system-design-014"
+      ]
+    },
+    "edge-cases": {
+      "label": "Edge cases",
+      "questions": [
+        "sql-005",
+        "sql-006",
+        "sql-008",
+        "sql-003",
+        "ml-004",
+        "python-004",
+        "sql-004",
+        "llm-008",
+        "llm-009",
+        "ml-014",
+        "ml-018",
+        "prodml-009",
+        "sql-009",
+        "sql-011",
+        "stats-015"
+      ]
+    },
+    "designing-systems": {
+      "label": "Designing systems",
+      "questions": [
+        "system-design-001",
+        "system-design-002",
+        "system-design-003",
+        "system-design-004",
+        "system-design-005",
+        "system-design-006",
+        "prodml-002",
+        "python-002",
+        "llm-001",
+        "llm-005",
+        "prodml-014",
+        "system-design-007",
+        "system-design-011",
+        "system-design-013",
+        "system-design-014",
+        "system-design-008",
+        "system-design-009",
+        "system-design-010"
+      ]
+    },
+    "explaining-concepts": {
+      "label": "Explaining a concept",
+      "questions": [
+        "stats-001",
+        "stats-003",
+        "stats-005",
+        "ml-006",
+        "prodml-005",
+        "stats-007",
+        "llm-006",
+        "ml-012",
+        "prodml-008",
+        "python-007",
+        "sql-010",
+        "stats-009"
+      ]
+    }
   }
 }
