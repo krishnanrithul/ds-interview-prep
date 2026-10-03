@@ -41,10 +41,11 @@ This teaches **decision-making under constraints**, which is what seniority actu
 
 ### Phase 0: Content (DONE)
 
-- 22 interview questions across 6 topics: SQL (4), ML (5), Statistics (3), System Design (3), Python (3), Production ML (4)
-- Each question has 2-3 follow-ups (with the interviewer's intent) plus a key insight
-- Real examples from a fintech / financial analytics context
+- 49 questions across 7 topics: SQL (8), ML (10), Statistics (7), System Design (6), Python (6), Production ML (7), LLMs & AI (5)
+- The first 22 are the author's own, with frequency data from real interviews. The other 27 were drafted later and carry `"draft": true` (shown as a Draft badge) until reviewed. Their frequency label is a generic "common in DS interviews", not measured data
+- Each question has 2-3 follow-ups (with the interviewer's intent), a key insight, and a junior and a senior answer
 - Source of truth: `src/data/questions.json`
+- Only 3 questions are "easy"; adding more easy ones would help beginners
 
 ### Phase 1: Study-loop UI (DONE)
 
@@ -72,6 +73,7 @@ Borrowed from the vape-ease-journey app:
 - [x] Saved attempts: your answers are stored per question (last 5) and shown next to the senior answer on later attempts
 - [x] Mobile check at phone width: no horizontal overflow, tabs collapse to icons (a bottom nav is still optional)
 - [ ] Bug pass on edge cases: empty queue, 1-question session, keyboard shortcuts
+- [ ] Review the 27 draft questions and the senior answers on all 49, then remove `draft` flags
 - [ ] Optional polish: animations, card transitions
 
 ### Phase 2: Launch (1 week)

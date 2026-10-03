@@ -3,6 +3,7 @@ import { ArrowRight, X, RotateCcw, CornerDownRight } from 'lucide-react'
 import { DIFFICULTY, RATINGS, dot } from '../lib/topics'
 import AnswerLadder from './AnswerLadder'
 import Attempts from './Attempts'
+import DraftBadge from './DraftBadge'
 
 export default function Practice({ ids, byId, notes, active, onRate, onExit, onAgain }) {
   const [i, setI] = useState(0)
@@ -110,6 +111,7 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
           </span>
           <span className={`px-2 py-0.5 rounded-md ring-1 capitalize font-medium ${DIFFICULTY[q.difficulty] || ''}`}>{q.difficulty}</span>
           <span className="text-muted-foreground">{q.frequency}</span>
+          <DraftBadge q={q} />
         </div>
 
         <h2 className="text-2xl font-semibold leading-snug mb-6">{q.question}</h2>

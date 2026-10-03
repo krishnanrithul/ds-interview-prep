@@ -513,6 +513,708 @@
       "key_insight": "Model deployment is about managing risk—perfect is the enemy of good enough, and the cost of being wrong changes your decision",
       "junior_answer": "Test the new model on a holdout set, and switch over if the error is lower.",
       "senior_answer": "Backtest first, then shadow mode: run old and new side by side on live inputs with no user impact. Next a canary or segment rollout if the forecast drives decisions, with a one-step rollback. If the new model is better only for some segments, I'd evaluate each segment by what it is worth to the business and consider routing by segment, not an all-or-nothing switch. The monitoring window depends on the feedback loop: long enough to cover at least one full business cycle and for labels to arrive, not a fixed number of days."
+    },
+    {
+      "id": "sql-005",
+      "question": "Return the top 3 highest-paid employees in each department.",
+      "topic": "SQL",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Tests window functions and tie handling.",
+      "follow_ups": [
+        {
+          "text": "Two people tie for third place. Do you return both, and how does that change your query?",
+          "intent": "test RANK vs DENSE_RANK vs ROW_NUMBER semantics"
+        },
+        {
+          "text": "A department has only two employees. What does your query return?",
+          "intent": "test edge cases and awareness of what the query actually guarantees"
+        },
+        {
+          "text": "Why can't you filter on the window function directly in the WHERE clause?",
+          "intent": "test understanding of SQL's logical order of evaluation"
+        }
+      ],
+      "key_insight": "Ranking functions differ only in how they treat ties, so the right one depends on the business rule. Window results can't be filtered in the same SELECT, so rank in a CTE or subquery first.",
+      "junior_answer": "ORDER BY salary DESC LIMIT 3. (That returns the top 3 company-wide, not per department.)",
+      "senior_answer": "I'd rank within each department: DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) in a CTE, then filter rank <= 3 in the outer query, because window functions are evaluated after WHERE. I'd ask about ties first: ROW_NUMBER gives exactly 3 rows and breaks ties arbitrarily, RANK can return more than 3 and skips numbers, DENSE_RANK returns everyone within the top 3 salary levels. Departments with fewer than three people simply return what they have.",
+      "draft": true
+    },
+    {
+      "id": "sql-006",
+      "question": "Calculate a 7-day rolling average of daily revenue.",
+      "topic": "SQL",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Tests window frames and the gaps-in-dates problem that breaks naive solutions.",
+      "follow_ups": [
+        {
+          "text": "Some days have no sales, so there is no row for them. What goes wrong?",
+          "intent": "test awareness that row-based windows count rows, not days"
+        },
+        {
+          "text": "What is the difference between ROWS and RANGE in the window frame?",
+          "intent": "test window frame fundamentals"
+        },
+        {
+          "text": "What should the first six days of the series show?",
+          "intent": "test judgment about partial windows"
+        }
+      ],
+      "key_insight": "A row-based window counts rows, not calendar days, so missing dates silently stretch the window. Build a complete date spine first.",
+      "junior_answer": "AVG(revenue) OVER (ORDER BY date ROWS 6 PRECEDING) on the raw table.",
+      "senior_answer": "That works only if every day has a row. I'd generate a calendar of dates, LEFT JOIN revenue onto it with COALESCE(revenue, 0), and then use AVG(revenue) OVER (ORDER BY date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW). ROWS counts physical rows, while RANGE works on values, which matters with duplicate dates. For the first six days I'd return NULL, or flag them as partial, instead of presenting an average over fewer than seven days as if it were comparable.",
+      "draft": true
+    },
+    {
+      "id": "sql-007",
+      "question": "Given a table of user click events with timestamps, group the events into sessions where a new session starts after 30 minutes of inactivity.",
+      "topic": "SQL",
+      "difficulty": "hard",
+      "frequency": "common in DS interviews",
+      "context": "Classic sessionization: tests LAG, conditional flags and cumulative sums.",
+      "follow_ups": [
+        {
+          "text": "How would you handle events that arrive late or out of order?",
+          "intent": "test data-quality thinking in event pipelines"
+        },
+        {
+          "text": "This table has 5 billion rows. How do you make it practical to run daily?",
+          "intent": "test incremental processing and partitioning"
+        },
+        {
+          "text": "How do bots or very long sessions affect your numbers?",
+          "intent": "test sanity checks and outlier handling"
+        }
+      ],
+      "key_insight": "Sessionization is three steps: compute the gap from the previous event, flag gaps over the threshold as new sessions, then take a running sum of the flags to get a session id.",
+      "junior_answer": "Group by user and date and call each group a session.",
+      "senior_answer": "A date is not a session. I'd use LAG(event_time) OVER (PARTITION BY user_id ORDER BY event_time) to get the gap, set new_session = 1 when the gap is NULL or over 30 minutes, then SUM(new_session) OVER the same window to get a session number per user. For scale I'd process incrementally by day, carrying over each user's last event and open session from the previous run so sessions that span midnight stay intact. I'd sanity-check for bots (thousands of events per session) and cap or flag extreme sessions.",
+      "draft": true
+    },
+    {
+      "id": "sql-008",
+      "question": "Find customers who made a purchase in January but not in February.",
+      "topic": "SQL",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Tests anti-joins and the NULL trap in NOT IN.",
+      "follow_ups": [
+        {
+          "text": "Your NOT IN query suddenly returns zero rows. What could have happened?",
+          "intent": "test the NULL semantics of NOT IN"
+        },
+        {
+          "text": "NOT EXISTS, LEFT JOIN ... IS NULL, or NOT IN: how do you choose?",
+          "intent": "test practical SQL judgment and readability"
+        },
+        {
+          "text": "How would you generalize this to 'bought in at least 3 of the last 6 months but not this month'?",
+          "intent": "test extending a pattern with aggregation"
+        }
+      ],
+      "key_insight": "NOT IN returns no rows if the subquery contains a single NULL. NOT EXISTS or a LEFT JOIN anti-join avoids the trap.",
+      "junior_answer": "SELECT customer_id FROM orders WHERE month = 'Jan' AND customer_id NOT IN (SELECT customer_id FROM orders WHERE month = 'Feb').",
+      "senior_answer": "That works until the subquery returns a NULL customer_id: then NOT IN evaluates to unknown for every row and returns nothing. I'd write it with NOT EXISTS (or a LEFT JOIN with a IS NULL filter), which handle NULLs predictably and usually optimize well. I'd also DISTINCT the January customers so repeat buyers aren't duplicated. For the generalization I'd aggregate by customer and month into a CTE and use conditional counts in HAVING.",
+      "draft": true
+    },
+    {
+      "id": "ml-006",
+      "question": "Explain the bias-variance tradeoff, and how it guides what you do when a model underperforms.",
+      "topic": "ML",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Tests whether you can turn theory into a diagnostic process.",
+      "follow_ups": [
+        {
+          "text": "How can you tell from learning curves whether you have a bias problem or a variance problem?",
+          "intent": "test practical diagnosis"
+        },
+        {
+          "text": "Will collecting more data fix it?",
+          "intent": "test understanding that more data helps variance, not bias"
+        },
+        {
+          "text": "How does regularization move you along the tradeoff?",
+          "intent": "test intuition about model complexity"
+        }
+      ],
+      "key_insight": "High bias means the model is too simple (both train and validation error are high). High variance means it is too sensitive to the training set (a big gap between them). The fix differs.",
+      "junior_answer": "Bias is underfitting and variance is overfitting. You want a balance.",
+      "senior_answer": "I'd diagnose before acting. If training and validation error are both high and close, that's bias: use a richer model, better features, or less regularization. If training error is low and validation error is much higher, that's variance: more data, stronger regularization, simpler model, or bagging. Learning curves show which regime I'm in, and more data mainly helps variance. Regularization trades a little extra bias for a larger reduction in variance.",
+      "draft": true
+    },
+    {
+      "id": "ml-007",
+      "question": "Which evaluation metric would you use for a fraud detection model, and why not accuracy?",
+      "topic": "ML",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Tests metric choice under extreme class imbalance and business cost.",
+      "follow_ups": [
+        {
+          "text": "Fraud is 0.1% of transactions. ROC-AUC looks great at 0.97. Is it?",
+          "intent": "test why PR-AUC is more informative when positives are rare"
+        },
+        {
+          "text": "How do you pick the decision threshold?",
+          "intent": "test connecting the threshold to costs and review capacity"
+        },
+        {
+          "text": "Fraud labels arrive weeks late and some fraud is never caught. How does that affect evaluation?",
+          "intent": "test awareness of label delay and noisy labels"
+        }
+      ],
+      "key_insight": "With rare positives, accuracy is meaningless and ROC-AUC can look flattering. Evaluate precision and recall at the operating point the business can actually use.",
+      "junior_answer": "Use accuracy, and maybe F1.",
+      "senior_answer": "A model that always says 'not fraud' is 99.9% accurate, so accuracy tells me nothing. I'd look at precision-recall curves and PR-AUC, because ROC-AUC can stay high when the number of negatives is huge. The threshold comes from costs and capacity: missed fraud has a dollar cost, each false alert costs analyst time and customer friction, and the review team can only handle so many cases a day. I'd also account for label delay by evaluating on mature cohorts, and remember that unlabeled fraud makes recall look better than it is.",
+      "draft": true
+    },
+    {
+      "id": "ml-008",
+      "question": "How do you cross-validate a time-series model, and what goes wrong with random k-fold?",
+      "topic": "ML",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Tests leakage awareness in temporal data.",
+      "follow_ups": [
+        {
+          "text": "Your target is 'did the customer churn in the next 30 days'. Is a clean time split enough?",
+          "intent": "test label-horizon leakage and the need for a gap"
+        },
+        {
+          "text": "Expanding window or sliding window: how do you choose?",
+          "intent": "test reasoning about stationarity and data volume"
+        },
+        {
+          "text": "How do you tune hyperparameters without leaking the future?",
+          "intent": "test nested, time-aware validation"
+        }
+      ],
+      "key_insight": "Random k-fold lets the model train on the future and test on the past. Validation must mimic how the model will be used: train on earlier data, test on later data.",
+      "junior_answer": "Use 5-fold cross-validation and average the scores.",
+      "senior_answer": "Random folds mix future and past, so the model can learn patterns from after the test period and the score is too optimistic. I'd use walk-forward validation: train on data up to a cutoff, test on the next period, then move the cutoff forward. If the label looks 30 days ahead, I'd leave a 30-day gap between train and test so labels don't overlap. Expanding windows use all history and suit stable relationships, while sliding windows adapt faster when behavior drifts. Hyperparameter tuning goes inside the training period with the same time-aware splits.",
+      "draft": true
+    },
+    {
+      "id": "ml-009",
+      "question": "Your gradient-boosted model beats logistic regression by 1% AUC. Do you ship it?",
+      "topic": "ML",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Tests judgment about complexity versus value.",
+      "follow_ups": [
+        {
+          "text": "How would you know whether that 1% is real or noise?",
+          "intent": "test statistical thinking about model comparison"
+        },
+        {
+          "text": "The business owner needs to explain each decision to customers. What changes?",
+          "intent": "test interpretability as a requirement"
+        },
+        {
+          "text": "What does the more complex model cost you after launch?",
+          "intent": "test awareness of maintenance, monitoring and latency"
+        }
+      ],
+      "key_insight": "A small metric gain has to justify real costs in interpretability, latency, monitoring and maintenance. Compare on the business metric, with uncertainty.",
+      "junior_answer": "Yes, higher AUC means a better model.",
+      "senior_answer": "Not automatically. First I'd check the difference is real with a confidence interval from bootstrapping or repeated time-based folds, and translate it into the business metric (for example, extra customers retained per month) to see whether it covers the costs. Then the non-metric factors: whether decisions must be explained, latency limits, how fragile the model is to drift, and the ongoing monitoring and retraining burden. If the gain is small, I'd ship logistic regression, or ship the complex model only with SHAP-based explanations and monitoring in place.",
+      "draft": true
+    },
+    {
+      "id": "ml-010",
+      "question": "How do you handle missing data and outliers before modeling?",
+      "topic": "ML",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Tests whether you diagnose before you clean.",
+      "follow_ups": [
+        {
+          "text": "What is the difference between data missing at random and missing not at random? Give an example of the second.",
+          "intent": "test understanding of missingness mechanisms"
+        },
+        {
+          "text": "Does your approach change between a tree-based model and a linear model?",
+          "intent": "test model-aware preprocessing"
+        },
+        {
+          "text": "You find extreme values in income. Do you remove them?",
+          "intent": "test judgment about investigating outliers before deleting them"
+        }
+      ],
+      "key_insight": "Ask why the data is missing or extreme before fixing it. The mechanism decides the treatment, and sometimes the missingness itself is the signal.",
+      "junior_answer": "Fill missing values with the mean and delete outliers.",
+      "senior_answer": "I'd start by understanding why values are missing. If missingness is random, simple imputation is fine. If it depends on the value itself, such as high earners skipping an income field, mean imputation biases the data, and I'd add a missing-indicator feature. Imputation goes inside the pipeline, fitted on training data only, to avoid leakage. Tree-based models like XGBoost can handle missing values natively. For outliers I'd first check whether they're data errors or real extreme cases. Real ones carry information, so I'd keep them and use robust methods or transformations like log, and only remove confirmed errors.",
+      "draft": true
+    },
+    {
+      "id": "stats-004",
+      "question": "How would you decide how many users you need for an A/B test?",
+      "topic": "Statistics",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Tests whether you understand the inputs to a power calculation, not just the formula.",
+      "follow_ups": [
+        {
+          "text": "Leadership wants results in a week, but you'd need a month of traffic. What are your options?",
+          "intent": "test practical tradeoffs: larger MDE, variance reduction, different metric"
+        },
+        {
+          "text": "Why does detecting a smaller effect require so many more users?",
+          "intent": "test intuition that sample size scales with 1 over the effect squared"
+        },
+        {
+          "text": "What is CUPED and when does it help?",
+          "intent": "test knowledge of variance reduction using pre-experiment data"
+        }
+      ],
+      "key_insight": "Sample size is driven by the baseline rate and variance, the smallest effect worth detecting, and your tolerance for false positives and false negatives. Halve the effect and you need roughly four times the users.",
+      "junior_answer": "Use an online sample size calculator and run until it's significant.",
+      "senior_answer": "I'd fix four inputs before starting: the baseline metric and its variance, the minimum detectable effect that would actually change a decision, the significance level (usually 5%), and the power (usually 80%). Sample size grows with variance and with 1 over the MDE squared, so halving the effect needs about four times the users. If we can't wait that long, I'd raise the MDE honestly, pick a less noisy metric, or use CUPED, which uses pre-experiment behavior as a covariate to cut variance. I'd also commit to the sample size up front and not stop when the p-value first dips below 0.05.",
+      "draft": true
+    },
+    {
+      "id": "stats-005",
+      "question": "Explain a 95% confidence interval to a non-technical stakeholder.",
+      "topic": "Statistics",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Tests clear communication of a commonly misunderstood idea.",
+      "follow_ups": [
+        {
+          "text": "Is it correct to say there's a 95% probability the true value is in this interval?",
+          "intent": "test the frequentist interpretation"
+        },
+        {
+          "text": "What happens to the interval if you quadruple the sample size?",
+          "intent": "test intuition about precision and sample size"
+        },
+        {
+          "text": "The stakeholder asks for one number. What do you say?",
+          "intent": "test communicating uncertainty without hiding it"
+        }
+      ],
+      "key_insight": "The 95% describes the method, not this one interval: if we repeated the study many times, about 95% of the intervals built this way would contain the true value.",
+      "junior_answer": "We're 95% sure the true value is between these two numbers.",
+      "senior_answer": "I'd say: 'Our best estimate is X, and given the noise in our data, values from A to B are all plausible. If we repeated this study many times, intervals built this way would capture the true value about 95% of the time.' Strictly, the true value is fixed, so 95% describes the procedure and not this particular interval. Quadrupling the sample size roughly halves the width. If they want one number, I give the estimate and always pair it with the range, and say what decision would change within that range.",
+      "draft": true
+    },
+    {
+      "id": "stats-006",
+      "question": "You track 20 metrics in an A/B test and one shows a significant lift with p=0.04. What do you conclude?",
+      "topic": "Statistics",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Tests multiple-comparisons awareness.",
+      "follow_ups": [
+        {
+          "text": "Roughly how likely is at least one false positive across 20 independent tests at the 5% level?",
+          "intent": "test the arithmetic behind multiple testing"
+        },
+        {
+          "text": "How would you correct for this, and what does the correction cost you?",
+          "intent": "test Bonferroni/Holm versus FDR tradeoffs"
+        },
+        {
+          "text": "How could you have designed the experiment to avoid the problem?",
+          "intent": "test pre-registration of a primary metric"
+        }
+      ],
+      "key_insight": "Test enough metrics and something will look significant by chance. Declare the primary metric in advance and treat the rest as exploratory or correct for them.",
+      "junior_answer": "One metric is significant, so the change worked on that metric.",
+      "senior_answer": "With 20 independent tests at the 5% level, the chance of at least one false positive is 1 - 0.95^20, about 64%, so one p=0.04 is weak evidence. I'd check whether this was a pre-declared primary metric. If not, I'd treat it as a hypothesis to confirm in a follow-up test. For the analysis I'd correct: Bonferroni or Holm control the chance of any false positive but cost power, while Benjamini-Hochberg controls the false discovery rate and is better for exploratory work. Going forward I'd pre-register one primary metric plus a few guardrail metrics.",
+      "draft": true
+    },
+    {
+      "id": "stats-007",
+      "question": "When would you use bootstrapping, and where does it break down?",
+      "topic": "Statistics",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Tests practical resampling knowledge and its limits.",
+      "follow_ups": [
+        {
+          "text": "Can you bootstrap a time series by resampling individual points?",
+          "intent": "test the independence assumption and block bootstrap"
+        },
+        {
+          "text": "Would bootstrapping work well for estimating the maximum of a dataset?",
+          "intent": "test awareness that the bootstrap fails for extreme statistics"
+        },
+        {
+          "text": "How many resamples do you need?",
+          "intent": "test practical sense about precision of the bootstrap itself"
+        }
+      ],
+      "key_insight": "The bootstrap estimates uncertainty by resampling your data with replacement, which is useful when no simple formula exists. It assumes observations are independent and fails for extremes and tiny samples.",
+      "junior_answer": "It's resampling your data to get more data.",
+      "senior_answer": "Bootstrapping estimates the sampling distribution of any statistic, such as a median, a ratio or an AUC, by resampling the data with replacement many times and recomputing it. I'd use it when there's no clean analytical formula. It breaks when observations aren't independent: resampling points of a time series destroys the autocorrelation, so I'd use a block bootstrap. It also behaves badly for extreme statistics like the maximum, and for very small samples. A thousand or more resamples is usually fine for a standard error, and more for stable tail percentiles.",
+      "draft": true
+    },
+    {
+      "id": "system-design-004",
+      "question": "Design an experimentation (A/B testing) platform for a product with millions of users.",
+      "topic": "System Design",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Tests end-to-end thinking about assignment, logging, analysis and trust.",
+      "follow_ups": [
+        {
+          "text": "How do you assign users to variants so that assignment is stable and independent across experiments?",
+          "intent": "test hashing-based assignment and experiment layers"
+        },
+        {
+          "text": "Your 50/50 split shows 52/48 in the data. What does it mean and what do you do?",
+          "intent": "test knowledge of sample ratio mismatch checks"
+        },
+        {
+          "text": "How do you prevent two overlapping experiments from interfering with each other?",
+          "intent": "test layers and interaction effects"
+        }
+      ],
+      "key_insight": "The hard part isn't the statistics, it's trust: stable assignment, correct exposure logging, and automatic checks like sample ratio mismatch that tell you when a result can't be believed.",
+      "junior_answer": "Randomly assign users to A or B and compare the averages.",
+      "senior_answer": "I'd assign by hashing the user id with an experiment-specific salt, so a user always gets the same variant and assignments are independent between experiments. I'd log an exposure event only when the user actually sees the change, so analysis covers the right population. The pipeline joins exposures to metric events and computes lifts with confidence intervals, plus guardrail metrics like latency and errors. Automatic checks matter most: a sample ratio mismatch test flags broken assignment or logging, and a result with SRM isn't trusted. Overlapping experiments run in separate layers, or are mutually exclusive when they touch the same surface.",
+      "draft": true
+    },
+    {
+      "id": "system-design-005",
+      "question": "How do you decide between batch and streaming for an ML feature pipeline?",
+      "topic": "System Design",
+      "difficulty": "medium",
+      "frequency": "common in senior DS interviews",
+      "context": "Tests whether you match architecture to freshness requirements and cost.",
+      "follow_ups": [
+        {
+          "text": "How fresh do the features actually need to be, and who decides that?",
+          "intent": "test requirement gathering before technology choice"
+        },
+        {
+          "text": "How do you keep the batch and streaming versions of a feature consistent?",
+          "intent": "test training-serving consistency"
+        },
+        {
+          "text": "How do you handle late-arriving events in a streaming pipeline?",
+          "intent": "test event time versus processing time"
+        }
+      ],
+      "key_insight": "Streaming adds real complexity and cost. Use it only when the business value of fresher features justifies it, and default to batch.",
+      "junior_answer": "Streaming is more modern, so use streaming.",
+      "senior_answer": "I'd start by asking how quickly a change in the feature should change the prediction, and what that freshness is worth. Many features, like a customer's 90-day average spend, don't need minute-level freshness, so daily batch is simpler, cheaper and easier to backfill and debug. I'd use streaming only for signals where staleness costs money, like fraud velocity counts. The key risk is two code paths computing the same feature differently, so I'd share the transformation logic or use a feature store. For streaming I'd use event time with watermarks to handle late data.",
+      "draft": true
+    },
+    {
+      "id": "system-design-006",
+      "question": "Design a fraud detection system for card transactions.",
+      "topic": "System Design",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Tests low-latency decisioning, delayed labels and cost-aware thresholds.",
+      "follow_ups": [
+        {
+          "text": "The decision has to be made in under 100 milliseconds. How does that shape the design?",
+          "intent": "test latency budgets and precomputed features"
+        },
+        {
+          "text": "Fraudsters adapt to your model. How does that change how you monitor and retrain?",
+          "intent": "test adversarial drift"
+        },
+        {
+          "text": "A false positive blocks a legitimate customer at checkout. How do you account for that?",
+          "intent": "test cost-sensitive decisioning and customer experience"
+        }
+      ],
+      "key_insight": "Fraud is a cost-sensitive decision under delay and adversaries: combine fast rules with a model, use cost-based thresholds, and expect labels to arrive late and behavior to shift.",
+      "junior_answer": "Train a classifier on past transactions and flag the high scores.",
+      "senior_answer": "I'd build a real-time path under the latency budget: fetch precomputed features such as per-card velocity counts from an online store, apply hard rules for known patterns, then score a model. The output isn't just yes or no: low scores approve, high scores decline, and the middle band goes to step-up authentication or manual review. Thresholds come from costs: fraud loss versus lost sales and customer friction. Labels arrive weeks later through chargebacks, so I'd train on mature data and watch leading indicators like score distributions. Fraudsters adapt, so I'd monitor drift closely, retrain often, and keep rules as a fast-response layer.",
+      "draft": true
+    },
+    {
+      "id": "python-004",
+      "question": "After a pandas merge, your row count exploded. What happened and how do you prevent it?",
+      "topic": "Python",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Tests data-join discipline and defensive coding.",
+      "follow_ups": [
+        {
+          "text": "How do you check whether a key is unique before merging?",
+          "intent": "test validating assumptions about the data"
+        },
+        {
+          "text": "What does the validate argument do?",
+          "intent": "test knowledge of pandas merge safeguards"
+        },
+        {
+          "text": "How would an inner join versus a left join change which rows silently disappear?",
+          "intent": "test understanding of join semantics"
+        }
+      ],
+      "key_insight": "A merge multiplies rows when the key isn't unique on both sides. Check key uniqueness and let pandas enforce the relationship you expect.",
+      "junior_answer": "Drop duplicates after the merge to fix it.",
+      "senior_answer": "Duplicate keys on both sides produce a many-to-many join, so every match is multiplied. I'd diagnose it by checking df[key].is_unique and the duplicate counts on each side before merging. To prevent it I'd state the expected relationship with merge(..., validate='many_to_one'), which raises an error if the right-hand keys aren't unique, and use indicator=True to see which rows matched. Dropping duplicates afterward hides the problem. I'd also compare row counts before and after every join, because inner joins can silently drop rows and left joins can silently introduce NaNs.",
+      "draft": true
+    },
+    {
+      "id": "python-005",
+      "question": "You need to process a 50 GB CSV on a laptop with 16 GB of RAM. How do you approach it?",
+      "topic": "Python",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Tests practical large-data skills without a cluster.",
+      "follow_ups": [
+        {
+          "text": "How can you reduce memory use just by changing how you read the file?",
+          "intent": "test dtypes, usecols and categoricals"
+        },
+        {
+          "text": "Why would you convert it to Parquet?",
+          "intent": "test understanding of columnar formats"
+        },
+        {
+          "text": "At what point would you move to Spark or a warehouse instead?",
+          "intent": "test judgment about scale and tooling"
+        }
+      ],
+      "key_insight": "Don't load it all. Read only the columns you need with compact types, process in chunks or with an out-of-core engine, and convert to a columnar format for repeated use.",
+      "junior_answer": "Read it with pd.read_csv and hope it fits, or buy more RAM.",
+      "senior_answer": "I'd avoid loading everything. First I'd read only the needed columns and set compact dtypes (int32, category). Then I'd either process in chunks and aggregate incrementally, or use an engine that works out of core, like DuckDB or Polars in lazy mode, which can query the CSV directly. If I'll reuse the data, I'd convert it once to Parquet: columnar, compressed, and much faster to scan. I'd move to Spark or a warehouse when the data keeps growing, several people need it, or the jobs must run on a schedule.",
+      "draft": true
+    },
+    {
+      "id": "python-006",
+      "question": "How do you test a data pipeline or ML code?",
+      "topic": "Python",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Tests engineering discipline that separates notebooks from production work.",
+      "follow_ups": [
+        {
+          "text": "How do you test code that involves randomness?",
+          "intent": "test seeds, tolerances and property-based checks"
+        },
+        {
+          "text": "Beyond unit tests, what checks would you run on the data itself?",
+          "intent": "test data validation and contracts"
+        },
+        {
+          "text": "How do you catch a change that silently makes the model worse?",
+          "intent": "test regression tests on metrics"
+        }
+      ],
+      "key_insight": "Test the transformations with small fixtures, the data with explicit checks, and the model with metric regression tests, so a change that breaks quality fails the build.",
+      "junior_answer": "I run it and check that the output looks right.",
+      "senior_answer": "I'd test at three levels. Transformations get unit tests with tiny hand-made inputs and expected outputs, including edge cases like nulls and empty groups. The data gets schema and quality checks (types, ranges, null rates, uniqueness) that run in the pipeline. The model gets regression tests: train on a small fixed dataset with a fixed seed and assert metrics stay above a floor, and compare new results to a stored baseline so a silent quality drop fails CI. For randomness I'd set seeds and use tolerances instead of exact equality. Fast tests run on every commit, and heavier end-to-end runs on a schedule.",
+      "draft": true
+    },
+    {
+      "id": "prodml-005",
+      "question": "What is training-serving skew, and how do you prevent it?",
+      "topic": "Production ML",
+      "difficulty": "medium",
+      "frequency": "common in senior DS interviews",
+      "context": "Tests a classic production failure that metrics alone won't reveal.",
+      "follow_ups": [
+        {
+          "text": "How would you detect it after launch?",
+          "intent": "test comparing logged serving features to training features"
+        },
+        {
+          "text": "Why do point-in-time correct joins matter when building training data?",
+          "intent": "test temporal correctness of features"
+        },
+        {
+          "text": "Where does skew usually come from in practice?",
+          "intent": "test practical experience with duplicated feature logic"
+        }
+      ],
+      "key_insight": "Skew happens when a feature is computed differently in training than in production. Prevent it by sharing one definition of each feature, and detect it by logging what the model actually saw.",
+      "junior_answer": "It's when the model performs worse in production than in testing.",
+      "senior_answer": "It's a mismatch between the features the model was trained on and the features it receives in production, for example a feature computed in SQL for training and reimplemented in application code for serving. It usually comes from duplicated logic, different handling of nulls or time zones, or training features built from data that wouldn't have been available at prediction time. I'd prevent it with a single feature definition shared by both paths, such as a feature store, and point-in-time correct joins when building training data. To detect it, I'd log the exact features served with each prediction and compare their distributions against training.",
+      "draft": true
+    },
+    {
+      "id": "prodml-006",
+      "question": "How do you make a model's results reproducible, and why does it matter?",
+      "topic": "Production ML",
+      "difficulty": "medium",
+      "frequency": "common in senior DS interviews",
+      "context": "Tests ML engineering maturity: versioning, lineage and auditability.",
+      "follow_ups": [
+        {
+          "text": "Someone asks why last quarter's forecast said X. How would you answer?",
+          "intent": "test lineage and the ability to reconstruct a past prediction"
+        },
+        {
+          "text": "What can still make a run non-deterministic even with a fixed random seed?",
+          "intent": "test awareness of hidden nondeterminism"
+        },
+        {
+          "text": "What would you version besides the code?",
+          "intent": "test thinking beyond git"
+        }
+      ],
+      "key_insight": "A result is reproducible only if you can recover the exact code, data snapshot, configuration, environment and random seeds that produced it.",
+      "junior_answer": "Set a random seed and save the code in git.",
+      "senior_answer": "Reproducibility means I can recreate a past model and its predictions. I'd version the code (git commit), the training data (an immutable snapshot or a time-travel table), the configuration and hyperparameters, and the environment (pinned dependencies or a container image), and record all of it in a model registry entry linked to the model artifact. Seeds help, but non-determinism can still come from parallel execution order, library versions, or GPU operations, so I'd test that a re-run lands within tolerance. It matters for debugging, for audits in regulated settings like lending, and for trusting comparisons between model versions.",
+      "draft": true
+    },
+    {
+      "id": "prodml-007",
+      "question": "Your model is accurate but too slow and expensive to serve. How do you reduce latency and cost?",
+      "topic": "Production ML",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Tests optimization under constraints without just trading away accuracy.",
+      "follow_ups": [
+        {
+          "text": "How do you find where the time actually goes?",
+          "intent": "test profiling before optimizing"
+        },
+        {
+          "text": "Which predictions could be precomputed instead of computed on request?",
+          "intent": "test batch versus online serving"
+        },
+        {
+          "text": "How do you measure what you give up in accuracy for each speedup?",
+          "intent": "test disciplined tradeoff evaluation"
+        }
+      ],
+      "key_insight": "Measure first: the bottleneck is often feature retrieval, not the model. Then choose between precomputing, caching, simplifying the model and compressing it, and measure the accuracy cost of each.",
+      "junior_answer": "Switch to a smaller model.",
+      "senior_answer": "I'd profile a request end to end first, because the time often goes to fetching features or network calls, not model inference. If predictions don't need to be fresh per request, I'd precompute them in batch or cache by key. If inference is the bottleneck, options include fewer or cheaper features, a smaller model or distillation, quantization, and batching requests. For each option I'd measure the accuracy loss on a holdout and the latency and cost gain, and then pick the cheapest point that still meets the SLA and the business metric.",
+      "draft": true
+    },
+    {
+      "id": "llm-001",
+      "question": "Design a RAG (retrieval-augmented generation) system that answers questions over a company's internal documents.",
+      "topic": "LLMs & AI",
+      "difficulty": "hard",
+      "frequency": "increasingly common",
+      "context": "Tests end-to-end design thinking for the most common LLM application.",
+      "follow_ups": [
+        {
+          "text": "How do you chunk the documents, and what goes wrong with chunks that are too large or too small?",
+          "intent": "test retrieval design tradeoffs"
+        },
+        {
+          "text": "Different employees are allowed to see different documents. Where do you enforce that?",
+          "intent": "test security and access control at retrieval time"
+        },
+        {
+          "text": "The answers are wrong. How do you tell whether retrieval or generation is at fault?",
+          "intent": "test evaluating the components separately"
+        }
+      ],
+      "key_insight": "A RAG system is only as good as its retrieval. Evaluate retrieval and generation separately, and enforce permissions before documents reach the model.",
+      "junior_answer": "Put all the documents into a vector database and send the closest ones to the LLM.",
+      "senior_answer": "I'd design the pipeline in stages: ingest and clean the documents, chunk them with enough context to be meaningful (with metadata like source and date), embed and index them, and retrieve with hybrid search (keyword plus vector) followed by a reranker. The prompt includes the retrieved passages and asks for answers grounded in them, with citations, and to say so when the answer isn't there. Permissions must be applied as filters at retrieval time, so the model never sees documents the user can't access. For evaluation, I'd measure retrieval separately (did the right passage appear in the top k?) and generation separately (is the answer faithful to the passages?), because the fixes are different.",
+      "draft": true
+    },
+    {
+      "id": "llm-002",
+      "question": "How do you evaluate an LLM application when there is no single right answer?",
+      "topic": "LLMs & AI",
+      "difficulty": "hard",
+      "frequency": "increasingly common",
+      "context": "Tests evaluation design, the hardest part of shipping LLM products.",
+      "follow_ups": [
+        {
+          "text": "How would you build your first evaluation set?",
+          "intent": "test practical creation of a golden set"
+        },
+        {
+          "text": "You use an LLM as a judge. What can go wrong?",
+          "intent": "test awareness of judge biases and calibration"
+        },
+        {
+          "text": "Offline scores improve but users are not happier. Why might that be?",
+          "intent": "test the gap between offline and online evaluation"
+        }
+      ],
+      "key_insight": "Build a representative test set, define a rubric for what good means, calibrate any automated judge against human labels, and confirm offline gains with online behavior.",
+      "junior_answer": "Read some outputs and see if they look good.",
+      "senior_answer": "I'd start by collecting real or realistic inputs, including hard and adversarial cases, and writing a rubric that defines good (correctness, groundedness, tone, format). A human-labeled set is the anchor. For scale I'd use an LLM judge, but I'd check its agreement with human labels first, because judges have biases such as preferring longer answers, favoring the first option shown, and favoring their own style. I'd run the set on every prompt or model change as a regression suite and track failure categories, not just one average score. Offline scores can miss what users care about, so I'd confirm with online signals like task completion and feedback.",
+      "draft": true
+    },
+    {
+      "id": "llm-003",
+      "question": "When would you use prompt engineering, RAG, or fine-tuning?",
+      "topic": "LLMs & AI",
+      "difficulty": "medium",
+      "frequency": "increasingly common",
+      "context": "Tests whether you pick the cheapest tool that solves the problem.",
+      "follow_ups": [
+        {
+          "text": "The model needs to answer from documents that change daily. Which approach and why?",
+          "intent": "test knowledge versus behavior distinction"
+        },
+        {
+          "text": "What would justify the cost of fine-tuning?",
+          "intent": "test cost, data and maintenance reasoning"
+        },
+        {
+          "text": "Can you combine these approaches?",
+          "intent": "test pragmatic system design"
+        }
+      ],
+      "key_insight": "Prompting changes instructions, RAG supplies knowledge, and fine-tuning changes behavior or style. Start with the cheapest and move only when evaluation shows it's not enough.",
+      "junior_answer": "Fine-tuning is the most powerful, so use that.",
+      "senior_answer": "I'd go in order of cost. Prompt engineering first: clearer instructions, examples, and structured output. If the model lacks private or fast-changing knowledge, add RAG, since fine-tuning is a poor way to inject facts and goes stale. Fine-tuning fits when I need a consistent style or format, specialized behavior, or lower latency and cost by moving to a smaller model, and when I have enough quality examples to train on. It also adds ongoing costs: data curation, evaluation and retraining. They combine well, for example RAG for knowledge on top of a fine-tuned model for tone. I'd decide using the evaluation set, not intuition.",
+      "draft": true
+    },
+    {
+      "id": "llm-004",
+      "question": "Your assistant confidently makes things up. How do you reduce hallucinations?",
+      "topic": "LLMs & AI",
+      "difficulty": "medium",
+      "frequency": "increasingly common",
+      "context": "Tests practical mitigation strategies and honest measurement.",
+      "follow_ups": [
+        {
+          "text": "How would you measure the hallucination rate?",
+          "intent": "test building a targeted evaluation"
+        },
+        {
+          "text": "When is it better for the assistant to refuse than to answer?",
+          "intent": "test product judgment about abstaining"
+        },
+        {
+          "text": "What can you do at the prompt and decoding level?",
+          "intent": "test knowledge of basic controls"
+        }
+      ],
+      "key_insight": "You can't eliminate hallucinations, but you can reduce and contain them: ground answers in retrieved sources, require citations, let the model say it doesn't know, and measure it on questions that have no answer.",
+      "junior_answer": "Tell the model in the prompt not to make things up.",
+      "senior_answer": "I'd combine several measures. Ground answers in retrieved or provided sources and require citations, so claims can be checked. Instruct and test the model to say 'I don't know' when the sources don't contain the answer, and measure this with an evaluation set that includes unanswerable questions. Add a verification step where a second pass checks that each claim is supported by the sources. Lower temperature helps with consistency, and structured outputs constrain what can be said. In high-stakes settings I'd prefer abstaining or escalating to a human over a confident wrong answer, and I'd monitor flagged answers in production.",
+      "draft": true
+    },
+    {
+      "id": "llm-005",
+      "question": "Your AI agent calls tools and sometimes loops or takes risky actions. How do you make it reliable and safe?",
+      "topic": "LLMs & AI",
+      "difficulty": "hard",
+      "frequency": "increasingly common",
+      "context": "Tests agent engineering: guardrails, observability and evaluation.",
+      "follow_ups": [
+        {
+          "text": "Which actions should require human approval, and how do you decide?",
+          "intent": "test risk-based permissions"
+        },
+        {
+          "text": "A web page the agent reads contains instructions telling it to leak data. What do you do?",
+          "intent": "test awareness of prompt injection"
+        },
+        {
+          "text": "How do you test an agent when each run takes a different path?",
+          "intent": "test trajectory-level evaluation"
+        }
+      ],
+      "key_insight": "Treat the agent like an untrusted program: limit what it can do, validate everything it produces, require approval for irreversible actions, and record every step so failures can be diagnosed.",
+      "junior_answer": "Write a clearer prompt telling the agent to be careful.",
+      "senior_answer": "Prompts alone aren't a safety mechanism, so I'd add controls around the agent. Give each tool the least privilege it needs, set step and cost limits to stop loops, validate tool arguments against schemas, and require human approval for irreversible or high-impact actions like payments or deletions. Content the agent reads from tools or the web is untrusted and must not be able to change its instructions or permissions, which is the defense against prompt injection. I'd trace every step and tool call for debugging, and evaluate on full trajectories (did it finish the task, safely, within budget) using a set of scenarios, including adversarial ones, run on every change.",
+      "draft": true
     }
   ]
 }

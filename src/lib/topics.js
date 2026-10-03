@@ -5,6 +5,7 @@ const TOPIC_DOT = {
   'System Design': 'bg-fuchsia-500',
   Python: 'bg-yellow-500',
   'Production ML': 'bg-orange-500',
+  'LLMs & AI': 'bg-cyan-500',
 }
 export const dot = (t) => TOPIC_DOT[t] || 'bg-slate-400'
 

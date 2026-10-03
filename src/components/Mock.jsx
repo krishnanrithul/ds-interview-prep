@@ -5,6 +5,7 @@ import { buildMockQueue } from '../lib/queue'
 import { DIFFICULTY, RATINGS, dot } from '../lib/topics'
 import AnswerLadder from './AnswerLadder'
 import ConfirmDialog from './ConfirmDialog'
+import DraftBadge from './DraftBadge'
 
 const mmss = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 
@@ -166,6 +167,7 @@ export default function Mock({ progress, byId, active, onSave }) {
               <span className={`w-2 h-2 rounded-full ${dot(q.topic)}`} />{q.topic}
             </span>
             <span className={`px-2 py-0.5 rounded-md ring-1 capitalize font-medium ${DIFFICULTY[q.difficulty] || ''}`}>{q.difficulty}</span>
+            <DraftBadge q={q} />
           </div>
           <h2 className="text-2xl font-semibold leading-snug mb-5">{q.question}</h2>
 

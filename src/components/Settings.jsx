@@ -131,7 +131,7 @@ export default function Settings({ settings, update, flash }) {
 
       <Section title="Study">
         <Row label="Questions per session" hint="How many questions each practice session contains">
-          <Stepper value={draft.sessionSize} min={3} max={22} onChange={(v) => setDraft({ ...draft, sessionSize: v })} />
+          <Stepper value={draft.sessionSize} min={3} max={30} onChange={(v) => setDraft({ ...draft, sessionSize: v })} />
         </Row>
         <Row label="Daily goal" hint="Questions you want to practice each day">
           <Stepper value={draft.dailyGoal} min={1} max={30} onChange={(v) => setDraft({ ...draft, dailyGoal: v })} />

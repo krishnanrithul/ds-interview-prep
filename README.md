@@ -15,9 +15,9 @@ Those are the questions that separate junior from mid/senior candidates.
 
 ## What's Included
 
-- **22 real interview questions** from someone with 10+ years of hiring experience
+- **49 interview questions** across SQL, ML, Statistics, System Design, Python, Production ML and LLMs & AI. The first 22 come from the author's hiring experience; the other 27 are drafts (marked with a Draft badge) pending review
 - **Follow-up chains** showing what interviewers actually ask next, with what each follow-up is testing
-- **Topics:** SQL, System Design, ML, Statistics, Python, Production ML
+- **Topics:** SQL, ML, Statistics, System Design, Python, Production ML, LLMs & AI
 - **Frequency weighting** so you know what actually gets asked
 - **A practice loop:** write your answer, face the follow-ups one at a time, then compare with a junior and a senior answer and the key insight, and rate yourself Missed it / Shaky / Solid
 - **Spaced repetition:** each rating schedules the next review (Missed tomorrow, Shaky in 2 days, Solid in 4 to 45 days), so due questions come first
@@ -93,7 +93,7 @@ The questions live in `src/data/questions.json` (wrapped as `{ "questions": [...
 
 ## Adding Questions
 
-Add an entry to `src/data/questions.json` using the format above (`junior_answer` and `senior_answer` are optional, and the ladder is hidden when they're missing). The app picks it up automatically, including topic counts and the practice queue. A new topic gets a neutral color unless you add it to `src/lib/topics.js`.
+Add an entry to `src/data/questions.json` using the format above. Add `"draft": true` to show a Draft badge until you've reviewed it (`junior_answer` and `senior_answer` are optional, and the ladder is hidden when they're missing). The app picks it up automatically, including topic counts and the practice queue. A new topic gets a neutral color unless you add it to `src/lib/topics.js`.
 
 ## Questions?
 

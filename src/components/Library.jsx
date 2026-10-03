@@ -5,6 +5,7 @@ import { DIFFICULTY, RATINGS, dot } from '../lib/topics'
 import { describeDue } from '../lib/srs'
 import AnswerLadder from './AnswerLadder'
 import Attempts from './Attempts'
+import DraftBadge from './DraftBadge'
 
 const STATUS = ['all', 'unseen', 'due', 'missed', 'shaky', 'solid']
 
@@ -81,6 +82,7 @@ export default function Library({ progress, notes, onPractice }) {
                       <span className={`w-2 h-2 rounded-full ${dot(q.topic)}`} />{q.topic}
                     </span>
                     <span className={`px-2 py-0.5 rounded-md ring-1 capitalize font-medium ${DIFFICULTY[q.difficulty] || ''}`}>{q.difficulty}</span>
+                    <DraftBadge q={q} />
                     {r
                       ? <span className={`px-2 py-0.5 rounded-md ring-1 font-medium ${RATINGS[r].badge}`}>{RATINGS[r].label}</span>
                       : <span className="text-muted-foreground">Unseen</span>}
