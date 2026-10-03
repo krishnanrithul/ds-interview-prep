@@ -60,11 +60,10 @@ Living list for Gradient Ascent. What has already been built is recorded in `doc
 
 ## 2. Carried over from earlier discussion
 - **Learn section.** Concept lessons linked both ways with questions, built on the tag vocabulary (first 8 to 10 concepts chosen from your questions, marked draft until reviewed).
-- **More "go deeper" explainers.** Done: boosting, bias-variance, drift, false positives, time series, CLT. Next: SQL join fan-out, temperature and top-p, regularization paths, Bayesian updating, then gradient descent.
-- **Review my drafts.** The 27 draft questions, all senior answers, and the 74 key-term definitions in `scripts/terms.map.json`.
+- **More "go deeper" explainers.** Done (17): attention, Bayesian updating, bias-variance, boosting, CLT, clustering, drift, false positives, gradient descent, SQL join fan-out, k-NN, PCA, regularization, sampling, SVM, time splits, trees. Next: temperature and top-p, plus the optional ones in section 4.
+- **Review my drafts.** The 133 draft questions, all senior answers, the key-term definitions in `scripts/terms.map.json`, and the 910 follow-up variants in `scripts/variants/`.
 - **Insights over time.** The Insights tab shows the latest rating only. A weekly trend needs a longer attempts history than the 5 attempts kept per question.
 - **Launch polish.** Check the name Gradient Ascent for trademarks and domains (an ML newsletter and a podcast already use it), add a share image and PNG icon, a feedback or "suggest a question" link, and deploy (for example to Vercel).
-- **Commit.** The explainers, Insights tab, name and icon and this file are not committed yet.
 
 ## 3) Coverage gaps (audit of 2026-10-03, bank of 105) — mostly resolved
 
@@ -88,13 +87,14 @@ Proposed fix: a new "ML Algorithms" topic (supervised plus unsupervised, about 2
 Done (first session): collapsible map, 155 questions, 17 explainers, level and type filters.
 Done (second session):
 - Follow-up variants for every topic: 910 variants (2 for each of the 455 follow-ups, same intent, different scenario), marked draft, one file per topic in `scripts/variants/`. Apply with `python3 scripts/apply_variants.py`; it refuses variants whose follow-up text has changed. Practice and Mock pick one wording per follow-up and avoid the one shown last time (`src/lib/variants.js`, localStorage key `ds-variant-seen`). The Practice debrief now shows the follow-up actually asked.
+- Practice debrief: each follow-up now shows the wording asked, your reply ("You said") and what it was testing.
 - "Practice these again" on the end-of-session screen reruns the same questions with new follow-up wording.
 - Mastery map: clicking a tile opens a preview inside that topic, under its tiles, with Practice and Close.
 - Queue: unseen questions ramp by level (Foundations, then Core, then Advanced), so a new learner starts easy. No login needed: "new" just means no rating stored in this browser.
 - Decided: Practice keeps fixed follow-ups plus variants (stable for spaced repetition); Mock becomes the reactive mode (1.5). Match score should be automatic, not self-ticked: in-browser embeddings give real-time key-point coverage, with optional AI grading on submit for correctness (1.1, 1.2).
 
 Recommended next, in order:
-1. Push the local commits (the sandbox has no GitHub credentials).
+1. Push any local commits (the sandbox has no GitHub credentials).
 2. Review the variants, topic by topic, and flip `"draft"` to false for the good ones. Start with ML and the 22 real-interview questions.
 3. Key points for every question (1.1), starting with the 24 ML questions and the 22 real-interview ones. Everything else depends on them: match score, AI feedback and reactive Mock.
 4. Real-time coverage score: embed key points at build time, embed the learner's answer in the browser (transformers.js, all-MiniLM-L6-v2), show "3 of 5 key points covered" live. Set the threshold from about 30 hand-labeled answers.
@@ -107,3 +107,5 @@ Still open:
 - Optional explainers: class imbalance and threshold, hierarchical clustering, boosting residuals for LightGBM.
 - Per-follow-up junior and senior answers (1.4), Learn section, phone legends and PWA.
 - Mock layout: all follow-ups stack above one text box. Redo it as a back-and-forth when building 1.5.
+- Phone tap targets: mastery-map tiles are 28 to 32px, below the roughly 44px a finger needs.
+- Draft badge: it appears on 133 of 155 questions, so it no longer stands out. Consider showing it only in Library, or as a quiet note in the debrief.
