@@ -8,7 +8,7 @@ export default function Attempts({ attempts, title = 'Your attempts', limit = 5 
   const list = [...attempts].reverse().slice(0, limit)
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{title}</p>
+      <p className="text-sm font-semibold text-muted-foreground mb-2">{title}</p>
       <ul className="space-y-2">
         {list.map((a) => (
           <li key={a.ts} className="rounded-xl border border-border bg-muted/50 p-3">

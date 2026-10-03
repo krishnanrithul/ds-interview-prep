@@ -1,0 +1,310 @@
+{
+  "tags": [
+    {
+      "id": "gradient-boosting",
+      "label": "XGBoost & gradient boosting",
+      "kind": "subject",
+      "count": 4
+    },
+    {
+      "id": "model-selection",
+      "label": "Choosing a model",
+      "kind": "subject",
+      "count": 4
+    },
+    {
+      "id": "explainability",
+      "label": "Explainability (SHAP)",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "time-series-forecasting",
+      "label": "Time-series forecasting",
+      "kind": "subject",
+      "count": 6
+    },
+    {
+      "id": "validation-strategy",
+      "label": "Train/test validation",
+      "kind": "subject",
+      "count": 5
+    },
+    {
+      "id": "data-leakage",
+      "label": "Data leakage & look-ahead",
+      "kind": "subject",
+      "count": 4
+    },
+    {
+      "id": "distribution-shift",
+      "label": "Drift & distribution shift",
+      "kind": "subject",
+      "count": 5
+    },
+    {
+      "id": "model-monitoring",
+      "label": "Model monitoring",
+      "kind": "subject",
+      "count": 5
+    },
+    {
+      "id": "retraining",
+      "label": "Retraining",
+      "kind": "subject",
+      "count": 5
+    },
+    {
+      "id": "feature-engineering",
+      "label": "Feature engineering",
+      "kind": "subject",
+      "count": 4
+    },
+    {
+      "id": "missing-data-and-outliers",
+      "label": "Missing data & outliers",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "bias-variance",
+      "label": "Bias-variance & regularization",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "evaluation-metrics",
+      "label": "Evaluation metrics",
+      "kind": "subject",
+      "count": 4
+    },
+    {
+      "id": "class-imbalance",
+      "label": "Class imbalance",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "cost-sensitive-decisions",
+      "label": "Cost-sensitive decisions",
+      "kind": "subject",
+      "count": 6
+    },
+    {
+      "id": "fairness",
+      "label": "Fairness",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "hypothesis-testing",
+      "label": "Hypothesis testing",
+      "kind": "subject",
+      "count": 4
+    },
+    {
+      "id": "statistical-power",
+      "label": "Sample size & power",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "multiple-testing",
+      "label": "Multiple testing",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "confidence-intervals",
+      "label": "Confidence intervals",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "resampling",
+      "label": "Bootstrapping & resampling",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "ab-testing",
+      "label": "A/B testing",
+      "kind": "subject",
+      "count": 6
+    },
+    {
+      "id": "segment-analysis",
+      "label": "Segment analysis & Simpson's paradox",
+      "kind": "subject",
+      "count": 4
+    },
+    {
+      "id": "label-delay",
+      "label": "Delayed labels",
+      "kind": "subject",
+      "count": 4
+    },
+    {
+      "id": "window-functions",
+      "label": "SQL window functions",
+      "kind": "subject",
+      "count": 4
+    },
+    {
+      "id": "joins",
+      "label": "Joins",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "null-semantics",
+      "label": "NULL behavior",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "retention-cohorts",
+      "label": "Retention & cohorts",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "performance-at-scale",
+      "label": "Performance at scale",
+      "kind": "subject",
+      "count": 4
+    },
+    {
+      "id": "data-quality",
+      "label": "Data quality & validation",
+      "kind": "subject",
+      "count": 6
+    },
+    {
+      "id": "software-testing",
+      "label": "Testing code and pipelines",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "pandas",
+      "label": "pandas",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "batch-vs-realtime",
+      "label": "Batch vs real-time",
+      "kind": "subject",
+      "count": 4
+    },
+    {
+      "id": "latency-and-cost",
+      "label": "Latency & serving cost",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "training-serving-skew",
+      "label": "Training-serving skew",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "versioning-reproducibility",
+      "label": "Versioning & reproducibility",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "model-deployment",
+      "label": "Deployment & rollout",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "governance-and-process",
+      "label": "ML governance & process",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "alerting",
+      "label": "Alerting",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "fraud-detection",
+      "label": "Fraud detection",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "rag",
+      "label": "RAG",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "llm-evaluation",
+      "label": "LLM evaluation",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "prompting-vs-fine-tuning",
+      "label": "Prompting vs fine-tuning",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "ai-agents",
+      "label": "AI agents",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "security-and-permissions",
+      "label": "Security & permissions",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "debugging",
+      "label": "Debugging",
+      "kind": "skill",
+      "count": 6
+    },
+    {
+      "id": "tradeoffs",
+      "label": "Weighing tradeoffs",
+      "kind": "skill",
+      "count": 10
+    },
+    {
+      "id": "stakeholder-communication",
+      "label": "Talking to stakeholders",
+      "kind": "skill",
+      "count": 8
+    },
+    {
+      "id": "edge-cases",
+      "label": "Edge cases",
+      "kind": "skill",
+      "count": 7
+    },
+    {
+      "id": "designing-systems",
+      "label": "Designing systems",
+      "kind": "skill",
+      "count": 10
+    },
+    {
+      "id": "explaining-concepts",
+      "label": "Explaining a concept",
+      "kind": "skill",
+      "count": 6
+    }
+  ]
+}

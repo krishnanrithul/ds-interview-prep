@@ -31,6 +31,7 @@ export default function App() {
   const [view, setView] = useState('dashboard')
   const [session, setSession] = useState(null) // { ids, topic, key }
   const [status, setStatus] = useState(null)
+  const [libraryTags, setLibraryTags] = useState([])
   const byId = useMemo(() => Object.fromEntries(QUESTIONS.map((q) => [q.id, q])), [])
 
   const flash = useCallback((m) => { setStatus(m); setTimeout(() => setStatus(null), 3000) }, [])
@@ -54,6 +55,8 @@ export default function App() {
     setView('practice')
   }
 
+  const openTag = (id) => { setLibraryTags([id]); setView('library') }
+
   const go = (id) => {
     if (id === 'practice' && !session) return start()
     setView(id)
@@ -64,24 +67,26 @@ export default function App() {
       <header className="sticky top-0 z-20 bg-card/90 backdrop-blur border-b border-border">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center gap-4">
           <div className="flex items-center gap-2.5 mr-2">
-            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center">
-              <BookOpen className="w-5 h-5 text-primary-foreground" />
+            <div className="w-9 h-9 rounded-xl bg-ink flex items-center justify-center">
+              <BookOpen className="w-5 h-5 text-marker" />
             </div>
-            <span className="font-semibold hidden lg:block">DS Interview Prep</span>
+            <span className="font-serif font-semibold text-lg hidden md:block">DS Interview Prep</span>
           </div>
 
-          <nav className="flex gap-1 flex-1">
+          <nav className="flex gap-1 flex-1 h-full">
             {TABS.map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
                 onClick={() => go(id)}
                 aria-label={label}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  view === id ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                aria-current={view === id ? 'page' : undefined}
+                className={`relative flex items-center gap-2 px-3 text-sm font-medium transition-colors ${
+                  view === id ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 <Icon className="w-4 h-4" />
                 <span className="hidden sm:inline">{label}</span>
+                <span className={`absolute left-2 right-2 bottom-0 h-[3px] rounded-t-full bg-marker origin-left transition-transform duration-300 ${view === id ? 'scale-x-100' : 'scale-x-0'}`} />
               </button>
             ))}
           </nav>
@@ -103,6 +108,7 @@ export default function App() {
               notes={notes}
               active={view === 'practice'}
               onRate={handleRate}
+              onTag={openTag}
               onExit={() => { setSession(null); setView('dashboard') }}
               onAgain={() => start({ topic: session.topic })}
             />
@@ -112,7 +118,7 @@ export default function App() {
           <Mock progress={progress} byId={byId} active={view === 'mock'} onSave={saveMock} />
         </div>
 
-        {view === 'library' && <Library progress={progress} notes={notes} onPractice={(id) => start({ only: [id] })} />}
+        {view === 'library' && <Library progress={progress} notes={notes} onPractice={(id) => start({ only: [id] })} tags={libraryTags} setTags={setLibraryTags} onPracticeMany={(ids) => start({ only: ids })} />}
         {view === 'settings' && <Settings settings={settings} update={update} flash={flash} />}
       </main>
 

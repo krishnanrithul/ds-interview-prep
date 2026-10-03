@@ -1,11 +1,13 @@
 import { useState } from 'react'
-import { Search, X, ChevronDown, CornerDownRight, Play } from 'lucide-react'
+import { Search, X, ChevronDown, CornerDownRight, Play, Tags as TagsIcon } from 'lucide-react'
 import { QUESTIONS } from '../data/questions'
 import { DIFFICULTY, RATINGS, dot } from '../lib/topics'
 import { describeDue } from '../lib/srs'
 import AnswerLadder from './AnswerLadder'
 import Attempts from './Attempts'
 import DraftBadge from './DraftBadge'
+import TagChips, { TagChip } from './TagChips'
+import { TAGS, tagLabel } from '../lib/tags'
 
 const STATUS = ['all', 'unseen', 'due', 'missed', 'shaky', 'solid']
 
@@ -22,11 +24,13 @@ function Chip({ active, onClick, children }) {
   )
 }
 
-export default function Library({ progress, notes, onPractice }) {
+export default function Library({ progress, notes, onPractice, tags, setTags, onPracticeMany }) {
   const [query, setQuery] = useState('')
   const [topic, setTopic] = useState('all')
   const [status, setStatus] = useState('all')
   const [open, setOpen] = useState(null)
+  const [tagPanel, setTagPanel] = useState(false)
+  const toggleTag = (id) => setTags(tags.includes(id) ? tags.filter((t) => t !== id) : [...tags, id])
   const topics = [...new Set(QUESTIONS.map((q) => q.topic))]
   const endOfToday = new Date().setHours(23, 59, 59, 999)
 
@@ -37,6 +41,7 @@ export default function Library({ progress, notes, onPractice }) {
     return (
       (!query || q.question.toLowerCase().includes(query.toLowerCase())) &&
       (topic === 'all' || q.topic === topic) &&
+      tags.every((t) => q.tags?.includes(t)) &&
       statusOk
     )
   })
@@ -66,6 +71,57 @@ export default function Library({ progress, notes, onPractice }) {
         {STATUS.map((s) => <Chip key={s} active={status === s} onClick={() => setStatus(s)}>{s}</Chip>)}
       </div>
 
+      <div>
+        <button
+          onClick={() => setTagPanel((v) => !v)}
+          aria-expanded={tagPanel}
+          className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+        >
+          <TagsIcon className="w-4 h-4" />
+          Filter by tag{tags.length > 0 && ` (${tags.length})`}
+          <ChevronDown className={`w-4 h-4 transition-transform ${tagPanel ? 'rotate-180' : ''}`} />
+        </button>
+        {tagPanel && (
+          <div className="anim-msg mt-3 rounded-2xl border border-border bg-card p-4 space-y-4">
+            {[['subject', 'Topics'], ['skill', 'What the interviewer is testing']].map(([kind, title]) => (
+              <div key={kind}>
+                <p className="text-sm font-semibold mb-2">{title}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {TAGS.filter((t) => t.kind === kind).map((t) => (
+                    <TagChip key={t.id} id={t.id} active={tags.includes(t.id)} onClick={toggleTag} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {tags.length > 0 && (
+        <div className="anim-msg rounded-2xl border border-marker/60 bg-marker/15 p-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold">
+              {list.length} {list.length === 1 ? 'question' : 'questions'} tagged {tags.map(tagLabel).join(' and ')}
+            </p>
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {tags.map((id) => (
+                <button key={id} onClick={() => toggleTag(id)} className="inline-flex items-center gap-1 rounded-full bg-foreground text-background pl-2.5 pr-2 py-1 text-xs font-medium" aria-label={`Remove tag ${tagLabel(id)}`}>
+                  {tagLabel(id)} <X className="w-3 h-3" />
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {list.length > 0 && (
+              <button onClick={() => onPracticeMany(list.map((q) => q.id))} className="inline-flex items-center gap-2 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-xl hover:opacity-90">
+                <Play className="w-3.5 h-3.5 fill-current" /> Practice these
+              </button>
+            )}
+            <button onClick={() => setTags([])} className="text-sm font-medium px-3 py-2 rounded-xl border border-border hover:bg-muted">Clear</button>
+          </div>
+        </div>
+      )}
+
       {list.length === 0 && <p className="text-center text-muted-foreground py-16">No questions match these filters.</p>}
 
       <div className="space-y-2.5">
@@ -92,6 +148,7 @@ export default function Library({ progress, notes, onPractice }) {
                 </div>
                 <ChevronDown className={`w-5 h-5 mt-1 text-muted-foreground shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
               </button>
+              <TagChips tags={q.tags} onTag={(id) => !tags.includes(id) && setTags([...tags, id])} max={isOpen ? 99 : 4} className="px-5 pb-4 -mt-2" />
 
               {isOpen && (
                 <div className="px-5 pb-5 space-y-5 border-t border-border pt-4">

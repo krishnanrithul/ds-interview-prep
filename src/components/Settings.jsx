@@ -34,7 +34,7 @@ function Stepper({ value, onChange, min, max }) {
 function Section({ title, children }) {
   return (
     <section className="mb-8">
-      <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">{title}</h2>
+      <h2 className="text-sm font-semibold text-muted-foreground mb-3">{title}</h2>
       <div className="bg-card border border-border rounded-2xl divide-y divide-border">{children}</div>
     </section>
   )

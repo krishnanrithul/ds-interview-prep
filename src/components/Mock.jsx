@@ -175,7 +175,7 @@ export default function Mock({ progress, byId, active, onSave }) {
             <ol className="space-y-3 mb-5">
               {q.follow_ups.slice(0, Math.min(step, n)).map((fu, k) => (
                 <li key={k} className="rounded-xl border border-primary/20 bg-primary/5 p-4">
-                  <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-1">Interviewer follow-up {k + 1}</p>
+                  <p className="text-sm font-semibold text-primary mb-1">Interviewer follow-up {k + 1}</p>
                   <p className="text-[15px] leading-relaxed">{fu.text}</p>
                 </li>
               ))}
@@ -262,7 +262,7 @@ export default function Mock({ progress, byId, active, onSave }) {
               <h3 className="text-lg font-semibold leading-snug mb-4">{item.question}</h3>
 
               <div className="rounded-xl bg-muted/50 border border-border p-4 mb-4">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Your answer</p>
+                <p className="text-sm font-semibold text-muted-foreground mb-1">Your answer</p>
                 {answers[id]?.trim()
                   ? <p className="text-sm whitespace-pre-wrap text-foreground/80">{answers[id]}</p>
                   : <p className="text-sm text-muted-foreground italic">You didn't write an answer.</p>}
