@@ -1,0 +1,119 @@
+{
+  "questions": [
+    {
+      "id": "sql-001",
+      "question": "Write a SQL query to find duplicate users",
+      "topic": "SQL",
+      "difficulty": "medium",
+      "frequency": "asked 4x in last year",
+      "context": "Mid-level DS interview at fintech company",
+      "follow_ups": [
+        {
+          "text": "What if you needed to find users who created duplicate accounts across different time periods?",
+          "intent": "test understanding of time-based aggregation"
+        },
+        {
+          "text": "How would you optimize this for a table with 100M rows?",
+          "intent": "test production thinking (indexing, query planning)"
+        },
+        {
+          "text": "Should you use GROUP BY or DISTINCT? When would each fail?",
+          "intent": "test SQL fundamentals and edge cases"
+        }
+      ],
+      "key_insight": "Duplicate detection isn't just a GROUP BY—it's about understanding what constitutes a duplicate in your business context"
+    },
+    {
+      "id": "ml-001",
+      "question": "Build a churn prediction model—walk me through your approach",
+      "topic": "ML",
+      "difficulty": "medium",
+      "frequency": "asked 5x in last year",
+      "context": "Standard DS interview across fintech, B2B SaaS, e-commerce",
+      "follow_ups": [
+        {
+          "text": "Why would you choose XGBoost over logistic regression here?",
+          "intent": "test understanding of model selection tradeoffs"
+        },
+        {
+          "text": "Your model gets 95% accuracy. Is that good? Why or why not?",
+          "intent": "test business acumen and class imbalance awareness"
+        },
+        {
+          "text": "You achieved 92% accuracy but 50% false positive rate. How do you decide if this is production-ready?",
+          "intent": "test production thinking and stakeholder communication"
+        }
+      ],
+      "key_insight": "Senior engineers choose models based on business constraints (FP cost, latency, maintainability), not accuracy alone"
+    },
+    {
+      "id": "ml-002",
+      "question": "How would you detect model drift in production?",
+      "topic": "ML",
+      "difficulty": "hard",
+      "frequency": "asked 4x in last year",
+      "context": "Production ML roles, companies with mature ML infrastructure",
+      "follow_ups": [
+        {
+          "text": "What's the difference between data drift and model drift?",
+          "intent": "test understanding of failure modes"
+        },
+        {
+          "text": "You detect drift. What do you do next? Retrain? Rollback? How do you decide?",
+          "intent": "test operational decision-making"
+        },
+        {
+          "text": "How would you automate this monitoring without creating alert fatigue?",
+          "intent": "test systems thinking and pragmatism"
+        }
+      ],
+      "key_insight": "Drift detection alone is useless—you need a decision framework for when to act and what action to take"
+    },
+    {
+      "id": "stats-001",
+      "question": "Explain Type I vs Type II error with a real example from your work",
+      "topic": "Statistics",
+      "difficulty": "medium",
+      "frequency": "asked 3x in last year",
+      "context": "A/B testing, experimentation platforms",
+      "follow_ups": [
+        {
+          "text": "In your example, which error is more expensive to your business?",
+          "intent": "test tradeoff thinking and business impact awareness"
+        },
+        {
+          "text": "How would you design your test to minimize the costlier error?",
+          "intent": "test statistical power planning"
+        },
+        {
+          "text": "You run the experiment for 7 days and get p=0.08. Do you stop or keep running?",
+          "intent": "test understanding of p-hacking and when to stop"
+        }
+      ],
+      "key_insight": "Statistical significance isn't a binary switch—it's a tool for decision-making, and you need to know what error costs you more"
+    },
+    {
+      "id": "system-design-001",
+      "question": "Design a real-time recommendation system",
+      "topic": "System Design",
+      "difficulty": "hard",
+      "frequency": "asked 3x in last year",
+      "context": "Senior DS interviews at scale-up / big tech",
+      "follow_ups": [
+        {
+          "text": "Walk me through your latency budget. Where do you spend it?",
+          "intent": "test systems thinking and tradeoff awareness"
+        },
+        {
+          "text": "Your model training takes 6 hours. How do you keep recommendations fresh without retraining constantly?",
+          "intent": "test production pragmatism"
+        },
+        {
+          "text": "How would you A/B test this system without a madhouse of feature flags?",
+          "intent": "test operational sophistication"
+        }
+      ],
+      "key_insight": "Real-time systems are about constraints—latency, freshness, cost—and making principled tradeoffs across them"
+    }
+  ]
+}
