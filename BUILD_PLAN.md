@@ -1,4 +1,4 @@
-# DS Interview Prep App — Build Plan
+# DS Interview Prep App: Build Plan
 
 ## Product Vision
 
@@ -9,130 +9,153 @@ A curated, structured interview prep tool for junior/mid DS candidates. Not a cr
 **Example flow:**
 - Q: "Build a churn prediction model"
 - Follow-up: "Why XGBoost over logistic regression?"
-- Follow-up: "What if accuracy is 92% but 50% false positive rate—is that good?"
+- Follow-up: "What if accuracy is 92% but 50% false positive rate, is that good?"
 - Follow-up: "How would you decide if the model is worth putting in production?"
 
-This teaches **decision-making under constraints**—what seniority actually tests.
+This teaches **decision-making under constraints**, which is what seniority actually tests.
 
 **Target audience:** Junior and mid-level DS candidates prepping for interviews.
 
 **Differentiation:**
 - Structured (not rambling posts like Blind)
-- Frequency-weighted ("SQL 35%, System Design 28%")
+- Frequency-weighted ("asked 5x in last year")
 - Real follow-up chains (what interviewers actually ask next)
+- Practice loop with self-rating and a smart queue, not just a reading list
 - No crowdsourcing needed (curated by someone with hiring experience)
 
 ---
 
-## Build Plan Overview
+## Status
 
-### Phase 0: Content (1-2 weeks — CRITICAL)
-
-**This is not a coding problem. It's a content problem.**
-
-**Week 1: Brain dump**
-- List every DS interview question you've asked or seen (target: 50-75)
-- For each, write the follow-up chain (3-5 follow-ups typical)
-- Organize by topic: SQL, System Design, ML Fundamentals, Statistics, Python, Production ML
-- Add metadata:
-  - Difficulty: easy, medium, hard
-  - Frequency: how often you've seen it asked
-  - Key insight: why this matters, what it tests
-
-**Deliverable:** ~20-30 questions with follow-up chains (this is your entire product value).
+| Phase | Scope | Status |
+|-------|-------|--------|
+| 0 | Content: 22 questions with follow-up chains | Done |
+| 1 | Study-loop UI (Dashboard, Practice, Library) | Done |
+| 1.5 | Settings, theme, backup, wrap-up and bug pass | In progress |
+| 2 | Deploy to Vercel and launch | Next |
+| 3 | Iterate on feedback | Ongoing |
 
 ---
 
-### Phase 1: Tech (1.5 weeks)
+## Phases
 
-**Tech stack:**
-- Frontend: React (Vite for fast scaffolding)
-- Storage: localStorage (no backend, no auth)
-- Hosting: Vercel (free, one-command deploy)
-- Data: questions.json in repo
+### Phase 0: Content (DONE)
 
-**Week 1:**
-- Scaffold React app with Vite
-- Build QuestionList + QuestionCard (display questions + follow-ups)
-- Build Sidebar (filter by topic/difficulty/search)
-- Add localStorage persistence for progress
-- Test locally
+- 22 interview questions across 6 topics: SQL (4), ML (5), Statistics (3), System Design (3), Python (3), Production ML (4)
+- Each question has 2-3 follow-ups (with the interviewer's intent) plus a key insight
+- Real examples from a fintech / financial analytics context
+- Source of truth: `src/data/questions.json`
 
-**Week 1.5:**
-- Build TopicStats (frequency bars showing topic distribution)
-- Add export/import progress as JSON
-- Mobile responsive design
-- Polish UI (clean, no distractions)
+### Phase 1: Study-loop UI (DONE)
 
----
+The first UI was a flat, filterable list with a "studied" checkbox. It was replaced by a study loop modeled on flashcard apps (Anki, Quizlet), because the data's real value is the follow-up chain.
+
+- **Dashboard:** today's session, daily goal, Solid/Shaky/Missed/Unseen counts, per-topic progress
+- **Practice:** one question at a time. Think first, then follow-ups unlock one by one, then the key insight, then self-rate (Missed it / Shaky / Solid). Keyboard shortcuts: Space/Enter, 1/2/3
+- **Smart queue:** missed > unseen > shaky > solid, weighted toward weak topics and stale questions
+- **Library:** search plus topic and status filters over all questions
+
+### Phase 1.5: Settings and wrap-up (IN PROGRESS)
+
+Borrowed from the vape-ease-journey app:
+
+- [x] Settings page: questions per session, daily goal, interview date (countdown on dashboard)
+- [x] Theme: Light / Dark / Auto
+- [x] Daily reminder via the Web Notifications API (fires while the app is open)
+- [x] Backup: export progress and settings as JSON; import validates the file and asks before replacing; old export formats still import
+- [x] Corrupted-storage protection (`safeStorage`) and an error boundary instead of a white screen
+- [x] Docs updated to match the app
+- [ ] Mobile check at phone width (and a bottom nav if the top tabs feel cramped)
+- [ ] Bug pass on edge cases: empty queue, 1-question session, keyboard shortcuts
+- [ ] Optional polish: animations, card transitions
 
 ### Phase 2: Launch (1 week)
 
 - Deploy to Vercel
-- Write README
-- Create GitHub repo (public, open source)
+- Make the GitHub repo public
 - Post on r/datascience, r/MachineLearning, Twitter, LinkedIn, DS Discord
-
----
 
 ### Phase 3: Iterate (ongoing)
 
 - Collect feedback from early users
 - Add new questions as trends emerge
-- If traction: expand to 50+, add multi-device sync, write blog post
+- If traction: expand to 50+ questions, streaks/achievements (as in vape-ease-journey), multi-device sync, a blog post
+
+---
+
+## Tech Stack
+
+- **Frontend:** React 18 + Vite
+- **Styling:** Tailwind CSS v3 with CSS-variable theme tokens (light/dark)
+- **Icons:** Lucide
+- **Storage:** localStorage only (no backend, no auth)
+- **Hosting:** Vercel
+
+Note: Tailwind is pinned to v3.4. v4 uses a different PostCSS plugin and CSS setup, and the config here is v3-style.
+
+## Architecture
+
+```
+src/
+  App.jsx                    shell, tab navigation, session state
+  main.jsx                   ErrorBoundary > ThemeProvider > App
+  data/
+    questions.json           the content (edit this)
+    questions.js             exports QUESTIONS from the JSON
+  components/
+    Dashboard.jsx            session start, daily goal, stats, topics
+    Practice.jsx             the study loop
+    Library.jsx              browse and search
+    Settings.jsx             study settings, theme, reminders, data
+    ConfirmDialog.jsx        confirm before destructive actions
+    ErrorBoundary.jsx        recovery screen instead of a white page
+  hooks/
+    useProgress.js           per-question rating, persisted
+    useSettings.js           session size, daily goal, interview date
+    useTheme.jsx             light / dark / system
+    useReminderScheduler.js  daily reminder timer
+  lib/
+    queue.js                 builds the practice queue, summarizes progress
+    backup.js                export / import / clear
+    reminders.js             Web Notifications reminder logic
+    safeStorage.js           safe JSON parsing from localStorage
+    topics.js                topic colors, rating and difficulty styles
+```
+
+### Question data
+
+```json
+{
+  "id": "sql-001",
+  "question": "...",
+  "topic": "SQL | ML | Statistics | System Design | Python | Production ML",
+  "difficulty": "easy | medium | hard",
+  "frequency": "asked Nx in last year",
+  "context": "...",
+  "follow_ups": [{ "text": "...", "intent": "..." }],
+  "key_insight": "..."
+}
+```
+
+### localStorage keys
+
+| Key | Contents |
+|-----|----------|
+| `progress-v2` | `{ [questionId]: { rating: "missed"/"shaky"/"solid", last: timestamp, count } }` |
+| `ds-settings` | `{ sessionSize, dailyGoal, interviewDate }` |
+| `ds-theme` | `"light"`, `"dark"` or `"system"` |
+| `ds-reminder-enabled`, `ds-reminder-hour`, `ds-reminder-last-fired` | reminder state |
+
+The backup file is `{ app: "DSInterviewPrep", version: 3, data: { ...all keys above } }`.
 
 ---
 
 ## Timeline
 
-| Week | Task | Hours | Status |
-|------|------|-------|--------|
-| 1 | Content dump (20-30 Qs + follow-ups) | 20-30 | 👈 START HERE |
-| 2 | React MVP (components + localStorage) | 20-25 | |
-| 2.5 | Polish + deploy + launch | 5-10 | |
-| 3+ | Iterate + collect feedback | ongoing | |
-
-**Total: 60-80 hours over 3-4 weeks (part-time pace)**
-
----
-
-## What's Included in This Repo
-
-- **README.md** — Quick start guide
-- **BUILD_PLAN.md** — This file (full strategy)
-- **src/data/questions.json** — Your interview questions (template provided)
-- **package.json** — Dependencies and scripts
-- **.gitignore** — Standard Node ignores
-- **src/** — React components, hooks, styling (scaffold ready for Phase 1)
-
-## Next Step
-
-**Start Phase 0:** Dump 15-20 interview questions from your experience into `src/data/questions.json`. Follow the format shown below.
-
-If it feels natural and deep, continue to 30+. If it feels forced, revisit.
-
----
-
-## Question Format
-
-Each question needs:
-
-```json
-{
-  "id": "unique-id",
-  "question": "The core question text",
-  "topic": "SQL|System Design|ML|Statistics|Python|Production ML",
-  "difficulty": "easy|medium|hard",
-  "frequency": "asked Nx in last Y",
-  "context": "Where/when you asked it (company, role level)",
-  "follow_ups": [
-    {
-      "text": "Follow-up question 1",
-      "intent": "What this tests"
-    }
-  ],
-  "key_insight": "Meta-lesson: why this matters"
-}
-```
-
-That's it. Go fill it in.
+| Week | Task | Status |
+|------|------|--------|
+| 0 | Content dump (22 Qs + follow-ups) | Done |
+| 1 | Study-loop UI | Done |
+| 1.5 | Settings, theme, backup, wrap-up | In progress |
+| 2 | Deploy and launch | Next |
+| 3+ | Iterate and collect feedback | Ongoing |

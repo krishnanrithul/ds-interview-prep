@@ -15,10 +15,13 @@ Those are the questions that separate junior from mid/senior candidates.
 
 ## What's Included
 
-- **20-30 real interview questions** from someone with 10+ years of hiring experience
-- **Follow-up chains** showing what interviewers actually ask next
-- **Topic breakdown:** SQL, System Design, ML Fundamentals, Statistics, Python, Production ML
+- **22 real interview questions** from someone with 10+ years of hiring experience
+- **Follow-up chains** showing what interviewers actually ask next, with what each follow-up is testing
+- **Topics:** SQL, System Design, ML, Statistics, Python, Production ML
 - **Frequency weighting** so you know what actually gets asked
+- **A practice loop:** think first, face the follow-ups one at a time, see the key insight, then rate yourself Missed it / Shaky / Solid. Missed questions come back sooner
+- **Dashboard** with daily goal, interview-date countdown and per-topic progress
+- **Light and dark themes**, optional daily reminder, JSON backup and restore
 - **Local-first design:** No backend, no login, runs entirely in your browser
 
 ## Getting Started
@@ -39,21 +42,22 @@ npm run dev
 # Open http://localhost:5173
 ```
 
-Progress saves to your browser's localStorage. Export anytime as JSON.
+Progress saves to your browser's localStorage. Export a backup anytime from Settings.
 
 ## Building This
 
-See `BUILD_PLAN.md` for the complete 3-4 week development timeline, Phase 0-3 breakdown, and tech stack details.
+See `BUILD_PLAN.md` for the phase breakdown, architecture and tech stack.
 
-**TL;DR:**
-- Phase 0: Content (brain-dump 20-30 interview questions) ← **YOU ARE HERE**
-- Phase 1: React MVP (1.5 weeks)
-- Phase 2: Launch (1 week)
-- Phase 3: Iterate (ongoing)
+**Where it stands:**
+- Phase 0: Content (22 questions with follow-up chains), done
+- Phase 1: Study-loop UI (Dashboard, Practice, Library), done
+- Phase 1.5: Settings, theme, backup and wrap-up, in progress
+- Phase 2: Deploy to Vercel, next
+- Phase 3: Iterate on feedback, ongoing
 
 ## The Content
 
-Your interview questions live in `src/data/questions.json`. Format:
+The questions live in `src/data/questions.json` (wrapped as `{ "questions": [...] }`). Each entry looks like:
 
 ```json
 {
@@ -76,16 +80,14 @@ Your interview questions live in `src/data/questions.json`. Format:
 ## Tech Stack
 
 - **Frontend:** React + Vite
+- **Styling:** Tailwind CSS v3 (light/dark theme tokens), Lucide icons
 - **Storage:** localStorage (no backend)
 - **Hosting:** Vercel (free)
-- **Data:** questions.json (static)
+- **Data:** `questions.json` (static)
 
-## Next Steps
+## Adding Questions
 
-1. Review `BUILD_PLAN.md`
-2. Start Phase 0: Dump 15-20 interview questions into `src/data/questions.json`
-3. Once you have 20+ questions, run `npm install && npm run dev` to see them in the UI
-4. Iterate on follow-ups until they feel like real interview flows
+Add an entry to `src/data/questions.json` using the format above. The app picks it up automatically, including topic counts and the practice queue. A new topic gets a neutral color unless you add it to `src/lib/topics.js`.
 
 ## Questions?
 
