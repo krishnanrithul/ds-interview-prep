@@ -4,37 +4,37 @@
       "id": "gradient-boosting",
       "label": "XGBoost & gradient boosting",
       "kind": "subject",
-      "count": 5
+      "count": 6
     },
     {
       "id": "model-selection",
       "label": "Choosing a model",
       "kind": "subject",
-      "count": 7
+      "count": 18
     },
     {
       "id": "explainability",
       "label": "Explainability (SHAP)",
       "kind": "subject",
-      "count": 6
+      "count": 8
     },
     {
       "id": "time-series-forecasting",
       "label": "Time-series forecasting",
       "kind": "subject",
-      "count": 8
+      "count": 11
     },
     {
       "id": "validation-strategy",
       "label": "Train/test validation",
       "kind": "subject",
-      "count": 7
+      "count": 10
     },
     {
       "id": "data-leakage",
       "label": "Data leakage & look-ahead",
       "kind": "subject",
-      "count": 6
+      "count": 9
     },
     {
       "id": "distribution-shift",
@@ -58,7 +58,7 @@
       "id": "feature-engineering",
       "label": "Feature engineering",
       "kind": "subject",
-      "count": 8
+      "count": 9
     },
     {
       "id": "missing-data-and-outliers",
@@ -70,25 +70,25 @@
       "id": "bias-variance",
       "label": "Bias-variance & regularization",
       "kind": "subject",
-      "count": 2
+      "count": 6
     },
     {
       "id": "evaluation-metrics",
       "label": "Evaluation metrics",
       "kind": "subject",
-      "count": 7
+      "count": 9
     },
     {
       "id": "class-imbalance",
       "label": "Class imbalance",
       "kind": "subject",
-      "count": 3
+      "count": 4
     },
     {
       "id": "cost-sensitive-decisions",
       "label": "Cost-sensitive decisions",
       "kind": "subject",
-      "count": 8
+      "count": 9
     },
     {
       "id": "fairness",
@@ -100,7 +100,7 @@
       "id": "hypothesis-testing",
       "label": "Hypothesis testing",
       "kind": "subject",
-      "count": 7
+      "count": 8
     },
     {
       "id": "statistical-power",
@@ -112,7 +112,7 @@
       "id": "multiple-testing",
       "label": "Multiple testing",
       "kind": "subject",
-      "count": 2
+      "count": 3
     },
     {
       "id": "confidence-intervals",
@@ -130,7 +130,7 @@
       "id": "ab-testing",
       "label": "A/B testing",
       "kind": "subject",
-      "count": 11
+      "count": 12
     },
     {
       "id": "segment-analysis",
@@ -166,7 +166,7 @@
       "id": "retention-cohorts",
       "label": "Retention & cohorts",
       "kind": "subject",
-      "count": 5
+      "count": 6
     },
     {
       "id": "performance-at-scale",
@@ -238,7 +238,7 @@
       "id": "fraud-detection",
       "label": "Fraud detection",
       "kind": "subject",
-      "count": 3
+      "count": 4
     },
     {
       "id": "rag",
@@ -256,7 +256,7 @@
       "id": "prompting-vs-fine-tuning",
       "label": "Prompting vs fine-tuning",
       "kind": "subject",
-      "count": 2
+      "count": 3
     },
     {
       "id": "ai-agents",
@@ -274,7 +274,7 @@
       "id": "embeddings-and-search",
       "label": "Embeddings & semantic search",
       "kind": "subject",
-      "count": 2
+      "count": 4
     },
     {
       "id": "llm-output-control",
@@ -286,7 +286,7 @@
       "id": "llm-fundamentals",
       "label": "LLM fundamentals",
       "kind": "subject",
-      "count": 3
+      "count": 4
     },
     {
       "id": "calibration",
@@ -304,13 +304,13 @@
       "id": "feedback-loops",
       "label": "Feedback loops & selection bias",
       "kind": "subject",
-      "count": 2
+      "count": 3
     },
     {
       "id": "python-fundamentals",
       "label": "Python fundamentals",
       "kind": "subject",
-      "count": 7
+      "count": 10
     },
     {
       "id": "sql-fundamentals",
@@ -337,28 +337,184 @@
       "count": 2
     },
     {
+      "id": "linear-models",
+      "label": "Linear & regularized models",
+      "kind": "subject",
+      "count": 4
+    },
+    {
+      "id": "decision-trees",
+      "label": "Decision trees & forests",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "svm",
+      "label": "Support vector machines",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "knn",
+      "label": "k-nearest neighbors",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "probabilistic-models",
+      "label": "Probabilistic models",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "anomaly-detection",
+      "label": "Anomaly detection",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "clustering",
+      "label": "Clustering",
+      "kind": "subject",
+      "count": 8
+    },
+    {
+      "id": "dimensionality-reduction",
+      "label": "Dimensionality reduction",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "feature-selection",
+      "label": "Feature selection",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "ensembling",
+      "label": "Ensembling & stacking",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "hyperparameter-tuning",
+      "label": "Hyperparameter tuning",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "feature-scaling",
+      "label": "Feature scaling",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "optimization",
+      "label": "Gradient descent & optimizers",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "loss-functions",
+      "label": "Loss functions",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "neural-networks",
+      "label": "Neural networks",
+      "kind": "subject",
+      "count": 6
+    },
+    {
+      "id": "sequence-models",
+      "label": "Sequence models & attention",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "transfer-learning",
+      "label": "Transfer learning",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "text-features",
+      "label": "Text representations",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "llm-training",
+      "label": "How LLMs are trained",
+      "kind": "subject",
+      "count": 2
+    },
+    {
+      "id": "maximum-likelihood",
+      "label": "Maximum likelihood",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "categorical-tests",
+      "label": "Chi-square & ANOVA",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "bandits",
+      "label": "Bandits & adaptive tests",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "survival-analysis",
+      "label": "Survival analysis",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "forecasting-models",
+      "label": "Classical forecasting models",
+      "kind": "subject",
+      "count": 3
+    },
+    {
+      "id": "forecast-metrics",
+      "label": "Forecast accuracy metrics",
+      "kind": "subject",
+      "count": 1
+    },
+    {
+      "id": "recommender-systems",
+      "label": "Recommender systems",
+      "kind": "subject",
+      "count": 1
+    },
+    {
       "id": "debugging",
       "label": "Debugging",
       "kind": "skill",
-      "count": 14
+      "count": 15
     },
     {
       "id": "tradeoffs",
       "label": "Weighing tradeoffs",
       "kind": "skill",
-      "count": 20
+      "count": 24
     },
     {
       "id": "stakeholder-communication",
       "label": "Talking to stakeholders",
       "kind": "skill",
-      "count": 13
+      "count": 14
     },
     {
       "id": "edge-cases",
       "label": "Edge cases",
       "kind": "skill",
-      "count": 15
+      "count": 19
     },
     {
       "id": "designing-systems",
@@ -370,7 +526,7 @@
       "id": "explaining-concepts",
       "label": "Explaining a concept",
       "kind": "skill",
-      "count": 12
+      "count": 14
     }
   ]
 }

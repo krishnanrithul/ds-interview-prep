@@ -1,0 +1,531 @@
+{
+  "new_tags": {
+    "embeddings-and-search": {
+      "label": "Embeddings & semantic search",
+      "kind": "subject"
+    },
+    "llm-fundamentals": {
+      "label": "LLM fundamentals",
+      "kind": "subject"
+    },
+    "optimization": {
+      "label": "Gradient descent & optimizers",
+      "kind": "subject"
+    },
+    "loss-functions": {
+      "label": "Loss functions",
+      "kind": "subject"
+    },
+    "neural-networks": {
+      "label": "Neural networks",
+      "kind": "subject"
+    },
+    "sequence-models": {
+      "label": "Sequence models & attention",
+      "kind": "subject"
+    },
+    "transfer-learning": {
+      "label": "Transfer learning",
+      "kind": "subject"
+    },
+    "text-features": {
+      "label": "Text representations",
+      "kind": "subject"
+    },
+    "llm-training": {
+      "label": "How LLMs are trained",
+      "kind": "subject"
+    }
+  },
+  "new_terms": {
+    "embedding": {
+      "label": "Embedding",
+      "definition": "A list of numbers representing a piece of text (or other data) so that similar items sit close together.",
+      "tag": "embeddings-and-search"
+    },
+    "neural-network": {
+      "label": "Neural network",
+      "definition": "A model made of layers of simple units whose connection weights are learned from data.",
+      "tag": "neural-networks"
+    },
+    "backpropagation": {
+      "label": "Backpropagation",
+      "definition": "The procedure used to compute how each weight in a neural network should change.",
+      "tag": "neural-networks"
+    },
+    "gradient-descent": {
+      "label": "Gradient descent",
+      "definition": "An optimization method that repeatedly adjusts parameters in the direction that lowers the loss.",
+      "tag": "optimization"
+    },
+    "learning-rate": {
+      "label": "Learning rate",
+      "definition": "The size of each update step taken while training a model.",
+      "tag": "optimization"
+    },
+    "loss-function": {
+      "label": "Loss function",
+      "definition": "A formula that scores how wrong a model's predictions are, which training tries to minimize.",
+      "tag": "loss-functions"
+    },
+    "dropout": {
+      "label": "Dropout",
+      "definition": "A neural network technique in which random units are switched off during training.",
+      "tag": "neural-networks"
+    },
+    "batch-normalization": {
+      "label": "Batch normalization",
+      "definition": "A neural network layer that standardizes its inputs across each training batch.",
+      "tag": "neural-networks"
+    },
+    "convolutional-neural-network": {
+      "label": "Convolutional neural network",
+      "definition": "A neural network that scans small filters across grid-like data such as images.",
+      "tag": "neural-networks"
+    },
+    "rnn": {
+      "label": "RNN",
+      "definition": "Recurrent neural network: a model that reads a sequence one step at a time, carrying a memory forward.",
+      "tag": "sequence-models"
+    },
+    "transformer": {
+      "label": "Transformer",
+      "definition": "A neural network architecture built around attention, used by most modern language models.",
+      "tag": "sequence-models"
+    },
+    "attention": {
+      "label": "Attention",
+      "definition": "A mechanism that lets a model weigh how relevant each part of its input is when producing an output.",
+      "tag": "sequence-models"
+    },
+    "pretrained-model": {
+      "label": "Pretrained model",
+      "definition": "A model already trained on a large dataset, available as a starting point.",
+      "tag": "transfer-learning"
+    },
+    "tf-idf": {
+      "label": "TF-IDF",
+      "definition": "Term frequency-inverse document frequency: a score for how characteristic a word is of a document.",
+      "tag": "text-features"
+    },
+    "word2vec": {
+      "label": "word2vec",
+      "definition": "A method for learning a vector of numbers for each word from large amounts of text.",
+      "tag": "text-features"
+    },
+    "rlhf": {
+      "label": "RLHF",
+      "definition": "Reinforcement learning from human feedback: training a model using human preferences as a signal.",
+      "tag": "llm-training"
+    }
+  },
+  "questions": [
+    {
+      "id": "dl-001",
+      "question": "Explain how a neural network learns, in terms a non-technical colleague would follow.",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, stakeholder communication",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What does backpropagation actually compute?",
+          "intent": "test the chain rule and gradients"
+        },
+        {
+          "text": "Why do we need non-linear activation functions?",
+          "intent": "test that stacked linear layers collapse into one"
+        },
+        {
+          "text": "What can go wrong during training?",
+          "intent": "test vanishing gradients, divergence and overfitting"
+        }
+      ],
+      "key_insight": "A network adjusts millions of weights a little at a time in the direction that reduces its error. Backpropagation is the efficient way to find that direction.",
+      "junior_answer": "It has layers of neurons and learns weights through backpropagation.",
+      "senior_answer": "A network is a stack of simple functions: each layer multiplies inputs by weights and applies a non-linear activation. Training starts with random weights, makes predictions, measures the error with a loss, then uses backpropagation, the chain rule applied layer by layer, to compute how much each weight contributed to the error. Gradient descent nudges every weight slightly to reduce it, and this repeats over many batches. Without the non-linearities the layers would collapse into one linear model. Typical problems are overfitting, unstable learning rates and vanishing gradients, handled with regularization, tuning and normalization.",
+      "tags": [
+        "neural-networks",
+        "explaining-concepts"
+      ],
+      "terms": [
+        "neural-network",
+        "backpropagation"
+      ]
+    },
+    {
+      "id": "dl-002",
+      "question": "What is the difference between gradient descent, SGD and Adam? How does the learning rate affect training?",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, deep learning",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What do you see in the loss curve if the learning rate is too high or too low?",
+          "intent": "test diagnosing from curves"
+        },
+        {
+          "text": "Why use mini-batches?",
+          "intent": "test the noise versus compute trade-off"
+        },
+        {
+          "text": "Why might you still use SGD with momentum?",
+          "intent": "test generalization claims"
+        }
+      ],
+      "key_insight": "All three step downhill on the loss. They differ in how much data each step uses and how they adapt the step size, and the learning rate is the most important setting of all.",
+      "junior_answer": "Adam is an adaptive version of gradient descent.",
+      "senior_answer": "Gradient descent moves the weights against the gradient of the loss computed on all the data; SGD uses one example or a mini-batch, which is far cheaper per step and adds noise that can help escape poor spots. Momentum smooths the steps. Adam keeps running averages of the gradient and its square and gives each weight its own effective step size, so it usually converges fast with little tuning. The learning rate matters most: too high and the loss oscillates or diverges, too low and it crawls or stalls. I'd use a warmup and decay schedule, watch loss curves, and note that well-tuned SGD with momentum sometimes generalizes slightly better.",
+      "tags": [
+        "optimization",
+        "neural-networks"
+      ],
+      "terms": [
+        "gradient-descent",
+        "learning-rate"
+      ]
+    },
+    {
+      "id": "dl-003",
+      "question": "How do you choose a loss function? Compare MSE, MAE, Huber and cross-entropy.",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What does squared error assume about outliers?",
+          "intent": "test sensitivity to large errors"
+        },
+        {
+          "text": "Why train with cross-entropy instead of accuracy?",
+          "intent": "test differentiability and probability outputs"
+        },
+        {
+          "text": "When would you design a custom loss?",
+          "intent": "test aligning the loss with business costs"
+        }
+      ],
+      "key_insight": "The loss is the definition of wrong that the model optimizes, so it should match the cost of errors in the real decision.",
+      "junior_answer": "MSE for regression and cross-entropy for classification.",
+      "senior_answer": "The loss encodes what counts as an error. MSE penalizes large errors quadratically, so it targets the mean and is sensitive to outliers; MAE targets the median and is robust but has a constant gradient; Huber is quadratic for small errors and linear for large ones, a compromise. Cross-entropy (log loss) trains classifiers to output well-behaved probabilities and is smooth, unlike accuracy, which has no usable gradient. When errors have asymmetric business costs, such as under-forecasting being worse than over-forecasting, I'd use a quantile or custom weighted loss, and still evaluate with the metric the business uses.",
+      "tags": [
+        "loss-functions",
+        "model-selection",
+        "cost-sensitive-decisions"
+      ],
+      "terms": [
+        "loss-function"
+      ]
+    },
+    {
+      "id": "dl-004",
+      "question": "Your neural network overfits. What are your options, and how do dropout and batch normalization differ?",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, deep learning",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What does early stopping do?",
+          "intent": "test using validation loss to stop training"
+        },
+        {
+          "text": "Why does data augmentation help?",
+          "intent": "test regularization through data"
+        },
+        {
+          "text": "Is batch normalization a regularizer?",
+          "intent": "test knowing its main purpose"
+        }
+      ],
+      "key_insight": "Dropout and batch normalization solve different problems. Dropout fights overfitting by injecting noise, while batch normalization mainly stabilizes and speeds up training.",
+      "junior_answer": "Add dropout and use early stopping.",
+      "senior_answer": "Options in rough order of effort: get more or augmented data, simplify the architecture, add weight decay, use early stopping on validation loss, and add dropout. Dropout randomly zeroes units during training so the network can't rely on any single path, which acts like averaging many sub-networks. Batch normalization standardizes layer inputs within each batch, which stabilizes gradients and allows higher learning rates; it has a mild regularizing side effect but is mainly an optimization aid. I'd first diagnose with train versus validation curves to be sure it is overfitting and not a leak or a bug.",
+      "tags": [
+        "neural-networks",
+        "bias-variance"
+      ],
+      "terms": [
+        "dropout",
+        "batch-normalization"
+      ]
+    },
+    {
+      "id": "dl-005",
+      "question": "Your team wants a deep neural network for a tabular credit-risk dataset with 200,000 rows. Do you agree?",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, applied ML",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "Why do tree ensembles often win on tabular data?",
+          "intent": "test inductive bias and heterogeneous features"
+        },
+        {
+          "text": "When would a neural network make sense?",
+          "intent": "test large data, embeddings, multi-task and multimodal cases"
+        },
+        {
+          "text": "How would you run a fair comparison?",
+          "intent": "test baselines and equal tuning effort"
+        }
+      ],
+      "key_insight": "On tabular data of this size, gradient boosting is usually the stronger and cheaper baseline. A neural network has to earn its place with a specific advantage.",
+      "junior_answer": "Neural networks are more powerful, so try one.",
+      "senior_answer": "I'd start with a boosted-tree baseline: on mid-sized tabular data it usually matches or beats deep models, trains in minutes, handles mixed types and missing values, and is easier to explain and monitor. Tabular features are heterogeneous and often have sharp thresholds that trees capture well, while neural networks need careful scaling, encoding and tuning. A network earns its place with a specific advantage: very large data, learned embeddings for high-cardinality categories, multi-task or multimodal inputs, or online updates. I'd compare both on the same time-aware folds with comparable tuning effort, including calibration, latency and maintenance cost, and decide on the whole picture.",
+      "tags": [
+        "neural-networks",
+        "model-selection",
+        "tradeoffs"
+      ],
+      "terms": [
+        "neural-network",
+        "gradient-boosting"
+      ]
+    },
+    {
+      "id": "dl-006",
+      "question": "What is a convolutional neural network, and why does it work for images?",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, deep learning",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What does a convolution filter do?",
+          "intent": "test local pattern detection"
+        },
+        {
+          "text": "Why is weight sharing important?",
+          "intent": "test parameter efficiency and translation tolerance"
+        },
+        {
+          "text": "When could you use a CNN on something that isn't an image?",
+          "intent": "test audio, time series and text uses"
+        }
+      ],
+      "key_insight": "A CNN reuses small filters across the whole image, so it detects a pattern wherever it appears with far fewer parameters than a fully connected network.",
+      "junior_answer": "CNNs use filters to detect features like edges.",
+      "senior_answer": "A convolutional layer slides a small filter over the input and records how strongly each location matches a pattern, such as an edge. Early layers detect simple patterns and deeper layers combine them into shapes and objects. Because the same filter is reused everywhere, the network needs far fewer parameters than a fully connected one and recognizes a pattern regardless of where it appears. Pooling summarizes regions and adds some tolerance to small shifts. The same idea works for any grid-like data with local structure, including audio spectrograms and some time series, although for most new work a pretrained model is the starting point.",
+      "tags": [
+        "neural-networks"
+      ],
+      "terms": [
+        "convolutional-neural-network"
+      ]
+    },
+    {
+      "id": "dl-007",
+      "question": "Why did transformers largely replace RNNs and LSTMs for language tasks?",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, NLP",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What problem do LSTMs have with long sequences?",
+          "intent": "test vanishing gradients and limited memory"
+        },
+        {
+          "text": "What is the cost of attention?",
+          "intent": "test quadratic cost in sequence length"
+        },
+        {
+          "text": "When might you still use an RNN?",
+          "intent": "test streaming and small-footprint cases"
+        }
+      ],
+      "key_insight": "Transformers process all tokens at once and let any token look directly at any other, which trains faster on modern hardware and handles long-range dependencies better.",
+      "junior_answer": "Transformers use attention and can be parallelized.",
+      "senior_answer": "RNNs and LSTMs read a sequence one step at a time, passing a hidden state forward. That is inherently sequential, so training can't be parallelized across positions, and information from early tokens has to survive many steps, which makes long-range dependencies hard. Transformers use attention so every token can directly weigh every other token, and all positions are processed in parallel, which maps well onto GPUs and scales with data and size. The cost is attention that grows quadratically with sequence length, which drives work on efficient variants and long-context methods. RNN-style models are still used for streaming or very small-footprint settings.",
+      "tags": [
+        "sequence-models"
+      ],
+      "terms": [
+        "rnn",
+        "transformer"
+      ]
+    },
+    {
+      "id": "dl-008",
+      "question": "Explain attention to a colleague who has never studied deep learning.",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "hard",
+      "frequency": "increasingly common",
+      "context": "Senior DS interview, explaining concepts",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What are queries, keys and values?",
+          "intent": "test the roles of the three"
+        },
+        {
+          "text": "Why divide by the square root of the dimension?",
+          "intent": "test scaling for a stable softmax"
+        },
+        {
+          "text": "What is multi-head attention for?",
+          "intent": "test tracking several relationships at once"
+        }
+      ],
+      "key_insight": "Attention lets each word decide how much to read from every other word, using a learned relevance score, and then blends their information accordingly.",
+      "junior_answer": "Attention lets the model focus on the important words.",
+      "senior_answer": "For each word, the model asks a question (the query) and compares it against a label (the key) on every other word; a high match means this word is relevant to me. Those match scores are turned into weights that sum to one, and the word's new representation is a weighted blend of the other words' content (their values). So in 'the animal didn't cross the street because it was tired', the representation of 'it' can pull in information from 'animal'. Scores are scaled so the softmax stays well behaved, and multiple heads let the model track different relationships, such as syntax and reference, at the same time.",
+      "tags": [
+        "sequence-models",
+        "explaining-concepts"
+      ],
+      "terms": [
+        "attention",
+        "transformer"
+      ]
+    },
+    {
+      "id": "dl-009",
+      "question": "You have 500 labeled images and need a classifier. How would you approach it?",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, applied deep learning",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What does it mean to fine-tune only the last layers?",
+          "intent": "test freezing and adapting a pretrained model"
+        },
+        {
+          "text": "How do you stop it overfitting with so little data?",
+          "intent": "test augmentation, regularization and a small learning rate"
+        },
+        {
+          "text": "How would you know the pretrained features suit your domain?",
+          "intent": "test domain shift and evaluation"
+        }
+      ],
+      "key_insight": "With little labeled data, start from a model pretrained on a large dataset and adapt it, instead of training from scratch.",
+      "junior_answer": "Use transfer learning with a pretrained model like ResNet.",
+      "senior_answer": "Training from scratch on 500 images would overfit, so I'd start from a model pretrained on a large dataset such as ImageNet, whose early layers already detect general patterns. First I'd freeze the backbone and train a new classification head, which is cheap and hard to overfit, then optionally unfreeze the top layers with a small learning rate. Augmentation (crops, flips, color jitter) and early stopping help, and I'd use stratified cross-validation since a single validation split of 100 images is noisy. If the domain is very different, such as medical scans, generic features may transfer less well, so I'd check against a baseline and consider a domain-specific pretrained model.",
+      "tags": [
+        "transfer-learning",
+        "neural-networks",
+        "edge-cases"
+      ],
+      "terms": [
+        "pretrained-model"
+      ]
+    },
+    {
+      "id": "dl-010",
+      "question": "You need to classify support tickets by topic. Would you start with TF-IDF and logistic regression, or with embeddings or an LLM?",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "medium",
+      "frequency": "increasingly common",
+      "context": "Mid-level DS interview, NLP",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What does TF-IDF capture and miss?",
+          "intent": "test word weighting without meaning"
+        },
+        {
+          "text": "When would embeddings beat TF-IDF?",
+          "intent": "test synonyms and short texts"
+        },
+        {
+          "text": "How would you decide between the options?",
+          "intent": "test baseline, cost, latency and labeled data"
+        }
+      ],
+      "key_insight": "Start with the cheapest strong baseline and let the data show whether the added cost of embeddings or an LLM buys real accuracy.",
+      "junior_answer": "Use an LLM because it's the most accurate.",
+      "senior_answer": "I'd start with TF-IDF and logistic regression: it trains in seconds, needs little data, is easy to debug and often performs well when topics are signalled by distinctive words. TF-IDF weights words by how specific they are to a document but has no notion of meaning, so synonyms and paraphrases look unrelated. Embeddings from a pretrained model capture meaning and help on short or varied text, and they can feed the same simple classifier. An LLM can classify with few or no labels, at higher cost, latency and variability. I'd compare on one labeled test set for accuracy, cost per ticket and latency, and choose the simplest option that meets the target.",
+      "tags": [
+        "text-features",
+        "model-selection",
+        "tradeoffs"
+      ],
+      "terms": [
+        "tf-idf",
+        "embedding",
+        "logistic-regression"
+      ]
+    },
+    {
+      "id": "dl-011",
+      "question": "How are word embeddings like word2vec learned, and what are their limits?",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, NLP",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "Why do similar words end up close together?",
+          "intent": "test the distributional idea"
+        },
+        {
+          "text": "What happens to words with several meanings?",
+          "intent": "test polysemy"
+        },
+        {
+          "text": "How do contextual embeddings differ?",
+          "intent": "test BERT-style context"
+        }
+      ],
+      "key_insight": "Words that appear in similar contexts get similar vectors, but a single vector per word cannot represent different meanings of the same word.",
+      "junior_answer": "They turn words into vectors so similar words are close together.",
+      "senior_answer": "word2vec trains a small network on a prediction task: given a word, predict its neighbors (skip-gram), or the reverse. The vectors that make that prediction work well end up placing words used in similar contexts near each other, following the idea that a word is defined by the company it keeps. Limits: each word has one vector regardless of sense, so 'bank' for rivers and 'bank' for money are blended; rare words get poor vectors; and embeddings absorb biases in the training text. Contextual embeddings from transformer models produce a different vector for each occurrence, which fixes much of the ambiguity problem.",
+      "tags": [
+        "text-features",
+        "embeddings-and-search"
+      ],
+      "terms": [
+        "word2vec",
+        "embedding"
+      ]
+    },
+    {
+      "id": "dl-012",
+      "question": "At a high level, how is a chat model like ChatGPT trained after pretraining? What does RLHF add?",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "hard",
+      "frequency": "increasingly common",
+      "context": "Senior DS interview, LLM fundamentals",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What is the difference between pretraining and instruction tuning?",
+          "intent": "test knowing the stages"
+        },
+        {
+          "text": "What is a reward model?",
+          "intent": "test preference data and learned rewards"
+        },
+        {
+          "text": "What are the risks of optimizing against a reward model?",
+          "intent": "test reward hacking and sycophancy"
+        }
+      ],
+      "key_insight": "Pretraining teaches language, instruction tuning teaches the format of helpful answers, and RLHF steers behavior toward what people prefer, at the risk of optimizing the proxy instead of the goal.",
+      "junior_answer": "It's trained with human feedback to be more helpful.",
+      "senior_answer": "Stage one is pretraining on a huge text corpus to predict the next token, which gives broad knowledge but not good behavior. Stage two is supervised instruction tuning on examples of good responses so the model follows prompts. Stage three, RLHF, collects human comparisons between model answers, trains a reward model to predict which is preferred, and then optimizes the chat model against that reward with reinforcement learning while keeping it close to the original. The risk is that the reward model is only a proxy: models can learn to please raters, becoming sycophantic or verbose, which is why evaluation, diverse rater guidelines and newer preference-optimization methods matter.",
+      "tags": [
+        "llm-training",
+        "llm-fundamentals"
+      ],
+      "terms": [
+        "rlhf"
+      ]
+    }
+  ]
+}

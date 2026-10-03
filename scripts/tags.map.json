@@ -7,7 +7,8 @@
         "ml-005",
         "ml-009",
         "python-001",
-        "ml-012"
+        "ml-012",
+        "algo-005"
       ]
     },
     "model-selection": {
@@ -19,7 +20,18 @@
         "ml-010",
         "ml-012",
         "ml-015",
-        "ml-017"
+        "ml-017",
+        "algo-002",
+        "algo-005",
+        "algo-006",
+        "algo-009",
+        "algo-010",
+        "algo-012",
+        "algo-022",
+        "dl-003",
+        "dl-005",
+        "dl-010",
+        "ml-020"
       ]
     },
     "explainability": {
@@ -30,7 +42,9 @@
         "system-design-002",
         "ml-015",
         "system-design-014",
-        "system-design-009"
+        "system-design-009",
+        "algo-004",
+        "algo-010"
       ]
     },
     "time-series-forecasting": {
@@ -43,7 +57,10 @@
         "system-design-002",
         "prodml-004",
         "system-design-007",
-        "system-design-014"
+        "system-design-014",
+        "ml-019",
+        "ml-020",
+        "ml-021"
       ]
     },
     "validation-strategy": {
@@ -55,7 +72,10 @@
         "prodml-004",
         "ml-001",
         "ml-011",
-        "ml-018"
+        "ml-018",
+        "algo-017",
+        "algo-021",
+        "algo-024"
       ]
     },
     "data-leakage": {
@@ -66,7 +86,10 @@
         "python-003",
         "prodml-005",
         "ml-014",
-        "ml-018"
+        "ml-018",
+        "algo-021",
+        "algo-023",
+        "ml-024"
       ]
     },
     "distribution-shift": {
@@ -117,7 +140,8 @@
         "ml-014",
         "ml-015",
         "prodml-012",
-        "python-014"
+        "python-014",
+        "algo-018"
       ]
     },
     "missing-data-and-outliers": {
@@ -133,7 +157,11 @@
       "label": "Bias-variance & regularization",
       "questions": [
         "ml-006",
-        "ml-011"
+        "ml-011",
+        "algo-002",
+        "algo-003",
+        "algo-008",
+        "dl-004"
       ]
     },
     "evaluation-metrics": {
@@ -145,7 +173,9 @@
         "prodml-004",
         "ml-013",
         "ml-016",
-        "python-009"
+        "python-009",
+        "algo-023",
+        "ml-022"
       ]
     },
     "class-imbalance": {
@@ -153,7 +183,8 @@
       "questions": [
         "ml-007",
         "system-design-006",
-        "ml-001"
+        "ml-001",
+        "algo-023"
       ]
     },
     "cost-sensitive-decisions": {
@@ -166,7 +197,8 @@
         "stats-002",
         "prodml-003",
         "ml-016",
-        "system-design-008"
+        "system-design-008",
+        "dl-003"
       ]
     },
     "fairness": {
@@ -185,7 +217,8 @@
         "stats-006",
         "stats-008",
         "stats-011",
-        "stats-012"
+        "stats-012",
+        "stats-017"
       ]
     },
     "statistical-power": {
@@ -200,7 +233,8 @@
       "label": "Multiple testing",
       "questions": [
         "stats-006",
-        "stats-012"
+        "stats-012",
+        "stats-017"
       ]
     },
     "confidence-intervals": {
@@ -235,7 +269,8 @@
         "stats-010",
         "stats-012",
         "stats-014",
-        "stats-015"
+        "stats-015",
+        "stats-018"
       ]
     },
     "segment-analysis": {
@@ -293,7 +328,8 @@
         "sql-003",
         "sql-012",
         "sql-016",
-        "system-design-008"
+        "system-design-008",
+        "stats-019"
       ]
     },
     "performance-at-scale": {
@@ -413,7 +449,8 @@
       "questions": [
         "ml-007",
         "system-design-006",
-        "prodml-013"
+        "prodml-013",
+        "algo-011"
       ]
     },
     "rag": {
@@ -441,7 +478,8 @@
       "label": "Prompting vs fine-tuning",
       "questions": [
         "llm-003",
-        "llm-004"
+        "llm-004",
+        "llm-014"
       ]
     },
     "ai-agents": {
@@ -463,7 +501,9 @@
       "label": "Embeddings & semantic search",
       "questions": [
         "llm-010",
-        "system-design-013"
+        "system-design-013",
+        "dl-011",
+        "python-017"
       ]
     },
     "llm-output-control": {
@@ -478,7 +518,8 @@
       "questions": [
         "llm-006",
         "llm-007",
-        "llm-013"
+        "llm-013",
+        "dl-012"
       ]
     },
     "calibration": {
@@ -500,7 +541,8 @@
       "label": "Feedback loops & selection bias",
       "questions": [
         "prodml-009",
-        "prodml-015"
+        "prodml-015",
+        "ml-023"
       ]
     },
     "python-fundamentals": {
@@ -512,7 +554,10 @@
         "python-011",
         "python-012",
         "python-014",
-        "python-010"
+        "python-010",
+        "python-015",
+        "python-016",
+        "python-017"
       ]
     },
     "sql-fundamentals": {
@@ -547,6 +592,191 @@
         "stats-011",
         "stats-012"
       ]
+    },
+    "linear-models": {
+      "label": "Linear & regularized models",
+      "questions": [
+        "algo-001",
+        "algo-002",
+        "algo-007",
+        "algo-010"
+      ]
+    },
+    "decision-trees": {
+      "label": "Decision trees & forests",
+      "questions": [
+        "algo-003",
+        "algo-004"
+      ]
+    },
+    "svm": {
+      "label": "Support vector machines",
+      "questions": [
+        "algo-006",
+        "algo-007"
+      ]
+    },
+    "knn": {
+      "label": "k-nearest neighbors",
+      "questions": [
+        "algo-008"
+      ]
+    },
+    "probabilistic-models": {
+      "label": "Probabilistic models",
+      "questions": [
+        "algo-009",
+        "algo-012",
+        "algo-016"
+      ]
+    },
+    "anomaly-detection": {
+      "label": "Anomaly detection",
+      "questions": [
+        "algo-011",
+        "algo-014"
+      ]
+    },
+    "clustering": {
+      "label": "Clustering",
+      "questions": [
+        "algo-013",
+        "algo-014",
+        "algo-015",
+        "algo-016",
+        "algo-017",
+        "algo-018",
+        "algo-020",
+        "python-015"
+      ]
+    },
+    "dimensionality-reduction": {
+      "label": "Dimensionality reduction",
+      "questions": [
+        "algo-019",
+        "algo-020"
+      ]
+    },
+    "feature-selection": {
+      "label": "Feature selection",
+      "questions": [
+        "algo-021"
+      ]
+    },
+    "ensembling": {
+      "label": "Ensembling & stacking",
+      "questions": [
+        "algo-022"
+      ]
+    },
+    "hyperparameter-tuning": {
+      "label": "Hyperparameter tuning",
+      "questions": [
+        "algo-024"
+      ]
+    },
+    "feature-scaling": {
+      "label": "Feature scaling",
+      "questions": [
+        "algo-019",
+        "ml-024"
+      ]
+    },
+    "optimization": {
+      "label": "Gradient descent & optimizers",
+      "questions": [
+        "dl-002",
+        "python-016"
+      ]
+    },
+    "loss-functions": {
+      "label": "Loss functions",
+      "questions": [
+        "dl-003"
+      ]
+    },
+    "neural-networks": {
+      "label": "Neural networks",
+      "questions": [
+        "dl-001",
+        "dl-002",
+        "dl-004",
+        "dl-005",
+        "dl-006",
+        "dl-009"
+      ]
+    },
+    "sequence-models": {
+      "label": "Sequence models & attention",
+      "questions": [
+        "dl-007",
+        "dl-008"
+      ]
+    },
+    "transfer-learning": {
+      "label": "Transfer learning",
+      "questions": [
+        "dl-009"
+      ]
+    },
+    "text-features": {
+      "label": "Text representations",
+      "questions": [
+        "dl-010",
+        "dl-011",
+        "python-017"
+      ]
+    },
+    "llm-training": {
+      "label": "How LLMs are trained",
+      "questions": [
+        "dl-012",
+        "llm-014"
+      ]
+    },
+    "maximum-likelihood": {
+      "label": "Maximum likelihood",
+      "questions": [
+        "stats-016"
+      ]
+    },
+    "categorical-tests": {
+      "label": "Chi-square & ANOVA",
+      "questions": [
+        "stats-017"
+      ]
+    },
+    "bandits": {
+      "label": "Bandits & adaptive tests",
+      "questions": [
+        "stats-018"
+      ]
+    },
+    "survival-analysis": {
+      "label": "Survival analysis",
+      "questions": [
+        "stats-019"
+      ]
+    },
+    "forecasting-models": {
+      "label": "Classical forecasting models",
+      "questions": [
+        "ml-019",
+        "ml-020",
+        "ml-021"
+      ]
+    },
+    "forecast-metrics": {
+      "label": "Forecast accuracy metrics",
+      "questions": [
+        "ml-022"
+      ]
+    },
+    "recommender-systems": {
+      "label": "Recommender systems",
+      "questions": [
+        "ml-023"
+      ]
     }
   },
   "skill": {
@@ -566,7 +796,8 @@
         "prodml-013",
         "python-008",
         "python-012",
-        "sql-013"
+        "sql-013",
+        "algo-001"
       ]
     },
     "tradeoffs": {
@@ -591,7 +822,11 @@
         "prodml-012",
         "stats-013",
         "system-design-012",
-        "llm-013"
+        "llm-013",
+        "algo-005",
+        "algo-022",
+        "dl-005",
+        "dl-010"
       ]
     },
     "stakeholder-communication": {
@@ -609,7 +844,8 @@
         "prodml-015",
         "sql-016",
         "stats-011",
-        "system-design-014"
+        "system-design-014",
+        "algo-017"
       ]
     },
     "edge-cases": {
@@ -629,7 +865,11 @@
         "prodml-009",
         "sql-009",
         "sql-011",
-        "stats-015"
+        "stats-015",
+        "algo-011",
+        "algo-012",
+        "algo-020",
+        "dl-009"
       ]
     },
     "designing-systems": {
@@ -669,7 +909,9 @@
         "prodml-008",
         "python-007",
         "sql-010",
-        "stats-009"
+        "stats-009",
+        "dl-001",
+        "dl-008"
       ]
     }
   }

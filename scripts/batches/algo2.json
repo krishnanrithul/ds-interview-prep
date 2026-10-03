@@ -1,0 +1,508 @@
+{
+  "new_tags": {
+    "probabilistic-models": {
+      "label": "Probabilistic models",
+      "kind": "subject"
+    },
+    "anomaly-detection": {
+      "label": "Anomaly detection",
+      "kind": "subject"
+    },
+    "clustering": {
+      "label": "Clustering",
+      "kind": "subject"
+    },
+    "dimensionality-reduction": {
+      "label": "Dimensionality reduction",
+      "kind": "subject"
+    },
+    "feature-selection": {
+      "label": "Feature selection",
+      "kind": "subject"
+    },
+    "ensembling": {
+      "label": "Ensembling & stacking",
+      "kind": "subject"
+    },
+    "hyperparameter-tuning": {
+      "label": "Hyperparameter tuning",
+      "kind": "subject"
+    },
+    "feature-scaling": {
+      "label": "Feature scaling",
+      "kind": "subject"
+    }
+  },
+  "new_terms": {
+    "k-means": {
+      "label": "k-means",
+      "definition": "A clustering method that groups points around k center points.",
+      "tag": "clustering"
+    },
+    "clustering": {
+      "label": "Clustering",
+      "definition": "Grouping similar items together without predefined labels.",
+      "tag": "clustering"
+    },
+    "dbscan": {
+      "label": "DBSCAN",
+      "definition": "A clustering method that groups points by how densely packed they are.",
+      "tag": "clustering"
+    },
+    "hierarchical-clustering": {
+      "label": "Hierarchical clustering",
+      "definition": "A clustering method that builds a tree of nested groups.",
+      "tag": "clustering"
+    },
+    "gaussian-mixture-model": {
+      "label": "Gaussian mixture model",
+      "definition": "A model that describes data as a blend of several bell-shaped distributions.",
+      "tag": "clustering"
+    },
+    "pca": {
+      "label": "PCA",
+      "definition": "Principal component analysis: a technique that rewrites data in terms of new, uncorrelated directions.",
+      "tag": "dimensionality-reduction"
+    },
+    "t-sne": {
+      "label": "t-SNE",
+      "definition": "A technique for drawing high-dimensional data as a two-dimensional picture.",
+      "tag": "dimensionality-reduction"
+    },
+    "feature-selection": {
+      "label": "Feature selection",
+      "definition": "Choosing a subset of the available input features to use in a model.",
+      "tag": "feature-selection"
+    },
+    "stacking": {
+      "label": "Stacking",
+      "definition": "An ensemble method in which a second model learns to combine the predictions of several base models.",
+      "tag": "ensembling"
+    },
+    "smote": {
+      "label": "SMOTE",
+      "definition": "Synthetic Minority Over-sampling Technique: a way of creating artificial examples of a rare class.",
+      "tag": "class-imbalance"
+    },
+    "hyperparameter": {
+      "label": "Hyperparameter",
+      "definition": "A setting chosen before training, such as tree depth, rather than learned from the data.",
+      "tag": "hyperparameter-tuning"
+    },
+    "feature-scaling": {
+      "label": "Feature scaling",
+      "definition": "Rewriting features so they sit on comparable ranges.",
+      "tag": "feature-scaling"
+    }
+  },
+  "questions": [
+    {
+      "id": "algo-013",
+      "question": "How does k-means work, how do you choose k, and when does it fail?",
+      "topic": "ML Algorithms",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, unsupervised learning",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "Why does the result depend on initialization?",
+          "intent": "test local optima and k-means++"
+        },
+        {
+          "text": "What kinds of cluster shapes does it handle poorly?",
+          "intent": "test non-round shapes, unequal sizes and outliers"
+        },
+        {
+          "text": "Do you need to scale the features?",
+          "intent": "test distance-based methods and scaling"
+        }
+      ],
+      "key_insight": "k-means partitions points by distance to centers, so it assumes roughly round, similar-sized clusters on comparable scales.",
+      "junior_answer": "It assigns points to the nearest of k centers and then updates the centers.",
+      "senior_answer": "k-means alternates between assigning each point to its nearest center and moving each center to the mean of its points, until assignments stop changing. It finds a local optimum, so initialization matters; k-means++ and several restarts help. To choose k I'd look at the elbow in within-cluster variance and at silhouette scores, but also at whether the clusters are interpretable and stable across samples. It struggles with elongated or nested shapes, very different cluster sizes and outliers, and it needs scaled numeric features. DBSCAN or Gaussian mixtures are common alternatives.",
+      "tags": [
+        "clustering"
+      ],
+      "terms": [
+        "k-means",
+        "clustering"
+      ]
+    },
+    {
+      "id": "algo-014",
+      "question": "When would you choose DBSCAN over k-means?",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, unsupervised learning",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What do eps and min_samples control?",
+          "intent": "test the density parameters"
+        },
+        {
+          "text": "How does DBSCAN treat noise points?",
+          "intent": "test the noise label"
+        },
+        {
+          "text": "When does DBSCAN struggle?",
+          "intent": "test varying density and high dimensions"
+        }
+      ],
+      "key_insight": "DBSCAN groups by density, so it finds odd shapes and flags noise without being told how many clusters exist, but it assumes one density throughout.",
+      "junior_answer": "DBSCAN doesn't need k and handles outliers.",
+      "senior_answer": "DBSCAN grows clusters from dense neighborhoods: a point with at least min_samples neighbors within distance eps is a core point, clusters are connected dense regions, and points in no dense region are labeled noise. I'd choose it over k-means when clusters have irregular shapes, when I don't know k, or when outliers are meaningful. It struggles when clusters differ a lot in density, because one eps cannot suit both, and in high dimensions where distances lose meaning. I'd pick eps from a k-distance plot, and features still need scaling.",
+      "tags": [
+        "clustering",
+        "anomaly-detection"
+      ],
+      "terms": [
+        "dbscan",
+        "k-means"
+      ]
+    },
+    {
+      "id": "algo-015",
+      "question": "What is hierarchical clustering, and when is a dendrogram more useful than k-means?",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, unsupervised learning",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What is the difference between single, complete and average linkage?",
+          "intent": "test linkage choice and chaining"
+        },
+        {
+          "text": "How do you decide where to cut the tree?",
+          "intent": "test using merge heights and business needs"
+        },
+        {
+          "text": "Why is it hard to run on a million points?",
+          "intent": "test the pairwise-distance memory cost"
+        }
+      ],
+      "key_insight": "Hierarchical clustering shows how groups merge at every scale, which helps when you don't know how many groups you want or the groups are nested.",
+      "junior_answer": "It builds a tree of clusters, and you cut it at a level.",
+      "senior_answer": "Agglomerative clustering starts with each point alone and repeatedly merges the two closest clusters; the dendrogram records every merge and its distance. The linkage rule defines closest: single linkage chains and finds elongated shapes but is noise-sensitive, complete linkage makes compact clusters, and average and Ward sit between. It is useful when the number of groups is unknown or the structure is nested, as with product taxonomies, and I'd pick the cut from large gaps in merge height or from what the business can act on. It needs the pairwise distance matrix, so it is impractical beyond tens of thousands of points without sampling.",
+      "tags": [
+        "clustering"
+      ],
+      "terms": [
+        "hierarchical-clustering",
+        "clustering"
+      ]
+    },
+    {
+      "id": "algo-016",
+      "question": "How are Gaussian mixture models different from k-means, and what do 'soft assignments' give you?",
+      "topic": "ML Algorithms",
+      "difficulty": "hard",
+      "frequency": "common in DS interviews",
+      "context": "Senior DS interview, unsupervised learning",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "How is a mixture model fitted?",
+          "intent": "test expectation-maximization at a conceptual level"
+        },
+        {
+          "text": "What happens if you give the model too many components?",
+          "intent": "test overfitting and choosing with BIC"
+        },
+        {
+          "text": "When would you prefer k-means anyway?",
+          "intent": "test practicality and speed"
+        }
+      ],
+      "key_insight": "A mixture model gives each point a probability of belonging to each cluster, with clusters of different shapes and sizes, at the cost of more parameters.",
+      "junior_answer": "A Gaussian mixture gives probabilities instead of hard labels.",
+      "senior_answer": "k-means is a special case that assumes equal, round clusters and gives hard labels. A Gaussian mixture models the data as a blend of Gaussians, each with its own mean, spread and weight, so clusters can be elliptical and different in size, and each point gets a probability of membership, which is useful for borderline customers or for scoring. It is fitted with expectation-maximization, alternating between computing memberships and updating the Gaussians, and can get stuck in local optima. More components always fit better, so I'd choose the number with BIC or held-out likelihood. k-means is faster and simpler when clusters are roughly round and hard labels are enough.",
+      "tags": [
+        "clustering",
+        "probabilistic-models"
+      ],
+      "terms": [
+        "gaussian-mixture-model",
+        "k-means"
+      ]
+    },
+    {
+      "id": "algo-017",
+      "question": "You clustered customers and there are no labels. How do you tell whether the clusters are any good?",
+      "topic": "ML Algorithms",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, unsupervised learning",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What do silhouette scores tell you, and what don't they?",
+          "intent": "test internal metrics and their bias toward round clusters"
+        },
+        {
+          "text": "How would you check stability?",
+          "intent": "test resampling and re-clustering"
+        },
+        {
+          "text": "What is the business test of a segmentation?",
+          "intent": "test actionability and difference in behavior"
+        }
+      ],
+      "key_insight": "Without labels, good means compact and separated, stable under resampling, and different in ways the business can act on. The first two are measurable; the third is the one that matters.",
+      "junior_answer": "Use the silhouette score and the elbow method.",
+      "senior_answer": "I'd check three things. Internal quality: silhouette or Davies-Bouldin say whether clusters are compact and separated, but they reward round clusters and can look fine on arbitrary slices. Stability: re-cluster on bootstrap samples or with different seeds and see whether the same groups reappear; unstable clusters are artifacts. Usefulness: profile each cluster on outcomes not used in the clustering, such as churn or revenue, and ask whether the groups behave differently and whether the team would treat them differently. If I can't describe a cluster in a sentence or act on it, it isn't a segment.",
+      "tags": [
+        "clustering",
+        "validation-strategy",
+        "stakeholder-communication"
+      ],
+      "terms": [
+        "clustering"
+      ]
+    },
+    {
+      "id": "algo-018",
+      "question": "Design a customer segmentation for a bank using transaction behavior, demographics and product holdings.",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "DS interview, retail banking",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "How do you combine numeric and categorical features?",
+          "intent": "test Gower distance, encoding and k-prototypes"
+        },
+        {
+          "text": "How would you make the segments explainable?",
+          "intent": "test profiling and a shallow-tree explanation"
+        },
+        {
+          "text": "How often should segments be refreshed?",
+          "intent": "test stability versus drift"
+        }
+      ],
+      "key_insight": "Segmentation succeeds or fails on feature choice and on whether the result is stable and easy to name, not on the algorithm.",
+      "junior_answer": "Standardize the features and run k-means.",
+      "senior_answer": "I'd start with the purpose: marketing, risk and service design each want different features. I'd engineer behavioral features (spend mix, balances, tenure, channel use), transform skewed ones, and scale. For mixed numeric and categorical data I'd use Gower distance with hierarchical clustering, k-prototypes, or reduce to embeddings or PCA components first. I'd compare candidate values of k on stability and interpretability, name segments from their profiles, and fit a shallow decision tree on the labels to explain the boundaries. I'd refresh on a schedule and track membership drift so campaigns don't target moving groups.",
+      "tags": [
+        "clustering",
+        "feature-engineering"
+      ],
+      "terms": [
+        "customer-segmentation",
+        "clustering"
+      ]
+    },
+    {
+      "id": "algo-019",
+      "question": "What does PCA do, when would you use it, and what do you need to do to the data before running it?",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "How do you decide how many components to keep?",
+          "intent": "test explained variance and scree plots"
+        },
+        {
+          "text": "Can you interpret the components?",
+          "intent": "test loadings and their limits"
+        },
+        {
+          "text": "When is PCA a bad idea?",
+          "intent": "test non-linear structure, tree models and interpretability needs"
+        }
+      ],
+      "key_insight": "PCA rotates the data onto the directions of greatest variance, so it depends on feature scale and compresses linear structure only.",
+      "junior_answer": "It reduces dimensions by keeping the components with the most variance.",
+      "senior_answer": "PCA finds orthogonal directions that capture the most variance and projects the data onto the first few. That compresses correlated features, removes noise, and helps visualization or models hurt by collinearity. Because it chases variance, features must be standardized or large-scale features dominate. I'd choose components from cumulative explained variance or a scree plot, or by downstream model performance. Components are linear mixtures, so interpretation relies on loadings and gets hard. It is a poor fit when structure is non-linear, when tree models don't need it, or when you must explain individual features to stakeholders.",
+      "tags": [
+        "dimensionality-reduction",
+        "feature-scaling"
+      ],
+      "terms": [
+        "pca",
+        "feature-scaling"
+      ]
+    },
+    {
+      "id": "algo-020",
+      "question": "A colleague shows a t-SNE plot with clear clusters and says it proves the data has natural groups. How do you respond?",
+      "topic": "ML Algorithms",
+      "difficulty": "hard",
+      "frequency": "common in DS interviews",
+      "context": "Senior DS interview, unsupervised learning",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What do distances between clusters in a t-SNE plot mean?",
+          "intent": "test that global distances are not meaningful"
+        },
+        {
+          "text": "How do perplexity and other settings change the picture?",
+          "intent": "test sensitivity to parameters"
+        },
+        {
+          "text": "How would you check that the clusters are real?",
+          "intent": "test clustering in the original space and stability"
+        }
+      ],
+      "key_insight": "t-SNE and UMAP preserve local neighborhoods, not global distances or cluster sizes, so a picture of clusters is a hypothesis, not evidence.",
+      "junior_answer": "t-SNE is only for visualization, so I'd be careful.",
+      "senior_answer": "I'd say the plot is a good prompt but not proof. t-SNE (and UMAP to a lesser degree) preserves local neighborhoods while distorting global structure, so cluster sizes, the gaps between clusters and their relative positions aren't reliable. The picture also changes with perplexity, initialization and random seed, and can show apparent clusters in structureless noise. To test it I'd re-run with several settings and seeds, cluster in the original or PCA space and compare, check stability under resampling, and see whether the groups differ on outcomes the embedding never saw.",
+      "tags": [
+        "dimensionality-reduction",
+        "clustering",
+        "edge-cases"
+      ],
+      "terms": [
+        "t-sne",
+        "clustering"
+      ]
+    },
+    {
+      "id": "algo-021",
+      "question": "You have 2,000 candidate features and 10,000 rows. How do you select features?",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What is the difference between filter, wrapper and embedded methods?",
+          "intent": "test the taxonomy"
+        },
+        {
+          "text": "How can feature selection cause leakage?",
+          "intent": "test selecting on the full data before cross-validation"
+        },
+        {
+          "text": "When would you not bother selecting?",
+          "intent": "test regularized and boosted models"
+        }
+      ],
+      "key_insight": "Feature selection has to happen inside each cross-validation fold. Otherwise the selection step itself leaks information from the validation data.",
+      "junior_answer": "Remove low-variance and correlated features, then use importance from a model.",
+      "senior_answer": "With many more features than the data supports, I'd start with cheap filters: drop constants, near-duplicates and highly correlated pairs, and apply domain judgment. Embedded methods such as lasso or tree-based importance then rank what remains, and wrapper methods such as recursive elimination can refine it at higher cost. The key discipline is doing selection inside each cross-validation fold; selecting on the whole dataset first leaks the labels into the validation score and inflates it. With regularized models or boosting, aggressive selection is often unnecessary, but it can help stability, speed and explainability.",
+      "tags": [
+        "feature-selection",
+        "data-leakage",
+        "validation-strategy"
+      ],
+      "terms": [
+        "feature-selection",
+        "cross-validation"
+      ]
+    },
+    {
+      "id": "algo-022",
+      "question": "When does stacking or blending models help, and when is it not worth it?",
+      "topic": "ML Algorithms",
+      "difficulty": "hard",
+      "frequency": "common in DS interviews",
+      "context": "Senior DS interview, applied ML",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "Why must the second-level model be trained on out-of-fold predictions?",
+          "intent": "test leakage in stacking"
+        },
+        {
+          "text": "How different do the base models need to be?",
+          "intent": "test correlation of errors"
+        },
+        {
+          "text": "What does it cost in production?",
+          "intent": "test maintenance and latency"
+        }
+      ],
+      "key_insight": "Ensembling helps when the base models make different mistakes. When they are highly correlated or the system must stay simple, the gain doesn't justify the complexity.",
+      "junior_answer": "Combining models usually gives better accuracy, as in Kaggle.",
+      "senior_answer": "Averaging or stacking helps when models make different, partly uncorrelated errors, such as a boosted tree with a linear model or a neural net. Stacking trains a second-level model on the base models' out-of-fold predictions; using in-sample predictions would leak and overstate the benefit. Blending is the simpler version using a holdout set. Gains are typically small on clean tabular data where several boosted models are highly correlated. The costs are real: more training time, latency, monitoring and failure modes. I'd try a simple average first and ship the ensemble only if the gain beats the cost of maintaining it.",
+      "tags": [
+        "ensembling",
+        "model-selection",
+        "tradeoffs"
+      ],
+      "terms": [
+        "stacking"
+      ]
+    },
+    {
+      "id": "algo-023",
+      "question": "Only 2% of your cases are positive. Compare resampling (including SMOTE), class weights and threshold tuning.",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, imbalanced data",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "Why can SMOTE hurt if applied before splitting the data?",
+          "intent": "test leakage through synthetic samples"
+        },
+        {
+          "text": "How does class imbalance change which metric you use?",
+          "intent": "test precision-recall metrics over accuracy"
+        },
+        {
+          "text": "Which approach would you try first, and why?",
+          "intent": "test preferring simple options"
+        }
+      ],
+      "key_insight": "Imbalance is mostly a metric and threshold problem. Resampling changes what the model sees, so it must happen only inside training folds and often adds little over class weights.",
+      "junior_answer": "Use SMOTE to balance the classes.",
+      "senior_answer": "First I'd fix evaluation: accuracy is meaningless at 2%, so I'd use precision-recall, PR AUC and cost-based thresholds. Then compare options on honest folds. Class weights are the simplest: they change the loss without altering the data. Random undersampling is cheap but discards information; oversampling duplicates rows; SMOTE interpolates new minority points and can create unrealistic samples and overlap, and it must be applied only inside the training fold or synthetic points leak into validation. Resampling also distorts predicted probabilities, so I'd recalibrate. I'd try weights plus threshold tuning first and keep resampling only if it measurably helps.",
+      "tags": [
+        "class-imbalance",
+        "evaluation-metrics",
+        "data-leakage"
+      ],
+      "terms": [
+        "smote"
+      ]
+    },
+    {
+      "id": "algo-024",
+      "question": "How would you tune hyperparameters, and how do you avoid overfitting to your validation set while doing it?",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "Why is random search often better than grid search?",
+          "intent": "test that only a few hyperparameters matter"
+        },
+        {
+          "text": "What does Bayesian optimization do differently?",
+          "intent": "test sequential, model-based search"
+        },
+        {
+          "text": "What is nested cross-validation for?",
+          "intent": "test an unbiased estimate after tuning"
+        }
+      ],
+      "key_insight": "Every look at the validation score while tuning leaks a little information, so the final estimate needs data the tuning never touched.",
+      "junior_answer": "Use grid search with cross-validation.",
+      "senior_answer": "I'd first narrow the space to what matters for the model; for boosting that is learning rate, depth, number of rounds (with early stopping) and regularization. Random search usually beats a grid because only a few hyperparameters really matter and random draws try more distinct values of each; Bayesian optimization (for example Optuna) learns from earlier trials to choose promising ones and is worth it when each run is expensive. Repeated tuning on the same folds overfits them, so I'd keep a final holdout or use nested cross-validation to estimate the tuned procedure's performance, and stop when gains are within noise.",
+      "tags": [
+        "hyperparameter-tuning",
+        "validation-strategy"
+      ],
+      "terms": [
+        "hyperparameter",
+        "cross-validation"
+      ]
+    }
+  ]
+}

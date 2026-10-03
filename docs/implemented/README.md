@@ -15,5 +15,7 @@ Each file states what changed, which files were touched, the decisions made and 
 | 08 | [Question bank expansion: 49 to 105 questions](08-question-bank-expansion.md) | Built, uncommitted at time of writing |
 | 09 | [Levels and question types in the Library](09-levels-and-types.md) | Built, uncommitted at time of writing |
 | 10 | [Four more explainers: drift, false positives, time series, CLT](10-more-explainers.md) | Built, uncommitted at time of writing |
-| 11 | Algorithm and technique coverage (about 50 questions) | Not started, see THINGS_TO_DO.md section 3 |
-| 12 | Learn section: concept lessons | Not started |
+| 11 | [Collapsible mastery map](11-collapsible-map.md) | Built and verified, uncommitted at time of writing |
+| 12 | [Algorithm and technique questions: 105 to 155](12-algorithm-questions.md) | Built and verified, uncommitted at time of writing |
+| 13 | [Eleven more explainers (17 in total)](13-more-explainers.md) | Built, last edits not re-screenshotted |
+| 14 | Learn section: concept lessons | Not started |

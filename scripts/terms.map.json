@@ -390,12 +390,14 @@
     "temperature": {
       "label": "Temperature",
       "definition": "A sampling setting on LLM requests, usually between 0 and 2.",
-      "tag": "llm-output-control"
+      "tag": "llm-output-control",
+      "deeper": "sampling"
     },
     "top-p": {
       "label": "Top-p",
       "definition": "Another sampling setting on LLM requests, between 0 and 1.",
-      "tag": "llm-output-control"
+      "tag": "llm-output-control",
+      "deeper": "sampling"
     },
     "system-prompt": {
       "label": "System prompt",
@@ -425,7 +427,8 @@
     "random-forest": {
       "label": "Random forest",
       "definition": "An ensemble of decision trees, each trained on a random sample of the data, whose predictions are combined.",
-      "tag": "model-selection"
+      "tag": "model-selection",
+      "deeper": "trees"
     },
     "predicted-probability": {
       "label": "Predicted probability",
@@ -526,7 +529,8 @@
     "join": {
       "label": "Join",
       "definition": "An operation that combines rows from two tables using a matching condition.",
-      "tag": "joins"
+      "tag": "joins",
+      "deeper": "join-fanout"
     },
     "null-value": {
       "label": "NULL",
@@ -557,7 +561,8 @@
     "frequentist": {
       "label": "Frequentist",
       "definition": "An approach to inference in which probability describes long-run frequencies across repeated experiments.",
-      "tag": "hypothesis-testing"
+      "tag": "hypothesis-testing",
+      "deeper": "bayes"
     },
     "causation": {
       "label": "Causation",
@@ -589,6 +594,265 @@
       "label": "Embedding",
       "definition": "A list of numbers representing a piece of text (or other data) so that similar items sit close together.",
       "tag": "embeddings-and-search"
+    },
+    "linear-regression": {
+      "label": "Linear regression",
+      "definition": "A model that predicts a number as a weighted sum of input features.",
+      "tag": "linear-models"
+    },
+    "ridge": {
+      "label": "Ridge regression",
+      "definition": "Linear regression with a penalty on the squared size of its coefficients (an L2 penalty).",
+      "tag": "linear-models",
+      "deeper": "regularization"
+    },
+    "lasso": {
+      "label": "Lasso",
+      "definition": "Linear regression with a penalty on the absolute size of its coefficients (an L1 penalty).",
+      "tag": "linear-models",
+      "deeper": "regularization"
+    },
+    "decision-tree": {
+      "label": "Decision tree",
+      "definition": "A model that makes predictions by asking a sequence of yes-or-no questions about the features.",
+      "tag": "decision-trees",
+      "deeper": "trees"
+    },
+    "lightgbm": {
+      "label": "LightGBM",
+      "definition": "A gradient boosting library from Microsoft.",
+      "tag": "gradient-boosting"
+    },
+    "catboost": {
+      "label": "CatBoost",
+      "definition": "A gradient boosting library from Yandex.",
+      "tag": "gradient-boosting"
+    },
+    "support-vector-machine": {
+      "label": "Support vector machine",
+      "definition": "A classifier that separates classes with a boundary chosen using the points closest to it.",
+      "tag": "svm",
+      "deeper": "svm"
+    },
+    "support-vector-regression": {
+      "label": "SVR",
+      "definition": "Support vector regression: the regression counterpart of the support vector machine.",
+      "tag": "svm",
+      "deeper": "svm"
+    },
+    "k-nearest-neighbors": {
+      "label": "k-nearest neighbors",
+      "definition": "A method that predicts using the labels of the k most similar training examples.",
+      "tag": "knn",
+      "deeper": "knn"
+    },
+    "naive-bayes": {
+      "label": "Naive Bayes",
+      "definition": "A family of simple probabilistic classifiers based on Bayes' rule.",
+      "tag": "probabilistic-models"
+    },
+    "generalized-linear-model": {
+      "label": "Generalized linear model",
+      "definition": "A family of models that extends linear regression to outcomes with other distributions, such as counts or yes/no.",
+      "tag": "probabilistic-models"
+    },
+    "isolation-forest": {
+      "label": "Isolation forest",
+      "definition": "An unsupervised method for scoring how unusual each observation is, built from random trees.",
+      "tag": "anomaly-detection"
+    },
+    "k-means": {
+      "label": "k-means",
+      "definition": "A clustering method that groups points around k center points.",
+      "tag": "clustering",
+      "deeper": "clustering"
+    },
+    "clustering": {
+      "label": "Clustering",
+      "definition": "Grouping similar items together without predefined labels.",
+      "tag": "clustering",
+      "deeper": "clustering"
+    },
+    "dbscan": {
+      "label": "DBSCAN",
+      "definition": "A clustering method that groups points by how densely packed they are.",
+      "tag": "clustering",
+      "deeper": "clustering"
+    },
+    "hierarchical-clustering": {
+      "label": "Hierarchical clustering",
+      "definition": "A clustering method that builds a tree of nested groups.",
+      "tag": "clustering"
+    },
+    "gaussian-mixture-model": {
+      "label": "Gaussian mixture model",
+      "definition": "A model that describes data as a blend of several bell-shaped distributions.",
+      "tag": "clustering"
+    },
+    "pca": {
+      "label": "PCA",
+      "definition": "Principal component analysis: a technique that rewrites data in terms of new, uncorrelated directions.",
+      "tag": "dimensionality-reduction",
+      "deeper": "pca"
+    },
+    "t-sne": {
+      "label": "t-SNE",
+      "definition": "A technique for drawing high-dimensional data as a two-dimensional picture.",
+      "tag": "dimensionality-reduction"
+    },
+    "feature-selection": {
+      "label": "Feature selection",
+      "definition": "Choosing a subset of the available input features to use in a model.",
+      "tag": "feature-selection"
+    },
+    "stacking": {
+      "label": "Stacking",
+      "definition": "An ensemble method in which a second model learns to combine the predictions of several base models.",
+      "tag": "ensembling"
+    },
+    "smote": {
+      "label": "SMOTE",
+      "definition": "Synthetic Minority Over-sampling Technique: a way of creating artificial examples of a rare class.",
+      "tag": "class-imbalance"
+    },
+    "hyperparameter": {
+      "label": "Hyperparameter",
+      "definition": "A setting chosen before training, such as tree depth, rather than learned from the data.",
+      "tag": "hyperparameter-tuning"
+    },
+    "feature-scaling": {
+      "label": "Feature scaling",
+      "definition": "Rewriting features so they sit on comparable ranges.",
+      "tag": "feature-scaling"
+    },
+    "neural-network": {
+      "label": "Neural network",
+      "definition": "A model made of layers of simple units whose connection weights are learned from data.",
+      "tag": "neural-networks"
+    },
+    "backpropagation": {
+      "label": "Backpropagation",
+      "definition": "The procedure used to compute how each weight in a neural network should change.",
+      "tag": "neural-networks"
+    },
+    "gradient-descent": {
+      "label": "Gradient descent",
+      "definition": "An optimization method that repeatedly adjusts parameters in the direction that lowers the loss.",
+      "tag": "optimization",
+      "deeper": "gradient-descent"
+    },
+    "learning-rate": {
+      "label": "Learning rate",
+      "definition": "The size of each update step taken while training a model.",
+      "tag": "optimization",
+      "deeper": "gradient-descent"
+    },
+    "loss-function": {
+      "label": "Loss function",
+      "definition": "A formula that scores how wrong a model's predictions are, which training tries to minimize.",
+      "tag": "loss-functions"
+    },
+    "dropout": {
+      "label": "Dropout",
+      "definition": "A neural network technique in which random units are switched off during training.",
+      "tag": "neural-networks"
+    },
+    "batch-normalization": {
+      "label": "Batch normalization",
+      "definition": "A neural network layer that standardizes its inputs across each training batch.",
+      "tag": "neural-networks"
+    },
+    "convolutional-neural-network": {
+      "label": "Convolutional neural network",
+      "definition": "A neural network that scans small filters across grid-like data such as images.",
+      "tag": "neural-networks"
+    },
+    "rnn": {
+      "label": "RNN",
+      "definition": "Recurrent neural network: a model that reads a sequence one step at a time, carrying a memory forward.",
+      "tag": "sequence-models"
+    },
+    "transformer": {
+      "label": "Transformer",
+      "definition": "A neural network architecture built around attention, used by most modern language models.",
+      "tag": "sequence-models",
+      "deeper": "attention"
+    },
+    "attention": {
+      "label": "Attention",
+      "definition": "A mechanism that lets a model weigh how relevant each part of its input is when producing an output.",
+      "tag": "sequence-models",
+      "deeper": "attention"
+    },
+    "pretrained-model": {
+      "label": "Pretrained model",
+      "definition": "A model already trained on a large dataset, available as a starting point.",
+      "tag": "transfer-learning"
+    },
+    "tf-idf": {
+      "label": "TF-IDF",
+      "definition": "Term frequency-inverse document frequency: a score for how characteristic a word is of a document.",
+      "tag": "text-features"
+    },
+    "word2vec": {
+      "label": "word2vec",
+      "definition": "A method for learning a vector of numbers for each word from large amounts of text.",
+      "tag": "text-features"
+    },
+    "rlhf": {
+      "label": "RLHF",
+      "definition": "Reinforcement learning from human feedback: training a model using human preferences as a signal.",
+      "tag": "llm-training"
+    },
+    "likelihood": {
+      "label": "Likelihood",
+      "definition": "The probability a model assigns to the observed data, viewed as a function of the model's parameters.",
+      "tag": "maximum-likelihood"
+    },
+    "chi-square-test": {
+      "label": "Chi-square test",
+      "definition": "A hypothesis test comparing observed counts in categories with the counts expected under no relationship.",
+      "tag": "categorical-tests"
+    },
+    "multi-armed-bandit": {
+      "label": "Multi-armed bandit",
+      "definition": "A method that adaptively allocates traffic among options while learning which performs best.",
+      "tag": "bandits"
+    },
+    "arima": {
+      "label": "ARIMA",
+      "definition": "AutoRegressive Integrated Moving Average: a classical model for forecasting a single time series.",
+      "tag": "forecasting-models"
+    },
+    "exponential-smoothing": {
+      "label": "Exponential smoothing",
+      "definition": "A forecasting method that weights recent observations more heavily than older ones.",
+      "tag": "forecasting-models"
+    },
+    "prophet": {
+      "label": "Prophet",
+      "definition": "An open-source forecasting library from Meta.",
+      "tag": "forecasting-models"
+    },
+    "mape": {
+      "label": "MAPE",
+      "definition": "Mean absolute percentage error: the average of absolute errors as a percentage of the actual values.",
+      "tag": "forecast-metrics"
+    },
+    "matrix-factorization": {
+      "label": "Matrix factorization",
+      "definition": "A technique that approximates a large table as the product of two smaller ones.",
+      "tag": "recommender-systems"
+    },
+    "cosine-similarity": {
+      "label": "Cosine similarity",
+      "definition": "A measure of how alike two vectors are, based on the angle between them.",
+      "tag": "text-features"
+    },
+    "lora": {
+      "label": "LoRA",
+      "definition": "Low-Rank Adaptation: a technique for fine-tuning a model by training small added matrices.",
+      "tag": "prompting-vs-fine-tuning"
     }
   },
   "questions": {
@@ -994,6 +1258,189 @@
     "system-design-010": [
       "churn",
       "data-pipeline"
+    ],
+    "algo-001": [
+      "linear-regression",
+      "residual"
+    ],
+    "algo-002": [
+      "ridge",
+      "lasso"
+    ],
+    "algo-003": [
+      "decision-tree"
+    ],
+    "algo-004": [
+      "random-forest",
+      "feature-importance"
+    ],
+    "algo-005": [
+      "xgboost",
+      "lightgbm",
+      "catboost"
+    ],
+    "algo-006": [
+      "support-vector-machine"
+    ],
+    "algo-007": [
+      "support-vector-regression"
+    ],
+    "algo-008": [
+      "k-nearest-neighbors"
+    ],
+    "algo-009": [
+      "naive-bayes"
+    ],
+    "algo-010": [
+      "logistic-regression",
+      "default-rate"
+    ],
+    "algo-011": [
+      "isolation-forest",
+      "anomaly-detection"
+    ],
+    "algo-012": [
+      "generalized-linear-model"
+    ],
+    "algo-013": [
+      "k-means",
+      "clustering"
+    ],
+    "algo-014": [
+      "dbscan",
+      "k-means"
+    ],
+    "algo-015": [
+      "hierarchical-clustering",
+      "clustering"
+    ],
+    "algo-016": [
+      "gaussian-mixture-model",
+      "k-means"
+    ],
+    "algo-017": [
+      "clustering"
+    ],
+    "algo-018": [
+      "customer-segmentation",
+      "clustering"
+    ],
+    "algo-019": [
+      "pca",
+      "feature-scaling"
+    ],
+    "algo-020": [
+      "t-sne",
+      "clustering"
+    ],
+    "algo-021": [
+      "feature-selection",
+      "cross-validation"
+    ],
+    "algo-022": [
+      "stacking"
+    ],
+    "algo-023": [
+      "smote"
+    ],
+    "algo-024": [
+      "hyperparameter",
+      "cross-validation"
+    ],
+    "dl-001": [
+      "neural-network",
+      "backpropagation"
+    ],
+    "dl-002": [
+      "gradient-descent",
+      "learning-rate"
+    ],
+    "dl-003": [
+      "loss-function"
+    ],
+    "dl-004": [
+      "dropout",
+      "batch-normalization"
+    ],
+    "dl-005": [
+      "neural-network",
+      "gradient-boosting"
+    ],
+    "dl-006": [
+      "convolutional-neural-network"
+    ],
+    "dl-007": [
+      "rnn",
+      "transformer"
+    ],
+    "dl-008": [
+      "attention",
+      "transformer"
+    ],
+    "dl-009": [
+      "pretrained-model"
+    ],
+    "dl-010": [
+      "tf-idf",
+      "embedding",
+      "logistic-regression"
+    ],
+    "dl-011": [
+      "word2vec",
+      "embedding"
+    ],
+    "dl-012": [
+      "rlhf"
+    ],
+    "stats-016": [
+      "likelihood"
+    ],
+    "stats-017": [
+      "chi-square-test",
+      "p-value"
+    ],
+    "stats-018": [
+      "multi-armed-bandit",
+      "ab-test"
+    ],
+    "stats-019": [
+      "churn"
+    ],
+    "ml-019": [
+      "arima",
+      "time-series"
+    ],
+    "ml-020": [
+      "exponential-smoothing",
+      "prophet"
+    ],
+    "ml-021": [
+      "forecasting"
+    ],
+    "ml-022": [
+      "mape"
+    ],
+    "ml-023": [
+      "matrix-factorization",
+      "embedding"
+    ],
+    "ml-024": [
+      "feature-scaling"
+    ],
+    "python-015": [
+      "k-means"
+    ],
+    "python-016": [
+      "gradient-descent",
+      "learning-rate"
+    ],
+    "python-017": [
+      "tf-idf",
+      "cosine-similarity"
+    ],
+    "llm-014": [
+      "lora",
+      "pretrained-model"
     ]
   }
 }

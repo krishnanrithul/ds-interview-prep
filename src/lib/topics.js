@@ -6,6 +6,8 @@ const TOPIC_DOT = {
   Python: 'bg-yellow-500',
   'Production ML': 'bg-orange-500',
   'LLMs & AI': 'bg-cyan-500',
+  'ML Algorithms': 'bg-indigo-500',
+  'Deep Learning & NLP': 'bg-rose-500',
 }
 export const dot = (t) => TOPIC_DOT[t] || 'bg-slate-400'
 

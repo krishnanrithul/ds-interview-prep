@@ -1,0 +1,515 @@
+{
+  "new_tags": {
+    "linear-models": {
+      "label": "Linear & regularized models",
+      "kind": "subject"
+    },
+    "decision-trees": {
+      "label": "Decision trees & forests",
+      "kind": "subject"
+    },
+    "svm": {
+      "label": "Support vector machines",
+      "kind": "subject"
+    },
+    "knn": {
+      "label": "k-nearest neighbors",
+      "kind": "subject"
+    },
+    "probabilistic-models": {
+      "label": "Probabilistic models",
+      "kind": "subject"
+    },
+    "anomaly-detection": {
+      "label": "Anomaly detection",
+      "kind": "subject"
+    }
+  },
+  "new_terms": {
+    "random-forest": {
+      "label": "Random forest",
+      "definition": "An ensemble of decision trees, each trained on a random sample of the data, whose predictions are combined.",
+      "tag": "model-selection"
+    },
+    "residual": {
+      "label": "Residual",
+      "definition": "The difference between an observed value and the model's prediction for it.",
+      "tag": "model-selection"
+    },
+    "anomaly-detection": {
+      "label": "Anomaly detection",
+      "definition": "Identifying observations that deviate markedly from the expected pattern.",
+      "tag": "model-monitoring"
+    },
+    "linear-regression": {
+      "label": "Linear regression",
+      "definition": "A model that predicts a number as a weighted sum of input features.",
+      "tag": "linear-models"
+    },
+    "ridge": {
+      "label": "Ridge regression",
+      "definition": "Linear regression with a penalty on the squared size of its coefficients (an L2 penalty).",
+      "tag": "linear-models"
+    },
+    "lasso": {
+      "label": "Lasso",
+      "definition": "Linear regression with a penalty on the absolute size of its coefficients (an L1 penalty).",
+      "tag": "linear-models"
+    },
+    "decision-tree": {
+      "label": "Decision tree",
+      "definition": "A model that makes predictions by asking a sequence of yes-or-no questions about the features.",
+      "tag": "decision-trees"
+    },
+    "lightgbm": {
+      "label": "LightGBM",
+      "definition": "A gradient boosting library from Microsoft.",
+      "tag": "gradient-boosting"
+    },
+    "catboost": {
+      "label": "CatBoost",
+      "definition": "A gradient boosting library from Yandex.",
+      "tag": "gradient-boosting"
+    },
+    "support-vector-machine": {
+      "label": "Support vector machine",
+      "definition": "A classifier that separates classes with a boundary chosen using the points closest to it.",
+      "tag": "svm"
+    },
+    "support-vector-regression": {
+      "label": "SVR",
+      "definition": "Support vector regression: the regression counterpart of the support vector machine.",
+      "tag": "svm"
+    },
+    "k-nearest-neighbors": {
+      "label": "k-nearest neighbors",
+      "definition": "A method that predicts using the labels of the k most similar training examples.",
+      "tag": "knn"
+    },
+    "naive-bayes": {
+      "label": "Naive Bayes",
+      "definition": "A family of simple probabilistic classifiers based on Bayes' rule.",
+      "tag": "probabilistic-models"
+    },
+    "generalized-linear-model": {
+      "label": "Generalized linear model",
+      "definition": "A family of models that extends linear regression to outcomes with other distributions, such as counts or yes/no.",
+      "tag": "probabilistic-models"
+    },
+    "isolation-forest": {
+      "label": "Isolation forest",
+      "definition": "An unsupervised method for scoring how unusual each observation is, built from random trees.",
+      "tag": "anomaly-detection"
+    }
+  },
+  "questions": [
+    {
+      "id": "algo-001",
+      "question": "What assumptions does linear regression make, and which ones matter most when you only care about prediction?",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What do you do if the residuals show a pattern?",
+          "intent": "test diagnosing non-linearity and fixing it with transforms or interactions"
+        },
+        {
+          "text": "How do outliers affect it?",
+          "intent": "test sensitivity of least squares"
+        },
+        {
+          "text": "What changes if you care about inference instead of prediction?",
+          "intent": "test the difference between predictive and inferential needs"
+        }
+      ],
+      "key_insight": "The assumptions matter in proportion to what you use the model for. Prediction mostly needs a roughly linear, stable relationship, while inference also needs well-behaved errors.",
+      "junior_answer": "Linearity, independence, normal errors and constant variance.",
+      "senior_answer": "The classic list is a linear relationship, independent errors, constant error variance, roughly normal errors and no severe collinearity. For pure prediction the ones that bite are linearity (a missed curve means systematic error) and independence across train and test (leakage). Constant variance and normality mostly affect confidence and prediction intervals, not point predictions. Outliers can drag least squares, so I'd check leverage and consider a robust or Huber loss. I'd diagnose with residual plots and fix with transforms, interaction terms or a more flexible model.",
+      "tags": [
+        "linear-models",
+        "debugging"
+      ],
+      "terms": [
+        "linear-regression",
+        "residual"
+      ]
+    },
+    {
+      "id": "algo-002",
+      "question": "When would you choose ridge, lasso or elastic net?",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "Why does lasso set some coefficients exactly to zero while ridge does not?",
+          "intent": "test geometric intuition for L1 versus L2"
+        },
+        {
+          "text": "What happens with a group of highly correlated features?",
+          "intent": "test lasso instability and elastic net grouping"
+        },
+        {
+          "text": "How do you choose the penalty strength?",
+          "intent": "test cross-validating the penalty and scaling features first"
+        }
+      ],
+      "key_insight": "Ridge shrinks every coefficient, lasso also selects features, and elastic net keeps lasso's selection while behaving better with correlated features.",
+      "junior_answer": "Lasso removes features and ridge shrinks them.",
+      "senior_answer": "All three add a penalty to reduce variance. Ridge (L2) shrinks coefficients smoothly and keeps every feature, which suits many features that each carry a little signal. Lasso (L1) can set coefficients exactly to zero, so it selects features, which suits sparse problems and interpretability. With correlated features lasso tends to pick one arbitrarily and flip between samples, while elastic net mixes both penalties and tends to keep correlated groups together. I standardize features first, choose the penalty strength by cross-validation, and use time-aware folds for time-ordered data.",
+      "tags": [
+        "linear-models",
+        "bias-variance",
+        "model-selection"
+      ],
+      "terms": [
+        "ridge",
+        "lasso"
+      ]
+    },
+    {
+      "id": "algo-003",
+      "question": "How does a decision tree choose where to split, and why do deep trees overfit?",
+      "topic": "ML Algorithms",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, ML fundamentals",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What is impurity and how is it measured?",
+          "intent": "test knowing Gini and entropy"
+        },
+        {
+          "text": "How can you stop a tree from overfitting?",
+          "intent": "test depth limits, minimum leaf size and pruning"
+        },
+        {
+          "text": "Can a tree predict beyond the range of its training data?",
+          "intent": "test that trees predict piecewise constants"
+        }
+      ],
+      "key_insight": "A tree greedily picks the split that most reduces impurity, and with no limits it keeps splitting until it memorizes the training data.",
+      "junior_answer": "It picks the best feature to split on, and deep trees memorize the data.",
+      "senior_answer": "At each node the tree tries candidate splits on each feature and picks the one that most reduces impurity (Gini or entropy for classification, variance for regression). That is greedy: it does not look ahead. Left unchecked it splits until leaves are nearly pure, so it fits noise and generalizes poorly. Remedies are limiting depth, requiring a minimum number of samples per leaf, pruning, or using an ensemble. A tree predicts piecewise constants, so it cannot extrapolate beyond the training range, which matters for trends.",
+      "tags": [
+        "decision-trees",
+        "bias-variance"
+      ],
+      "terms": [
+        "decision-tree"
+      ]
+    },
+    {
+      "id": "algo-004",
+      "question": "How does a random forest differ from a single tree, and what can go wrong when you read its feature importances?",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What is out-of-bag error?",
+          "intent": "test knowing it is a built-in validation estimate"
+        },
+        {
+          "text": "Why are impurity-based importances biased toward some features?",
+          "intent": "test the bias toward high-cardinality and continuous features"
+        },
+        {
+          "text": "What would you use instead?",
+          "intent": "test permutation importance and SHAP"
+        }
+      ],
+      "key_insight": "A forest cuts variance by averaging many decorrelated trees, but its default importances favor features with many possible splits and divide credit between correlated features.",
+      "junior_answer": "A forest averages many trees, and importance shows which features matter.",
+      "senior_answer": "Each tree trains on a bootstrap sample and considers a random subset of features at each split, so the trees are decorrelated and averaging them reduces variance without raising bias much. Out-of-bag samples give a built-in validation estimate. Default impurity-based importances are biased toward continuous or high-cardinality features and are computed on training data, so they can reward overfit features; correlated features also split the credit. I'd use permutation importance on held-out data or SHAP, and describe the result as what the model uses, not what causes the outcome.",
+      "tags": [
+        "decision-trees",
+        "explainability"
+      ],
+      "terms": [
+        "random-forest",
+        "feature-importance"
+      ]
+    },
+    {
+      "id": "algo-005",
+      "question": "You're choosing between XGBoost, LightGBM and CatBoost for a tabular problem with many categorical features. How do you decide?",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, tabular ML",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "How do their tree-growing strategies differ?",
+          "intent": "test level-wise versus leaf-wise growth"
+        },
+        {
+          "text": "How does each handle categorical variables?",
+          "intent": "test native categorical handling"
+        },
+        {
+          "text": "How would you compare them fairly?",
+          "intent": "test same folds, same tuning budget, and measuring time as well as accuracy"
+        }
+      ],
+      "key_insight": "On most tabular data the three land within noise of each other. The choice comes down to categorical handling, speed at your data size and how much tuning you can afford.",
+      "junior_answer": "XGBoost is the standard, LightGBM is faster and CatBoost handles categories.",
+      "senior_answer": "All three are gradient-boosted trees, and with equal tuning they are usually within a small margin on accuracy, so I'd decide on practical grounds. LightGBM grows trees leaf-wise with histogram binning, which is fast on large data but can overfit small data without limits on leaves. XGBoost is the most widely deployed and documented, with level-wise growth by default. CatBoost uses ordered target statistics to handle categorical features natively and reduce target leakage, often needing less tuning. With many categoricals I'd start with CatBoost, then compare all three on the same time-aware folds with a fixed tuning budget, looking at accuracy, training time and calibration.",
+      "tags": [
+        "gradient-boosting",
+        "model-selection",
+        "tradeoffs"
+      ],
+      "terms": [
+        "xgboost",
+        "lightgbm",
+        "catboost"
+      ]
+    },
+    {
+      "id": "algo-006",
+      "question": "Explain how a support vector machine works. When would you use one, and what do you need to do to the data first?",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, classical ML",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What does the kernel trick do?",
+          "intent": "test intuition for non-linear boundaries"
+        },
+        {
+          "text": "What do C and gamma control?",
+          "intent": "test the margin-versus-errors trade-off and kernel width"
+        },
+        {
+          "text": "Why does an SVM scale poorly to millions of rows?",
+          "intent": "test training cost growing faster than linearly with rows"
+        }
+      ],
+      "key_insight": "An SVM finds the boundary with the widest margin, and because margins depend on distances, features must be scaled.",
+      "junior_answer": "It draws a line between the classes with the biggest gap.",
+      "senior_answer": "An SVM finds the separating boundary with the largest margin between classes; only the points nearest the boundary, the support vectors, define it. A kernel such as the RBF lets it draw non-linear boundaries by implicitly mapping the data to a higher dimension. C trades margin width against misclassified training points, and gamma sets how local the RBF kernel is. Distances drive everything, so features must be standardized. It works well on small to medium, high-dimensional data like text, but training scales roughly quadratically or worse with rows and its scores are not probabilities, so for large tabular data I'd pick boosting.",
+      "tags": [
+        "svm",
+        "model-selection"
+      ],
+      "terms": [
+        "support-vector-machine"
+      ]
+    },
+    {
+      "id": "algo-007",
+      "question": "How does support vector regression differ from ordinary linear regression, and when might you prefer it?",
+      "topic": "ML Algorithms",
+      "difficulty": "hard",
+      "frequency": "common in DS interviews",
+      "context": "Senior DS interview, classical ML",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What is the epsilon-insensitive loss?",
+          "intent": "test the idea of a tolerance tube"
+        },
+        {
+          "text": "What happens to points inside the tube?",
+          "intent": "test sparsity of support vectors"
+        },
+        {
+          "text": "How does it compare with ridge for a typical tabular problem?",
+          "intent": "test pragmatic judgment"
+        }
+      ],
+      "key_insight": "SVR ignores errors smaller than a tolerance, so only points outside it shape the model. That makes it robust to small noise, but it is not automatically better than a regularized linear model.",
+      "junior_answer": "SVR uses support vectors and kernels to fit a curve instead of a line.",
+      "senior_answer": "Linear regression minimizes squared error on every point. SVR defines a tube of width epsilon around the fit: errors inside the tube cost nothing and errors outside are penalized linearly, with C controlling how heavily. Only points on or outside the tube become support vectors, so the model is sparse and less sensitive to small noise or moderate outliers, and a kernel gives non-linear fits. It needs scaled features and tuning of epsilon, C and gamma. For ordinary tabular regression a regularized linear model or boosting is usually simpler and as good; I'd reach for SVR on smaller, smooth, non-linear problems.",
+      "tags": [
+        "svm",
+        "linear-models"
+      ],
+      "terms": [
+        "support-vector-regression"
+      ]
+    },
+    {
+      "id": "algo-008",
+      "question": "How does k-nearest neighbors work, and what are its weaknesses?",
+      "topic": "ML Algorithms",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, ML fundamentals",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "How do you choose k?",
+          "intent": "test the bias-variance trade-off and cross-validation"
+        },
+        {
+          "text": "Why does it struggle in high dimensions?",
+          "intent": "test the curse of dimensionality"
+        },
+        {
+          "text": "Why must features be scaled?",
+          "intent": "test distances being dominated by large-valued features"
+        }
+      ],
+      "key_insight": "k-NN has no training step. All of its cost and all of its assumptions sit in the distance function, which breaks down when features are unscaled or numerous.",
+      "junior_answer": "It looks at the k closest points and takes a vote.",
+      "senior_answer": "k-NN stores the training data and predicts by taking the majority label (or the average) of the k closest points under a distance metric. Small k gives a jagged, high-variance boundary and large k smooths toward the base rate, so I choose k by cross-validation. Because it uses distance, features must be scaled and irrelevant ones removed; in high dimensions distances become nearly equal, so neighbors stop being meaningful. Prediction is slow on large data without an index or approximate search. It is a useful baseline and underlies many retrieval systems.",
+      "tags": [
+        "knn",
+        "bias-variance"
+      ],
+      "terms": [
+        "k-nearest-neighbors"
+      ]
+    },
+    {
+      "id": "algo-009",
+      "question": "Naive Bayes assumes features are independent, which is almost never true. Why does it still work, and when would you use it?",
+      "topic": "ML Algorithms",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, ML fundamentals",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "Where does it fail?",
+          "intent": "test double-counting of correlated features and poor probabilities"
+        },
+        {
+          "text": "What is smoothing for?",
+          "intent": "test the zero-count problem"
+        },
+        {
+          "text": "How does it handle text?",
+          "intent": "test the bag-of-words setup"
+        }
+      ],
+      "key_insight": "Naive Bayes only needs the right class to score highest, not accurate probabilities, so its wrong independence assumption often hurts less than expected.",
+      "junior_answer": "It's fast and works well for text even though the assumption is wrong.",
+      "senior_answer": "It multiplies per-feature likelihoods as if features were independent given the class. The assumption is wrong, but classification only needs the correct class to come out on top, and errors from double-counting correlated features often don't change that ordering. Its probabilities are badly calibrated, so I wouldn't use them for cost-based decisions without recalibration. It trains in one pass, needs little data and handles high-dimensional sparse features like words, which is why it is a strong text baseline. Smoothing prevents a single unseen word from zeroing out a class.",
+      "tags": [
+        "probabilistic-models",
+        "model-selection"
+      ],
+      "terms": [
+        "naive-bayes"
+      ]
+    },
+    {
+      "id": "algo-010",
+      "question": "You fit a logistic regression for loan default. How do you interpret the coefficients, and why might you still choose it over a boosted model?",
+      "topic": "ML Algorithms",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, lending",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What does a coefficient of 0.7 mean?",
+          "intent": "test log-odds and odds-ratio interpretation"
+        },
+        {
+          "text": "What do you need to check about the features?",
+          "intent": "test scaling, collinearity and linearity in the log-odds"
+        },
+        {
+          "text": "How do you capture non-linear effects?",
+          "intent": "test binning, splines and interactions"
+        }
+      ],
+      "key_insight": "Each coefficient is a change in log-odds with the other features held fixed, and that transparency is often worth a small loss in accuracy.",
+      "junior_answer": "Positive coefficients increase the chance of default, and it's simple and explainable.",
+      "senior_answer": "A coefficient is the change in log-odds of default for a one-unit increase in a feature with the others held fixed; exponentiating gives an odds ratio, so 0.7 means about twice the odds. That reading is only safe if features are on comparable scales and not strongly collinear. I'd check linearity in the log-odds and add splines, bins or interactions where needed. I'd keep it over boosting when regulators or stakeholders need clear reasons, when data is small, or when the accuracy gap is within noise, and I'd verify that with a held-out comparison and a calibration check instead of assuming.",
+      "tags": [
+        "linear-models",
+        "explainability",
+        "model-selection"
+      ],
+      "terms": [
+        "logistic-regression",
+        "default-rate"
+      ]
+    },
+    {
+      "id": "algo-011",
+      "question": "You have millions of transactions and almost no labeled fraud. How would you use an unsupervised approach, such as an isolation forest, to find suspicious ones?",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Senior DS interview, fraud or risk",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "How does an isolation forest decide a point is unusual?",
+          "intent": "test the random-partitioning intuition"
+        },
+        {
+          "text": "How do you set the alert threshold without labels?",
+          "intent": "test tying it to review capacity and sampling for precision"
+        },
+        {
+          "text": "How do you know it finds fraud and not just unusual-but-fine transactions?",
+          "intent": "test validation with analysts"
+        }
+      ],
+      "key_insight": "Unsupervised detectors rank what is unusual, not what is fraudulent, so their value depends on analyst feedback and a threshold tied to review capacity.",
+      "junior_answer": "Use an isolation forest to flag outliers and review them.",
+      "senior_answer": "An isolation forest builds random trees that split features at random; points that are isolated in few splits are unusual, so a shorter average path length means a higher anomaly score. I'd engineer behavioral features (amount versus the customer's norm, velocity, new merchant), since raw amounts mostly flag rich customers. With no labels the threshold comes from review capacity: flag the top N per day. Unusual is not the same as fraudulent, so I'd have analysts label a sample from the top of the ranking, measure precision, and feed the labels into a supervised model over time. Segmenting by customer type improves it.",
+      "tags": [
+        "anomaly-detection",
+        "fraud-detection",
+        "edge-cases"
+      ],
+      "terms": [
+        "isolation-forest",
+        "anomaly-detection"
+      ]
+    },
+    {
+      "id": "algo-012",
+      "question": "You need to model the number of insurance claims per customer per year. Why not just use linear regression, and what would you use?",
+      "topic": "ML Algorithms",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, insurance or risk",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What distribution suits count data?",
+          "intent": "test Poisson and overdispersion"
+        },
+        {
+          "text": "What do you do when the variance is much larger than the mean?",
+          "intent": "test negative binomial and zero inflation"
+        },
+        {
+          "text": "How do you handle customers observed for different lengths of time?",
+          "intent": "test exposure offsets"
+        }
+      ],
+      "key_insight": "Counts are non-negative integers whose variance grows with the mean, so a model built for counts, with an exposure term, beats a straight line.",
+      "junior_answer": "Use Poisson regression because it's count data.",
+      "senior_answer": "Linear regression can predict negative claims and assumes constant variance, but counts are non-negative integers whose variance rises with the mean. A generalized linear model with a log link and a Poisson distribution fits that shape, and coefficients become multiplicative effects on the claim rate. Real claims are often overdispersed (variance above the mean), so I'd check that and move to a negative binomial, or add a zero-inflation component when many customers have none. Customers observed for different periods need an exposure offset so the model predicts a rate. Gradient boosting with a Poisson objective is a flexible alternative.",
+      "tags": [
+        "probabilistic-models",
+        "model-selection",
+        "edge-cases"
+      ],
+      "terms": [
+        "generalized-linear-model"
+      ]
+    }
+  ]
+}

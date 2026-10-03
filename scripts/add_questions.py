@@ -11,7 +11,7 @@ terms in scripts/tags.map.json and scripts/terms.map.json, then runs apply_tags.
 Re-running is safe. Run from the repo root: python3 scripts/add_questions.py"""
 import glob, json, re, subprocess, sys
 
-TOPICS = {'SQL', 'ML', 'Statistics', 'System Design', 'Python', 'Production ML', 'LLMs & AI'}
+TOPICS = {'SQL', 'ML', 'Statistics', 'System Design', 'Python', 'Production ML', 'LLMs & AI', 'ML Algorithms', 'Deep Learning & NLP'}
 DIFFS = {'easy', 'medium', 'hard'}
 KINDS = {'concept', 'implementation', 'case', 'design'}
 load = lambda p: json.load(open(p))

@@ -50,7 +50,9 @@ Living list for Gradient Ascent. What has already been built is recorded in `doc
 - **Launch polish.** Check the name Gradient Ascent for trademarks and domains (an ML newsletter and a podcast already use it), add a share image and PNG icon, a feedback or "suggest a question" link, and deploy (for example to Vercel).
 - **Commit.** The explainers, Insights tab, name and icon and this file are not committed yet.
 
-## 3) Coverage gaps (audit of 2026-10-03, bank of 105)
+## 3) Coverage gaps (audit of 2026-10-03, bank of 105) — mostly resolved
+
+Status: 50 questions were added (bank now 155, see docs/implemented/12). Still without a dedicated question: instrumental variables, UMAP specifically, topic models, NDCG as its own question, log loss as its own question, RNN/LSTM details beyond dl-007. The list below is the original audit.
 
 The audit searched every question, answer and follow-up for a checklist of algorithms and techniques. A mention inside an answer is not coverage: only gradient boosting, bias-variance, logistic regression versus boosting, and bagging versus boosting have their own question. Everything below has no dedicated question.
 
@@ -64,3 +66,13 @@ The audit searched every question, answer and follow-up for a checklist of algor
 - Recommenders and NLP: matrix factorization, TF-IDF, ranking metrics (NDCG), topic models, RLHF.
 
 Proposed fix: a new "ML Algorithms" topic (supervised plus unsupervised, about 24 questions) and a "Deep Learning & NLP" topic (about 12), plus about 14 questions spread across the existing topics. Roughly 50 questions, taking the bank to about 155.
+
+
+## 4. Status after the 2026-10-03 session
+Done: collapsible map, 155 questions, 17 explainers, level and type filters.
+Next candidates:
+- Logo: the current mark (dots, trend line, arrow) may resemble others. Plan: contour hill with climbing dots; keep `Logo.jsx` and `public/favicon.svg` in sync; run a real trademark and logo search before public launch.
+- More Foundations questions (only 25 easy).
+- Expert review of all 106 draft questions.
+- Optional explainers: class imbalance and threshold, hierarchical clustering, boosting residuals for LightGBM.
+- Items in section 1 (match score, AI feedback, per-follow-up answers), Learn section, phone legends and PWA.

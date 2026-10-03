@@ -1,0 +1,629 @@
+{
+  "new_tags": {
+    "python-fundamentals": {
+      "label": "Python fundamentals",
+      "kind": "subject"
+    },
+    "feedback-loops": {
+      "label": "Feedback loops & selection bias",
+      "kind": "subject"
+    },
+    "embeddings-and-search": {
+      "label": "Embeddings & semantic search",
+      "kind": "subject"
+    },
+    "clustering": {
+      "label": "Clustering",
+      "kind": "subject"
+    },
+    "optimization": {
+      "label": "Gradient descent & optimizers",
+      "kind": "subject"
+    },
+    "text-features": {
+      "label": "Text representations",
+      "kind": "subject"
+    },
+    "llm-training": {
+      "label": "How LLMs are trained",
+      "kind": "subject"
+    },
+    "maximum-likelihood": {
+      "label": "Maximum likelihood",
+      "kind": "subject"
+    },
+    "categorical-tests": {
+      "label": "Chi-square & ANOVA",
+      "kind": "subject"
+    },
+    "bandits": {
+      "label": "Bandits & adaptive tests",
+      "kind": "subject"
+    },
+    "survival-analysis": {
+      "label": "Survival analysis",
+      "kind": "subject"
+    },
+    "forecasting-models": {
+      "label": "Classical forecasting models",
+      "kind": "subject"
+    },
+    "forecast-metrics": {
+      "label": "Forecast accuracy metrics",
+      "kind": "subject"
+    },
+    "recommender-systems": {
+      "label": "Recommender systems",
+      "kind": "subject"
+    },
+    "feature-scaling": {
+      "label": "Feature scaling",
+      "kind": "subject"
+    },
+    "transfer-learning": {
+      "label": "Transfer learning",
+      "kind": "subject"
+    }
+  },
+  "new_terms": {
+    "embedding": {
+      "label": "Embedding",
+      "definition": "A list of numbers representing a piece of text (or other data) so that similar items sit close together.",
+      "tag": "embeddings-and-search"
+    },
+    "k-means": {
+      "label": "k-means",
+      "definition": "A clustering method that groups points around k center points.",
+      "tag": "clustering"
+    },
+    "gradient-descent": {
+      "label": "Gradient descent",
+      "definition": "An optimization method that repeatedly adjusts parameters in the direction that lowers the loss.",
+      "tag": "optimization"
+    },
+    "learning-rate": {
+      "label": "Learning rate",
+      "definition": "The size of each update step taken while training a model.",
+      "tag": "optimization"
+    },
+    "pretrained-model": {
+      "label": "Pretrained model",
+      "definition": "A model already trained on a large dataset, available as a starting point.",
+      "tag": "transfer-learning"
+    },
+    "tf-idf": {
+      "label": "TF-IDF",
+      "definition": "Term frequency-inverse document frequency: a score for how characteristic a word is of a document.",
+      "tag": "text-features"
+    },
+    "likelihood": {
+      "label": "Likelihood",
+      "definition": "The probability a model assigns to the observed data, viewed as a function of the model's parameters.",
+      "tag": "maximum-likelihood"
+    },
+    "chi-square-test": {
+      "label": "Chi-square test",
+      "definition": "A hypothesis test comparing observed counts in categories with the counts expected under no relationship.",
+      "tag": "categorical-tests"
+    },
+    "multi-armed-bandit": {
+      "label": "Multi-armed bandit",
+      "definition": "A method that adaptively allocates traffic among options while learning which performs best.",
+      "tag": "bandits"
+    },
+    "arima": {
+      "label": "ARIMA",
+      "definition": "AutoRegressive Integrated Moving Average: a classical model for forecasting a single time series.",
+      "tag": "forecasting-models"
+    },
+    "exponential-smoothing": {
+      "label": "Exponential smoothing",
+      "definition": "A forecasting method that weights recent observations more heavily than older ones.",
+      "tag": "forecasting-models"
+    },
+    "prophet": {
+      "label": "Prophet",
+      "definition": "An open-source forecasting library from Meta.",
+      "tag": "forecasting-models"
+    },
+    "mape": {
+      "label": "MAPE",
+      "definition": "Mean absolute percentage error: the average of absolute errors as a percentage of the actual values.",
+      "tag": "forecast-metrics"
+    },
+    "matrix-factorization": {
+      "label": "Matrix factorization",
+      "definition": "A technique that approximates a large table as the product of two smaller ones.",
+      "tag": "recommender-systems"
+    },
+    "feature-scaling": {
+      "label": "Feature scaling",
+      "definition": "Rewriting features so they sit on comparable ranges.",
+      "tag": "feature-scaling"
+    },
+    "cosine-similarity": {
+      "label": "Cosine similarity",
+      "definition": "A measure of how alike two vectors are, based on the angle between them.",
+      "tag": "text-features"
+    },
+    "lora": {
+      "label": "LoRA",
+      "definition": "Low-Rank Adaptation: a technique for fine-tuning a model by training small added matrices.",
+      "tag": "prompting-vs-fine-tuning"
+    }
+  },
+  "questions": [
+    {
+      "id": "stats-016",
+      "question": "What is maximum likelihood estimation, and why does it show up in so many models?",
+      "topic": "Statistics",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "DS interview, statistics foundations",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "Why do we maximize the log-likelihood instead of the likelihood?",
+          "intent": "test numerical stability and sums over independent points"
+        },
+        {
+          "text": "How does logistic regression's loss relate to likelihood?",
+          "intent": "test the link between cross-entropy and Bernoulli likelihood"
+        },
+        {
+          "text": "When does maximum likelihood go wrong?",
+          "intent": "test small samples, separation and overfitting"
+        }
+      ],
+      "key_insight": "Maximum likelihood picks the parameters that make the observed data most probable; many familiar loss functions are negative log-likelihoods in disguise.",
+      "junior_answer": "It finds the parameters that best fit the data by maximizing the probability of the data.",
+      "senior_answer": "Given a model with parameters, the likelihood is the probability it assigns to the data we saw. Maximum likelihood chooses the parameters that maximize it. For independent points the likelihood is a product, so we maximize the log, which turns it into a sum and avoids underflow. Squared error is the negative log-likelihood of Gaussian noise, and cross-entropy is the negative log-likelihood of Bernoulli labels, so training those models is maximum likelihood. It can fail with little data, where it overfits, and with perfectly separable classes, where logistic coefficients diverge; priors or regularization fix both.",
+      "tags": [
+        "maximum-likelihood"
+      ],
+      "terms": [
+        "likelihood"
+      ]
+    },
+    {
+      "id": "stats-017",
+      "question": "You have conversion data for four marketing channels. How do you test whether they differ, and what do you do after a significant result?",
+      "topic": "Statistics",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Marketing analytics case",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "Why not run six pairwise tests?",
+          "intent": "test multiple comparisons"
+        },
+        {
+          "text": "What assumptions does a chi-square test make?",
+          "intent": "test independence and expected counts"
+        },
+        {
+          "text": "How would the approach change for a continuous outcome like revenue per user?",
+          "intent": "test ANOVA and non-normal data"
+        }
+      ],
+      "key_insight": "An omnibus test says whether any channels differ; you then need a corrected follow-up to say which, and a size of effect to say whether it matters.",
+      "junior_answer": "I would run a chi-square test on the conversion counts and then compare channels in pairs.",
+      "senior_answer": "Conversions are counts in a channel-by-outcome table, so a chi-square test of independence asks whether conversion rate depends on channel. It needs independent users and reasonably large expected counts; otherwise use Fisher's exact test. A significant result only says some channels differ. To find which, I'd run pairwise comparisons with a correction such as Holm or Tukey rather than six uncorrected tests, and report effect sizes with intervals, since a huge sample makes tiny differences significant. For revenue per user the analogue is ANOVA, or a rank-based test if the data are heavily skewed.",
+      "tags": [
+        "categorical-tests",
+        "multiple-testing",
+        "hypothesis-testing"
+      ],
+      "terms": [
+        "chi-square-test",
+        "p-value"
+      ]
+    },
+    {
+      "id": "stats-018",
+      "question": "When would you use a multi-armed bandit instead of a standard A/B test?",
+      "topic": "Statistics",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, experimentation",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What do you give up compared with a fixed-horizon A/B test?",
+          "intent": "test inference trade-offs"
+        },
+        {
+          "text": "How does Thompson sampling decide what to show?",
+          "intent": "test the mechanism"
+        },
+        {
+          "text": "What goes wrong if the effect changes over time?",
+          "intent": "test non-stationarity"
+        }
+      ],
+      "key_insight": "Bandits trade clean inference for lower regret, so they suit cheap, short-lived decisions where you care about outcomes during the test, not about a precise estimate afterwards.",
+      "junior_answer": "A bandit sends more traffic to the better option while it learns, so you lose less.",
+      "senior_answer": "A bandit shifts traffic toward better-performing variants as evidence accumulates, which cuts the cost of showing a loser. That fits headline testing, promotions and recommendations, where options are many, decisions are short-lived and the goal is reward, not a report. An A/B test fits product changes where you need an unbiased estimate, a guardrail check and a decision you can defend. With a bandit the unequal, adaptive allocation makes estimates for the weaker arms noisy and biased and complicates p-values. Thompson sampling draws a plausible rate for each arm from its posterior and plays the best draw. If the effect drifts, for example by day of week, a bandit can lock onto a stale winner unless it discounts old data.",
+      "tags": [
+        "bandits",
+        "ab-testing"
+      ],
+      "terms": [
+        "multi-armed-bandit",
+        "ab-test"
+      ]
+    },
+    {
+      "id": "stats-019",
+      "question": "A subscription product wants to understand churn, but many customers are still subscribed. How do you analyze time-to-churn?",
+      "topic": "Statistics",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, retention analysis",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What is censoring and why is it a problem for a simple average?",
+          "intent": "test right-censored data"
+        },
+        {
+          "text": "What does a Kaplan-Meier curve show?",
+          "intent": "test the estimator"
+        },
+        {
+          "text": "How would you include features like plan type?",
+          "intent": "test Cox proportional hazards"
+        }
+      ],
+      "key_insight": "Customers who haven't churned yet are not missing data; they are partial information, and dropping them or treating them as lifetimes biases the answer short.",
+      "junior_answer": "I would calculate the average time until customers cancel.",
+      "senior_answer": "Customers who are still active have an unknown churn time: we only know it is longer than what we have observed. Averaging observed lifetimes of churned customers biases the answer downward, and treating active customers as churned at today's date is also wrong. Survival analysis handles this censoring. A Kaplan-Meier curve estimates the share still subscribed at each tenure, and I would compare curves by plan or cohort. To include features I'd use a Cox proportional hazards model, which gives hazard ratios, after checking that the proportionality assumption holds. If the goal is a score for who will churn in the next 30 days, a classifier on a fixed window can be simpler.",
+      "tags": [
+        "survival-analysis",
+        "retention-cohorts"
+      ],
+      "terms": [
+        "churn"
+      ]
+    },
+    {
+      "id": "ml-019",
+      "question": "How does an ARIMA model forecast, and when would you still use it?",
+      "topic": "ML",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "DS interview, forecasting",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What do the p, d and q mean?",
+          "intent": "test the components"
+        },
+        {
+          "text": "Why does the series need to be stationary?",
+          "intent": "test differencing"
+        },
+        {
+          "text": "How do you pick the orders?",
+          "intent": "test ACF and PACF, information criteria and validation"
+        }
+      ],
+      "key_insight": "ARIMA forecasts a single series from its own past values and past errors after differencing it to be stable; it is a strong baseline for short, regular series.",
+      "junior_answer": "ARIMA uses past values of the series to predict future values.",
+      "senior_answer": "ARIMA combines autoregression on past values (p), differencing to remove trend (d) and a moving average of past errors (q). Differencing aims at a stationary series, whose mean and variance don't drift, because the model's coefficients assume stable relationships. I'd choose orders using autocorrelation plots and information criteria, then check them by walk-forward validation. It works well for a single, short, regular series with few external drivers and is easy to explain. It is a poor fit for many series at once, multiple seasonalities, holidays and rich external features, where boosted trees or other models do better.",
+      "tags": [
+        "forecasting-models",
+        "time-series-forecasting"
+      ],
+      "terms": [
+        "arima",
+        "time-series"
+      ]
+    },
+    {
+      "id": "ml-020",
+      "question": "You need weekly sales forecasts for 200 products. Would you use exponential smoothing, Prophet or gradient boosting?",
+      "topic": "ML",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "DS interview, forecasting case",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What can boosting use that the classical models can't?",
+          "intent": "test external features and cross-series learning"
+        },
+        {
+          "text": "How would you evaluate the choice?",
+          "intent": "test walk-forward validation"
+        },
+        {
+          "text": "What would you ship first?",
+          "intent": "test baselines and pragmatism"
+        }
+      ],
+      "key_insight": "Start with a simple baseline per series, then add a global model once you have drivers such as price and promotions that the classical methods cannot use.",
+      "junior_answer": "I would try them all and pick the one with the lowest error.",
+      "senior_answer": "Exponential smoothing is a quick, robust baseline for each series and needs little tuning. Prophet adds trend changes, seasonality and holidays with readable components, but it is not always the most accurate. Gradient boosting trains one global model across all 200 products using lag features, calendar features, price and promotions, so it can learn from related products and handle short histories. I'd compare all three with walk-forward validation on the metric the business cares about, ship the simple baseline first, and move to the global model if it wins by a margin that justifies the extra pipeline.",
+      "tags": [
+        "forecasting-models",
+        "time-series-forecasting",
+        "model-selection"
+      ],
+      "terms": [
+        "exponential-smoothing",
+        "prophet"
+      ]
+    },
+    {
+      "id": "ml-021",
+      "question": "You forecast sales for each store, each region and the whole company, and the numbers don't add up. What do you do?",
+      "topic": "ML",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, forecasting at scale",
+      "kind": "design",
+      "follow_ups": [
+        {
+          "text": "What is the difference between bottom-up and top-down?",
+          "intent": "test the simple approaches"
+        },
+        {
+          "text": "What does reconciliation do?",
+          "intent": "test optimal combination"
+        },
+        {
+          "text": "How do you evaluate the result?",
+          "intent": "test accuracy at every level"
+        }
+      ],
+      "key_insight": "Forecasts made separately at each level disagree; reconciliation adjusts them so they add up, usually improving accuracy as well as consistency.",
+      "junior_answer": "I would forecast the stores and add them up to get the region and company totals.",
+      "senior_answer": "Separate models at each level won't sum. Bottom-up sums store forecasts, which is consistent but noisy for sparse stores. Top-down splits a company forecast by historical proportions, which is smooth but loses store detail. Reconciliation methods take forecasts from every level and adjust them jointly so they add up, weighting each by how reliable it is; this often improves accuracy at all levels because each level contributes information. I would evaluate with walk-forward validation at every level, since the right choice depends on which level decisions are made at.",
+      "tags": [
+        "forecasting-models",
+        "time-series-forecasting"
+      ],
+      "terms": [
+        "forecasting"
+      ]
+    },
+    {
+      "id": "ml-022",
+      "question": "Compare MAPE, RMSE and WAPE for judging a demand forecast. Which would you use?",
+      "topic": "ML",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "DS interview, evaluation metrics for forecasting",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What happens to MAPE when actual values are near zero?",
+          "intent": "test blow-up and asymmetry"
+        },
+        {
+          "text": "Why might RMSE and MAE disagree on which model is better?",
+          "intent": "test sensitivity to large errors"
+        },
+        {
+          "text": "How would you match the metric to the business cost?",
+          "intent": "test cost alignment"
+        }
+      ],
+      "key_insight": "Each metric rewards a different behavior, so choose by what an error costs the business and by whether the data contain small or zero values.",
+      "junior_answer": "I would use MAPE because percentages are easy to explain.",
+      "senior_answer": "MAPE is easy to read but explodes when actuals are near zero and penalizes over-forecasts more than under-forecasts, which can push models toward under-forecasting. RMSE squares errors, so it punishes large misses and suits cases where a big miss is disproportionately costly. WAPE divides total absolute error by total actuals, so it is stable and weights high-volume items more, which is often how the business thinks. I would pick the metric from the cost of errors, report more than one, and evaluate at the level where decisions are made.",
+      "tags": [
+        "forecast-metrics",
+        "evaluation-metrics"
+      ],
+      "terms": [
+        "mape"
+      ]
+    },
+    {
+      "id": "ml-023",
+      "question": "How would you build a recommender for an e-commerce site? Compare matrix factorization with a content-based approach.",
+      "topic": "ML",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "DS interview, recommendations",
+      "kind": "design",
+      "follow_ups": [
+        {
+          "text": "What happens for a brand-new item or user?",
+          "intent": "test the cold start problem"
+        },
+        {
+          "text": "Explicit ratings are rare. What do you use instead?",
+          "intent": "test implicit feedback"
+        },
+        {
+          "text": "How do you evaluate offline and online?",
+          "intent": "test ranking metrics and A/B tests"
+        }
+      ],
+      "key_insight": "Collaborative methods learn from behavior but need history; content-based methods work from item attributes but stay narrow. Real systems combine them.",
+      "junior_answer": "I would use collaborative filtering to recommend what similar users bought.",
+      "senior_answer": "Matrix factorization learns a vector for each user and item from the interaction matrix so that their product predicts affinity; it captures taste patterns without needing item attributes, but it needs history and handles new items poorly. A content-based approach scores items by similarity to what a user liked using attributes or embeddings; it handles new items but tends to recommend more of the same. Most sites use implicit feedback such as clicks and purchases, and combine the approaches, often with a ranking model on top. I'd evaluate offline with ranking metrics like recall at k or NDCG, with time-based splits, and confirm with an online experiment.",
+      "tags": [
+        "recommender-systems",
+        "feedback-loops"
+      ],
+      "terms": [
+        "matrix-factorization",
+        "embedding"
+      ]
+    },
+    {
+      "id": "ml-024",
+      "question": "Which models need feature scaling, and which don't? Why?",
+      "topic": "ML",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, ML fundamentals",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What goes wrong if you fit the scaler on all the data?",
+          "intent": "test leakage"
+        },
+        {
+          "text": "Does scaling matter for lasso and ridge?",
+          "intent": "test penalty sensitivity"
+        },
+        {
+          "text": "When would you use standardization versus min-max?",
+          "intent": "test outliers and bounded ranges"
+        }
+      ],
+      "key_insight": "Scaling matters when a model uses distances or penalizes coefficient size, or when optimization is sensitive to scale; tree models split on order and don't care.",
+      "junior_answer": "Neural networks and SVMs need scaling, trees don't.",
+      "senior_answer": "Models based on distances (k-NN, k-means, SVMs), penalized models (ridge, lasso) and gradient-based models like neural networks are sensitive to feature scale: a feature measured in large units dominates distances or gets penalized differently. Tree-based models split on thresholds, so monotonic rescaling changes nothing. I fit the scaler on the training data only and apply it to validation and test data, otherwise information leaks. Standardization is the default; min-max suits bounded inputs but is sensitive to outliers, where a robust scaler helps.",
+      "tags": [
+        "feature-scaling",
+        "data-leakage"
+      ],
+      "terms": [
+        "feature-scaling"
+      ]
+    },
+    {
+      "id": "python-015",
+      "question": "Implement k-means from scratch with NumPy. What would you check before trusting the result?",
+      "topic": "Python",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Coding screen, ML from scratch",
+      "kind": "implementation",
+      "follow_ups": [
+        {
+          "text": "How would you vectorize the assignment step?",
+          "intent": "test broadcasting and avoiding loops"
+        },
+        {
+          "text": "What do you do with an empty cluster?",
+          "intent": "test edge cases"
+        },
+        {
+          "text": "How do you decide it has converged?",
+          "intent": "test stopping criteria"
+        }
+      ],
+      "key_insight": "The algorithm is short; the care goes into initialization, empty clusters and stopping, plus running it several times because the result depends on the start.",
+      "junior_answer": "I would pick random centers, assign points and update the means in a loop.",
+      "senior_answer": "Initialize k centers by sampling points (ideally k-means++), then repeat: compute distances from every point to every center with broadcasting, assign each point to its nearest center with argmin, and set each center to the mean of its points. If a cluster is empty, re-seed it from a far-away point. Stop when assignments stop changing or the centers move less than a tolerance, with an iteration cap. Run it several times with different seeds and keep the lowest within-cluster sum of squares. Before trusting it I'd check that features are scaled and that the clusters are stable and interpretable.",
+      "tags": [
+        "python-fundamentals",
+        "clustering"
+      ],
+      "terms": [
+        "k-means"
+      ]
+    },
+    {
+      "id": "python-016",
+      "question": "Write gradient descent for linear regression using only NumPy. How do you know the learning rate is right?",
+      "topic": "Python",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Coding screen, ML from scratch",
+      "kind": "implementation",
+      "follow_ups": [
+        {
+          "text": "Why does unscaled data make this slow or unstable?",
+          "intent": "test conditioning and scaling"
+        },
+        {
+          "text": "How does this differ from the closed-form solution?",
+          "intent": "test the normal equation"
+        },
+        {
+          "text": "What changes for stochastic or mini-batch updates?",
+          "intent": "test noisy gradients"
+        }
+      ],
+      "key_insight": "Compute the gradient of the mean squared error, step against it, and watch the loss curve: a good learning rate decreases it smoothly and a bad one diverges or crawls.",
+      "junior_answer": "I would repeatedly update the weights by subtracting the learning rate times the gradient.",
+      "senior_answer": "With X as an n by d matrix, predictions are X @ w, the gradient of mean squared error is (2/n) * X.T @ (X @ w - y), and each step is w -= lr * gradient, repeated for a fixed number of iterations or until the loss stops improving. I'd scale features first, because very different scales make the loss surface a narrow valley that forces a tiny learning rate. I'd plot loss per iteration: smooth decline means the rate is fine, oscillation or growth means it is too high, and a very slow decline means it is too low. The closed form is exact for small problems; gradient descent scales to large ones and generalizes to other models. Mini-batches trade noisier steps for much cheaper updates.",
+      "tags": [
+        "optimization",
+        "python-fundamentals"
+      ],
+      "terms": [
+        "gradient-descent",
+        "learning-rate"
+      ]
+    },
+    {
+      "id": "python-017",
+      "question": "Build a simple document search using TF-IDF and cosine similarity. What are its limits?",
+      "topic": "Python",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Coding screen, text processing",
+      "kind": "implementation",
+      "follow_ups": [
+        {
+          "text": "Why cosine similarity instead of Euclidean distance?",
+          "intent": "test length normalization"
+        },
+        {
+          "text": "How does it handle synonyms?",
+          "intent": "test lexical matching limits"
+        },
+        {
+          "text": "How would it scale to millions of documents?",
+          "intent": "test sparse matrices and indexes"
+        }
+      ],
+      "key_insight": "TF-IDF search matches words, not meaning: fast and transparent, but blind to synonyms and paraphrase.",
+      "junior_answer": "I would convert documents to TF-IDF vectors and rank them by cosine similarity to the query.",
+      "senior_answer": "Fit a TF-IDF vectorizer on the documents to get a sparse matrix, transform the query with the same vectorizer, compute cosine similarity as a sparse dot product (rows are L2-normalized by default), and return the top-scoring documents with argsort. Cosine ignores document length, which Euclidean distance does not. The limits are that it only matches shared words, so synonyms and paraphrases are missed, and that stop words and tokenization choices matter. At large scale I'd use an inverted index such as BM25 in a search engine, or embeddings with an approximate nearest-neighbor index, often combining both.",
+      "tags": [
+        "text-features",
+        "embeddings-and-search",
+        "python-fundamentals"
+      ],
+      "terms": [
+        "tf-idf",
+        "cosine-similarity"
+      ]
+    },
+    {
+      "id": "llm-014",
+      "question": "When would you use LoRA instead of fully fine-tuning a large language model?",
+      "topic": "LLMs & AI",
+      "difficulty": "medium",
+      "frequency": "increasingly common",
+      "context": "DS/ML engineer interview, LLM adaptation",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What exactly is trained in LoRA?",
+          "intent": "test low-rank adapters"
+        },
+        {
+          "text": "What are the trade-offs against full fine-tuning?",
+          "intent": "test capacity and cost"
+        },
+        {
+          "text": "Before fine-tuning at all, what would you try?",
+          "intent": "test prompting and retrieval first"
+        }
+      ],
+      "key_insight": "LoRA freezes the base model and trains small added matrices, giving most of the benefit of fine-tuning at a fraction of the memory and storage.",
+      "junior_answer": "LoRA is cheaper than full fine-tuning because it trains fewer parameters.",
+      "senior_answer": "LoRA keeps the pretrained weights frozen and learns small low-rank matrices added to selected layers, so only a tiny share of parameters is trained. That cuts GPU memory, speeds up training and lets you store one small adapter per task and swap them on one base model. Full fine-tuning can capture larger changes in behavior but costs far more and risks forgetting. I'd use LoRA for style, format or domain adaptation with limited data and budget. Before either, I'd check whether prompting or retrieval solves the problem, since fine-tuning is better for behavior than for adding facts.",
+      "tags": [
+        "prompting-vs-fine-tuning",
+        "llm-training"
+      ],
+      "terms": [
+        "lora",
+        "pretrained-model"
+      ]
+    }
+  ]
+}

@@ -8,6 +8,17 @@ const EXPLAINERS = {
   'false-positives': lazy(() => import('./explainers/FalsePositives.jsx')),
   'time-split': lazy(() => import('./explainers/TimeSplit.jsx')),
   clt: lazy(() => import('./explainers/CLT.jsx')),
+  clustering: lazy(() => import('./explainers/Clustering.jsx')),
+  'gradient-descent': lazy(() => import('./explainers/GradientDescent.jsx')),
+  regularization: lazy(() => import('./explainers/Regularization.jsx')),
+  trees: lazy(() => import('./explainers/Trees.jsx')),
+  pca: lazy(() => import('./explainers/PCA.jsx')),
+  svm: lazy(() => import('./explainers/SVM.jsx')),
+  knn: lazy(() => import('./explainers/Knn.jsx')),
+  'join-fanout': lazy(() => import('./explainers/JoinFanout.jsx')),
+  sampling: lazy(() => import('./explainers/Sampling.jsx')),
+  attention: lazy(() => import('./explainers/Attention.jsx')),
+  bayes: lazy(() => import('./explainers/Bayes.jsx')),
 }
 
 export default function Explainer({ id, onClose }) {
