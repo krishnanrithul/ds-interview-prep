@@ -1,0 +1,46 @@
+{
+  "key_points": [
+    {
+      "id": "prodml-001",
+      "base": "I'd triage first: is the pipeline healthy (missing data, schema change, delayed features)? Then I'd ",
+      "points": [
+        "I'd triage first: is the pipeline healthy (missing data, schema change, delayed features)?",
+        "Then I'd compare input distributions (data drift), the prediction distribution, and where labels exist, performance by segment and time (concept drift).",
+        "Label drift is a change in the base rate.",
+        "I'd fix the cheapest cause first.",
+        "If retraining on all history is too expensive, I'd use a recent window, a warm start, or fine-tune only the affected segment, and validate with a backtest.",
+        "Then I'd add telemetry so the next incident is faster to diagnose."
+      ]
+    },
+    {
+      "id": "prodml-002",
+      "base": "I'd monitor in layers: system health (latency, errors), data quality, input and prediction drift as ",
+      "points": [
+        "I'd monitor in layers: system health (latency, errors), data quality, input and prediction drift as leading indicators, outcome metrics when labels arrive (often delayed), plus segment-level and fairness metrics for a lending model.",
+        "Thresholds are tied to impact and require persistence over several days, and only actionable issues page someone, so 100 weekly alerts become a handful.",
+        "I'd automate retraining into a candidate model but require human approval to promote it for a critical model.",
+        "Automate detection and preparation, and keep a human on the irreversible step."
+      ]
+    },
+    {
+      "id": "prodml-003",
+      "base": "I'd measure first: approval and error rates by group (demographic parity, equalized odds), and invol",
+      "points": [
+        "I'd measure first: approval and error rates by group (demographic parity, equalized odds), and involve legal and compliance, since in lending this is a regulatory issue.",
+        "Removing protected attributes doesn't help when proxies like zip code or employer carry the signal.",
+        "So I'd audit the features, drop or constrain the proxies, and consider fairness-constrained training or threshold adjustments, evaluated against a less-discriminatory alternative.",
+        "The accuracy-versus-fairness tradeoff is a business, legal and ethical decision, so I'd present the options with numbers for stakeholders to decide and document the choice."
+      ]
+    },
+    {
+      "id": "prodml-004",
+      "base": "Backtest first, then shadow mode: run old and new side by side on live inputs with no user impact. N",
+      "points": [
+        "Backtest first, then shadow mode: run old and new side by side on live inputs with no user impact.",
+        "Next a canary or segment rollout if the forecast drives decisions, with a one-step rollback.",
+        "If the new model is better only for some segments, I'd evaluate each segment by what it is worth to the business and consider routing by segment, not an all-or-nothing switch.",
+        "The monitoring window depends on the feedback loop: long enough to cover at least one full business cycle and for labels to arrive, not a fixed number of days."
+      ]
+    }
+  ]
+}

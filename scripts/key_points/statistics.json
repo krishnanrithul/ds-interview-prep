@@ -1,0 +1,37 @@
+{
+  "key_points": [
+    {
+      "id": "stats-001",
+      "base": "Type I means we ship a change that does nothing, and Type II means we miss a real improvement. Which",
+      "points": [
+        "Type I means we ship a change that does nothing, and Type II means we miss a real improvement.",
+        "Which is worse depends on cost.",
+        "For a risky lending policy a false positive can lose money, so I'd use a stricter alpha.",
+        "I'd control Type II by planning power and sample size before the test.",
+        "At p=0.08 after 7 days I wouldn't stop or keep extending until it crosses 0.05.",
+        "The stopping rule is fixed in advance, peeking inflates false positives, and sequential methods are the answer if early looks are needed."
+      ]
+    },
+    {
+      "id": "stats-002",
+      "base": "I'd compute the sample size needed to detect the effect I care about. Detecting 0.1 percentage point",
+      "points": [
+        "I'd compute the sample size needed to detect the effect I care about.",
+        "Detecting 0.1 percentage points on a 2% base rate needs a very large sample, so this test is probably underpowered.",
+        "Then I'd translate it into money: 0.1pp of default on the portfolio's average loan size can be expensive, so 'not significant' doesn't mean 'safe'.",
+        "I'd report a confidence interval for the difference.",
+        "Defaults mature after 90 days, so a 30-day window sees incomplete outcomes.",
+        "I'd use early proxies like delinquency, fixed-maturity cohorts, or survival analysis."
+      ]
+    },
+    {
+      "id": "stats-003",
+      "base": "For example, segment A's overall approval rate looks lower than B's, but within every income band A ",
+      "points": [
+        "For example, segment A's overall approval rate looks lower than B's, but within every income band A is approved more often, because A has more applicants in the harder bands.",
+        "I'd detect it by always slicing key metrics by likely confounders and checking whether the direction flips.",
+        "For the board I'd report the stratified or adjusted comparison with a plain explanation, and say which question each number answers, because the aggregate answers a different question than the one they're asking."
+      ]
+    }
+  ]
+}

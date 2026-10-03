@@ -51,7 +51,7 @@
           ]
         }
       ],
-      "key_insight": "Duplicate detection isn't just a GROUP BY—it's about understanding what constitutes a duplicate in your business context",
+      "key_insight": "Duplicate detection isn't just a GROUP BY\u2014it's about understanding what constitutes a duplicate in your business context",
       "junior_answer": "SELECT email, COUNT(*) FROM users GROUP BY email HAVING COUNT(*) > 1. Done.",
       "senior_answer": "First I'd ask what counts as a duplicate: same email, same normalized email (case, whitespace, plus-addressing), same phone, or the same person across several fields. Then GROUP BY the normalized key with HAVING COUNT(*) > 1, and ROW_NUMBER() over that key ordered by created_at when I need to keep one record and flag the rest. For duplicates across time periods I'd compare created_at gaps. At 100M rows I'd precompute and index the normalized key instead of computing it per query. GROUP BY surfaces the duplicate groups, while DISTINCT only collapses rows and hides them.",
       "tags": [
@@ -61,7 +61,14 @@
       "terms": [
         "deduplication"
       ],
-      "kind": "implementation"
+      "kind": "implementation",
+      "key_points": [
+        "First I'd ask what counts as a duplicate: same email, same normalized email (case, whitespace, plus-addressing), same phone, or the same person across several fields.",
+        "Then GROUP BY the normalized key with HAVING COUNT(*) > 1, and ROW_NUMBER() over that key ordered by created_at when I need to keep one record and flag the rest.",
+        "For duplicates across time periods I'd compare created_at gaps.",
+        "At 100M rows I'd precompute and index the normalized key instead of computing it per query.",
+        "GROUP BY surfaces the duplicate groups, while DISTINCT only collapses rows and hides them."
+      ]
     },
     {
       "id": "sql-002",
@@ -128,7 +135,14 @@
         "forecast-horizon",
         "customer-segmentation"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": [
+        "I'd define the unit first: the distribution of days from invoice to cash by segment, not just the average.",
+        "Unpaid invoices are censored observations, so dropping them would bias the pattern toward fast payers.",
+        "I'd build it as a daily incremental table so the 15-minute scan becomes a small partition read.",
+        "New customers with no history fall back to their segment prior.",
+        "For a regime change like COVID I'd compare recent against full-history distributions and decide on recency weighting or excluding the shock period with a backtest, not a guess."
+      ]
     },
     {
       "id": "sql-003",
@@ -179,7 +193,15 @@
       "terms": [
         "window-function"
       ],
-      "kind": "implementation"
+      "kind": "implementation",
+      "key_points": [
+        "LAG(payment_date) OVER (PARTITION BY customer_id ORDER BY payment_date), a date difference for each gap, then MAX per customer.",
+        "The business rules matter more than the syntax.",
+        "Refunds probably shouldn't reset the gap, because a refund isn't engagement.",
+        "The open gap since the last payment must be counted, or churned customers look healthy.",
+        "A single-payment customer has a NULL gap, not zero.",
+        "For churn risk I'd compare the current open gap to that customer's own history instead of using one global threshold."
+      ]
     },
     {
       "id": "sql-004",
@@ -230,11 +252,18 @@
         "cohort",
         "retention"
       ],
-      "kind": "implementation"
+      "kind": "implementation",
+      "key_points": [
+        "I'd define the cohort (signup month) and 'active' (at least one qualifying transaction in the window) explicitly, then LEFT JOIN cohort members to activity so inactive customers stay in the denominator.",
+        "Returners count as active in month N.",
+        "If lapses matter I'd also report 'never lapsed'.",
+        "Recent cohorts have less follow-up, so I'd compare cohorts at the same age and mask incomplete periods.",
+        "If January beats December I'd check confounders before crediting the product: seasonality, an acquisition channel or pricing change, a different customer mix, or survivorship."
+      ]
     },
     {
       "id": "ml-001",
-      "question": "Build a churn prediction model—walk me through your approach",
+      "question": "Build a churn prediction model\u2014walk me through your approach",
       "topic": "ML",
       "difficulty": "medium",
       "frequency": "asked 5x in last year",
@@ -298,7 +327,15 @@
       "terms": [
         "churn"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": [
+        "I'd start with the decision the model supports: who gets a retention offer, and what an offer costs versus a lost customer.",
+        "Then I'd define churn and the prediction window, build features only from data available at prediction time, split by time, and baseline with logistic regression.",
+        "Churn is imbalanced, so accuracy is meaningless.",
+        "I'd use precision and recall at the top-k the team can actually act on, plus calibration.",
+        "XGBoost is justified if it beats the baseline by enough to matter, and SHAP explains it.",
+        "Production-ready means the false-positive cost is acceptable, not that a metric crossed a number."
+      ]
     },
     {
       "id": "ml-002",
@@ -351,7 +388,7 @@
           ]
         }
       ],
-      "key_insight": "Drift detection alone is useless—you need a decision framework for when to act and what action to take",
+      "key_insight": "Drift detection alone is useless\u2014you need a decision framework for when to act and what action to take",
       "junior_answer": "Compare the training and live feature distributions and alert when they differ.",
       "senior_answer": "I'd separate data drift (inputs shift, measured with PSI or KS on key features) from model drift (performance degrades, which needs labels that often arrive late). Input and prediction distributions are the leading signal, and real performance follows when labels land. The valuable part is the action policy: thresholds tied to impact, and a clear rule for when drift means investigate, retrain, or roll back. To avoid alert fatigue I'd alert on a few high-importance features and an aggregate score, not every column.",
       "tags": [
@@ -364,7 +401,13 @@
         "model-drift",
         "production-model"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": [
+        "I'd separate data drift (inputs shift, measured with PSI or KS on key features) from model drift (performance degrades, which needs labels that often arrive late).",
+        "Input and prediction distributions are the leading signal, and real performance follows when labels land.",
+        "The valuable part is the action policy: thresholds tied to impact, and a clear rule for when drift means investigate, retrain, or roll back.",
+        "To avoid alert fatigue I'd alert on a few high-importance features and an aggregate score, not every column."
+      ]
     },
     {
       "id": "ml-003",
@@ -429,7 +472,15 @@
         "forecasting",
         "forecast-horizon"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": [
+        "History only shows what happened under past budgets.",
+        "I'd model the demand drivers (revenue plan, attrition, ramp time, open requisitions) and treat approved budget as a constraint on supply.",
+        "I'd compare a seasonal baseline, a regression with drivers, and ARIMA using rolling-origin backtests.",
+        "If the model says 150 and Finance budgeted 80, I wouldn't defend or discard the number.",
+        "I'd show the gap, the assumptions driving it, and scenarios.",
+        "A hiring pause is a regime shift, so I'd flag those months instead of learning from them as normal."
+      ]
     },
     {
       "id": "ml-004",
@@ -482,7 +533,7 @@
           ]
         }
       ],
-      "key_insight": "Feature engineering for financial predictions requires careful temporal thinking and business validation—the best statistical features can be meaningless or biased",
+      "key_insight": "Feature engineering for financial predictions requires careful temporal thinking and business validation\u2014the best statistical features can be meaningless or biased",
       "junior_answer": "Create features like average payment delay, customer size, and month, then feed them to the model.",
       "senior_answer": "Every feature is computed as of a cutoff date using only data available then, via as-of joins or a point-in-time feature store. I'd verify by recomputing features at past cutoffs. 'Days since last payment' leaks if it's calculated from the full table. From 10,000 candidates I'd prune by domain priors, stability across time, and importance under time-based validation, not on a single fold. For credit score missing on 40% of customers, I'd keep missingness as a signal, impute inside a pipeline fit only on training data, and check whether missingness correlates with the target.",
       "tags": [
@@ -496,7 +547,14 @@
         "data-pipeline",
         "cash-collection-forecast"
       ],
-      "kind": "design"
+      "kind": "design",
+      "key_points": [
+        "Every feature is computed as of a cutoff date using only data available then, via as-of joins or a point-in-time feature store.",
+        "I'd verify by recomputing features at past cutoffs.",
+        "'Days since last payment' leaks if it's calculated from the full table.",
+        "From 10,000 candidates I'd prune by domain priors, stability across time, and importance under time-based validation, not on a single fold.",
+        "For credit score missing on 40% of customers, I'd keep missingness as a signal, impute inside a pipeline fit only on training data, and check whether missingness correlates with the target."
+      ]
     },
     {
       "id": "ml-005",
@@ -535,7 +593,7 @@
           ]
         }
       ],
-      "key_insight": "Production failures are rarely about code—they're usually about assumptions baked into your training data that no longer hold",
+      "key_insight": "Production failures are rarely about code\u2014they're usually about assumptions baked into your training data that no longer hold",
       "junior_answer": "Retrain the model on newer data.",
       "senior_answer": "First rule out a pipeline bug: schema, null rates, feature computation, and train/serve skew. Then compare feature and target distributions between 2023 and 2024 and slice performance by segment and month to see where it broke. If the world changed, as with the rate spike, it's covariate or concept shift. Retraining helps only if the new regime is represented in the data. Otherwise I'd add macro features, shorten the training window, or add a guardrail. I'd decide with a time-based backtest, not a gut call.",
       "tags": [
@@ -550,7 +608,15 @@
         "test-set",
         "production-model"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": [
+        "First rule out a pipeline bug: schema, null rates, feature computation, and train/serve skew.",
+        "Then compare feature and target distributions between 2023 and 2024 and slice performance by segment and month to see where it broke.",
+        "If the world changed, as with the rate spike, it's covariate or concept shift.",
+        "Retraining helps only if the new regime is represented in the data.",
+        "Otherwise I'd add macro features, shorten the training window, or add a guardrail.",
+        "I'd decide with a time-based backtest, not a gut call."
+      ]
     },
     {
       "id": "stats-001",
@@ -603,7 +669,7 @@
           ]
         }
       ],
-      "key_insight": "Statistical significance isn't a binary switch—it's a tool for decision-making, and you need to know what error costs you more",
+      "key_insight": "Statistical significance isn't a binary switch\u2014it's a tool for decision-making, and you need to know what error costs you more",
       "junior_answer": "Type I is a false positive and Type II is a false negative.",
       "senior_answer": "Type I means we ship a change that does nothing, and Type II means we miss a real improvement. Which is worse depends on cost. For a risky lending policy a false positive can lose money, so I'd use a stricter alpha. I'd control Type II by planning power and sample size before the test. At p=0.08 after 7 days I wouldn't stop or keep extending until it crosses 0.05. The stopping rule is fixed in advance, peeking inflates false positives, and sequential methods are the answer if early looks are needed.",
       "tags": [
@@ -617,7 +683,15 @@
         "type-i-error",
         "type-ii-error"
       ],
-      "kind": "concept"
+      "kind": "concept",
+      "key_points": [
+        "Type I means we ship a change that does nothing, and Type II means we miss a real improvement.",
+        "Which is worse depends on cost.",
+        "For a risky lending policy a false positive can lose money, so I'd use a stricter alpha.",
+        "I'd control Type II by planning power and sample size before the test.",
+        "At p=0.08 after 7 days I wouldn't stop or keep extending until it crosses 0.05.",
+        "The stopping rule is fixed in advance, peeking inflates false positives, and sequential methods are the answer if early looks are needed."
+      ]
     },
     {
       "id": "stats-002",
@@ -670,7 +744,7 @@
           ]
         }
       ],
-      "key_insight": "Financial experiments have delayed feedback and compounding effects—statistical significance doesn't equal business impact",
+      "key_insight": "Financial experiments have delayed feedback and compounding effects\u2014statistical significance doesn't equal business impact",
       "junior_answer": "Run a two-proportion z-test and check whether p is below 0.05.",
       "senior_answer": "I'd compute the sample size needed to detect the effect I care about. Detecting 0.1 percentage points on a 2% base rate needs a very large sample, so this test is probably underpowered. Then I'd translate it into money: 0.1pp of default on the portfolio's average loan size can be expensive, so 'not significant' doesn't mean 'safe'. I'd report a confidence interval for the difference. Defaults mature after 90 days, so a 30-day window sees incomplete outcomes. I'd use early proxies like delinquency, fixed-maturity cohorts, or survival analysis.",
       "tags": [
@@ -685,7 +759,15 @@
         "default-rate",
         "statistical-significance"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": [
+        "I'd compute the sample size needed to detect the effect I care about.",
+        "Detecting 0.1 percentage points on a 2% base rate needs a very large sample, so this test is probably underpowered.",
+        "Then I'd translate it into money: 0.1pp of default on the portfolio's average loan size can be expensive, so 'not significant' doesn't mean 'safe'.",
+        "I'd report a confidence interval for the difference.",
+        "Defaults mature after 90 days, so a 30-day window sees incomplete outcomes.",
+        "I'd use early proxies like delinquency, fixed-maturity cohorts, or survival analysis."
+      ]
     },
     {
       "id": "stats-003",
@@ -724,7 +806,7 @@
           ]
         }
       ],
-      "key_insight": "Aggregated statistics can be misleading—you must segment carefully and question what each number represents",
+      "key_insight": "Aggregated statistics can be misleading\u2014you must segment carefully and question what each number represents",
       "junior_answer": "It's when a trend reverses once you combine groups.",
       "senior_answer": "For example, segment A's overall approval rate looks lower than B's, but within every income band A is approved more often, because A has more applicants in the harder bands. I'd detect it by always slicing key metrics by likely confounders and checking whether the direction flips. For the board I'd report the stratified or adjusted comparison with a plain explanation, and say which question each number answers, because the aggregate answers a different question than the one they're asking.",
       "tags": [
@@ -736,7 +818,12 @@
         "simpsons-paradox",
         "customer-segmentation"
       ],
-      "kind": "concept"
+      "kind": "concept",
+      "key_points": [
+        "For example, segment A's overall approval rate looks lower than B's, but within every income band A is approved more often, because A has more applicants in the harder bands.",
+        "I'd detect it by always slicing key metrics by likely confounders and checking whether the direction flips.",
+        "For the board I'd report the stratified or adjusted comparison with a plain explanation, and say which question each number answers, because the aggregate answers a different question than the one they're asking."
+      ]
     },
     {
       "id": "system-design-001",
@@ -789,7 +876,7 @@
           ]
         }
       ],
-      "key_insight": "Real-time systems are about constraints—latency, freshness, cost—and making principled tradeoffs across them",
+      "key_insight": "Real-time systems are about constraints\u2014latency, freshness, cost\u2014and making principled tradeoffs across them",
       "junior_answer": "Train a collaborative filtering model and serve it behind an API.",
       "senior_answer": "I'd split it into candidate generation (fast retrieval from embeddings or an ANN index), ranking (a heavier model over a few hundred candidates), and re-ranking for business rules. With a 100ms budget I'd spend roughly 20ms on feature fetch from an online store, 30ms on retrieval, 30ms on ranking, and keep the rest as buffer. Freshness comes from training offline on a schedule while updating cheap features like recent clicks in real time. For A/B tests I'd randomize by user through one experiment-assignment layer, not per-feature flags.",
       "tags": [
@@ -804,7 +891,13 @@
         "recommendation-system",
         "real-time"
       ],
-      "kind": "design"
+      "kind": "design",
+      "key_points": [
+        "I'd split it into candidate generation (fast retrieval from embeddings or an ANN index), ranking (a heavier model over a few hundred candidates), and re-ranking for business rules.",
+        "With a 100ms budget I'd spend roughly 20ms on feature fetch from an online store, 30ms on retrieval, 30ms on ranking, and keep the rest as buffer.",
+        "Freshness comes from training offline on a schedule while updating cheap features like recent clicks in real time.",
+        "For A/B tests I'd randomize by user through one experiment-assignment layer, not per-feature flags."
+      ]
     },
     {
       "id": "system-design-002",
@@ -857,7 +950,7 @@
           ]
         }
       ],
-      "key_insight": "Financial systems need predictable, auditable behavior—the model accuracy matters less than explainability and stability",
+      "key_insight": "Financial systems need predictable, auditable behavior\u2014the model accuracy matters less than explainability and stability",
       "junior_answer": "Build a model and expose predictions through an API for each customer.",
       "senior_answer": "Forecasts are needed daily, not per request, so I'd batch: compute overnight, store versioned predictions in a table, and serve from there. It's cheaper, reproducible, and auditable, and the dashboard never waits on a model. For a sudden 50% drop I'd validate before alerting (data issue, model change, or real behavior?) and include the reason, because false alarms destroy trust. I'd write predictions with a model-version column, run new versions in shadow, then cut over without changing the dashboard's schema.",
       "tags": [
@@ -873,7 +966,13 @@
         "cash-flow-forecast",
         "real-time"
       ],
-      "kind": "design"
+      "kind": "design",
+      "key_points": [
+        "Forecasts are needed daily, not per request, so I'd batch: compute overnight, store versioned predictions in a table, and serve from there.",
+        "It's cheaper, reproducible, and auditable, and the dashboard never waits on a model.",
+        "For a sudden 50% drop I'd validate before alerting (data issue, model change, or real behavior?) and include the reason, because false alarms destroy trust.",
+        "I'd write predictions with a model-version column, run new versions in shadow, then cut over without changing the dashboard's schema."
+      ]
     },
     {
       "id": "system-design-003",
@@ -923,7 +1022,12 @@
       "terms": [
         "ml-intake"
       ],
-      "kind": "design"
+      "kind": "design",
+      "key_points": [
+        "I'd treat intake as a decision process: a short standard template (problem, decision supported, success metric, data availability, owner), a triage rubric (business value, feasibility, risk), and stage gates from idea to pilot to production with explicit exit criteria.",
+        "Ideas with no decision owner or no data get parked, which keeps it from becoming a dumping ground.",
+        "For differing SLOs I'd define a few standard tiers (daily batch, near-real-time, real-time), each with known costs and requirements, and let teams pick a tier instead of imposing one rigid standard."
+      ]
     },
     {
       "id": "python-001",
@@ -962,7 +1066,7 @@
           ]
         }
       ],
-      "key_insight": "Feature importance is a useful starting point but incomplete—correlated features confound the signal",
+      "key_insight": "Feature importance is a useful starting point but incomplete\u2014correlated features confound the signal",
       "junior_answer": "Use model.feature_importances_ and plot a bar chart.",
       "senior_answer": "Built-in importance (gain or weight) is biased toward high-cardinality features and splits credit arbitrarily among correlated ones. I'd compute permutation importance or SHAP on held-out data, and get confidence intervals by repeating over bootstrap resamples or CV folds and reporting the spread. For correlated features I'd group them and permute the group together. For stakeholders I'd use SHAP, because per-prediction explanations are what non-technical people want to see.",
       "tags": [
@@ -977,7 +1081,13 @@
         "xgboost",
         "confidence-interval"
       ],
-      "kind": "implementation"
+      "kind": "implementation",
+      "key_points": [
+        "Built-in importance (gain or weight) is biased toward high-cardinality features and splits credit arbitrarily among correlated ones.",
+        "I'd compute permutation importance or SHAP on held-out data, and get confidence intervals by repeating over bootstrap resamples or CV folds and reporting the spread.",
+        "For correlated features I'd group them and permute the group together.",
+        "For stakeholders I'd use SHAP, because per-prediction explanations are what non-technical people want to see."
+      ]
     },
     {
       "id": "python-002",
@@ -1016,7 +1126,7 @@
           ]
         }
       ],
-      "key_insight": "Data quality is a contract between producers and consumers—validation is a conversation, not just a gate",
+      "key_insight": "Data quality is a contract between producers and consumers\u2014validation is a conversation, not just a gate",
       "junior_answer": "Check for nulls and fail the pipeline if there are any.",
       "senior_answer": "I'd layer the checks: schema and types, null rates, ranges, uniqueness, freshness and volume, then distribution checks against a recent baseline. Each check has a severity: hard failures block the pipeline, soft ones warn. A high-importance feature jumping to 50% missing should fail or fall back to the last good data, not be silently imputed. Treat it as a contract with upstream: send alerts to the owning team with the failing check and sample rows, and batch them into one daily digest instead of a flood.",
       "tags": [
@@ -1030,7 +1140,13 @@
         "data-validation",
         "data-quality"
       ],
-      "kind": "design"
+      "kind": "design",
+      "key_points": [
+        "I'd layer the checks: schema and types, null rates, ranges, uniqueness, freshness and volume, then distribution checks against a recent baseline.",
+        "Each check has a severity: hard failures block the pipeline, soft ones warn.",
+        "A high-importance feature jumping to 50% missing should fail or fall back to the last good data, not be silently imputed.",
+        "Treat it as a contract with upstream: send alerts to the owning team with the failing check and sample rows, and batch them into one daily digest instead of a flood."
+      ]
     },
     {
       "id": "python-003",
@@ -1069,7 +1185,7 @@
           ]
         }
       ],
-      "key_insight": "Backtesting is hard because you must simulate exactly what the model sees at prediction time—any deviation invalidates the results",
+      "key_insight": "Backtesting is hard because you must simulate exactly what the model sees at prediction time\u2014any deviation invalidates the results",
       "junior_answer": "Split the data into train and test and compute RMSE.",
       "senior_answer": "I'd use rolling-origin (walk-forward) evaluation: at each cutoff, build features from data available at that time, train, forecast the next horizon, then advance the cutoff. I'd respect real publication lags, such as payments recorded days late, or the features contain information that wouldn't exist live. A backtest RMSE of 0.05 against 0.2 live usually means leakage, a different data-availability timeline, or a regime shift. I'd rebuild the live features at the same cutoff and compare them with the backtest features.",
       "tags": [
@@ -1082,7 +1198,13 @@
         "backtesting",
         "time-series"
       ],
-      "kind": "implementation"
+      "kind": "implementation",
+      "key_points": [
+        "I'd use rolling-origin (walk-forward) evaluation: at each cutoff, build features from data available at that time, train, forecast the next horizon, then advance the cutoff.",
+        "I'd respect real publication lags, such as payments recorded days late, or the features contain information that wouldn't exist live.",
+        "A backtest RMSE of 0.05 against 0.2 live usually means leakage, a different data-availability timeline, or a regime shift.",
+        "I'd rebuild the live features at the same cutoff and compare them with the backtest features."
+      ]
     },
     {
       "id": "prodml-001",
@@ -1121,7 +1243,7 @@
           ]
         }
       ],
-      "key_insight": "Debugging production ML failures is detective work—you need clear telemetry and a hypothesis-testing mindset",
+      "key_insight": "Debugging production ML failures is detective work\u2014you need clear telemetry and a hypothesis-testing mindset",
       "junior_answer": "Retrain the model with the latest data.",
       "senior_answer": "I'd triage first: is the pipeline healthy (missing data, schema change, delayed features)? Then I'd compare input distributions (data drift), the prediction distribution, and where labels exist, performance by segment and time (concept drift). Label drift is a change in the base rate. I'd fix the cheapest cause first. If retraining on all history is too expensive, I'd use a recent window, a warm start, or fine-tune only the affected segment, and validate with a backtest. Then I'd add telemetry so the next incident is faster to diagnose.",
       "tags": [
@@ -1134,7 +1256,15 @@
         "model-degradation",
         "production-model"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": [
+        "I'd triage first: is the pipeline healthy (missing data, schema change, delayed features)?",
+        "Then I'd compare input distributions (data drift), the prediction distribution, and where labels exist, performance by segment and time (concept drift).",
+        "Label drift is a change in the base rate.",
+        "I'd fix the cheapest cause first.",
+        "If retraining on all history is too expensive, I'd use a recent window, a warm start, or fine-tune only the affected segment, and validate with a backtest.",
+        "Then I'd add telemetry so the next incident is faster to diagnose."
+      ]
     },
     {
       "id": "prodml-002",
@@ -1187,7 +1317,7 @@
           ]
         }
       ],
-      "key_insight": "Monitoring must be specific to your use case—a lending model and a recommendation engine need completely different alerting strategies",
+      "key_insight": "Monitoring must be specific to your use case\u2014a lending model and a recommendation engine need completely different alerting strategies",
       "junior_answer": "Track accuracy over time and alert if it drops.",
       "senior_answer": "I'd monitor in layers: system health (latency, errors), data quality, input and prediction drift as leading indicators, outcome metrics when labels arrive (often delayed), plus segment-level and fairness metrics for a lending model. Thresholds are tied to impact and require persistence over several days, and only actionable issues page someone, so 100 weekly alerts become a handful. I'd automate retraining into a candidate model but require human approval to promote it for a critical model. Automate detection and preparation, and keep a human on the irreversible step.",
       "tags": [
@@ -1202,7 +1332,13 @@
         "alerting",
         "production-model"
       ],
-      "kind": "design"
+      "kind": "design",
+      "key_points": [
+        "I'd monitor in layers: system health (latency, errors), data quality, input and prediction drift as leading indicators, outcome metrics when labels arrive (often delayed), plus segment-level and fairness metrics for a lending model.",
+        "Thresholds are tied to impact and require persistence over several days, and only actionable issues page someone, so 100 weekly alerts become a handful.",
+        "I'd automate retraining into a candidate model but require human approval to promote it for a critical model.",
+        "Automate detection and preparation, and keep a human on the irreversible step."
+      ]
     },
     {
       "id": "prodml-003",
@@ -1255,7 +1391,7 @@
           ]
         }
       ],
-      "key_insight": "Fairness is a business and ethical decision, not just a technical problem—you need domain expertise and stakeholder alignment",
+      "key_insight": "Fairness is a business and ethical decision, not just a technical problem\u2014you need domain expertise and stakeholder alignment",
       "junior_answer": "Remove the sensitive features from the model.",
       "senior_answer": "I'd measure first: approval and error rates by group (demographic parity, equalized odds), and involve legal and compliance, since in lending this is a regulatory issue. Removing protected attributes doesn't help when proxies like zip code or employer carry the signal. So I'd audit the features, drop or constrain the proxies, and consider fairness-constrained training or threshold adjustments, evaluated against a less-discriminatory alternative. The accuracy-versus-fairness tradeoff is a business, legal and ethical decision, so I'd present the options with numbers for stakeholders to decide and document the choice.",
       "tags": [
@@ -1269,7 +1405,13 @@
         "algorithmic-fairness",
         "disparate-impact"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": [
+        "I'd measure first: approval and error rates by group (demographic parity, equalized odds), and involve legal and compliance, since in lending this is a regulatory issue.",
+        "Removing protected attributes doesn't help when proxies like zip code or employer carry the signal.",
+        "So I'd audit the features, drop or constrain the proxies, and consider fairness-constrained training or threshold adjustments, evaluated against a less-discriminatory alternative.",
+        "The accuracy-versus-fairness tradeoff is a business, legal and ethical decision, so I'd present the options with numbers for stakeholders to decide and document the choice."
+      ]
     },
     {
       "id": "prodml-004",
@@ -1322,7 +1464,7 @@
           ]
         }
       ],
-      "key_insight": "Model deployment is about managing risk—perfect is the enemy of good enough, and the cost of being wrong changes your decision",
+      "key_insight": "Model deployment is about managing risk\u2014perfect is the enemy of good enough, and the cost of being wrong changes your decision",
       "junior_answer": "Test the new model on a holdout set, and switch over if the error is lower.",
       "senior_answer": "Backtest first, then shadow mode: run old and new side by side on live inputs with no user impact. Next a canary or segment rollout if the forecast drives decisions, with a one-step rollback. If the new model is better only for some segments, I'd evaluate each segment by what it is worth to the business and consider routing by segment, not an all-or-nothing switch. The monitoring window depends on the feedback loop: long enough to cover at least one full business cycle and for labels to arrive, not a fixed number of days.",
       "tags": [
@@ -1338,7 +1480,13 @@
         "model-rollout",
         "forecasting"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": [
+        "Backtest first, then shadow mode: run old and new side by side on live inputs with no user impact.",
+        "Next a canary or segment rollout if the forecast drives decisions, with a one-step rollback.",
+        "If the new model is better only for some segments, I'd evaluate each segment by what it is worth to the business and consider routing by segment, not an all-or-nothing switch.",
+        "The monitoring window depends on the feedback loop: long enough to cover at least one full business cycle and for labels to arrive, not a fixed number of days."
+      ]
     },
     {
       "id": "sql-005",
@@ -1402,7 +1550,8 @@
       "terms": [
         "top-n-per-group"
       ],
-      "kind": "implementation"
+      "kind": "implementation",
+      "key_points": []
     },
     {
       "id": "sql-006",
@@ -1466,7 +1615,8 @@
       "terms": [
         "rolling-average"
       ],
-      "kind": "implementation"
+      "kind": "implementation",
+      "key_points": []
     },
     {
       "id": "sql-007",
@@ -1530,7 +1680,8 @@
       "terms": [
         "sessionization"
       ],
-      "kind": "implementation"
+      "kind": "implementation",
+      "key_points": []
     },
     {
       "id": "sql-008",
@@ -1596,7 +1747,8 @@
       "terms": [
         "anti-join"
       ],
-      "kind": "implementation"
+      "kind": "implementation",
+      "key_points": []
     },
     {
       "id": "ml-006",
@@ -1660,7 +1812,14 @@
       "terms": [
         "bias-variance-tradeoff"
       ],
-      "kind": "concept"
+      "kind": "concept",
+      "key_points": [
+        "I'd diagnose before acting.",
+        "If training and validation error are both high and close, that's bias: use a richer model, better features, or less regularization.",
+        "If training error is low and validation error is much higher, that's variance: more data, stronger regularization, simpler model, or bagging.",
+        "Learning curves show which regime I'm in, and more data mainly helps variance.",
+        "Regularization trades a little extra bias for a larger reduction in variance."
+      ]
     },
     {
       "id": "ml-007",
@@ -1729,7 +1888,13 @@
         "accuracy",
         "fraud-detection"
       ],
-      "kind": "concept"
+      "kind": "concept",
+      "key_points": [
+        "A model that always says 'not fraud' is 99.9% accurate, so accuracy tells me nothing.",
+        "I'd look at precision-recall curves and PR-AUC, because ROC-AUC can stay high when the number of negatives is huge.",
+        "The threshold comes from costs and capacity: missed fraud has a dollar cost, each false alert costs analyst time and customer friction, and the review team can only handle so many cases a day.",
+        "I'd also account for label delay by evaluating on mature cohorts, and remember that unlabeled fraud makes recall look better than it is."
+      ]
     },
     {
       "id": "ml-008",
@@ -1797,7 +1962,14 @@
         "k-fold",
         "time-series"
       ],
-      "kind": "concept"
+      "kind": "concept",
+      "key_points": [
+        "Random folds mix future and past, so the model can learn patterns from after the test period and the score is too optimistic.",
+        "I'd use walk-forward validation: train on data up to a cutoff, test on the next period, then move the cutoff forward.",
+        "If the label looks 30 days ahead, I'd leave a 30-day gap between train and test so labels don't overlap.",
+        "Expanding windows use all history and suit stable relationships, while sliding windows adapt faster when behavior drifts.",
+        "Hyperparameter tuning goes inside the training period with the same time-aware splits."
+      ]
     },
     {
       "id": "ml-009",
@@ -1868,7 +2040,13 @@
         "logistic-regression",
         "auc"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": [
+        "Not automatically.",
+        "First I'd check the difference is real with a confidence interval from bootstrapping or repeated time-based folds, and translate it into the business metric (for example, extra customers retained per month) to see whether it covers the costs.",
+        "Then the non-metric factors: whether decisions must be explained, latency limits, how fragile the model is to drift, and the ongoing monitoring and retraining burden.",
+        "If the gain is small, I'd ship logistic regression, or ship the complex model only with SHAP-based explanations and monitoring in place."
+      ]
     },
     {
       "id": "ml-010",
@@ -1935,7 +2113,15 @@
         "missing-data",
         "outliers"
       ],
-      "kind": "concept"
+      "kind": "concept",
+      "key_points": [
+        "I'd start by understanding why values are missing.",
+        "If missingness is random, simple imputation is fine.",
+        "If it depends on the value itself, such as high earners skipping an income field, mean imputation biases the data, and I'd add a missing-indicator feature.",
+        "Imputation goes inside the pipeline, fitted on training data only, to avoid leakage.",
+        "Tree-based models like XGBoost can handle missing values natively.",
+        "Real ones carry information, so I'd keep them and use robust methods or transformations like log, and only remove confirmed errors."
+      ]
     },
     {
       "id": "stats-004",
@@ -2002,7 +2188,8 @@
         "ab-test",
         "sample-size"
       ],
-      "kind": "concept"
+      "kind": "concept",
+      "key_points": []
     },
     {
       "id": "stats-005",
@@ -2067,7 +2254,8 @@
       "terms": [
         "confidence-interval"
       ],
-      "kind": "concept"
+      "kind": "concept",
+      "key_points": []
     },
     {
       "id": "stats-006",
@@ -2135,7 +2323,8 @@
         "lift",
         "statistical-significance"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": []
     },
     {
       "id": "stats-007",
@@ -2200,7 +2389,8 @@
       "terms": [
         "bootstrapping"
       ],
-      "kind": "concept"
+      "kind": "concept",
+      "key_points": []
     },
     {
       "id": "system-design-004",
@@ -2265,7 +2455,8 @@
         "ab-test",
         "experimentation-platform"
       ],
-      "kind": "design"
+      "kind": "design",
+      "key_points": []
     },
     {
       "id": "system-design-005",
@@ -2334,7 +2525,8 @@
         "stream-processing",
         "feature-pipeline"
       ],
-      "kind": "design"
+      "kind": "design",
+      "key_points": []
     },
     {
       "id": "system-design-006",
@@ -2406,7 +2598,8 @@
         "fraud-detection",
         "real-time"
       ],
-      "kind": "design"
+      "kind": "design",
+      "key_points": []
     },
     {
       "id": "python-004",
@@ -2473,7 +2666,8 @@
       "terms": [
         "pandas-merge"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": []
     },
     {
       "id": "python-005",
@@ -2537,7 +2731,8 @@
       "terms": [
         "memory-footprint"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": []
     },
     {
       "id": "python-006",
@@ -2602,7 +2797,8 @@
         "unit-testing",
         "data-pipeline"
       ],
-      "kind": "concept"
+      "kind": "concept",
+      "key_points": []
     },
     {
       "id": "prodml-005",
@@ -2670,7 +2866,8 @@
       "terms": [
         "training-serving-skew"
       ],
-      "kind": "concept"
+      "kind": "concept",
+      "key_points": []
     },
     {
       "id": "prodml-006",
@@ -2733,7 +2930,8 @@
       "terms": [
         "reproducibility"
       ],
-      "kind": "concept"
+      "kind": "concept",
+      "key_points": []
     },
     {
       "id": "prodml-007",
@@ -2799,7 +2997,8 @@
         "model-serving",
         "latency"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": []
     },
     {
       "id": "llm-001",
@@ -2865,7 +3064,8 @@
       "terms": [
         "rag"
       ],
-      "kind": "design"
+      "kind": "design",
+      "key_points": []
     },
     {
       "id": "llm-002",
@@ -2928,7 +3128,8 @@
       "terms": [
         "llm-evaluation"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": []
     },
     {
       "id": "llm-003",
@@ -2995,7 +3196,8 @@
         "rag",
         "fine-tuning"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": []
     },
     {
       "id": "llm-004",
@@ -3060,7 +3262,8 @@
       "terms": [
         "hallucination"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": []
     },
     {
       "id": "llm-005",
@@ -3126,7 +3329,8 @@
         "ai-agent",
         "tool-calling"
       ],
-      "kind": "case"
+      "kind": "case",
+      "key_points": []
     },
     {
       "id": "llm-006",
@@ -3192,7 +3396,8 @@
       "terms": [
         "token",
         "latency"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "llm-007",
@@ -3258,7 +3463,8 @@
       "terms": [
         "temperature",
         "top-p"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "llm-008",
@@ -3324,7 +3530,8 @@
       "terms": [
         "json",
         "tool-calling"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "llm-009",
@@ -3389,7 +3596,8 @@
       ],
       "terms": [
         "system-prompt"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "llm-010",
@@ -3455,7 +3663,8 @@
       "terms": [
         "rag",
         "chunk"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "llm-011",
@@ -3521,7 +3730,8 @@
       "terms": [
         "hallucination",
         "llm-evaluation"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "llm-012",
@@ -3587,7 +3797,8 @@
       "terms": [
         "llm-evaluation",
         "ground-truth"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "ml-011",
@@ -3653,6 +3864,13 @@
       "terms": [
         "accuracy",
         "validation-set"
+      ],
+      "key_points": [
+        "That gap suggests the model has memorized training patterns that don't generalize, meaning high variance.",
+        "Before changing the model I'd confirm the split is valid: no duplicates across sets, similar distributions, no leakage.",
+        "Then I'd plot learning curves: if validation error keeps falling with more data, collecting more helps; if it plateaus, reduce complexity.",
+        "I'd try, roughly in this order: a simpler model or stronger regularization, early stopping, feature pruning, more or augmented data, and cross-validation for a steadier estimate.",
+        "Each change is judged on the validation gap and the validation score together."
       ]
     },
     {
@@ -3719,6 +3937,14 @@
       "terms": [
         "random-forest",
         "gradient-boosting"
+      ],
+      "key_points": [
+        "Bagging, as in a random forest, trains many deep, high-variance trees independently on bootstrap samples and averages them.",
+        "Averaging cancels much of the variance, so the individual trees can be deep.",
+        "Boosting builds trees sequentially, each fitting the errors of the ensemble so far, which reduces bias, so each tree can be shallow and weak; the learning rate scales how much each one contributes.",
+        "Boosting usually reaches higher accuracy on tabular data but is more sensitive to noisy labels and needs more tuning.",
+        "A random forest is a robust, low-tuning baseline that is hard to overfit badly.",
+        "I'd start with a forest and move to XGBoost when accuracy matters."
       ]
     },
     {
@@ -3785,6 +4011,14 @@
       "terms": [
         "auc",
         "predicted-probability"
+      ],
+      "key_points": [
+        "It depends on how the score is used.",
+        "If we only rank cases and take the top K, AUC is what matters.",
+        "If we use the output as a probability, for expected loss, pricing or cost-based thresholds, a score of 0.8 that really means 50% leads to wrong decisions.",
+        "I'd check with a reliability diagram and the Brier score, then recalibrate on a held-out set with Platt scaling or isotonic regression, which leaves AUC roughly unchanged.",
+        "Boosted trees and naive Bayes often need it; logistic regression is usually better behaved.",
+        "Calibration also drifts when class balance shifts, so I'd monitor it."
       ]
     },
     {
@@ -3850,6 +4084,12 @@
       ],
       "terms": [
         "high-cardinality"
+      ],
+      "key_points": [
+        "One-hot would create 50,000 sparse columns, slow training and overfit rare values.",
+        "Options: frequency or count encoding; target encoding computed out of fold with smoothing toward the global mean so rare categories can't memorize the label; learned embeddings for neural models; hashing; or grouping rare values into 'other' and using a coarser hierarchy such as region instead of zip.",
+        "CatBoost and LightGBM handle categories natively.",
+        "I'd always plan for unseen values at serving with a default bucket, and validate with a time-based split to check that the encoding isn't leaking."
       ]
     },
     {
@@ -3917,6 +4157,13 @@
         "multicollinearity",
         "xgboost",
         "feature-importance"
+      ],
+      "key_points": [
+        "For prediction, mostly no: a regularized linear model and a boosted model predict about as well.",
+        "In a linear model the coefficients become unstable with large standard errors, so individual signs and sizes can't be trusted even though the combined effect is fine; ridge regularization or dropping one helps.",
+        "Trees use whichever feature gives the split first, so importance gets split or flips between runs.",
+        "For explanation, SHAP divides credit between them, so I'd report them as a group or remove one.",
+        "I drop a feature when interpretation, collection cost or stability matters, not as a reflex."
       ]
     },
     {
@@ -3983,6 +4230,13 @@
       "terms": [
         "decision-threshold",
         "precision-recall"
+      ],
+      "key_points": [
+        "I'd turn it into expected value: flagging a customer costs the discount, and pays off only if the customer would have churned and the discount saves them.",
+        "So I need the cost of the offer, the value of a saved customer and the discount's actual effect on churn, ideally from an experiment, since a high churn probability doesn't mean a customer is persuadable.",
+        "Then I sweep thresholds on held-out data using calibrated probabilities, choose the one that maximizes expected profit, and check capacity limits such as how many offers the team can send.",
+        "0.5 is arbitrary and F1 treats the two errors as equally costly.",
+        "I'd re-tune when base rates or costs shift."
       ]
     },
     {
@@ -4049,6 +4303,12 @@
       "terms": [
         "residual",
         "r-squared"
+      ],
+      "key_points": [
+        "Fanning residuals mean the error variance rises with the predicted value, known as heteroscedasticity.",
+        "Point predictions can stay unbiased, but standard errors and confidence and prediction intervals are wrong, and large values may be fit worse in relative terms.",
+        "I'd plot residuals against fitted values and against each feature, then try modelling the log of the target (common for money), weighted least squares, robust standard errors, or a model that predicts spread too, such as quantile regression.",
+        "If only point accuracy matters it may be tolerable, but I'd check that the metric reflects relative error and not just absolute error."
       ]
     },
     {
@@ -4115,6 +4375,12 @@
       "terms": [
         "cross-validation",
         "sample-size"
+      ],
+      "key_points": [
+        "With 400 examples a single cross-validation estimate is very uncertain, so I'd report an interval and use repeated or stratified CV.",
+        "Scores that high on small data usually point to a problem: duplicate or near-duplicate rows across folds, grouped data (the same patient or customer) split across folds, a feature that encodes the label, or hyperparameters tuned on the same folds.",
+        "I'd use grouped splits, nested CV for tuning and a final untouched holdout.",
+        "I'd also compare with a trivial baseline, read the confusion matrix, and ask whether real-world data resembles this sample."
       ]
     },
     {
@@ -4179,7 +4445,8 @@
       ],
       "terms": [
         "model-drift"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "prodml-009",
@@ -4244,7 +4511,8 @@
       ],
       "terms": [
         "training-data"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "prodml-010",
@@ -4310,7 +4578,8 @@
       "terms": [
         "retraining",
         "model-drift"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "prodml-011",
@@ -4375,7 +4644,8 @@
       ],
       "terms": [
         "psi"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "prodml-012",
@@ -4441,7 +4711,8 @@
       "terms": [
         "feature-store",
         "training-serving-skew"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "prodml-013",
@@ -4507,7 +4778,8 @@
       "terms": [
         "fraud-detection",
         "precision-recall"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "prodml-014",
@@ -4573,7 +4845,8 @@
       "terms": [
         "alerting",
         "monitoring"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "prodml-015",
@@ -4638,7 +4911,8 @@
       ],
       "terms": [
         "human-review"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "python-007",
@@ -4702,7 +4976,8 @@
       ],
       "terms": [
         "data-structure"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "python-008",
@@ -4767,7 +5042,8 @@
       ],
       "terms": [
         "dataframe"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "python-009",
@@ -4832,7 +5108,8 @@
       ],
       "terms": [
         "precision-recall"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "python-011",
@@ -4896,7 +5173,8 @@
       ],
       "terms": [
         "stream-processing"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "python-012",
@@ -4960,7 +5238,8 @@
       ],
       "terms": [
         "default-argument"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "python-013",
@@ -5026,7 +5305,8 @@
       "terms": [
         "unit-testing",
         "data-validation"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "python-014",
@@ -5091,7 +5371,8 @@
       ],
       "terms": [
         "parallelism"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "sql-009",
@@ -5156,7 +5437,8 @@
       ],
       "terms": [
         "ranking"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "sql-010",
@@ -5206,7 +5488,8 @@
       ],
       "terms": [
         "aggregate-function"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "sql-011",
@@ -5272,7 +5555,8 @@
       "terms": [
         "growth-rate",
         "window-function"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "sql-012",
@@ -5337,7 +5621,8 @@
       ],
       "terms": [
         "streak"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "sql-013",
@@ -5402,7 +5687,8 @@
       ],
       "terms": [
         "join"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "sql-014",
@@ -5467,7 +5753,8 @@
       "terms": [
         "aggregate-function",
         "null-value"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "sql-015",
@@ -5533,7 +5820,8 @@
       "terms": [
         "median",
         "ranking"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "sql-016",
@@ -5599,7 +5887,8 @@
       "terms": [
         "repeat-purchase-rate",
         "cohort"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "stats-008",
@@ -5665,7 +5954,8 @@
       "terms": [
         "p-value",
         "sample-size"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "stats-009",
@@ -5731,7 +6021,8 @@
       "terms": [
         "central-limit-theorem",
         "standard-error"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "stats-010",
@@ -5798,7 +6089,8 @@
         "mean",
         "median",
         "outliers"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "stats-011",
@@ -5864,7 +6156,8 @@
       "terms": [
         "p-value",
         "frequentist"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "stats-012",
@@ -5931,7 +6224,8 @@
       "terms": [
         "p-value",
         "type-i-error"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "stats-013",
@@ -5998,7 +6292,8 @@
         "causation",
         "control-group",
         "retention"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "stats-014",
@@ -6064,7 +6359,8 @@
       "terms": [
         "standard-error",
         "confidence-interval"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "stats-015",
@@ -6130,7 +6426,8 @@
       "terms": [
         "control-group",
         "ab-test"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "system-design-007",
@@ -6196,7 +6493,8 @@
       "terms": [
         "forecasting",
         "forecast-horizon"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "system-design-011",
@@ -6262,7 +6560,8 @@
       "terms": [
         "data-pipeline",
         "data-validation"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "system-design-012",
@@ -6328,7 +6627,8 @@
       "terms": [
         "anomaly-detection",
         "monitoring"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "system-design-013",
@@ -6395,7 +6695,8 @@
       "terms": [
         "embedding",
         "latency"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "system-design-014",
@@ -6462,7 +6763,8 @@
       "terms": [
         "scenario-analysis",
         "forecasting"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "llm-013",
@@ -6528,7 +6830,8 @@
       "terms": [
         "token",
         "model-serving"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "python-010",
@@ -6593,7 +6896,8 @@
       "terms": [
         "memory-footprint",
         "data-pipeline"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "system-design-008",
@@ -6660,7 +6964,8 @@
       "terms": [
         "churn",
         "retention"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "system-design-009",
@@ -6728,7 +7033,8 @@
         "feature-importance",
         "algorithmic-fairness",
         "disparate-impact"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "system-design-010",
@@ -6794,7 +7100,8 @@
       "terms": [
         "churn",
         "data-pipeline"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-001",
@@ -6859,7 +7166,8 @@
       "terms": [
         "linear-regression",
         "residual"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-002",
@@ -6925,7 +7233,8 @@
       "terms": [
         "ridge",
         "lasso"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-003",
@@ -6989,7 +7298,8 @@
       ],
       "terms": [
         "decision-tree"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-004",
@@ -7054,7 +7364,8 @@
       "terms": [
         "random-forest",
         "feature-importance"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-005",
@@ -7121,7 +7432,8 @@
         "xgboost",
         "lightgbm",
         "catboost"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-006",
@@ -7185,7 +7497,8 @@
       ],
       "terms": [
         "support-vector-machine"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-007",
@@ -7249,7 +7562,8 @@
       ],
       "terms": [
         "support-vector-regression"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-008",
@@ -7313,7 +7627,8 @@
       ],
       "terms": [
         "k-nearest-neighbors"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-009",
@@ -7377,7 +7692,8 @@
       ],
       "terms": [
         "naive-bayes"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-010",
@@ -7443,7 +7759,8 @@
       "terms": [
         "logistic-regression",
         "default-rate"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-011",
@@ -7509,7 +7826,8 @@
       "terms": [
         "isolation-forest",
         "anomaly-detection"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-012",
@@ -7574,7 +7892,8 @@
       ],
       "terms": [
         "generalized-linear-model"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-013",
@@ -7638,7 +7957,8 @@
       "terms": [
         "k-means",
         "clustering"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-014",
@@ -7703,7 +8023,8 @@
       "terms": [
         "dbscan",
         "k-means"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-015",
@@ -7767,7 +8088,8 @@
       "terms": [
         "hierarchical-clustering",
         "clustering"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-016",
@@ -7832,7 +8154,8 @@
       "terms": [
         "gaussian-mixture-model",
         "k-means"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-017",
@@ -7897,7 +8220,8 @@
       ],
       "terms": [
         "clustering"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-018",
@@ -7962,7 +8286,8 @@
       "terms": [
         "customer-segmentation",
         "clustering"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-019",
@@ -8027,7 +8352,8 @@
       "terms": [
         "pca",
         "feature-scaling"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-020",
@@ -8093,7 +8419,8 @@
       "terms": [
         "t-sne",
         "clustering"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-021",
@@ -8159,7 +8486,8 @@
       "terms": [
         "feature-selection",
         "cross-validation"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-022",
@@ -8224,7 +8552,8 @@
       ],
       "terms": [
         "stacking"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-023",
@@ -8289,7 +8618,8 @@
       ],
       "terms": [
         "smote"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "algo-024",
@@ -8354,7 +8684,8 @@
       "terms": [
         "hyperparameter",
         "cross-validation"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "dl-001",
@@ -8419,7 +8750,8 @@
       "terms": [
         "neural-network",
         "backpropagation"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "dl-002",
@@ -8484,7 +8816,8 @@
       "terms": [
         "gradient-descent",
         "learning-rate"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "dl-003",
@@ -8549,7 +8882,8 @@
       ],
       "terms": [
         "loss-function"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "dl-004",
@@ -8614,7 +8948,8 @@
       "terms": [
         "dropout",
         "batch-normalization"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "dl-005",
@@ -8680,7 +9015,8 @@
       "terms": [
         "neural-network",
         "gradient-boosting"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "dl-006",
@@ -8743,7 +9079,8 @@
       ],
       "terms": [
         "convolutional-neural-network"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "dl-007",
@@ -8807,7 +9144,8 @@
       "terms": [
         "rnn",
         "transformer"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "dl-008",
@@ -8872,7 +9210,8 @@
       "terms": [
         "attention",
         "transformer"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "dl-009",
@@ -8937,7 +9276,8 @@
       ],
       "terms": [
         "pretrained-model"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "dl-010",
@@ -9004,7 +9344,8 @@
         "tf-idf",
         "embedding",
         "logistic-regression"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "dl-011",
@@ -9069,7 +9410,8 @@
       "terms": [
         "word2vec",
         "embedding"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "dl-012",
@@ -9133,7 +9475,8 @@
       ],
       "terms": [
         "rlhf"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "stats-016",
@@ -9196,7 +9539,8 @@
       ],
       "terms": [
         "likelihood"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "stats-017",
@@ -9262,7 +9606,8 @@
       "terms": [
         "chi-square-test",
         "p-value"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "stats-018",
@@ -9327,7 +9672,8 @@
       "terms": [
         "multi-armed-bandit",
         "ab-test"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "stats-019",
@@ -9391,7 +9737,8 @@
       ],
       "terms": [
         "churn"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "ml-019",
@@ -9456,6 +9803,13 @@
       "terms": [
         "arima",
         "time-series"
+      ],
+      "key_points": [
+        "ARIMA combines autoregression on past values (p), differencing to remove trend (d) and a moving average of past errors (q).",
+        "Differencing aims at a stationary series, whose mean and variance don't drift, because the model's coefficients assume stable relationships.",
+        "I'd choose orders using autocorrelation plots and information criteria, then check them by walk-forward validation.",
+        "It works well for a single, short, regular series with few external drivers and is easy to explain.",
+        "It is a poor fit for many series at once, multiple seasonalities, holidays and rich external features, where boosted trees or other models do better."
       ]
     },
     {
@@ -9522,6 +9876,12 @@
       "terms": [
         "exponential-smoothing",
         "prophet"
+      ],
+      "key_points": [
+        "Exponential smoothing is a quick, robust baseline for each series and needs little tuning.",
+        "Prophet adds trend changes, seasonality and holidays with readable components, but it is not always the most accurate.",
+        "Gradient boosting trains one global model across all 200 products using lag features, calendar features, price and promotions, so it can learn from related products and handle short histories.",
+        "I'd compare all three with walk-forward validation on the metric the business cares about, ship the simple baseline first, and move to the global model if it wins by a margin that justifies the extra pipeline."
       ]
     },
     {
@@ -9586,6 +9946,13 @@
       ],
       "terms": [
         "forecasting"
+      ],
+      "key_points": [
+        "Separate models at each level won't sum.",
+        "Bottom-up sums store forecasts, which is consistent but noisy for sparse stores.",
+        "Top-down splits a company forecast by historical proportions, which is smooth but loses store detail.",
+        "Reconciliation methods take forecasts from every level and adjust them jointly so they add up, weighting each by how reliable it is; this often improves accuracy at all levels because each level contributes information.",
+        "I would evaluate with walk-forward validation at every level, since the right choice depends on which level decisions are made at."
       ]
     },
     {
@@ -9650,6 +10017,12 @@
       ],
       "terms": [
         "mape"
+      ],
+      "key_points": [
+        "MAPE is easy to read but explodes when actuals are near zero and penalizes over-forecasts more than under-forecasts, which can push models toward under-forecasting.",
+        "RMSE squares errors, so it punishes large misses and suits cases where a big miss is disproportionately costly.",
+        "WAPE divides total absolute error by total actuals, so it is stable and weights high-volume items more, which is often how the business thinks.",
+        "I would pick the metric from the cost of errors, report more than one, and evaluate at the level where decisions are made."
       ]
     },
     {
@@ -9715,6 +10088,12 @@
       "terms": [
         "matrix-factorization",
         "embedding"
+      ],
+      "key_points": [
+        "Matrix factorization learns a vector for each user and item from the interaction matrix so that their product predicts affinity; it captures taste patterns without needing item attributes, but it needs history and handles new items poorly.",
+        "A content-based approach scores items by similarity to what a user liked using attributes or embeddings; it handles new items but tends to recommend more of the same.",
+        "Most sites use implicit feedback such as clicks and purchases, and combine the approaches, often with a ranking model on top.",
+        "I'd evaluate offline with ranking metrics like recall at k or NDCG, with time-based splits, and confirm with an online experiment."
       ]
     },
     {
@@ -9779,6 +10158,12 @@
       ],
       "terms": [
         "feature-scaling"
+      ],
+      "key_points": [
+        "Models based on distances (k-NN, k-means, SVMs), penalized models (ridge, lasso) and gradient-based models like neural networks are sensitive to feature scale: a feature measured in large units dominates distances or gets penalized differently.",
+        "Tree-based models split on thresholds, so monotonic rescaling changes nothing.",
+        "I fit the scaler on the training data only and apply it to validation and test data, otherwise information leaks.",
+        "Standardization is the default; min-max suits bounded inputs but is sensitive to outliers, where a robust scaler helps."
       ]
     },
     {
@@ -9843,7 +10228,8 @@
       ],
       "terms": [
         "k-means"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "python-016",
@@ -9908,7 +10294,8 @@
       "terms": [
         "gradient-descent",
         "learning-rate"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "python-017",
@@ -9974,7 +10361,8 @@
       "terms": [
         "tf-idf",
         "cosine-similarity"
-      ]
+      ],
+      "key_points": []
     },
     {
       "id": "llm-014",
@@ -10039,7 +10427,8 @@
       "terms": [
         "lora",
         "pretrained-model"
-      ]
+      ],
+      "key_points": []
     }
   ]
 }

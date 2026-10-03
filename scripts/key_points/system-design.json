@@ -1,0 +1,33 @@
+{
+  "key_points": [
+    {
+      "id": "system-design-001",
+      "base": "I'd split it into candidate generation (fast retrieval from embeddings or an ANN index), ranking (a ",
+      "points": [
+        "I'd split it into candidate generation (fast retrieval from embeddings or an ANN index), ranking (a heavier model over a few hundred candidates), and re-ranking for business rules.",
+        "With a 100ms budget I'd spend roughly 20ms on feature fetch from an online store, 30ms on retrieval, 30ms on ranking, and keep the rest as buffer.",
+        "Freshness comes from training offline on a schedule while updating cheap features like recent clicks in real time.",
+        "For A/B tests I'd randomize by user through one experiment-assignment layer, not per-feature flags."
+      ]
+    },
+    {
+      "id": "system-design-002",
+      "base": "Forecasts are needed daily, not per request, so I'd batch: compute overnight, store versioned predic",
+      "points": [
+        "Forecasts are needed daily, not per request, so I'd batch: compute overnight, store versioned predictions in a table, and serve from there.",
+        "It's cheaper, reproducible, and auditable, and the dashboard never waits on a model.",
+        "For a sudden 50% drop I'd validate before alerting (data issue, model change, or real behavior?) and include the reason, because false alarms destroy trust.",
+        "I'd write predictions with a model-version column, run new versions in shadow, then cut over without changing the dashboard's schema."
+      ]
+    },
+    {
+      "id": "system-design-003",
+      "base": "I'd treat intake as a decision process: a short standard template (problem, decision supported, succ",
+      "points": [
+        "I'd treat intake as a decision process: a short standard template (problem, decision supported, success metric, data availability, owner), a triage rubric (business value, feasibility, risk), and stage gates from idea to pilot to production with explicit exit criteria.",
+        "Ideas with no decision owner or no data get parked, which keeps it from becoming a dumping ground.",
+        "For differing SLOs I'd define a few standard tiers (daily batch, near-real-time, real-time), each with known costs and requirements, and let teams pick a tier instead of imposing one rigid standard."
+      ]
+    }
+  ]
+}

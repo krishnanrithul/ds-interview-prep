@@ -1,0 +1,49 @@
+{
+  "key_points": [
+    {
+      "id": "sql-001",
+      "base": "First I'd ask what counts as a duplicate: same email, same normalized email (case, whitespace, plus-",
+      "points": [
+        "First I'd ask what counts as a duplicate: same email, same normalized email (case, whitespace, plus-addressing), same phone, or the same person across several fields.",
+        "Then GROUP BY the normalized key with HAVING COUNT(*) > 1, and ROW_NUMBER() over that key ordered by created_at when I need to keep one record and flag the rest.",
+        "For duplicates across time periods I'd compare created_at gaps.",
+        "At 100M rows I'd precompute and index the normalized key instead of computing it per query.",
+        "GROUP BY surfaces the duplicate groups, while DISTINCT only collapses rows and hides them."
+      ]
+    },
+    {
+      "id": "sql-002",
+      "base": "I'd define the unit first: the distribution of days from invoice to cash by segment, not just the av",
+      "points": [
+        "I'd define the unit first: the distribution of days from invoice to cash by segment, not just the average.",
+        "Unpaid invoices are censored observations, so dropping them would bias the pattern toward fast payers.",
+        "I'd build it as a daily incremental table so the 15-minute scan becomes a small partition read.",
+        "New customers with no history fall back to their segment prior.",
+        "For a regime change like COVID I'd compare recent against full-history distributions and decide on recency weighting or excluding the shock period with a backtest, not a guess."
+      ]
+    },
+    {
+      "id": "sql-003",
+      "base": "LAG(payment_date) OVER (PARTITION BY customer_id ORDER BY payment_date), a date difference for each ",
+      "points": [
+        "LAG(payment_date) OVER (PARTITION BY customer_id ORDER BY payment_date), a date difference for each gap, then MAX per customer.",
+        "The business rules matter more than the syntax.",
+        "Refunds probably shouldn't reset the gap, because a refund isn't engagement.",
+        "The open gap since the last payment must be counted, or churned customers look healthy.",
+        "A single-payment customer has a NULL gap, not zero.",
+        "For churn risk I'd compare the current open gap to that customer's own history instead of using one global threshold."
+      ]
+    },
+    {
+      "id": "sql-004",
+      "base": "I'd define the cohort (signup month) and 'active' (at least one qualifying transaction in the window",
+      "points": [
+        "I'd define the cohort (signup month) and 'active' (at least one qualifying transaction in the window) explicitly, then LEFT JOIN cohort members to activity so inactive customers stay in the denominator.",
+        "Returners count as active in month N.",
+        "If lapses matter I'd also report 'never lapsed'.",
+        "Recent cohorts have less follow-up, so I'd compare cohorts at the same age and mask incomplete periods.",
+        "If January beats December I'd check confounders before crediting the product: seasonality, an acquisition channel or pricing change, a different customer mix, or survivorship."
+      ]
+    }
+  ]
+}

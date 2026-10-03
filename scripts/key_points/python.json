@@ -1,0 +1,34 @@
+{
+  "key_points": [
+    {
+      "id": "python-001",
+      "base": "Built-in importance (gain or weight) is biased toward high-cardinality features and splits credit ar",
+      "points": [
+        "Built-in importance (gain or weight) is biased toward high-cardinality features and splits credit arbitrarily among correlated ones.",
+        "I'd compute permutation importance or SHAP on held-out data, and get confidence intervals by repeating over bootstrap resamples or CV folds and reporting the spread.",
+        "For correlated features I'd group them and permute the group together.",
+        "For stakeholders I'd use SHAP, because per-prediction explanations are what non-technical people want to see."
+      ]
+    },
+    {
+      "id": "python-002",
+      "base": "I'd layer the checks: schema and types, null rates, ranges, uniqueness, freshness and volume, then d",
+      "points": [
+        "I'd layer the checks: schema and types, null rates, ranges, uniqueness, freshness and volume, then distribution checks against a recent baseline.",
+        "Each check has a severity: hard failures block the pipeline, soft ones warn.",
+        "A high-importance feature jumping to 50% missing should fail or fall back to the last good data, not be silently imputed.",
+        "Treat it as a contract with upstream: send alerts to the owning team with the failing check and sample rows, and batch them into one daily digest instead of a flood."
+      ]
+    },
+    {
+      "id": "python-003",
+      "base": "I'd use rolling-origin (walk-forward) evaluation: at each cutoff, build features from data available",
+      "points": [
+        "I'd use rolling-origin (walk-forward) evaluation: at each cutoff, build features from data available at that time, train, forecast the next horizon, then advance the cutoff.",
+        "I'd respect real publication lags, such as payments recorded days late, or the features contain information that wouldn't exist live.",
+        "A backtest RMSE of 0.05 against 0.2 live usually means leakage, a different data-availability timeline, or a regime shift.",
+        "I'd rebuild the live features at the same cutoff and compare them with the backtest features."
+      ]
+    }
+  ]
+}
