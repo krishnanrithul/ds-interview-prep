@@ -7585,11 +7585,18 @@
         "residual"
       ],
       "key_points": [
-        "The classic list is a linear relationship, independent errors, constant error variance, roughly normal errors and no severe collinearity.",
-        "For pure prediction the ones that bite are linearity (a missed curve means systematic error) and independence across train and test (leakage).",
-        "Constant variance and normality mostly affect confidence and prediction intervals, not point predictions.",
-        "Outliers can drag least squares, so I'd check leverage and consider a robust or Huber loss.",
-        "I'd diagnose with residual plots and fix with transforms, interaction terms or a more flexible model."
+        "Lists the assumptions: linearity, independent errors, constant variance, normal errors, no collinearity",
+        "For prediction, linearity matters most: a missed curve gives systematic error",
+        "Independence between train and test matters: leakage breaks predictions",
+        "Constant variance and normality mainly affect intervals, not point predictions",
+        "Outliers drag least squares; check leverage or use a robust loss like Huber",
+        "Diagnose with residual plots; fix with transforms, interactions or a flexible model"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        1,
+        3
       ]
     },
     {
@@ -7658,11 +7665,18 @@
         "lasso"
       ],
       "key_points": [
-        "All three add a penalty to reduce variance.",
-        "Ridge (L2) shrinks coefficients smoothly and keeps every feature, which suits many features that each carry a little signal.",
-        "Lasso (L1) can set coefficients exactly to zero, so it selects features, which suits sparse problems and interpretability.",
-        "With correlated features lasso tends to pick one arbitrarily and flip between samples, while elastic net mixes both penalties and tends to keep correlated groups together.",
-        "I standardize features first, choose the penalty strength by cross-validation, and use time-aware folds for time-ordered data."
+        "All three add a penalty that reduces variance",
+        "Ridge (L2) shrinks coefficients smoothly and keeps every feature",
+        "Lasso (L1) sets coefficients to zero, so it selects features",
+        "With correlated features lasso picks one arbitrarily; elastic net keeps the group",
+        "Standardize features before applying the penalty",
+        "Choose the penalty strength by cross-validation, time-aware for time data"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        1,
+        2,
+        3
       ]
     },
     {
@@ -7729,11 +7743,17 @@
         "decision-tree"
       ],
       "key_points": [
-        "At each node the tree tries candidate splits on each feature and picks the one that most reduces impurity (Gini or entropy for classification, variance for regression).",
-        "That is greedy: it does not look ahead.",
-        "Left unchecked it splits until leaves are nearly pure, so it fits noise and generalizes poorly.",
-        "Remedies are limiting depth, requiring a minimum number of samples per leaf, pruning, or using an ensemble.",
-        "A tree predicts piecewise constants, so it cannot extrapolate beyond the training range, which matters for trends."
+        "Each split picks the feature and threshold that most reduce impurity",
+        "Impurity is Gini or entropy for classification, variance for regression",
+        "Splitting is greedy and never looks ahead",
+        "Unlimited depth fits noise until leaves are pure, so it overfits",
+        "Control it with max depth, minimum samples per leaf, pruning or ensembles",
+        "Trees predict piecewise constants and cannot extrapolate beyond the training range"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        3
       ]
     },
     {
@@ -7801,10 +7821,18 @@
         "feature-importance"
       ],
       "key_points": [
-        "Each tree trains on a bootstrap sample and considers a random subset of features at each split, so the trees are decorrelated and averaging them reduces variance without raising bias much.",
-        "Out-of-bag samples give a built-in validation estimate.",
-        "Default impurity-based importances are biased toward continuous or high-cardinality features and are computed on training data, so they can reward overfit features; correlated features also split the credit.",
-        "I'd use permutation importance on held-out data or SHAP, and describe the result as what the model uses, not what causes the outcome."
+        "Each tree trains on a bootstrap sample of the rows",
+        "Each split considers a random subset of features, which decorrelates the trees",
+        "Averaging decorrelated trees reduces variance without adding much bias",
+        "Out-of-bag samples give a built-in validation estimate",
+        "Impurity importance is biased toward high-cardinality features and computed on training data",
+        "Use permutation importance on held-out data or SHAP; importance is not causation"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        2,
+        4
       ]
     },
     {
@@ -7874,11 +7902,17 @@
         "catboost"
       ],
       "key_points": [
-        "All three are gradient-boosted trees, and with equal tuning they are usually within a small margin on accuracy, so I'd decide on practical grounds.",
-        "LightGBM grows trees leaf-wise with histogram binning, which is fast on large data but can overfit small data without limits on leaves.",
-        "XGBoost is the most widely deployed and documented, with level-wise growth by default.",
-        "CatBoost uses ordered target statistics to handle categorical features natively and reduce target leakage, often needing less tuning.",
-        "With many categoricals I'd start with CatBoost, then compare all three on the same time-aware folds with a fixed tuning budget, looking at accuracy, training time and calibration."
+        "All three are gradient-boosted trees with similar accuracy when tuned equally",
+        "LightGBM grows leaf-wise with histograms: fast, but can overfit small data",
+        "XGBoost is the most widely deployed and documented, level-wise by default",
+        "CatBoost handles categorical features natively with ordered target statistics",
+        "With many categoricals, start with CatBoost",
+        "Compare all three on the same time-aware folds and tuning budget, including calibration"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        3,
+        5
       ]
     },
     {
@@ -7945,11 +7979,18 @@
         "support-vector-machine"
       ],
       "key_points": [
-        "An SVM finds the separating boundary with the largest margin between classes; only the points nearest the boundary, the support vectors, define it.",
-        "A kernel such as the RBF lets it draw non-linear boundaries by implicitly mapping the data to a higher dimension.",
-        "C trades margin width against misclassified training points, and gamma sets how local the RBF kernel is.",
-        "Distances drive everything, so features must be standardized.",
-        "It works well on small to medium, high-dimensional data like text, but training scales roughly quadratically or worse with rows and its scores are not probabilities, so for large tabular data I'd pick boosting."
+        "SVM finds the boundary with the largest margin between classes",
+        "Only the support vectors nearest the boundary define it",
+        "Kernels like RBF allow non-linear boundaries",
+        "C trades margin width against training errors; gamma sets how local the kernel is",
+        "Features must be standardized because it is distance-based",
+        "Good on small, high-dimensional data like text; slow on large data and scores are not probabilities"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        4,
+        5
       ]
     },
     {
@@ -8016,11 +8057,18 @@
         "support-vector-regression"
       ],
       "key_points": [
-        "Linear regression minimizes squared error on every point.",
-        "SVR defines a tube of width epsilon around the fit: errors inside the tube cost nothing and errors outside are penalized linearly, with C controlling how heavily.",
-        "Only points on or outside the tube become support vectors, so the model is sparse and less sensitive to small noise or moderate outliers, and a kernel gives non-linear fits.",
-        "It needs scaled features and tuning of epsilon, C and gamma.",
-        "For ordinary tabular regression a regularized linear model or boosting is usually simpler and as good; I'd reach for SVR on smaller, smooth, non-linear problems."
+        "Linear regression penalizes squared error on every point",
+        "SVR ignores errors inside an epsilon tube around the fit",
+        "Errors outside the tube are penalized linearly, weighted by C",
+        "Only points on or outside the tube are support vectors, so it is robust to small noise and outliers",
+        "Needs scaled features and tuning of epsilon, C and gamma",
+        "Prefer it for small, smooth non-linear problems; otherwise regularized linear or boosting"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        1,
+        3,
+        5
       ]
     },
     {
@@ -8087,11 +8135,17 @@
         "k-nearest-neighbors"
       ],
       "key_points": [
-        "k-NN stores the training data and predicts by taking the majority label (or the average) of the k closest points under a distance metric.",
-        "Small k gives a jagged, high-variance boundary and large k smooths toward the base rate, so I choose k by cross-validation.",
-        "Because it uses distance, features must be scaled and irrelevant ones removed; in high dimensions distances become nearly equal, so neighbors stop being meaningful.",
-        "Prediction is slow on large data without an index or approximate search.",
-        "It is a useful baseline and underlies many retrieval systems."
+        "Predicts by majority vote or average of the k nearest training points",
+        "Small k is high variance; large k smooths toward the base rate; pick k by cross-validation",
+        "Features must be scaled and irrelevant ones removed",
+        "In high dimensions distances become similar, so neighbors lose meaning",
+        "Prediction is slow on large data without an index or approximate search"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        2,
+        3
       ]
     },
     {
@@ -8158,11 +8212,18 @@
         "naive-bayes"
       ],
       "key_points": [
-        "It multiplies per-feature likelihoods as if features were independent given the class.",
-        "The assumption is wrong, but classification only needs the correct class to come out on top, and errors from double-counting correlated features often don't change that ordering.",
-        "Its probabilities are badly calibrated, so I wouldn't use them for cost-based decisions without recalibration.",
-        "It trains in one pass, needs little data and handles high-dimensional sparse features like words, which is why it is a strong text baseline.",
-        "Smoothing prevents a single unseen word from zeroing out a class."
+        "Assumes features are independent given the class and multiplies their likelihoods",
+        "Classification only needs the right class ranked first, which often survives the wrong assumption",
+        "Its probabilities are poorly calibrated; recalibrate before cost-based decisions",
+        "Trains in one pass and needs little data",
+        "Works well on high-dimensional sparse text, a strong baseline",
+        "Smoothing stops an unseen word from zeroing out a class"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        1,
+        4
       ]
     },
     {
@@ -8231,10 +8292,18 @@
         "default-rate"
       ],
       "key_points": [
-        "A coefficient is the change in log-odds of default for a one-unit increase in a feature with the others held fixed; exponentiating gives an odds ratio, so 0.7 means about twice the odds.",
-        "That reading is only safe if features are on comparable scales and not strongly collinear.",
-        "I'd check linearity in the log-odds and add splines, bins or interactions where needed.",
-        "I'd keep it over boosting when regulators or stakeholders need clear reasons, when data is small, or when the accuracy gap is within noise, and I'd verify that with a held-out comparison and a calibration check instead of assuming."
+        "A coefficient is the change in log-odds per unit increase, others held fixed",
+        "Exponentiate a coefficient to get an odds ratio",
+        "Reading coefficients needs comparable scales and little collinearity",
+        "Check linearity in the log-odds; add splines, bins or interactions",
+        "Choose it when regulators need reasons, data is small, or the accuracy gap is within noise",
+        "Verify with a held-out comparison and calibration check"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        1,
+        4
       ]
     },
     {
@@ -8303,11 +8372,18 @@
         "anomaly-detection"
       ],
       "key_points": [
-        "An isolation forest builds random trees that split features at random; points that are isolated in few splits are unusual, so a shorter average path length means a higher anomaly score.",
-        "I'd engineer behavioral features (amount versus the customer's norm, velocity, new merchant), since raw amounts mostly flag rich customers.",
-        "With no labels the threshold comes from review capacity: flag the top N per day.",
-        "Unusual is not the same as fraudulent, so I'd have analysts label a sample from the top of the ranking, measure precision, and feed the labels into a supervised model over time.",
-        "Segmenting by customer type improves it."
+        "Isolation forest splits features at random; anomalies are isolated in fewer splits",
+        "Engineer behavioral features like amount versus the customer's norm and velocity",
+        "Set the threshold from review capacity, such as the top N per day",
+        "Unusual is not the same as fraud",
+        "Have analysts label the top of the ranking and measure precision",
+        "Feed the labels into a supervised model over time"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        3,
+        4
       ]
     },
     {
@@ -8375,11 +8451,17 @@
         "generalized-linear-model"
       ],
       "key_points": [
-        "Linear regression can predict negative claims and assumes constant variance, but counts are non-negative integers whose variance rises with the mean.",
-        "A generalized linear model with a log link and a Poisson distribution fits that shape, and coefficients become multiplicative effects on the claim rate.",
-        "Real claims are often overdispersed (variance above the mean), so I'd check that and move to a negative binomial, or add a zero-inflation component when many customers have none.",
-        "Customers observed for different periods need an exposure offset so the model predicts a rate.",
-        "Gradient boosting with a Poisson objective is a flexible alternative."
+        "Linear regression can predict negative counts and assumes constant variance",
+        "Use a Poisson GLM with a log link; effects are multiplicative on the rate",
+        "Check for overdispersion and use negative binomial if variance exceeds the mean",
+        "Add zero inflation when many customers have no claims",
+        "Use an exposure offset for customers observed for different periods",
+        "Gradient boosting with a Poisson objective is a flexible alternative"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        1
       ]
     },
     {
@@ -8446,11 +8528,18 @@
         "clustering"
       ],
       "key_points": [
-        "k-means alternates between assigning each point to its nearest center and moving each center to the mean of its points, until assignments stop changing.",
-        "It finds a local optimum, so initialization matters; k-means++ and several restarts help.",
-        "To choose k I'd look at the elbow in within-cluster variance and at silhouette scores, but also at whether the clusters are interpretable and stable across samples.",
-        "It struggles with elongated or nested shapes, very different cluster sizes and outliers, and it needs scaled numeric features.",
-        "DBSCAN or Gaussian mixtures are common alternatives."
+        "Alternates assigning points to the nearest center and moving centers to the mean",
+        "Finds a local optimum; use k-means++ and several restarts",
+        "Choose k with the elbow and silhouette, plus interpretability and stability",
+        "Fails on elongated shapes, very different cluster sizes and outliers",
+        "Needs scaled numeric features",
+        "DBSCAN or Gaussian mixtures are alternatives"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        2,
+        3
       ]
     },
     {
@@ -8518,10 +8607,18 @@
         "k-means"
       ],
       "key_points": [
-        "DBSCAN grows clusters from dense neighborhoods: a point with at least min_samples neighbors within distance eps is a core point, clusters are connected dense regions, and points in no dense region are labeled noise.",
-        "I'd choose it over k-means when clusters have irregular shapes, when I don't know k, or when outliers are meaningful.",
-        "It struggles when clusters differ a lot in density, because one eps cannot suit both, and in high dimensions where distances lose meaning.",
-        "I'd pick eps from a k-distance plot, and features still need scaling."
+        "DBSCAN builds clusters from dense regions defined by eps and min_samples",
+        "Points in no dense region are labeled noise",
+        "Choose it for irregular shapes, unknown k, or when outliers matter",
+        "Struggles when clusters have very different densities",
+        "Struggles in high dimensions where distances lose meaning",
+        "Pick eps from a k-distance plot and scale features"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        2,
+        3
       ]
     },
     {
@@ -8588,10 +8685,18 @@
         "clustering"
       ],
       "key_points": [
-        "Agglomerative clustering starts with each point alone and repeatedly merges the two closest clusters; the dendrogram records every merge and its distance.",
-        "The linkage rule defines closest: single linkage chains and finds elongated shapes but is noise-sensitive, complete linkage makes compact clusters, and average and Ward sit between.",
-        "It is useful when the number of groups is unknown or the structure is nested, as with product taxonomies, and I'd pick the cut from large gaps in merge height or from what the business can act on.",
-        "It needs the pairwise distance matrix, so it is impractical beyond tens of thousands of points without sampling."
+        "Agglomerative clustering repeatedly merges the two closest clusters",
+        "The dendrogram records every merge and its distance",
+        "Linkage matters: single chains, complete is compact, average and Ward in between",
+        "Useful when the number of groups is unknown or structure is nested",
+        "Cut the tree at large gaps in merge height or where the business can act",
+        "Needs pairwise distances, so impractical beyond tens of thousands of points"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        1,
+        3
       ]
     },
     {
@@ -8659,11 +8764,17 @@
         "k-means"
       ],
       "key_points": [
-        "k-means is a special case that assumes equal, round clusters and gives hard labels.",
-        "A Gaussian mixture models the data as a blend of Gaussians, each with its own mean, spread and weight, so clusters can be elliptical and different in size, and each point gets a probability of membership, which is useful for borderline customers or for scoring.",
-        "It is fitted with expectation-maximization, alternating between computing memberships and updating the Gaussians, and can get stuck in local optima.",
-        "More components always fit better, so I'd choose the number with BIC or held-out likelihood.",
-        "k-means is faster and simpler when clusters are roughly round and hard labels are enough."
+        "k-means assumes equal round clusters and gives hard labels",
+        "A Gaussian mixture lets clusters have their own mean, shape, size and weight",
+        "Soft assignments give each point a probability of membership",
+        "Fitted with expectation-maximization and can hit local optima",
+        "Choose the number of components with BIC or held-out likelihood",
+        "k-means is faster when clusters are round and hard labels are enough"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        1,
+        2
       ]
     },
     {
@@ -8731,11 +8842,17 @@
         "clustering"
       ],
       "key_points": [
-        "I'd check three things.",
-        "Internal quality: silhouette or Davies-Bouldin say whether clusters are compact and separated, but they reward round clusters and can look fine on arbitrary slices.",
-        "Stability: re-cluster on bootstrap samples or with different seeds and see whether the same groups reappear; unstable clusters are artifacts.",
-        "Usefulness: profile each cluster on outcomes not used in the clustering, such as churn or revenue, and ask whether the groups behave differently and whether the team would treat them differently.",
-        "If I can't describe a cluster in a sentence or act on it, it isn't a segment."
+        "Internal metrics like silhouette or Davies-Bouldin check compactness and separation",
+        "Those metrics favor round clusters and can mislead",
+        "Check stability by re-clustering on bootstrap samples or different seeds",
+        "Profile clusters on outcomes not used in clustering, like churn or revenue",
+        "A good segment can be described in a sentence and acted on"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        2,
+        3
       ]
     },
     {
@@ -8803,11 +8920,18 @@
         "clustering"
       ],
       "key_points": [
-        "I'd start with the purpose: marketing, risk and service design each want different features.",
-        "I'd engineer behavioral features (spend mix, balances, tenure, channel use), transform skewed ones, and scale.",
-        "For mixed numeric and categorical data I'd use Gower distance with hierarchical clustering, k-prototypes, or reduce to embeddings or PCA components first.",
-        "I'd compare candidate values of k on stability and interpretability, name segments from their profiles, and fit a shallow decision tree on the labels to explain the boundaries.",
-        "I'd refresh on a schedule and track membership drift so campaigns don't target moving groups."
+        "Start from the purpose: marketing, risk and service need different features",
+        "Engineer behavioral features, transform skewed ones and scale",
+        "For mixed data use Gower distance, k-prototypes, or PCA or embeddings first",
+        "Compare values of k on stability and interpretability",
+        "Explain segments by fitting a shallow decision tree on the labels",
+        "Refresh on a schedule and track membership drift"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        1,
+        3
       ]
     },
     {
@@ -8875,12 +8999,18 @@
         "feature-scaling"
       ],
       "key_points": [
-        "PCA finds orthogonal directions that capture the most variance and projects the data onto the first few.",
-        "That compresses correlated features, removes noise, and helps visualization or models hurt by collinearity.",
-        "Because it chases variance, features must be standardized or large-scale features dominate.",
-        "I'd choose components from cumulative explained variance or a scree plot, or by downstream model performance.",
-        "Components are linear mixtures, so interpretation relies on loadings and gets hard.",
-        "It is a poor fit when structure is non-linear, when tree models don't need it, or when you must explain individual features to stakeholders."
+        "PCA finds orthogonal directions of maximum variance and projects onto the top few",
+        "Used to compress correlated features, remove noise or visualize",
+        "Standardize first or large-scale features dominate",
+        "Choose components by cumulative explained variance, scree plot or downstream performance",
+        "Components are linear mixtures and hard to interpret",
+        "Poor fit for non-linear structure or when individual features must be explained"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        1,
+        2
       ]
     },
     {
@@ -8949,10 +9079,18 @@
         "clustering"
       ],
       "key_points": [
-        "I'd say the plot is a good prompt but not proof.",
-        "t-SNE (and UMAP to a lesser degree) preserves local neighborhoods while distorting global structure, so cluster sizes, the gaps between clusters and their relative positions aren't reliable.",
-        "The picture also changes with perplexity, initialization and random seed, and can show apparent clusters in structureless noise.",
-        "To test it I'd re-run with several settings and seeds, cluster in the original or PCA space and compare, check stability under resampling, and see whether the groups differ on outcomes the embedding never saw."
+        "A t-SNE plot is a prompt, not proof",
+        "t-SNE preserves local neighborhoods but distorts global structure",
+        "Cluster sizes, gaps and positions in the plot are not reliable",
+        "Results change with perplexity and seed and can show clusters in pure noise",
+        "Re-run with several settings and cluster in the original or PCA space",
+        "Check stability and whether groups differ on outcomes the embedding never saw"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        1,
+        4
       ]
     },
     {
@@ -9021,10 +9159,18 @@
         "cross-validation"
       ],
       "key_points": [
-        "With many more features than the data supports, I'd start with cheap filters: drop constants, near-duplicates and highly correlated pairs, and apply domain judgment.",
-        "Embedded methods such as lasso or tree-based importance then rank what remains, and wrapper methods such as recursive elimination can refine it at higher cost.",
-        "The key discipline is doing selection inside each cross-validation fold; selecting on the whole dataset first leaks the labels into the validation score and inflates it.",
-        "With regularized models or boosting, aggressive selection is often unnecessary, but it can help stability, speed and explainability."
+        "Start with cheap filters: drop constants, near-duplicates and highly correlated features",
+        "Use embedded methods like lasso or tree importance to rank features",
+        "Wrapper methods like recursive elimination refine at higher cost",
+        "Do selection inside each cross-validation fold",
+        "Selecting on the full dataset first leaks labels and inflates the score",
+        "Regularized models or boosting often make heavy selection unnecessary"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        1,
+        3
       ]
     },
     {
@@ -9092,12 +9238,18 @@
         "stacking"
       ],
       "key_points": [
-        "Averaging or stacking helps when models make different, partly uncorrelated errors, such as a boosted tree with a linear model or a neural net.",
-        "Stacking trains a second-level model on the base models' out-of-fold predictions; using in-sample predictions would leak and overstate the benefit.",
-        "Blending is the simpler version using a holdout set.",
-        "Gains are typically small on clean tabular data where several boosted models are highly correlated.",
-        "The costs are real: more training time, latency, monitoring and failure modes.",
-        "I'd try a simple average first and ship the ensemble only if the gain beats the cost of maintaining it."
+        "Ensembles help when models make different, uncorrelated errors",
+        "Stacking trains a meta-model on out-of-fold predictions",
+        "Using in-sample predictions for stacking leaks and overstates the gain",
+        "Blending uses a holdout set instead",
+        "Gains are small when base models are highly correlated boosted trees",
+        "Try a simple average first; ship only if the gain beats maintenance and latency cost"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        2,
+        5
       ]
     },
     {
@@ -9165,12 +9317,18 @@
         "smote"
       ],
       "key_points": [
-        "First I'd fix evaluation: accuracy is meaningless at 2%, so I'd use precision-recall, PR AUC and cost-based thresholds.",
-        "Then compare options on honest folds.",
-        "Class weights are the simplest: they change the loss without altering the data.",
-        "Random undersampling is cheap but discards information; oversampling duplicates rows; SMOTE interpolates new minority points and can create unrealistic samples and overlap, and it must be applied only inside the training fold or synthetic points leak into validation.",
-        "Resampling also distorts predicted probabilities, so I'd recalibrate.",
-        "I'd try weights plus threshold tuning first and keep resampling only if it measurably helps."
+        "Fix evaluation first: accuracy is meaningless; use precision-recall, PR AUC and cost",
+        "Class weights change the loss without changing the data",
+        "Undersampling discards data; oversampling duplicates rows",
+        "SMOTE interpolates synthetic points that can be unrealistic or overlap",
+        "Resample only inside the training fold, or validation leaks",
+        "Resampling distorts probabilities, so recalibrate; try weights plus threshold tuning first"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        0,
+        1,
+        4
       ]
     },
     {
@@ -9238,9 +9396,18 @@
         "cross-validation"
       ],
       "key_points": [
-        "I'd first narrow the space to what matters for the model; for boosting that is learning rate, depth, number of rounds (with early stopping) and regularization.",
-        "Random search usually beats a grid because only a few hyperparameters really matter and random draws try more distinct values of each; Bayesian optimization (for example Optuna) learns from earlier trials to choose promising ones and is worth it when each run is expensive.",
-        "Repeated tuning on the same folds overfits them, so I'd keep a final holdout or use nested cross-validation to estimate the tuned procedure's performance, and stop when gains are within noise."
+        "Narrow the search to the hyperparameters that matter, like learning rate and depth",
+        "Use early stopping for the number of boosting rounds",
+        "Random search beats grid search because only a few hyperparameters matter",
+        "Bayesian optimization like Optuna is worth it when each run is expensive",
+        "Repeated tuning overfits the validation folds",
+        "Keep a final holdout or use nested cross-validation; stop when gains are within noise"
+      ],
+      "key_points_draft": true,
+      "key_points_core": [
+        2,
+        4,
+        5
       ]
     },
     {

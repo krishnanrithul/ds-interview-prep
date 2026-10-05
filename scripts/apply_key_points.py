@@ -50,7 +50,7 @@ def main():
                     f"    Got: {actual_base[:80]}..."
                 )
             
-            all_key_points[qid] = points
+            all_key_points[qid] = (points, bool(entry.get('draft')), entry.get('core'))
     
     if errors:
         print("Errors found:")
@@ -66,7 +66,15 @@ def main():
     for q in questions:
         qid = q['id']
         if qid in all_key_points:
-            q['key_points'] = all_key_points[qid]
+            q['key_points'], draft, core = all_key_points[qid]
+            if core:
+                q['key_points_core'] = core
+            else:
+                q.pop('key_points_core', None)
+            if draft:
+                q['key_points_draft'] = True
+            else:
+                q.pop('key_points_draft', None)
             applied += 1
         else:
             # Ensure field exists even if empty (for consistency)

@@ -7,7 +7,7 @@ export function exportBackup() {
   const data = {}
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i)
-    if (!key) continue
+    if (!key || key === 'ds-anthropic-key') continue // never write the API key into a backup file
     const raw = localStorage.getItem(key)
     try { data[key] = raw ? JSON.parse(raw) : raw } catch { data[key] = raw }
   }

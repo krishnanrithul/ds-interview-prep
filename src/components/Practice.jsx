@@ -7,6 +7,9 @@ import DraftBadge from './DraftBadge'
 import TagChips from './TagChips'
 import KeyTerms from './KeyTerms'
 import { pickVariants, markSeen, followUpText } from '../lib/variants'
+import { matchEnabled } from '../lib/match'
+import { useMatchScore } from '../hooks/useMatchScore'
+import { CoverageMeter, KeyPointsReview } from './KeyPoints'
 
 const reduced = () => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
 
@@ -61,6 +64,8 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
   const typing = !!q && revealed < step
   const rating = !!q && step === total && revealed === total
   const draft = turns.filter(Boolean).join('\n\n')
+  // Key-point coverage follows the main answer: live while it is typed, then frozen once sent.
+  const match = useMatchScore(q, step === 0 ? text : turns[0] || '')
 
   // One wording per follow-up for this question, avoiding the wording shown last time.
   const picks = useMemo(() => (q ? pickVariants(q) : []), [q?.id, i]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -213,6 +218,7 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
               <p className="text-sm text-muted-foreground mb-1">Here's how that lands for this question</p>
               <p className="font-serif text-lg leading-snug">{q.question}</p>
             </div>
+            {matchEnabled(q) && <KeyPointsReview key={q.id} q={q} answer={turns[0]} sims={match.sims} />}
             <AnswerLadder q={q} />
             {q.tags?.length > 0 && (
               <div>
@@ -267,7 +273,9 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
               className="w-full resize-none bg-transparent px-4 pt-3.5 pb-1 text-[15px] leading-relaxed placeholder:text-muted-foreground focus:outline-none"
             />
             <div className="flex items-center justify-between gap-3 px-3 pb-3">
-              <span className="text-xs text-muted-foreground pl-1 hidden sm:block">Ctrl or Cmd + Enter to send</span>
+              {step === 0 && match.status !== 'off'
+                ? <div className="pl-1"><CoverageMeter q={q} status={match.status} sims={match.sims} /></div>
+                : <span className="text-xs text-muted-foreground pl-1 hidden sm:block">Ctrl or Cmd + Enter to send</span>}
               <button
                 onClick={send}
                 disabled={typing}

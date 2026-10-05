@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { Minus, Plus, Sun, Moon, Monitor, Download, Upload, Trash2, Bell, X } from 'lucide-react'
+import { Minus, Plus, Sun, Moon, Monitor, Download, Upload, Trash2, Bell, X, KeyRound } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
 import { exportBackup, importBackup, clearAll } from '../lib/backup'
 import {
   getReminderHour, isReminderEnabled, isReminderSupported, setReminderEnabled, setReminderHour,
 } from '../lib/reminders'
 import ConfirmDialog from './ConfirmDialog'
+import { getApiKey, setApiKey } from '../lib/grade'
 
 const formatHour = (h) => `${h % 12 === 0 ? 12 : h % 12}:00 ${h < 12 ? 'AM' : 'PM'}`
 
@@ -92,6 +93,17 @@ export default function Settings({ settings, update, flash }) {
     if (next && !enabled) flash('Notifications are blocked for this site. Allow them in browser settings.')
     else flash(enabled ? `Daily reminder on at ${formatHour(hour)}` : 'Daily reminder off')
   }
+
+  // AI feedback: the key stays in this browser and is sent only to Anthropic
+  const [savedKey, setSavedKey] = useState(getApiKey())
+  const [keyDraft, setKeyDraft] = useState('')
+  const saveKey = () => {
+    const k = keyDraft.trim()
+    if (!k) return
+    setApiKey(k); setSavedKey(k); setKeyDraft('')
+    flash('API key saved in this browser')
+  }
+  const removeKey = () => { setApiKey(''); setSavedKey(''); flash('API key removed') }
 
   // data
   const fileRef = useRef(null)
@@ -209,6 +221,38 @@ export default function Settings({ settings, update, flash }) {
         )}
       </Section>
 
+      <Section title="AI feedback">
+        <div className="p-4 space-y-3">
+          <div>
+            <p className="font-medium">Anthropic API key</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Optional. Checks whether your answer is right, not just whether it mentions the key points. One Haiku call per answer, roughly $0.004, billed to your key. Your answer and the question go to Anthropic. The key is stored only in this browser and is left out of backups. Currently used for ML Algorithms questions in Practice.
+            </p>
+          </div>
+          {savedKey ? (
+            <div className="flex items-center justify-between gap-3">
+              <span className="inline-flex items-center gap-2 text-sm font-mono text-muted-foreground"><KeyRound size={14} />…{savedKey.slice(-4)}</span>
+              <button onClick={removeKey} className={buttonCls}>Remove</button>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <input
+                type="password"
+                autoComplete="off"
+                spellCheck={false}
+                value={keyDraft}
+                onChange={(e) => setKeyDraft(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') saveKey() }}
+                placeholder="sk-ant-…"
+                aria-label="Anthropic API key"
+                className="flex-1 min-w-0 h-9 rounded-md border border-border bg-background px-3 text-sm font-mono"
+              />
+              <button onClick={saveKey} disabled={!keyDraft.trim()} className="px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40">Save</button>
+            </div>
+          )}
+        </div>
+      </Section>
+
       <Section title="Data">
         <Row label="Export backup" hint="Download progress and settings as JSON">
           <button onClick={handleExport} className={buttonCls}><Download size={16} />Export</button>
@@ -234,7 +278,7 @@ export default function Settings({ settings, update, flash }) {
         </Row>
       </Section>
 
-      <p className="text-center text-xs text-muted-foreground mt-8">All data stays on this device. Nothing is sent anywhere.</p>
+      <p className="text-center text-xs text-muted-foreground mt-8">All data stays on this device. Nothing is sent anywhere, except answers sent to Anthropic for grading if you add an API key.</p>
 
       <ConfirmDialog
         open={pendingImport !== null}
