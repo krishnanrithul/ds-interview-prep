@@ -7,6 +7,33 @@ import { DIFFICULTY, RATINGS, dot } from '../lib/topics'
 import AnswerLadder from './AnswerLadder'
 import ConfirmDialog from './ConfirmDialog'
 import DraftBadge from './DraftBadge'
+import { generateProbe, reactiveEnabled, REACTIVE_TOPICS } from '../lib/probe'
+import { getApiKey } from '../lib/grade'
+import { matchEnabled, ratingFromScore, interviewVerdict } from '../lib/match'
+import { useMatchScore } from '../hooks/useMatchScore'
+import { KeyPointsReview } from './KeyPoints'
+
+function Reply({ text }) {
+  return (
+    <div className="flex justify-end">
+      {text
+        ? <p className="max-w-[88%] whitespace-pre-wrap rounded-2xl rounded-br-md bg-primary text-primary-foreground px-4 py-3 text-[15px] leading-relaxed">{text}</p>
+        : <p className="text-sm italic text-muted-foreground">You passed</p>}
+    </div>
+  )
+}
+
+// Key points for one Mock question: the live score reads only the learner's words; the AI grade reads the
+// labeled conversation, so it can tell what the learner said from what the interviewer asked.
+function MockKeyPoints({ q, thread, onScore }) {
+  const mine = [thread?.main || '', ...(thread?.fus || []).map((f) => f.reply || '')].filter((t) => t.trim()).join('\n\n')
+  const transcript = thread
+    ? [`Candidate (answer to the main question): ${thread.main || '(no answer)'}`,
+       ...thread.fus.map((f) => `Interviewer: ${f.text}\nCandidate: ${f.reply?.trim() || '(no reply)'}`)].join('\n\n')
+    : ''
+  const match = useMatchScore(q, mine)
+  return <KeyPointsReview q={q} answer={mine} sims={match.sims} gradeText={transcript} onScore={onScore} />
+}
 
 const mmss = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 
@@ -26,21 +53,24 @@ function Stepper({ value, onChange, min, max, label }) {
   )
 }
 
-// A real-interview rehearsal: mixed topics, follow-ups unlocked one at a time,
-// a soft timer, and no answers until the very end.
+// A real-interview rehearsal: mixed topics, a back-and-forth with the interviewer (follow-ups written
+// from your replies in reactive topics), a soft timer, and no answers until the very end.
 export default function Mock({ progress, byId, active, onSave }) {
   const [stage, setStage] = useState('setup') // setup | run | review
   const [cfg, setCfg] = useState({ count: 5, minutes: 6, topic: 'all' })
   const [ids, setIds] = useState([])
   const [idx, setIdx] = useState(0)
-  const [step, setStep] = useState(0)
-  const [answers, setAnswers] = useState({})
+  const [threads, setThreads] = useState({}) // id -> { main, fus: [{ text, intent, probe, error, reply }] }
+  const [draft, setDraft] = useState('')
   const [times, setTimes] = useState({})
   const [ratings, setRatings] = useState({})
+  const [scores, setScores] = useState({}) // id -> { pct, status } from the key-points panel
+  const [touched, setTouched] = useState({}) // ratings the learner chose themselves; others follow the score
   const [picks, setPicks] = useState({}) // follow-up wording chosen per question for this interview
   const [startedAt, setStartedAt] = useState(0)
   const [elapsed, setElapsed] = useState(0)
   const [confirmEnd, setConfirmEnd] = useState(false)
+  const [thinking, setThinking] = useState(false)
   const textRef = useRef(null)
 
   const topics = useMemo(() => [...new Set(QUESTIONS.map((q) => q.topic))], [])
@@ -55,7 +85,7 @@ export default function Mock({ progress, byId, active, onSave }) {
     return () => clearInterval(t)
   }, [stage, startedAt])
 
-  useEffect(() => { if (active && stage === 'run') textRef.current?.focus() }, [idx, stage, active])
+  useEffect(() => { if (active && stage === 'run' && !thinking) textRef.current?.focus() }, [idx, stage, active, thinking, threads])
 
   const q = stage === 'run' ? byId[ids[idx]] : null
   const n = q ? q.follow_ups.length : 0
@@ -66,34 +96,86 @@ export default function Mock({ progress, byId, active, onSave }) {
     const chosen = Object.fromEntries(picked.map((id) => [id, pickVariants(byId[id])]))
     Object.entries(chosen).forEach(([id, p]) => markSeen(id, p))
     setPicks(chosen)
-    setIdx(0); setStep(0); setAnswers({}); setTimes({}); setRatings({}); setElapsed(0)
+    setIdx(0); setThreads({}); setDraft(''); setTimes({}); setRatings({}); setScores({}); setTouched({}); setElapsed(0); setThinking(false)
     setStartedAt(Date.now())
     setStage('run')
   }
 
-  const next = () => {
-    if (step < n) return setStep(step + 1)
-    // finish this question
+  const thread = q ? threads[q.id] || { main: null, fus: [] } : null
+  const awaitingReply = !!thread && (thread.main === null || (thread.fus.length > 0 && thread.fus[thread.fus.length - 1].reply === null))
+  const questionDone = !!thread && thread.main !== null && !awaitingReply && !thinking && thread.fus.length >= n
+
+  // Ask follow-up k: written from the conversation for reactive topics, otherwise the fixed one.
+  const askNext = async (id, item, t) => {
+    const k = t.fus.length
+    if (k >= item.follow_ups.length) return
+    const guide = { text: followUpText(item, picks[id], k), intent: item.follow_ups[k].intent }
+    let fu = { text: guide.text, intent: guide.intent, probe: null, error: null, reply: null }
+    const key = getApiKey()
+    if (reactiveEnabled(item) && key) {
+      const history = [{ who: 'candidate', text: t.main }]
+      t.fus.forEach((f) => { history.push({ who: 'interviewer', text: f.text }); history.push({ who: 'candidate', text: f.reply || '' }) })
+      setThinking(true)
+      try {
+        const p = await generateProbe(item, history, guide, key)
+        fu = { ...fu, text: p.question, probe: p }
+      } catch (err) {
+        // Error or timeout: the fixed follow-up is asked instead, and the reason is shown under it.
+        const why = err.name === 'AbortError' ? 'no reply within 10 seconds' : err.message
+        console.warn('[reactive mock] fell back to the fixed follow-up:', why)
+        fu = { ...fu, error: why }
+      }
+      setThinking(false)
+    }
+    setThreads((x) => ({ ...x, [id]: { ...x[id], fus: [...x[id].fus, fu] } }))
+  }
+
+  const send = () => {
+    if (thinking || !awaitingReply) return
+    const id = q.id
+    const text = draft.trim()
+    let t
+    if (thread.main === null) t = { main: text, fus: [] }
+    else t = { ...thread, fus: thread.fus.map((f, k) => (k === thread.fus.length - 1 ? { ...f, reply: text } : f)) }
+    setThreads((x) => ({ ...x, [id]: t }))
+    setDraft('')
+    askNext(id, q, t)
+  }
+
+  const finishQuestion = () => {
     setTimes((t) => ({ ...t, [q.id]: Math.floor((Date.now() - startedAt) / 1000) }))
     if (idx + 1 < ids.length) {
-      setIdx(idx + 1); setStep(0); setElapsed(0); setStartedAt(Date.now())
+      setIdx(idx + 1); setDraft(''); setElapsed(0); setStartedAt(Date.now())
     } else {
       setStage('review')
     }
   }
 
-  // Cmd/Ctrl+Enter advances from inside the answer box
+  // Cmd/Ctrl+Enter sends a reply, or moves on once the question is done
   useEffect(() => {
     if (stage !== 'run' || !active) return
-    const onKey = (e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); next() } }
+    const onKey = (e) => {
+      if (!((e.metaKey || e.ctrlKey) && e.key === 'Enter')) return
+      e.preventDefault()
+      if (questionDone) finishQuestion()
+      else send()
+    }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   })
 
+  // Main answer plus each follow-up and reply, as one text for the saved attempt.
+  const transcriptText = (id) => {
+    const t = threads[id]
+    if (!t) return ''
+    return [t.main || '', ...t.fus.map((f, k) => `Follow-up ${k + 1}: ${f.text}
+${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
+  }
+
   const save = () => {
     const results = ids
       .filter((id) => ratings[id])
-      .map((id) => ({ id, rating: ratings[id], answer: answers[id] || '' }))
+      .map((id) => ({ id, rating: ratings[id], answer: transcriptText(id) }))
     onSave(results)
     setStage('setup')
   }
@@ -140,6 +222,12 @@ export default function Mock({ progress, byId, active, onSave }) {
           Start interview <ArrowRight className="w-4 h-4" />
         </button>
         <p className="text-center text-xs text-muted-foreground mt-3">About {count * cfg.minutes} minutes in total</p>
+        {(cfg.topic === 'all' || REACTIVE_TOPICS.has(cfg.topic)) && (
+          <p className="text-center text-xs text-muted-foreground mt-1">
+            {[...REACTIVE_TOPICS].join(', ')} questions get follow-ups that react to your answers
+            {getApiKey() ? '.' : ' once you add an API key in Settings.'}
+          </p>
+        )}
       </div>
     )
   }
@@ -149,7 +237,7 @@ export default function Mock({ progress, byId, active, onSave }) {
     const over = elapsed > limit
     const timeLabel = over ? `+${mmss(elapsed - limit)} over` : mmss(limit - elapsed)
     const last = idx + 1 === ids.length
-    const buttonLabel = step < n ? (step === 0 ? 'Done, hear the follow-up' : 'Next follow-up') : last ? 'Finish interview' : 'Finish question, next'
+    const reactive = reactiveEnabled(q) && !!getApiKey()
 
     return (
       <div className="max-w-2xl mx-auto">
@@ -173,35 +261,63 @@ export default function Mock({ progress, byId, active, onSave }) {
             </span>
             <span className={`px-2 py-0.5 rounded-md ring-1 capitalize font-medium ${DIFFICULTY[q.difficulty] || ''}`}>{q.difficulty}</span>
             <DraftBadge q={q} />
+            {reactive && <span className="text-muted-foreground">Follow-ups react to your answers</span>}
           </div>
           <h2 className="text-2xl font-semibold leading-snug mb-5">{q.question}</h2>
 
-          {step > 0 && (
-            <ol className="space-y-3 mb-5">
-              {q.follow_ups.slice(0, Math.min(step, n)).map((fu, k) => (
-                <li key={k} className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+          <div className="space-y-4 mb-5">
+            {thread.main !== null && <Reply text={thread.main} />}
+            {thread.fus.map((f, k) => (
+              <div key={k} className="space-y-4">
+                <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
                   <p className="text-sm font-semibold text-primary mb-1">Interviewer follow-up {k + 1}</p>
-                  <p className="text-[15px] leading-relaxed">{followUpText(q, picks[q.id], k)}</p>
-                </li>
-              ))}
-            </ol>
-          )}
+                  <p className="text-[15px] leading-relaxed">{f.text}</p>
+                  {f.error && <p className="text-xs text-muted-foreground mt-2">Couldn't react to your answer ({f.error}), so this is a standard follow-up.</p>}
+                </div>
+                {f.reply !== null && <Reply text={f.reply} />}
+              </div>
+            ))}
+            {thinking && (
+              <div className="inline-flex items-center gap-2 rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground" role="status">
+                {[0, 1, 2].map((d) => <span key={d} className="typing-dot w-1.5 h-1.5 rounded-full bg-muted-foreground" style={{ animationDelay: `${d * 140}ms` }} />)}
+                <span className="ml-1">The interviewer is thinking</span>
+              </div>
+            )}
+          </div>
 
-          <textarea
-            ref={textRef}
-            value={answers[q.id] || ''}
-            onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })}
-            rows={8}
-            placeholder="Answer as you would out loud: your approach, trade-offs, and what you'd check. Include your answers to the follow-ups here."
-            className="w-full rounded-xl border border-border bg-muted/50 p-4 text-sm leading-relaxed placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition resize-y"
-          />
+          {awaitingReply && !thinking && (
+            <div className="rounded-2xl border border-border bg-muted/40 focus-within:border-primary transition-colors">
+              <textarea
+                ref={textRef}
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                rows={thread.main === null ? 6 : 3}
+                aria-label={thread.main === null ? 'Your answer' : 'Your reply'}
+                placeholder={thread.main === null
+                  ? 'Answer as you would out loud: your approach, trade-offs, and what you would check.'
+                  : 'Reply to the interviewer'}
+                className="w-full resize-y bg-transparent px-4 pt-3.5 pb-1 text-sm leading-relaxed placeholder:text-muted-foreground focus:outline-none"
+              />
+              <div className="flex items-center justify-between gap-3 px-3 pb-3">
+                <span className="text-xs text-muted-foreground pl-1 hidden sm:block">Cmd/Ctrl + Enter to send</span>
+                <button onClick={send}
+                  className="ml-auto inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-sm pl-4 pr-3 py-2 rounded-xl hover:opacity-90 transition">
+                  {draft.trim() ? 'Send' : "Skip, I'd pass"} <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        <button onClick={next}
-          className="mt-5 w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3.5 rounded-xl transition-colors">
-          {buttonLabel} <ArrowRight className="w-4 h-4" />
-        </button>
-        <p className="text-center text-xs text-muted-foreground mt-3">Cmd/Ctrl + Enter to continue</p>
+        {questionDone && (
+          <>
+            <button onClick={finishQuestion}
+              className="mt-5 w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3.5 rounded-xl transition-colors">
+              {last ? 'Finish interview' : 'Next question'} <ArrowRight className="w-4 h-4" />
+            </button>
+            <p className="text-center text-xs text-muted-foreground mt-3">Cmd/Ctrl + Enter to continue</p>
+          </>
+        )}
 
         <ConfirmDialog
           open={confirmEnd}
@@ -218,6 +334,17 @@ export default function Mock({ progress, byId, active, onSave }) {
   }
 
   // ---------- review ----------
+  // A question's score pre-fills its rating until the learner picks one themselves.
+  function setScore(id, sc) {
+    setScores((x) => (x[id]?.pct === sc.pct && x[id]?.status === sc.status ? x : { ...x, [id]: sc }))
+    if (sc.status === 'pending' || sc.status === 'unavailable') return
+    setRatings((r) => (touched[id] ? r : { ...r, [id]: ratingFromScore(sc.pct) }))
+  }
+  const scored = ids.filter((id) => scores[id] && !['pending', 'unavailable'].includes(scores[id].status))
+  const scoring = ids.some((id) => matchEnabled(byId[id]) && (!scores[id] || scores[id].status === 'pending'))
+  const overall = scored.length ? Math.round(scored.reduce((a, id) => a + scores[id].pct, 0) / scored.length) : null
+  const graded = scored.filter((id) => scores[id].status === 'graded').length
+  const ranked = [...scored].sort((a, b) => scores[b].pct - scores[a].pct)
   const totalTime = ids.reduce((s, id) => s + (times[id] || 0), 0)
   const overCount = ids.filter((id) => (times[id] || 0) > limit).length
   const rated = ids.filter((id) => ratings[id]).length
@@ -226,7 +353,33 @@ export default function Mock({ progress, byId, active, onSave }) {
   return (
     <div className="max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold mb-1">Interview review</h1>
-      <p className="text-muted-foreground mb-6">Compare each answer with the senior version, then rate yourself honestly.</p>
+      <p className="text-muted-foreground mb-6">How you did overall, then each question with its key points and the senior answer.</p>
+
+      <div className="bg-card border border-border rounded-2xl p-5 sm:p-6 mb-4">
+        {overall === null ? (
+          <p className="text-sm text-muted-foreground" role="status">{scoring ? 'Scoring your interview…' : 'No score: no question in this interview has key points.'}</p>
+        ) : (
+          <>
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <p><span className="text-4xl font-semibold tabular-nums">{overall}%</span> <span className="text-muted-foreground">of a senior answer, across the interview</span></p>
+              <p className="text-xs text-muted-foreground">
+                {scoring ? 'Still scoring…' : graded === scored.length ? 'Graded for correctness by Haiku' : graded ? `${graded} of ${scored.length} graded by Haiku, the rest by which ideas you mentioned` : 'Based on which ideas you mentioned'}
+              </p>
+            </div>
+            <div className="h-2 rounded-full bg-muted overflow-hidden mt-3" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={overall} aria-label="Interview score">
+              <div className="h-full rounded-full bg-primary transition-[width] duration-500" style={{ width: `${overall}%` }} />
+            </div>
+            <p className="font-semibold mt-3">{interviewVerdict(overall)}</p>
+            {ranked.length > 1 && (
+              <ul className="mt-3 space-y-1.5 text-sm">
+                <li className="flex gap-2"><span className="text-muted-foreground shrink-0 w-24">Strongest</span><span><span className="tabular-nums font-medium">{scores[ranked[0]].pct}%</span> · {byId[ranked[0]].question}</span></li>
+                <li className="flex gap-2"><span className="text-muted-foreground shrink-0 w-24">Biggest gap</span><span><span className="tabular-nums font-medium">{scores[ranked[ranked.length - 1]].pct}%</span> · {byId[ranked[ranked.length - 1]].question}</span></li>
+              </ul>
+            )}
+            <p className="text-xs text-muted-foreground mt-3">Each question's rating below is suggested from its score. Change any you disagree with before saving.</p>
+          </>
+        )}
+      </div>
 
       <div className="grid grid-cols-3 gap-3 mb-6">
         <div className="bg-card border border-border rounded-2xl p-4">
@@ -268,27 +421,45 @@ export default function Mock({ progress, byId, active, onSave }) {
 
               <div className="rounded-xl bg-muted/50 border border-border p-4 mb-4">
                 <p className="text-sm font-semibold text-muted-foreground mb-1">Your answer</p>
-                {answers[id]?.trim()
-                  ? <p className="text-sm whitespace-pre-wrap text-foreground/80">{answers[id]}</p>
+                {threads[id]?.main?.trim()
+                  ? <p className="text-sm whitespace-pre-wrap text-foreground/80">{threads[id].main}</p>
                   : <p className="text-sm text-muted-foreground italic">You didn't write an answer.</p>}
               </div>
 
-              <ul className="space-y-1.5 mb-4">
-                {item.follow_ups.map((fu, j) => (
+              <ol className="space-y-4 mb-4">
+                {(threads[id]?.fus || []).map((f, j) => (
                   <li key={j} className="text-sm">
-                    <span className="font-semibold text-primary mr-1.5">{j + 1}.</span>{followUpText(item, picks[id], j)}
-                    <span className="block text-xs text-muted-foreground ml-5 mt-0.5 flex gap-1.5">
-                      <CornerDownRight className="w-3 h-3 mt-0.5 shrink-0" />Testing: {fu.intent}
-                    </span>
+                    <p><span className="font-semibold text-primary mr-1.5">{j + 1}.</span>{f.text}</p>
+                    <p className="text-xs text-muted-foreground ml-5 mt-0.5 flex gap-1.5">
+                      <CornerDownRight className="w-3 h-3 mt-0.5 shrink-0" />
+                      {f.probe
+                        ? f.probe.quote
+                          ? <span>Asked because you said “{f.probe.quote}”</span>
+                          : f.probe.target === 'scaffold'
+                            ? <span>A simpler step, because your last reply was thin</span>
+                            : f.probe.target === 'reask'
+                              ? <span>Asked again, because your reply didn't answer it</span>
+                            : f.probe.point >= 0
+                              ? <span>Asked to steer you toward: {item.key_points[f.probe.point]}</span>
+                              : <span>Asked to push deeper on your answer</span>
+                        : <span>Testing: {f.intent}</span>}
+                    </p>
+                    <div className="ml-5 mt-1.5 rounded-lg bg-muted/50 border border-border px-3 py-2">
+                      <p className="text-xs text-muted-foreground mb-0.5">You said</p>
+                      {f.reply?.trim()
+                        ? <p className="whitespace-pre-wrap text-foreground/80">{f.reply}</p>
+                        : <p className="italic text-muted-foreground">No reply</p>}
+                    </div>
                   </li>
                 ))}
-              </ul>
+              </ol>
 
+              {matchEnabled(item) && <div className="mb-4"><MockKeyPoints q={item} thread={threads[id]} onScore={(sc) => setScore(id, sc)} /></div>}
               <div className="mb-4"><AnswerLadder q={item} /></div>
 
               <div className="grid grid-cols-3 gap-2">
                 {Object.entries(RATINGS).map(([r, v]) => (
-                  <button key={r} onClick={() => setRatings({ ...ratings, [id]: ratings[id] === r ? undefined : r })}
+                  <button key={r} onClick={() => { setTouched({ ...touched, [id]: true }); setRatings({ ...ratings, [id]: ratings[id] === r ? undefined : r }) }}
                     aria-pressed={ratings[id] === r}
                     className={`rounded-xl border py-2.5 text-sm font-semibold transition-colors ${v.button} ${
                       ratings[id] === r ? 'ring-2 ring-offset-2 ring-offset-card ring-current' : 'opacity-70 hover:opacity-100'

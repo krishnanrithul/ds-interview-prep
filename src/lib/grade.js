@@ -5,13 +5,13 @@ import { safeParse } from './safeStorage'
 export const API_KEY_STORAGE = 'ds-anthropic-key'
 const CACHE_KEY = 'ds-grades'
 const MODEL = 'claude-haiku-4-5'
-const MAX_ANSWER = 2000
+const MAX_ANSWER = 4000 // room for a Mock transcript; Practice answers are usually far shorter
 
 export const getApiKey = () => { try { return localStorage.getItem(API_KEY_STORAGE) || '' } catch { return '' } }
 export const setApiKey = (k) => { try { k ? localStorage.setItem(API_KEY_STORAGE, k) : localStorage.removeItem(API_KEY_STORAGE) } catch { /* ignore */ } }
 
 const hash = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36) }
-const cacheId = (q, answer) => `${q.id}:${hash('v3|' + q.key_points.join('|') + '\n' + answer)}`
+const cacheId = (q, answer) => `${q.id}:${hash('v4|' + q.key_points.join('|') + '\n' + answer)}`
 
 export function cachedGrade(q, answer) {
   return safeParse(CACHE_KEY, {})[cacheId(q, answer)] || null
@@ -24,6 +24,36 @@ function storeGrade(q, answer, result) {
   try { localStorage.setItem(CACHE_KEY, JSON.stringify(all)) } catch { /* full storage: skip caching */ }
 }
 
+// One forced tool call to Claude from the browser with the learner's own key. Returns the tool input.
+export async function callTool({ key, signal, system, user, tool, maxTokens = 800 }) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    signal,
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: maxTokens,
+      system,
+      tools: [tool],
+      tool_choice: { type: 'tool', name: tool.name },
+      messages: [{ role: 'user', content: user }],
+    }),
+  })
+  if (!res.ok) {
+    let msg = `Request failed (${res.status})`
+    try { msg = (await res.json())?.error?.message || msg } catch { /* keep default */ }
+    if (res.status === 401) msg = 'The API key was rejected. Check it in Settings.'
+    throw new Error(msg)
+  }
+  const body = await res.json()
+  return body.content?.find((c) => c.type === 'tool_use')?.input
+}
+
 const SYSTEM = `You grade a candidate's answer to a data science interview question against a list of key points.
 For each key point decide:
 - "correct": the answer makes this point, or an equivalent one, and gets it right. Different wording is fine.
@@ -31,6 +61,7 @@ For each key point decide:
 - "wrong": the answer addresses this point but says something incorrect, or the opposite of it.
 - "missing": the answer does not address it.
 Judge meaning, not wording. Do not give credit for vague gestures toward a point. Do not invent claims the candidate did not make.
+If the answer is an interview transcript, credit only the candidate's lines. Ideas that appear only in the interviewer's questions earn no credit, even if the candidate agreed with them briefly.
 Each note is one short sentence addressed to the candidate. For "wrong", say what is wrong and why. For "partial", say what part is missing. For "missing", say what they should have added. For "correct", note can be empty.
 The summary is one or two sentences: the most important thing to fix, or what made the answer strong.`
 
@@ -68,32 +99,7 @@ export async function gradeAnswer(q, answer, key, signal) {
     `Key points:\n${q.key_points.map((p, i) => `${i + 1}. ${p}`).join('\n')}`,
     `Candidate answer:\n<answer>\n${text}\n</answer>`,
   ].join('\n\n')
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    signal,
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 800,
-      system: SYSTEM,
-      tools: [TOOL],
-      tool_choice: { type: 'tool', name: 'grade' },
-      messages: [{ role: 'user', content: user }],
-    }),
-  })
-  if (!res.ok) {
-    let msg = `Request failed (${res.status})`
-    try { msg = (await res.json())?.error?.message || msg } catch { /* keep default */ }
-    if (res.status === 401) msg = 'The API key was rejected. Check it in Settings.'
-    throw new Error(msg)
-  }
-  const body = await res.json()
-  const input = body.content?.find((c) => c.type === 'tool_use')?.input
+  const input = await callTool({ key, signal, system: SYSTEM, user, tool: TOOL, maxTokens: 800 })
   if (!input?.points) throw new Error('The grader returned an unexpected response.')
   const byN = new Map(input.points.map((p) => [p.n, p]))
   const result = {
@@ -102,7 +108,7 @@ export async function gradeAnswer(q, answer, key, signal) {
       return { status: p?.status || 'missing', note: p?.note || '' }
     }),
     summary: input.summary || '',
-    model: body.model || MODEL,
+    model: MODEL,
   }
   storeGrade(q, text, result)
   return result

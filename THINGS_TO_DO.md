@@ -100,7 +100,7 @@ Recommended next, in order:
 3. ~~Key points for every question (1.1).~~ First pass done 2026-10-05 for all 155 (docs/implemented/16).
 4. ~~Rewrite the key points as short, one-idea points marked draft.~~ Done for all 155 questions (2026-10-05, doc 17); the score is on for every topic. Remaining: review the points topic by topic and drop the draft flag; split points that bundle several details (main cause of false misses).
 5. ~~Real-time coverage score~~ Built in Practice for all topics (doc 17): in-browser embeddings, live "x of n key points covered", key-points panel in the debrief. Still to do: tune the 0.5 threshold on about 30 hand-labeled answers. Overall score ("x% of a senior answer", partial credit from the AI grade) added the same day. Possible next: let the score suggest Solid, Shaky or Missed; grade follow-up replies in the same Haiku call.
-6. ~~Bring-your-own-key setting~~ Built (doc 17): Settings > AI feedback; one Haiku grade per answer in the debrief marks each key point correct, wrong or missing. Check the first real grades by hand (the sandbox test used a mocked response). Next: reactive Mock (1.5) using the same key points and call.
+6. ~~Bring-your-own-key setting~~ Built (doc 17): Settings > AI feedback; one Haiku grade per answer in the debrief marks each key point correct, wrong or missing. Check the first real grades by hand (the sandbox test used a mocked response). Reactive Mock (1.5) built for Production ML (doc 18): Mock is a back-and-forth and every follow-up is written by Haiku from the conversation so far, guided by the fixed follow-ups, which are also the fallback. Next: check real probes, then widen to other topics.
 
 Still open:
 - Logo: the current mark (dots, trend line, arrow) may resemble others. Plan: contour hill with climbing dots; keep `Logo.jsx` and `public/favicon.svg` in sync; run a real trademark and logo search before public launch.
@@ -108,6 +108,6 @@ Still open:
 - Expert review of the 133 draft questions.
 - Optional explainers: class imbalance and threshold, hierarchical clustering, boosting residuals for LightGBM.
 - Per-follow-up junior and senior answers (1.4), Learn section, phone legends and PWA.
-- Mock layout: all follow-ups stack above one text box. Redo it as a back-and-forth when building 1.5.
+- ~~Mock layout: all follow-ups stack above one text box.~~ Done (doc 18): Mock is a back-and-forth.
 - Phone tap targets: mastery-map tiles are 28 to 32px, below the roughly 44px a finger needs.
 - Draft badge: it appears on 133 of 155 questions, so it no longer stands out. Consider showing it only in Library, or as a quiet note in the debrief.

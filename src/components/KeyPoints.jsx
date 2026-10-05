@@ -55,9 +55,14 @@ function PointList({ q, idx, grade, sims, text }) {
 }
 
 // Debrief panel: overall score, then each key point with its live match or AI verdict.
-export function KeyPointsReview({ q, answer, sims }) {
+// answer: the learner's own words (shown, and used for the live score). gradeText: what Haiku grades,
+// e.g. a labeled Mock transcript; defaults to the answer.
+// onScore({ pct, status }): status is 'graded', 'estimate' (live match only), 'empty' (nothing written),
+// 'pending' (still scoring) or 'unavailable'.
+export function KeyPointsReview({ q, answer, sims, gradeText, onScore }) {
   const text = (answer || '').trim()
-  const [grade, setGrade] = useState(() => (text ? cachedGrade(q, text.slice(0, 2000)) : null))
+  const toGrade = (gradeText || answer || '').trim()
+  const [grade, setGrade] = useState(() => (text ? cachedGrade(q, toGrade.slice(0, 4000)) : null))
   const [state, setState] = useState(grade ? 'done' : 'idle') // idle | busy | done | error | nokey
   const [error, setError] = useState('')
 
@@ -67,17 +72,24 @@ export function KeyPointsReview({ q, answer, sims }) {
     if (!key) { setState('nokey'); return }
     const ctl = new AbortController()
     setState('busy')
-    gradeAnswer(q, text, key, ctl.signal)
+    gradeAnswer(q, toGrade, key, ctl.signal)
       .then((g) => { setGrade(g); setState('done') })
       .catch((e) => { if (e.name !== 'AbortError') { setError(e.message); setState('error') } })
     return () => ctl.abort()
-  }, [q.id, text]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [q.id, toGrade]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const credits = grade
     ? grade.points.map((p) => GRADE_CREDIT[p.status] ?? 0)
     : text ? liveCredits(sims) : q.key_points.map(() => 0) // a blank answer scores 0%
   const pct = scorePct(credits)
   const all = q.key_points.map((_, i) => i)
+  const status = !text ? 'empty'
+    : grade ? 'graded'
+    : state === 'busy' || state === 'idle' ? 'pending'
+    : sims ? 'estimate'
+    : 'unavailable' // no grade and the in-browser matcher couldn't run
+  useEffect(() => { onScore?.({ pct, status }) }, [pct, status]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const counts = grade && grade.points.reduce((a, p) => ({ ...a, [p.status]: (a[p.status] || 0) + 1 }), {})
 
   return (

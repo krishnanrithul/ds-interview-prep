@@ -74,3 +74,14 @@ export function scorePct(credits) {
 
 export const liveCredits = (sims) => sims?.map((s) => (s >= THRESHOLD ? 1 : 0)) ?? null
 export const GRADE_CREDIT = { correct: 1, partial: 0.5, wrong: 0, missing: 0 }
+
+// Suggested self-rating from a score (the learner can change it).
+export const ratingFromScore = (pct) => (pct >= 70 ? 'solid' : pct >= 40 ? 'shaky' : 'missed')
+
+// One-line verdict for a whole Mock interview.
+export function interviewVerdict(pct) {
+  if (pct >= 75) return 'Strong: close to senior level on most questions'
+  if (pct >= 50) return 'A solid base, with gaps to close'
+  if (pct >= 25) return 'Partly there: important ideas were missing'
+  return 'Not ready yet: most key points were missing'
+}
