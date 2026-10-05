@@ -51,3 +51,21 @@ Earlier offline check: off-topic answers scored 0.30 or less on every point.
 - **Grader:** new `partial` status (amber, half credit) for points that are partly right. Grades cached before this change are not reused (versioned cache key).
 - **Tried and removed the same day:** core points (counted double) and senior extras, with "Core 1/3 · Extras 0/3" in the meter and grouped lists in the debrief. Rithul found the split confusing, so it was dropped; the `core` field was removed from the data and the apply script. The "Live estimate · Draft" header label went too: both were author-side terms. The key-point draft flag stays in the data for review, but is not shown to learners.
 - Example, a real k-means answer (how it works and choosing k, nothing on failure modes): live 17% (only "choose k" matched; "assign to centroids" scored 0.45, under the 0.5 line); graded 25% with a mocked response that marks the assignment point partial.
+
+## Update: all topics (2026-10-05)
+- Short, one-idea key points (4 to 6, marked draft) written by hand for the remaining 131 questions, replacing the doc 16 sentence extracts: ML, SQL, Python, Statistics, System Design, Production ML, LLMs & AI, Deep Learning & NLP. All 155 questions now have rewritten points (885 in total), each `"draft": true` in `scripts/key_points/<topic>.json`.
+- `MATCH_TOPICS` removed: the live score and the Haiku grade are on for every question with key points. Settings text updated.
+- Code-shaped points keep the construct names (DENSE_RANK, LAG, df.loc, validate='many_to_one') so answers written as code can match.
+
+### Accuracy check on mixed answers (offline, same model and 0.5 threshold)
+| Answer | Score | Notes |
+|---|---|---|
+| sql-005, bare DENSE_RANK query | 2/5 | Query matched its point at 0.87; also got "ROW_NUMBER vs RANK vs DENSE_RANK" (0.60) without discussing ties: false credit from shared words |
+| sql-005, query plus reasoning | 3/5 | As expected |
+| sql-003, bare LAG query | 3/6 | LAG point 0.84; "count the open gap" 0.53 is a false credit |
+| python-004, prose | 6/6 | Strong answer |
+| python-008, short mixed | 4/6 | As expected |
+| stats-008, prose | 4/6 | "p-value isn't the probability the coin is fair" 0.72: false credit |
+| llm-001, partial (chunk, embed, retrieve) | 0/6 | False misses at 0.34 to 0.40: points that bundle extra detail dilute the match |
+| ml-007, off-topic | 0/5 | All under 0.16 |
+Conclusion: off-topic answers are reliably near zero, but on-topic answers can be off by about one point per question in either direction. The live score is a progress gauge; the Haiku grade is the correctness check. Points that bundle several details are the main source of false misses; splitting them further would help.

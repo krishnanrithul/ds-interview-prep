@@ -226,7 +226,7 @@ export default function Settings({ settings, update, flash }) {
           <div>
             <p className="font-medium">Anthropic API key</p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Optional. Checks whether your answer is right, not just whether it mentions the key points. One Haiku call per answer, roughly $0.004, billed to your key. Your answer and the question go to Anthropic. The key is stored only in this browser and is left out of backups. Currently used for ML Algorithms questions in Practice.
+              Optional. Checks whether your answer is right, not just whether it mentions the key points. One Haiku call per answer, roughly $0.004, billed to your key. Your answer and the question go to Anthropic. The key is stored only in this browser and is left out of backups. Used in Practice.
             </p>
           </div>
           {savedKey ? (

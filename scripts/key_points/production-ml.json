@@ -3,159 +3,195 @@
     {
       "id": "prodml-001",
       "base": "I'd triage first: is the pipeline healthy (missing data, schema change, delayed features)? Then I'd ",
+      "draft": true,
       "points": [
-        "I'd triage first: is the pipeline healthy (missing data, schema change, delayed features)?",
-        "Then I'd compare input distributions (data drift), the prediction distribution, and where labels exist, performance by segment and time (concept drift).",
-        "Label drift is a change in the base rate.",
-        "I'd fix the cheapest cause first.",
-        "If retraining on all history is too expensive, I'd use a recent window, a warm start, or fine-tune only the affected segment, and validate with a backtest.",
-        "Then I'd add telemetry so the next incident is faster to diagnose."
+        "Triage the pipeline first: missing data, schema changes, delayed features",
+        "Compare input distributions for data drift and the prediction distribution",
+        "Where labels exist, check performance by segment and time for concept drift",
+        "Label drift is a change in the base rate",
+        "Fix the cheapest cause first; retrain on a recent window or warm start if needed",
+        "Validate with a backtest and add telemetry for next time"
       ]
     },
     {
       "id": "prodml-002",
       "base": "I'd monitor in layers: system health (latency, errors), data quality, input and prediction drift as ",
+      "draft": true,
       "points": [
-        "I'd monitor in layers: system health (latency, errors), data quality, input and prediction drift as leading indicators, outcome metrics when labels arrive (often delayed), plus segment-level and fairness metrics for a lending model.",
-        "Thresholds are tied to impact and require persistence over several days, and only actionable issues page someone, so 100 weekly alerts become a handful.",
-        "I'd automate retraining into a candidate model but require human approval to promote it for a critical model.",
-        "Automate detection and preparation, and keep a human on the irreversible step."
+        "Monitor in layers: system health, data quality, input and prediction drift",
+        "Add outcome metrics when delayed labels arrive",
+        "Track segment-level and fairness metrics",
+        "Tie thresholds to impact and require persistence over several days",
+        "Page only for actionable issues",
+        "Automate retraining a candidate but keep human approval to promote it"
       ]
     },
     {
       "id": "prodml-003",
       "base": "I'd measure first: approval and error rates by group (demographic parity, equalized odds), and invol",
+      "draft": true,
       "points": [
-        "I'd measure first: approval and error rates by group (demographic parity, equalized odds), and involve legal and compliance, since in lending this is a regulatory issue.",
-        "Removing protected attributes doesn't help when proxies like zip code or employer carry the signal.",
-        "So I'd audit the features, drop or constrain the proxies, and consider fairness-constrained training or threshold adjustments, evaluated against a less-discriminatory alternative.",
-        "The accuracy-versus-fairness tradeoff is a business, legal and ethical decision, so I'd present the options with numbers for stakeholders to decide and document the choice."
+        "Measure first: approval and error rates by group",
+        "Use fairness metrics like demographic parity and equalized odds",
+        "Involve legal and compliance; in lending it's regulatory",
+        "Removing protected attributes fails when proxies like zip code carry the signal",
+        "Audit and constrain proxies, or use fairness-constrained training or thresholds",
+        "The accuracy-fairness tradeoff is a business decision: present options and document"
       ]
     },
     {
       "id": "prodml-004",
       "base": "Backtest first, then shadow mode: run old and new side by side on live inputs with no user impact. N",
+      "draft": true,
       "points": [
-        "Backtest first, then shadow mode: run old and new side by side on live inputs with no user impact.",
-        "Next a canary or segment rollout if the forecast drives decisions, with a one-step rollback.",
-        "If the new model is better only for some segments, I'd evaluate each segment by what it is worth to the business and consider routing by segment, not an all-or-nothing switch.",
-        "The monitoring window depends on the feedback loop: long enough to cover at least one full business cycle and for labels to arrive, not a fixed number of days."
+        "Backtest first",
+        "Run in shadow mode side by side on live inputs with no user impact",
+        "Then a canary or segment rollout with one-step rollback",
+        "If better only for some segments, consider routing by segment",
+        "Monitor long enough for a full business cycle and for labels to arrive"
       ]
     },
     {
       "id": "prodml-005",
       "base": "It's a mismatch between the features the model was trained on and the features it receives in produc",
+      "draft": true,
       "points": [
-        "It's a mismatch between the features the model was trained on and the features it receives in production, for example a feature computed in SQL for training and reimplemented in application code for serving.",
-        "It usually comes from duplicated logic, different handling of nulls or time zones, or training features built from data that wouldn't have been available at prediction time.",
-        "I'd prevent it with a single feature definition shared by both paths, such as a feature store, and point-in-time correct joins when building training data.",
-        "To detect it, I'd log the exact features served with each prediction and compare their distributions against training."
+        "Skew is a mismatch between training features and features served in production",
+        "Often from duplicated logic, like SQL for training and app code for serving",
+        "Also from different null or time zone handling, or leaked future data",
+        "Prevent with one shared feature definition, such as a feature store",
+        "Build training data with point-in-time correct joins",
+        "Log served features and compare their distributions with training"
       ]
     },
     {
       "id": "prodml-006",
       "base": "Reproducibility means I can recreate a past model and its predictions. I'd version the code (git com",
+      "draft": true,
       "points": [
-        "Reproducibility means I can recreate a past model and its predictions.",
-        "I'd version the code (git commit), the training data (an immutable snapshot or a time-travel table), the configuration and hyperparameters, and the environment (pinned dependencies or a container image), and record all of it in a model registry entry linked to the model artifact.",
-        "Seeds help, but non-determinism can still come from parallel execution order, library versions, or GPU operations, so I'd test that a re-run lands within tolerance.",
-        "It matters for debugging, for audits in regulated settings like lending, and for trusting comparisons between model versions."
+        "Reproducible means you can recreate a past model and its predictions",
+        "Version the code, data snapshot, config and environment",
+        "Record everything in a model registry linked to the artifact",
+        "Seeds help but parallelism, library versions and GPUs add non-determinism",
+        "Test that a re-run lands within tolerance",
+        "It matters for debugging, audits and trusting version comparisons"
       ]
     },
     {
       "id": "prodml-007",
       "base": "I'd profile a request end to end first, because the time often goes to fetching features or network ",
+      "draft": true,
       "points": [
-        "I'd profile a request end to end first, because the time often goes to fetching features or network calls, not model inference.",
-        "If predictions don't need to be fresh per request, I'd precompute them in batch or cache by key.",
-        "If inference is the bottleneck, options include fewer or cheaper features, a smaller model or distillation, quantization, and batching requests.",
-        "For each option I'd measure the accuracy loss on a holdout and the latency and cost gain, and then pick the cheapest point that still meets the SLA and the business metric."
+        "Profile a request end to end first; time often goes to feature fetch or network",
+        "Precompute predictions in batch or cache them if freshness allows",
+        "Use fewer or cheaper features",
+        "Use a smaller model, distillation or quantization",
+        "Batch inference requests",
+        "Measure accuracy loss against latency and cost gains; pick the cheapest that meets the SLA"
       ]
     },
     {
       "id": "prodml-008",
       "base": "Data (covariate) drift: the distribution of inputs shifts, for instance a lending model sees more yo",
+      "draft": true,
       "points": [
-        "Data (covariate) drift: the distribution of inputs shifts, for instance a lending model sees more young applicants after a marketing campaign.",
-        "Concept drift: the same inputs now imply a different outcome, for instance the same applicant profile defaults more often after a rate rise.",
-        "Data drift is visible from inputs alone with PSI or KS tests; concept drift needs labels or a proxy, so it shows up later.",
-        "Data drift only hurts if the model lands in a region where it is weak, while concept drift always hurts.",
-        "For data drift I'd check segment performance and consider reweighting or retraining; for concept drift I'd retrain on recent data and revisit the features."
+        "Data drift: the input distribution shifts",
+        "Concept drift: the same inputs now lead to different outcomes",
+        "Give a concrete example of each",
+        "Data drift is visible from inputs with PSI or KS; concept drift needs labels",
+        "Data drift hurts only where the model is weak; concept drift always hurts",
+        "Handle data drift with segment checks or reweighting; concept drift by retraining"
       ]
     },
     {
       "id": "prodml-009",
       "base": "The training set only contains applicants the old model liked, so the new model never learns what ha",
+      "draft": true,
       "points": [
-        "The training set only contains applicants the old model liked, so the new model never learns what happens to the ones it rejected, and its estimates for that region are extrapolation.",
-        "If the old model wrongly rejected good applicants, you will never find out, and the loop reinforces itself.",
-        "Mitigations: approve a small random slice of borderline applicants (exploration within risk limits) to get unbiased labels; use reject inference techniques with clear caveats; evaluate on that random holdout instead of on approved-only data; and track population coverage.",
-        "I'd also tell the business what is unknowable and what that costs."
+        "You only observe outcomes for approved applicants: selection bias",
+        "The model never learns about rejected applicants, so it extrapolates",
+        "Wrongly rejected good applicants are never discovered; the loop reinforces itself",
+        "Approve a small random slice of borderline applicants to get unbiased labels",
+        "Use reject inference with caveats and evaluate on the random holdout",
+        "Tell the business what's unknowable and what it costs"
       ]
     },
     {
       "id": "prodml-010",
       "base": "I'd choose by how fast the world changes versus how costly retraining and validation are. A schedule",
+      "draft": true,
       "points": [
-        "I'd choose by how fast the world changes versus how costly retraining and validation are.",
-        "A schedule is simple and predictable and works when drift is gradual; a trigger (drift metric, performance drop, new data volume) saves cost when changes are irregular; continuous learning fits fast-changing, low-risk domains but is the hardest to control.",
-        "Whatever the policy, a retrained model should be validated against the current one on a time-forward holdout, shadowed or canaried, and promoted only if better, with rollback ready.",
-        "Retraining too often adds noise, cost and instability, so I'd start with a schedule plus alerts and adapt."
+        "Decide by how fast the world changes versus the cost of retraining",
+        "A schedule is simple and suits gradual drift",
+        "A trigger on drift or performance saves cost when changes are irregular",
+        "Continuous learning fits fast, low-risk domains but is hardest to control",
+        "Always validate against the current model, shadow or canary, with rollback",
+        "Start with a schedule plus alerts and adapt"
       ]
     },
     {
       "id": "prodml-011",
       "base": "Bin the feature using the training distribution (quantiles for numeric features), compute the propor",
+      "draft": true,
       "points": [
-        "Bin the feature using the training distribution (quantiles for numeric features), compute the proportion in each bin for training and for the recent window, and sum (current minus reference) times ln(current over reference).",
-        "The usual rule of thumb is under 0.1 stable, 0.1 to 0.25 moderate, above 0.25 large, but these are heuristics that depend on the bins and the sample size.",
-        "PSI is blind to shifts within a bin, unstable for sparse bins, and says nothing about whether performance suffered.",
-        "I'd combine it with a KS test or Wasserstein distance, weight by feature importance, monitor the prediction distribution too, and investigate before retraining."
+        "Bin the feature using training quantiles",
+        "Sum (current minus reference) times ln(current over reference) across bins",
+        "Rule of thumb: under 0.1 stable, 0.1 to 0.25 moderate, above 0.25 large",
+        "Thresholds are heuristics that depend on bins and sample size",
+        "PSI misses shifts within bins, is unstable for sparse bins and ignores performance",
+        "Combine with KS or Wasserstein, weight by importance, and investigate before retraining"
       ]
     },
     {
       "id": "prodml-012",
       "base": "I'd ask what pain we have today: features recomputed by several teams, inconsistent definitions, tra",
+      "draft": true,
       "points": [
-        "I'd ask what pain we have today: features recomputed by several teams, inconsistent definitions, training-serving skew from separate offline and online code, or slow onboarding of new models.",
-        "A feature store addresses these with shared definitions, point-in-time correct training data and consistent online serving.",
-        "The costs are real: infrastructure, ownership, backfills and migration effort.",
-        "For a few batch models on one team, well-organized warehouse tables and shared code are enough.",
-        "I'd recommend one when there are several models, real-time serving needs or repeated skew incidents, and start with a pilot on one high-value feature set."
+        "Start from today's pain: recomputed features, inconsistent definitions, skew",
+        "A feature store gives shared definitions and point-in-time training data",
+        "It also gives consistent online serving",
+        "Costs: infrastructure, ownership, backfills and migration",
+        "For a few batch models, warehouse tables and shared code are enough",
+        "Pilot on one high-value feature set when there are many models or real-time needs"
       ]
     },
     {
       "id": "prodml-013",
       "base": "First hour: confirm the drop is real. Has the label or metric definition changed, and how mature are",
+      "draft": true,
       "points": [
-        "First hour: confirm the drop is real.",
-        "Has the label or metric definition changed, and how mature are the labels?",
-        "Then check upstream: schema changes, null rates and distributions of key features, new data sources, broken joins and traffic mix.",
-        "Next, slice precision by segment, channel, merchant and time to find where it dropped; a sharp step on one day suggests a pipeline or product change, a gradual slide suggests adversaries adapting.",
-        "Meanwhile I'd tell stakeholders the impact (extra false positives and customer friction) and an interim mitigation such as raising the threshold.",
-        "Only after diagnosing would I retrain."
+        "Confirm the drop is real: metric definitions and label maturity",
+        "Check upstream: schema, null rates, feature distributions, joins, traffic mix",
+        "Slice precision by segment, channel, merchant and time",
+        "A sudden step suggests a pipeline change; a gradual slide suggests adapting fraudsters",
+        "Tell stakeholders the impact and an interim fix like raising the threshold",
+        "Retrain only after diagnosing"
       ]
     },
     {
       "id": "prodml-014",
       "base": "I'd define a shared baseline for all models: data freshness and volume, schema and null checks, pred",
+      "draft": true,
       "points": [
-        "I'd define a shared baseline for all models: data freshness and volume, schema and null checks, prediction distribution, latency and error rate, and performance once labels arrive.",
-        "Models then add their own business metrics.",
-        "Alerts get severity tiers: page only for outages or clear customer harm, ticket for slow degradation, dashboard for the rest, each with a named owner and a runbook.",
-        "To avoid fatigue I'd tune thresholds on history, group related alerts, and review alert precision (what fraction needed action) each quarter, retiring noisy ones.",
-        "A central platform, with team-owned response."
+        "Define a shared baseline for every model",
+        "Baseline: freshness, volume, schema, nulls, prediction distribution, latency, errors",
+        "Teams add their own business metrics",
+        "Severity tiers: page for outages, ticket for degradation, dashboard for the rest",
+        "Each alert has an owner and a runbook",
+        "Tune thresholds, group alerts and review alert precision to retire noisy ones"
       ]
     },
     {
       "id": "prodml-015",
       "base": "First I'd work out what the overrides mean by slicing them by reviewer, case type and model confiden",
+      "draft": true,
       "points": [
-        "First I'd work out what the overrides mean by slicing them by reviewer, case type and model confidence.",
-        "Heavy overrides concentrated in one segment suggest the model is wrong there; scattered overrides from a few reviewers suggest preference or inconsistency; overrides explained by information the model doesn't see suggest a missing feature.",
-        "I'd audit a sample against real outcomes, where they exist, to see who is right.",
-        "Using overrides as labels is useful but risky: they carry reviewer biases, and if reviewers anchor on the model the signal is contaminated.",
-        "I'd also watch the opposite failure, rubber-stamping, by measuring agreement on cases where the model is known to be wrong."
+        "Slice overrides by reviewer, case type and model confidence",
+        "Overrides concentrated in a segment suggest the model is wrong there",
+        "Overrides from a few reviewers suggest preference or inconsistency",
+        "Overrides using information the model lacks suggest a missing feature",
+        "Audit a sample against real outcomes to see who is right",
+        "Overrides as labels carry reviewer bias; also watch for rubber-stamping"
       ]
     }
   ]

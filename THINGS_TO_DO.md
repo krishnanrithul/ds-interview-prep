@@ -98,8 +98,8 @@ Recommended next, in order:
 1. Push any local commits (the sandbox has no GitHub credentials).
 2. Review the variants, topic by topic, and flip `"draft"` to false for the good ones. Start with ML and the 22 real-interview questions.
 3. ~~Key points for every question (1.1).~~ First pass done 2026-10-05 for all 155 (docs/implemented/16).
-4. Rewrite the key points as short, one-idea points marked draft. Done for ML Algorithms (2026-10-05, doc 17). Remaining: the other 8 topics, starting with ML and the 22 real-interview questions; add each topic to `MATCH_TOPICS` once rewritten. Review the ML Algorithms points and drop their draft flag.
-5. ~~Real-time coverage score~~ Built for ML Algorithms in Practice (doc 17): in-browser embeddings, live "x of n key points covered", key-points panel in the debrief. Still to do: tune the 0.5 threshold on about 30 hand-labeled answers. Overall score ("x% of a senior answer", partial credit from the AI grade) added the same day. Possible next: let the score suggest Solid, Shaky or Missed; grade follow-up replies in the same Haiku call.
+4. ~~Rewrite the key points as short, one-idea points marked draft.~~ Done for all 155 questions (2026-10-05, doc 17); the score is on for every topic. Remaining: review the points topic by topic and drop the draft flag; split points that bundle several details (main cause of false misses).
+5. ~~Real-time coverage score~~ Built in Practice for all topics (doc 17): in-browser embeddings, live "x of n key points covered", key-points panel in the debrief. Still to do: tune the 0.5 threshold on about 30 hand-labeled answers. Overall score ("x% of a senior answer", partial credit from the AI grade) added the same day. Possible next: let the score suggest Solid, Shaky or Missed; grade follow-up replies in the same Haiku call.
 6. ~~Bring-your-own-key setting~~ Built (doc 17): Settings > AI feedback; one Haiku grade per answer in the debrief marks each key point correct, wrong or missing. Check the first real grades by hand (the sandbox test used a mocked response). Next: reactive Mock (1.5) using the same key points and call.
 
 Still open:

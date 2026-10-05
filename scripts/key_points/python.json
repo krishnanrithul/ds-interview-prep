@@ -3,185 +3,221 @@
     {
       "id": "python-001",
       "base": "Built-in importance (gain or weight) is biased toward high-cardinality features and splits credit ar",
+      "draft": true,
       "points": [
-        "Built-in importance (gain or weight) is biased toward high-cardinality features and splits credit arbitrarily among correlated ones.",
-        "I'd compute permutation importance or SHAP on held-out data, and get confidence intervals by repeating over bootstrap resamples or CV folds and reporting the spread.",
-        "For correlated features I'd group them and permute the group together.",
-        "For stakeholders I'd use SHAP, because per-prediction explanations are what non-technical people want to see."
+        "Built-in gain importance is biased toward high-cardinality features",
+        "Built-in importance splits credit arbitrarily between correlated features",
+        "Use permutation importance or SHAP on held-out data",
+        "Get confidence intervals by repeating over bootstrap samples or CV folds",
+        "Permute correlated features together as a group",
+        "Use SHAP for stakeholders because it explains individual predictions"
       ]
     },
     {
       "id": "python-002",
       "base": "I'd layer the checks: schema and types, null rates, ranges, uniqueness, freshness and volume, then d",
+      "draft": true,
       "points": [
-        "I'd layer the checks: schema and types, null rates, ranges, uniqueness, freshness and volume, then distribution checks against a recent baseline.",
-        "Each check has a severity: hard failures block the pipeline, soft ones warn.",
-        "A high-importance feature jumping to 50% missing should fail or fall back to the last good data, not be silently imputed.",
-        "Treat it as a contract with upstream: send alerts to the owning team with the failing check and sample rows, and batch them into one daily digest instead of a flood."
+        "Layer checks: schema, types, null rates, ranges, uniqueness, freshness, volume",
+        "Add distribution checks against a recent baseline",
+        "Give each check a severity: hard failures block, soft ones warn",
+        "A key feature suddenly 50% missing should fail or fall back, not be silently imputed",
+        "Treat it as a contract: alert the upstream owner with the failing check and sample rows",
+        "Batch alerts into a daily digest to avoid a flood"
       ]
     },
     {
       "id": "python-003",
       "base": "I'd use rolling-origin (walk-forward) evaluation: at each cutoff, build features from data available",
+      "draft": true,
       "points": [
-        "I'd use rolling-origin (walk-forward) evaluation: at each cutoff, build features from data available at that time, train, forecast the next horizon, then advance the cutoff.",
-        "I'd respect real publication lags, such as payments recorded days late, or the features contain information that wouldn't exist live.",
-        "A backtest RMSE of 0.05 against 0.2 live usually means leakage, a different data-availability timeline, or a regime shift.",
-        "I'd rebuild the live features at the same cutoff and compare them with the backtest features."
+        "Use rolling-origin walk-forward evaluation",
+        "At each cutoff build features only from data available then, train, forecast, advance",
+        "Respect real publication lags like late-recorded payments",
+        "Much better backtest than live error suggests leakage, timeline mismatch or regime shift",
+        "Rebuild live features at the same cutoff and compare with backtest features"
       ]
     },
     {
       "id": "python-004",
       "base": "Duplicate keys on both sides produce a many-to-many join, so every match is multiplied. I'd diagnose",
+      "draft": true,
       "points": [
-        "Duplicate keys on both sides produce a many-to-many join, so every match is multiplied.",
-        "I'd diagnose it by checking df[key].is_unique and the duplicate counts on each side before merging.",
-        "To prevent it I'd state the expected relationship with merge(..., validate='many_to_one'), which raises an error if the right-hand keys aren't unique, and use indicator=True to see which rows matched.",
-        "Dropping duplicates afterward hides the problem.",
-        "I'd also compare row counts before and after every join, because inner joins can silently drop rows and left joins can silently introduce NaNs."
+        "Duplicate keys on both sides make a many-to-many join that multiplies rows",
+        "Check key uniqueness and duplicate counts before merging",
+        "Use merge validate='many_to_one' to raise an error on unexpected duplicates",
+        "Use indicator=True to see which rows matched",
+        "Dropping duplicates afterward hides the problem",
+        "Compare row counts before and after every join"
       ]
     },
     {
       "id": "python-005",
       "base": "I'd avoid loading everything. First I'd read only the needed columns and set compact dtypes (int32, ",
+      "draft": true,
       "points": [
-        "I'd avoid loading everything.",
-        "First I'd read only the needed columns and set compact dtypes (int32, category).",
-        "Then I'd either process in chunks and aggregate incrementally, or use an engine that works out of core, like DuckDB or Polars in lazy mode, which can query the CSV directly.",
-        "If I'll reuse the data, I'd convert it once to Parquet: columnar, compressed, and much faster to scan.",
-        "I'd move to Spark or a warehouse when the data keeps growing, several people need it, or the jobs must run on a schedule."
+        "Don't load everything into memory",
+        "Read only needed columns with compact dtypes like int32 and category",
+        "Process in chunks and aggregate incrementally",
+        "Or use an out-of-core engine like DuckDB or lazy Polars",
+        "Convert once to Parquet if the data will be reused",
+        "Move to Spark or a warehouse when data grows or jobs are shared and scheduled"
       ]
     },
     {
       "id": "python-006",
       "base": "I'd test at three levels. Transformations get unit tests with tiny hand-made inputs and expected out",
+      "draft": true,
       "points": [
-        "I'd test at three levels.",
-        "Transformations get unit tests with tiny hand-made inputs and expected outputs, including edge cases like nulls and empty groups.",
-        "The data gets schema and quality checks (types, ranges, null rates, uniqueness) that run in the pipeline.",
-        "The model gets regression tests: train on a small fixed dataset with a fixed seed and assert metrics stay above a floor, and compare new results to a stored baseline so a silent quality drop fails CI.",
-        "For randomness I'd set seeds and use tolerances instead of exact equality.",
-        "Fast tests run on every commit, and heavier end-to-end runs on a schedule."
+        "Unit-test transformations with tiny hand-made inputs and expected outputs",
+        "Include edge cases like nulls and empty groups",
+        "Run schema and data quality checks inside the pipeline",
+        "Regression-test the model on a fixed dataset and seed with a metric floor",
+        "Use seeds and tolerances for randomness instead of exact equality",
+        "Fast tests on every commit; heavier end-to-end runs on a schedule"
       ]
     },
     {
       "id": "python-007",
       "base": "List: ordered, mutable, linear-time membership. Tuple: ordered and immutable, hashable if its conten",
+      "draft": true,
       "points": [
-        "Tuple: ordered and immutable, hashable if its contents are, good for fixed records and dict keys.",
-        "Set: unordered unique items with average constant-time membership.",
-        "Dict: key-value mapping with average constant-time lookup, insertion-ordered in modern Python.",
-        "For repeated membership checks on a million items I convert the list to a set once, because a list would scan every item on each check.",
-        "Lists cannot be dict keys because they are mutable and unhashable.",
-        "I choose by the access pattern: ordered iteration, fast lookups, deduplication or a fixed record."
+        "List: ordered, mutable, linear-time membership",
+        "Tuple: ordered, immutable, hashable, good for fixed records and dict keys",
+        "Set: unique items with constant-time membership",
+        "Dict: key-value mapping with constant-time lookup, insertion-ordered",
+        "Convert a list to a set once for repeated membership checks",
+        "Choose by access pattern: iteration, lookup, deduplication or fixed record"
       ]
     },
     {
       "id": "python-008",
       "base": "The expression first selects rows, which can return a copy, and then assigns the column into that te",
+      "draft": true,
       "points": [
-        "The expression first selects rows, which can return a copy, and then assigns the column into that temporary object, so the original DataFrame never changes, or pandas warns that it can't tell.",
-        "The fix is a single indexing call: df.loc[df['score'] > 0, 'label'] = 1, or np.where when creating a column.",
-        "Silencing the warning or adding .copy() only hides the problem.",
-        "In recent pandas, copy-on-write means chained assignment never modifies the original, which removes the ambiguity but breaks old code that relied on it.",
-        "I'd make writes explicit and cover them with a test."
+        "It's chained assignment: the first selection can return a copy",
+        "The assignment lands on a temporary object, so the original doesn't change",
+        "Fix with one indexing call: df.loc[df['score'] > 0, 'label'] = 1",
+        "np.where also works when creating a column",
+        "Silencing the warning or adding .copy() only hides the problem",
+        "With copy-on-write, chained assignment never modifies the original"
       ]
     },
     {
       "id": "python-009",
       "base": "Count TP, FP and FN in one pass over zip(y_true, y_pred); precision = TP / (TP + FP) and recall = TP",
+      "draft": true,
       "points": [
-        "Count TP, FP and FN in one pass over zip(y_true, y_pred); precision = TP / (TP + FP) and recall = TP / (TP + FN).",
-        "Edge cases: unequal lengths should raise an error, no predicted positives leaves precision undefined, and no actual positives leaves recall undefined.",
-        "I'd return 0.0 or NaN explicitly and document it, like a zero_division parameter, instead of letting ZeroDivisionError happen.",
-        "For multiclass I'd compute per class and report macro, micro or weighted averages depending on whether rare classes matter.",
-        "I'd test against sklearn on random inputs plus hand-built degenerate cases."
+        "Count TP, FP and FN in one pass over zip(y_true, y_pred)",
+        "Precision = TP / (TP + FP); recall = TP / (TP + FN)",
+        "Unequal input lengths should raise an error",
+        "No predicted or actual positives leaves a metric undefined: return 0 or NaN explicitly",
+        "For multiclass report macro, micro or weighted averages",
+        "Test against sklearn on random and degenerate inputs"
       ]
     },
     {
       "id": "python-010",
       "base": "A generator is a function (or expression) that yields values lazily: it computes the next item only ",
+      "draft": true,
       "points": [
-        "A generator is a function (or expression) that yields values lazily: it computes the next item only when asked, so memory use does not grow with the data.",
-        "That suits pipelines that read a large file line by line, transform each record, and write it out, since stages can be chained without ever holding everything.",
-        "The trade-offs: you can iterate once, you can't index or take len() without consuming it, and iterating twice silently yields nothing the second time, a classic bug.",
-        "If I need several passes or random access I materialize a list or reload the source.",
-        "For heavy numeric work I'd still prefer vectorized operations on chunks over item-at-a-time loops."
+        "A generator yields values lazily, one at a time",
+        "Memory stays flat regardless of data size",
+        "Suits streaming a large file through chained transform stages",
+        "You can iterate only once; a second pass silently yields nothing",
+        "No indexing or len() without consuming it",
+        "Use a list for multiple passes; prefer vectorized chunks for numeric work"
       ]
     },
     {
       "id": "python-011",
       "base": "Count with collections.Counter in linear time, then use heapq.nlargest(k, counts.items(), key=...), ",
+      "draft": true,
       "points": [
-        "Count with collections.Counter in linear time, then use heapq.nlargest(k, counts.items(), key=...), which costs O(m log k) for m distinct items instead of sorting all of them; Counter.most_common(k) does this.",
-        "Memory is proportional to the number of distinct items.",
-        "If a stream has too many distinct values to hold, I'd switch to an approximate method such as a Count-Min Sketch with a heap, or the Misra-Gries algorithm, and say that counts become estimates.",
-        "I'd also define tie-breaking (alphabetical or first seen) so results are deterministic."
+        "Count with collections.Counter in linear time",
+        "Use heapq.nlargest or Counter.most_common(k) instead of sorting everything",
+        "The heap costs O(m log k) for m distinct items",
+        "Memory grows with the number of distinct items",
+        "For huge streams use Count-Min Sketch or Misra-Gries; counts become estimates",
+        "Define tie-breaking so results are deterministic"
       ]
     },
     {
       "id": "python-012",
       "base": "The default list is evaluated once at definition time and stored on the function, so every call that",
+      "draft": true,
       "points": [
-        "The default list is evaluated once at definition time and stored on the function, so every call that omits items mutates the same list.",
-        "Items leak across calls, and in a long-running service even across users.",
-        "The standard fix is items=None and then items = [] inside the function when it is None.",
-        "The same trap affects dicts, sets and dataclass fields, where field(default_factory=list) is the equivalent.",
-        "It is a good example of a bug that tests miss: each test passes alone but fails when run in a different order."
+        "The default list is created once at definition time",
+        "Every call that omits items mutates the same shared list",
+        "Items leak across calls, even across users in a long-running service",
+        "Fix: items=None, then create a new list inside the function",
+        "Same trap for dicts and sets; dataclasses use field(default_factory=list)",
+        "Tests miss it because each passes alone but fails in a different order"
       ]
     },
     {
       "id": "python-013",
       "base": "I'd refactor the cells into pure functions with explicit inputs and outputs and no hidden notebook s",
+      "draft": true,
       "points": [
-        "I'd refactor the cells into pure functions with explicit inputs and outputs and no hidden notebook state, put them in a package with pinned dependencies, and add unit tests for edge cases such as empty frames, NaNs and unexpected categories.",
-        "I'd add data validation at the boundary (schema, ranges, null rates) that fails loudly with a clear message.",
-        "The same functions must serve training and inference to avoid skew.",
-        "Add logging, config instead of hardcoded paths, code review and a CI run.",
-        "The notebook stays as documentation or exploration and calls the package rather than owning the logic."
+        "Refactor cells into pure functions with explicit inputs and no notebook state",
+        "Package them with pinned dependencies",
+        "Unit-test edge cases like empty frames, NaNs and unexpected categories",
+        "Validate data at the boundary and fail loudly",
+        "Use the same functions for training and inference to avoid skew",
+        "Add logging, config, code review and CI; the notebook calls the package"
       ]
     },
     {
       "id": "python-014",
       "base": "First I'd check whether it can be vectorized with pandas, NumPy or Polars, or pushed to the warehous",
+      "draft": true,
       "points": [
-        "First I'd check whether it can be vectorized with pandas, NumPy or Polars, or pushed to the warehouse as SQL, which often beats naive parallel Python by a wide margin.",
-        "If it is CPU-bound and has to be Python, use processes, because the GIL stops threads from running Python bytecode in parallel; threads suit I/O-bound work.",
-        "Multiprocessing has costs: pickling data between processes, duplicated memory and per-task overhead, so I'd partition into large chunks and avoid shipping big objects around.",
-        "Beyond one machine I'd use Spark, Dask or the warehouse.",
-        "And I'd profile first so I parallelize the real bottleneck."
+        "First try vectorizing with pandas, NumPy or Polars, or push it to SQL",
+        "For CPU-bound Python use processes, because the GIL blocks threads",
+        "Threads suit I/O-bound work",
+        "Multiprocessing costs pickling, duplicated memory and task overhead, so use large chunks",
+        "Beyond one machine use Spark, Dask or the warehouse",
+        "Profile first to parallelize the real bottleneck"
       ]
     },
     {
       "id": "python-015",
       "base": "Initialize k centers by sampling points (ideally k-means++), then repeat: compute distances from eve",
+      "draft": true,
       "points": [
-        "Initialize k centers by sampling points (ideally k-means++), then repeat: compute distances from every point to every center with broadcasting, assign each point to its nearest center with argmin, and set each center to the mean of its points.",
-        "If a cluster is empty, re-seed it from a far-away point.",
-        "Stop when assignments stop changing or the centers move less than a tolerance, with an iteration cap.",
-        "Run it several times with different seeds and keep the lowest within-cluster sum of squares.",
-        "Before trusting it I'd check that features are scaled and that the clusters are stable and interpretable."
+        "Initialize centers by sampling points, ideally k-means++",
+        "Compute point-to-center distances with broadcasting and assign with argmin",
+        "Move each center to the mean of its points",
+        "Re-seed empty clusters",
+        "Stop when assignments stop changing or within tolerance, with an iteration cap",
+        "Run several seeds, keep the lowest inertia, and check scaling and stability"
       ]
     },
     {
       "id": "python-016",
       "base": "With X as an n by d matrix, predictions are X @ w, the gradient of mean squared error is (2/n) * X.T",
+      "draft": true,
       "points": [
-        "With X as an n by d matrix, predictions are X @ w, the gradient of mean squared error is (2/n) * X.T @ (X @ w - y), and each step is w -= lr * gradient, repeated for a fixed number of iterations or until the loss stops improving.",
-        "I'd scale features first, because very different scales make the loss surface a narrow valley that forces a tiny learning rate.",
-        "I'd plot loss per iteration: smooth decline means the rate is fine, oscillation or growth means it is too high, and a very slow decline means it is too low.",
-        "The closed form is exact for small problems; gradient descent scales to large ones and generalizes to other models.",
-        "Mini-batches trade noisier steps for much cheaper updates."
+        "Predictions are X @ w",
+        "MSE gradient is (2/n) * X.T @ (X @ w - y)",
+        "Update w -= lr * gradient until the loss stops improving",
+        "Scale features first or the loss surface becomes a narrow valley",
+        "Plot loss per iteration: oscillation means too high, slow decline means too low",
+        "Closed form is exact for small data; mini-batches make updates cheaper"
       ]
     },
     {
       "id": "python-017",
       "base": "Fit a TF-IDF vectorizer on the documents to get a sparse matrix, transform the query with the same v",
+      "draft": true,
       "points": [
-        "Fit a TF-IDF vectorizer on the documents to get a sparse matrix, transform the query with the same vectorizer, compute cosine similarity as a sparse dot product (rows are L2-normalized by default), and return the top-scoring documents with argsort.",
-        "Cosine ignores document length, which Euclidean distance does not.",
-        "The limits are that it only matches shared words, so synonyms and paraphrases are missed, and that stop words and tokenization choices matter.",
-        "At large scale I'd use an inverted index such as BM25 in a search engine, or embeddings with an approximate nearest-neighbor index, often combining both."
+        "Fit a TF-IDF vectorizer on the documents",
+        "Transform the query with the same vectorizer",
+        "Rank documents by cosine similarity and return the top ones",
+        "Cosine ignores document length",
+        "It only matches shared words, so synonyms and paraphrases are missed",
+        "At scale use BM25 with an inverted index or embeddings with approximate search"
       ]
     }
   ]

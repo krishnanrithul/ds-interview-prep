@@ -3,213 +3,247 @@
     {
       "id": "stats-001",
       "base": "Type I means we ship a change that does nothing, and Type II means we miss a real improvement. Which",
+      "draft": true,
       "points": [
-        "Type I means we ship a change that does nothing, and Type II means we miss a real improvement.",
-        "Which is worse depends on cost.",
-        "For a risky lending policy a false positive can lose money, so I'd use a stricter alpha.",
-        "I'd control Type II by planning power and sample size before the test.",
-        "At p=0.08 after 7 days I wouldn't stop or keep extending until it crosses 0.05.",
-        "The stopping rule is fixed in advance, peeking inflates false positives, and sequential methods are the answer if early looks are needed."
+        "Type I is shipping a change that does nothing; Type II is missing a real improvement",
+        "Which is worse depends on cost; use a stricter alpha for risky decisions",
+        "Control Type II by planning power and sample size before the test",
+        "Don't stop or extend a test to chase p below 0.05",
+        "Fix the stopping rule in advance; peeking inflates false positives",
+        "Use sequential methods if early looks are needed"
       ]
     },
     {
       "id": "stats-002",
       "base": "I'd compute the sample size needed to detect the effect I care about. Detecting 0.1 percentage point",
+      "draft": true,
       "points": [
-        "I'd compute the sample size needed to detect the effect I care about.",
-        "Detecting 0.1 percentage points on a 2% base rate needs a very large sample, so this test is probably underpowered.",
-        "Then I'd translate it into money: 0.1pp of default on the portfolio's average loan size can be expensive, so 'not significant' doesn't mean 'safe'.",
-        "I'd report a confidence interval for the difference.",
-        "Defaults mature after 90 days, so a 30-day window sees incomplete outcomes.",
-        "I'd use early proxies like delinquency, fixed-maturity cohorts, or survival analysis."
+        "A 0.1 point difference on a 2% base rate needs a very large sample",
+        "The test is probably underpowered",
+        "Translate the difference into money: 'not significant' doesn't mean safe",
+        "Report a confidence interval for the difference",
+        "Defaults mature over 90 days, so short windows see incomplete outcomes",
+        "Use early proxies, fixed-maturity cohorts or survival analysis"
       ]
     },
     {
       "id": "stats-003",
       "base": "For example, segment A's overall approval rate looks lower than B's, but within every income band A ",
+      "draft": true,
       "points": [
-        "For example, segment A's overall approval rate looks lower than B's, but within every income band A is approved more often, because A has more applicants in the harder bands.",
-        "I'd detect it by always slicing key metrics by likely confounders and checking whether the direction flips.",
-        "For the board I'd report the stratified or adjusted comparison with a plain explanation, and say which question each number answers, because the aggregate answers a different question than the one they're asking."
+        "The overall comparison reverses within every subgroup",
+        "It happens because the groups have different mixes across subgroups",
+        "Example: approval rates by segment flip within each income band",
+        "Detect it by slicing key metrics by likely confounders",
+        "Report the stratified or adjusted comparison with a plain explanation",
+        "Say which question each number answers"
       ]
     },
     {
       "id": "stats-004",
       "base": "I'd fix four inputs before starting: the baseline metric and its variance, the minimum detectable ef",
+      "draft": true,
       "points": [
-        "I'd fix four inputs before starting: the baseline metric and its variance, the minimum detectable effect that would actually change a decision, the significance level (usually 5%), and the power (usually 80%).",
-        "Sample size grows with variance and with 1 over the MDE squared, so halving the effect needs about four times the users.",
-        "If we can't wait that long, I'd raise the MDE honestly, pick a less noisy metric, or use CUPED, which uses pre-experiment behavior as a covariate to cut variance.",
-        "I'd also commit to the sample size up front and not stop when the p-value first dips below 0.05."
+        "Fix the baseline metric and its variance first",
+        "Choose the minimum detectable effect that would change a decision",
+        "Set significance level (usually 5%) and power (usually 80%)",
+        "Halving the detectable effect needs about four times the users",
+        "If too slow, raise the MDE honestly, pick a less noisy metric or use CUPED",
+        "Commit to the sample size up front and don't stop early"
       ]
     },
     {
       "id": "stats-005",
       "base": "I'd say: 'Our best estimate is X, and given the noise in our data, values from A to B are all plausi",
+      "draft": true,
       "points": [
-        "I'd say: 'Our best estimate is X, and given the noise in our data, values from A to B are all plausible.",
-        "If we repeated this study many times, intervals built this way would capture the true value about 95% of the time.' Strictly, the true value is fixed, so 95% describes the procedure and not this particular interval.",
-        "Quadrupling the sample size roughly halves the width.",
-        "If they want one number, I give the estimate and always pair it with the range, and say what decision would change within that range."
+        "Give the best estimate plus a range of plausible values",
+        "Repeated studies would capture the true value about 95% of the time",
+        "95% describes the procedure, not this particular interval",
+        "Quadrupling the sample roughly halves the width",
+        "Always pair the estimate with the range and say what decision would change"
       ]
     },
     {
       "id": "stats-006",
       "base": "With 20 independent tests at the 5% level, the chance of at least one false positive is 1 - 0.95^20,",
+      "draft": true,
       "points": [
-        "With 20 independent tests at the 5% level, the chance of at least one false positive is 1 - 0.95^20, about 64%, so one p=0.04 is weak evidence.",
-        "I'd check whether this was a pre-declared primary metric.",
-        "If not, I'd treat it as a hypothesis to confirm in a follow-up test.",
-        "For the analysis I'd correct: Bonferroni or Holm control the chance of any false positive but cost power, while Benjamini-Hochberg controls the false discovery rate and is better for exploratory work.",
-        "Going forward I'd pre-register one primary metric plus a few guardrail metrics."
+        "With 20 tests the chance of at least one false positive is about 64%",
+        "One p = 0.04 among 20 metrics is weak evidence",
+        "Check whether it was the pre-declared primary metric",
+        "Treat it as a hypothesis to confirm in a follow-up test",
+        "Correct with Bonferroni or Holm, or Benjamini-Hochberg for false discovery rate",
+        "Pre-register one primary metric plus a few guardrails"
       ]
     },
     {
       "id": "stats-007",
       "base": "Bootstrapping estimates the sampling distribution of any statistic, such as a median, a ratio or an ",
+      "draft": true,
       "points": [
-        "Bootstrapping estimates the sampling distribution of any statistic, such as a median, a ratio or an AUC, by resampling the data with replacement many times and recomputing it.",
-        "I'd use it when there's no clean analytical formula.",
-        "It breaks when observations aren't independent: resampling points of a time series destroys the autocorrelation, so I'd use a block bootstrap.",
-        "It also behaves badly for extreme statistics like the maximum, and for very small samples.",
-        "A thousand or more resamples is usually fine for a standard error, and more for stable tail percentiles."
+        "Bootstrapping resamples the data with replacement and recomputes the statistic",
+        "Use it when there is no clean formula, like for a median, ratio or AUC",
+        "It breaks when observations aren't independent",
+        "Use a block bootstrap for time series",
+        "It behaves badly for extremes like the maximum and for tiny samples",
+        "About a thousand resamples for a standard error; more for tail percentiles"
       ]
     },
     {
       "id": "stats-008",
       "base": "Under a fair coin, 7 or more heads in 10 flips has probability about 17%, and the two-sided p-value ",
+      "draft": true,
       "points": [
-        "Under a fair coin, 7 or more heads in 10 flips has probability about 17%, and the two-sided p-value (7 or more, or 3 or fewer) is about 0.34, so there is no evidence of bias.",
-        "With 70 heads out of 100 the p-value is far below 0.001, which is strong evidence.",
-        "The p-value is the probability of data this extreme if the coin is fair, not the probability that the coin is fair.",
-        "I'd also report a confidence interval for the heads rate, which for 10 flips spans roughly 35% to 93%, to show how little 10 flips tell us.",
-        "One-sided versus two-sided should be chosen before seeing the data."
+        "Under a fair coin, 7 or more heads in 10 has probability about 17%",
+        "The two-sided p-value is about 0.34: no evidence of bias",
+        "70 heads in 100 would be strong evidence",
+        "A p-value isn't the probability that the coin is fair",
+        "Report a confidence interval: about 35% to 93% for 10 flips",
+        "Choose one-sided or two-sided before seeing the data"
       ]
     },
     {
       "id": "stats-009",
       "base": "I'd say: individual users' spending is messy and skewed, but if you repeatedly take samples and aver",
+      "draft": true,
       "points": [
-        "I'd say: individual users' spending is messy and skewed, but if you repeatedly take samples and average them, those averages form a bell shape centered on the true mean, with a spread that shrinks as samples grow.",
-        "That is why we can put a margin of error on an average and compare two groups with a standard test.",
-        "The common misconception is that the data itself becomes normal; it is the distribution of the average.",
-        "How large n must be depends on the skew: 30 is a rough rule for mild skew, but a metric dominated by rare big spenders may need thousands.",
-        "With a heavy-tailed metric I'd check with a bootstrap."
+        "Averages of repeated samples form a bell shape around the true mean",
+        "The spread of the average shrinks as the sample grows",
+        "That's why we can put a margin of error on an average and compare groups",
+        "The data itself doesn't become normal; the average does",
+        "Heavily skewed metrics need much larger samples than 30",
+        "Check heavy-tailed metrics with a bootstrap"
       ]
     },
     {
       "id": "stats-010",
       "base": "It depends on the decision. If we care about total revenue, the mean is the right quantity even thou",
+      "draft": true,
       "points": [
-        "It depends on the decision.",
-        "If we care about total revenue, the mean is the right quantity even though it is noisy, since totals are mean times users.",
-        "If we care about a typical user's experience, the median or a trimmed mean is better.",
-        "For testing the mean, the central limit theorem usually still rescues a t-test at large n, but with heavy tails I'd confirm with a bootstrap interval or reduce variance with CUPED or winsorizing, stating what that does to the quantity being estimated.",
-        "Mann-Whitney tests whether one group tends to produce larger values, not specifically whether medians differ.",
-        "I'd report both mean and median with intervals."
+        "Choose by the decision: total revenue needs the mean",
+        "For the typical user's experience use the median or a trimmed mean",
+        "At large n the CLT still supports a t-test on the mean",
+        "With heavy tails confirm with a bootstrap or reduce variance with CUPED or winsorizing",
+        "Mann-Whitney doesn't specifically test medians",
+        "Report both mean and median with intervals"
       ]
     },
     {
       "id": "stats-011",
       "base": "No. p = 0.03 means that if A and B truly performed the same, data this extreme would show up about 3",
+      "draft": true,
       "points": [
-        "p = 0.03 means that if A and B truly performed the same, data this extreme would show up about 3% of the time.",
-        "It is not the probability that B is better.",
-        "To answer the PM's actual question I'd fit a Bayesian model: put priors on each conversion rate (often weakly informative Beta priors), update with the data, and report P(B > A) from the posterior along with the expected lift and the expected loss if we choose wrong.",
-        "The answer depends on the prior, which should be stated and tested for sensitivity.",
-        "With lots of data and weak priors the two approaches usually agree closely.",
-        "I'd frame it for the PM in terms of decision risk."
+        "No: a p-value isn't the probability that B is better",
+        "p = 0.03 means data this extreme would occur 3% of the time if A and B were equal",
+        "Answer the question with a Bayesian model and priors on each rate",
+        "Report P(B > A), expected lift and expected loss from the posterior",
+        "State the prior and test sensitivity to it",
+        "Frame it for the PM as decision risk"
       ]
     },
     {
       "id": "stats-012",
       "base": "A fixed-horizon p-value is only valid if you look once, at the pre-planned sample size. Stopping whe",
+      "draft": true,
       "points": [
-        "A fixed-horizon p-value is only valid if you look once, at the pre-planned sample size.",
-        "Stopping when it first dips below 0.05 exploits random fluctuation: with daily looks over a few weeks, the real false-positive rate can reach 20 to 30%.",
-        "Options: pre-commit to a sample size and read results once; or use a sequential design such as group-sequential or alpha-spending boundaries, always-valid p-values, or a Bayesian stopping rule with calibrated thresholds.",
-        "If stakeholders need early reads, I'd allow monitoring for harm on guardrail metrics but not for declaring wins.",
-        "Novelty effects and day-of-week cycles are another reason to run full weeks."
+        "A fixed-horizon p-value is valid only for one look at the planned sample size",
+        "Stopping at the first p < 0.05 exploits random fluctuation",
+        "Daily peeking can push false positives to 20 to 30%",
+        "Pre-commit to a sample size, or use a sequential design",
+        "Sequential options: alpha spending, always-valid p-values or Bayesian rules",
+        "Monitor early for harm, not for declaring wins; run full weeks"
       ]
     },
     {
       "id": "stats-013",
       "base": "First I'd learn how discounts were assigned: if marketing targeted engaged customers, or at-risk cus",
+      "draft": true,
       "points": [
-        "First I'd learn how discounts were assigned: if marketing targeted engaged customers, or at-risk customers, the groups differ before treatment.",
-        "I'd map the likely causal structure, then compare like with like: propensity-score matching or weighting, or regression adjustment on pre-treatment covariates only.",
-        "If there is a rollout date, a region or an eligibility cutoff, difference-in-differences or regression discontinuity gives a stronger estimate.",
-        "I'd check covariate balance and run a sensitivity analysis for unmeasured factors.",
-        "Adjustment only handles what we measured, so I'd say so and recommend a small holdout experiment going forward."
+        "First learn how discounts were assigned; targeting creates selection bias",
+        "Map the likely causal structure",
+        "Compare like with like: propensity matching, weighting or regression on pre-treatment covariates",
+        "Use difference-in-differences or regression discontinuity if there's a rollout or cutoff",
+        "Check covariate balance and run a sensitivity analysis",
+        "Adjustment only handles measured factors; recommend a holdout experiment"
       ]
     },
     {
       "id": "stats-014",
       "base": "With p1 and p2 as the arm rates, the standard error of the difference is sqrt(p1(1-p1)/n1 + p2(1-p2)",
+      "draft": true,
       "points": [
-        "With p1 and p2 as the arm rates, the standard error of the difference is sqrt(p1(1-p1)/n1 + p2(1-p2)/n2), and the 95% interval is the difference plus or minus 1.96 times that.",
-        "For about 2% and 100,000 users per arm the standard error is roughly 0.063 percentage points, so differences under about 0.12 points are inside the noise.",
-        "The formula assumes independent users and a large enough n for the normal approximation, both fine here.",
-        "A common error is analyzing clicks or sessions while randomizing users, which understates variance; I'd analyze per user or use cluster-robust errors.",
-        "A bootstrap is a good cross-check."
+        "SE of the difference is sqrt(p1(1-p1)/n1 + p2(1-p2)/n2)",
+        "The 95% interval is the difference plus or minus 1.96 standard errors",
+        "Here the SE is about 0.063 points, so differences under 0.12 are noise",
+        "Assumes independent users and a large enough n",
+        "Analyze per user when randomizing users, not per click or session",
+        "Cross-check with a bootstrap"
       ]
     },
     {
       "id": "stats-015",
       "base": "It can mislead. A/B tests assume one user's outcome doesn't depend on anyone else's assignment. In a",
+      "draft": true,
       "points": [
-        "It can mislead.",
-        "A/B tests assume one user's outcome doesn't depend on anyone else's assignment.",
-        "In a marketplace, treated buyers who grab limited inventory take it from control buyers, so the measured lift overstates what launching to everyone would deliver.",
-        "In social products, treated users influence their control friends, which shrinks the measured effect.",
-        "Better designs randomize at the level where the interaction happens: clusters of connected users, geographies or time-based switchbacks, accepting lower power.",
-        "I'd compare cluster-level and user-level estimates as a diagnostic and consider modelling the equilibrium effect."
+        "Standard tests assume one user's outcome doesn't depend on others' assignment",
+        "In marketplaces, treated users take inventory from control, overstating the lift",
+        "In social products, treated users influence control friends, shrinking the effect",
+        "Randomize where the interaction happens: clusters, geographies or switchbacks",
+        "Accept lower power with cluster randomization",
+        "Compare cluster-level and user-level estimates as a diagnostic"
       ]
     },
     {
       "id": "stats-016",
       "base": "Given a model with parameters, the likelihood is the probability it assigns to the data we saw. Maxi",
+      "draft": true,
       "points": [
-        "Given a model with parameters, the likelihood is the probability it assigns to the data we saw.",
-        "Maximum likelihood chooses the parameters that maximize it.",
-        "For independent points the likelihood is a product, so we maximize the log, which turns it into a sum and avoids underflow.",
-        "Squared error is the negative log-likelihood of Gaussian noise, and cross-entropy is the negative log-likelihood of Bernoulli labels, so training those models is maximum likelihood.",
-        "It can fail with little data, where it overfits, and with perfectly separable classes, where logistic coefficients diverge; priors or regularization fix both."
+        "The likelihood is the probability the model assigns to the observed data",
+        "MLE chooses the parameters that maximize it",
+        "Maximize the log-likelihood: a sum, and no underflow",
+        "Squared error is Gaussian MLE; cross-entropy is Bernoulli MLE",
+        "MLE overfits with little data",
+        "With separable classes logistic coefficients diverge; regularization or priors fix it"
       ]
     },
     {
       "id": "stats-017",
       "base": "Conversions are counts in a channel-by-outcome table, so a chi-square test of independence asks whet",
+      "draft": true,
       "points": [
-        "Conversions are counts in a channel-by-outcome table, so a chi-square test of independence asks whether conversion rate depends on channel.",
-        "It needs independent users and reasonably large expected counts; otherwise use Fisher's exact test.",
-        "A significant result only says some channels differ.",
-        "To find which, I'd run pairwise comparisons with a correction such as Holm or Tukey rather than six uncorrected tests, and report effect sizes with intervals, since a huge sample makes tiny differences significant.",
-        "For revenue per user the analogue is ANOVA, or a rank-based test if the data are heavily skewed."
+        "Use a chi-square test of independence on the channel-by-outcome table",
+        "Needs independent users and large expected counts; otherwise Fisher's exact test",
+        "A significant result only says some channels differ",
+        "Find which with pairwise comparisons corrected by Holm or Tukey",
+        "Report effect sizes with intervals, since big samples make tiny gaps significant",
+        "For revenue use ANOVA or a rank-based test if skewed"
       ]
     },
     {
       "id": "stats-018",
       "base": "A bandit shifts traffic toward better-performing variants as evidence accumulates, which cuts the co",
+      "draft": true,
       "points": [
-        "A bandit shifts traffic toward better-performing variants as evidence accumulates, which cuts the cost of showing a loser.",
-        "That fits headline testing, promotions and recommendations, where options are many, decisions are short-lived and the goal is reward, not a report.",
-        "An A/B test fits product changes where you need an unbiased estimate, a guardrail check and a decision you can defend.",
-        "With a bandit the unequal, adaptive allocation makes estimates for the weaker arms noisy and biased and complicates p-values.",
-        "Thompson sampling draws a plausible rate for each arm from its posterior and plays the best draw.",
-        "If the effect drifts, for example by day of week, a bandit can lock onto a stale winner unless it discounts old data."
+        "A bandit shifts traffic toward better variants as evidence accumulates",
+        "Fits headlines, promotions and recommendations where reward matters more than a report",
+        "Use an A/B test when you need an unbiased estimate and a defensible decision",
+        "Adaptive allocation makes estimates for weaker arms noisy and biased",
+        "Thompson sampling plays the arm with the best draw from its posterior",
+        "If effects drift, a bandit can lock onto a stale winner without discounting"
       ]
     },
     {
       "id": "stats-019",
       "base": "Customers who are still active have an unknown churn time: we only know it is longer than what we ha",
+      "draft": true,
       "points": [
-        "Customers who are still active have an unknown churn time: we only know it is longer than what we have observed.",
-        "Averaging observed lifetimes of churned customers biases the answer downward, and treating active customers as churned at today's date is also wrong.",
-        "Survival analysis handles this censoring.",
-        "A Kaplan-Meier curve estimates the share still subscribed at each tenure, and I would compare curves by plan or cohort.",
-        "To include features I'd use a Cox proportional hazards model, which gives hazard ratios, after checking that the proportionality assumption holds.",
-        "If the goal is a score for who will churn in the next 30 days, a classifier on a fixed window can be simpler."
+        "Active customers are censored: their churn time is only known to be longer",
+        "Averaging only churned customers' lifetimes biases the answer down",
+        "Use survival analysis to handle censoring",
+        "A Kaplan-Meier curve shows the share still subscribed at each tenure",
+        "A Cox model adds features and gives hazard ratios; check proportional hazards",
+        "For a 30-day churn score, a fixed-window classifier can be simpler"
       ]
     }
   ]

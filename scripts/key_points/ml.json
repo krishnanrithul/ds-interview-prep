@@ -3,261 +3,307 @@
     {
       "id": "ml-001",
       "base": "I'd start with the decision the model supports: who gets a retention offer, and what an offer costs ",
+      "draft": true,
       "points": [
-        "I'd start with the decision the model supports: who gets a retention offer, and what an offer costs versus a lost customer.",
-        "Then I'd define churn and the prediction window, build features only from data available at prediction time, split by time, and baseline with logistic regression.",
-        "Churn is imbalanced, so accuracy is meaningless.",
-        "I'd use precision and recall at the top-k the team can actually act on, plus calibration.",
-        "XGBoost is justified if it beats the baseline by enough to matter, and SHAP explains it.",
-        "Production-ready means the false-positive cost is acceptable, not that a metric crossed a number."
+        "Start from the decision: who gets a retention offer, and what it costs versus a lost customer",
+        "Define churn and the prediction window explicitly",
+        "Build features only from data available at prediction time and split by time",
+        "Baseline with logistic regression before a complex model",
+        "Churn is imbalanced, so use precision and recall at an actionable top-k, not accuracy",
+        "Ship when the false-positive cost is acceptable, not when a metric crosses a number"
       ]
     },
     {
       "id": "ml-002",
       "base": "I'd separate data drift (inputs shift, measured with PSI or KS on key features) from model drift (pe",
+      "draft": true,
       "points": [
-        "I'd separate data drift (inputs shift, measured with PSI or KS on key features) from model drift (performance degrades, which needs labels that often arrive late).",
-        "Input and prediction distributions are the leading signal, and real performance follows when labels land.",
-        "The valuable part is the action policy: thresholds tied to impact, and a clear rule for when drift means investigate, retrain, or roll back.",
-        "To avoid alert fatigue I'd alert on a few high-importance features and an aggregate score, not every column."
+        "Separate data drift (inputs shift) from model drift (performance drops)",
+        "Measure input drift with PSI or KS on key features",
+        "Labels arrive late, so input and prediction distributions are the early signal",
+        "Tie thresholds to impact with a rule for investigate, retrain or roll back",
+        "Alert on a few important features and an aggregate score to avoid alert fatigue"
       ]
     },
     {
       "id": "ml-003",
       "base": "History only shows what happened under past budgets. I'd model the demand drivers (revenue plan, att",
+      "draft": true,
       "points": [
-        "History only shows what happened under past budgets.",
-        "I'd model the demand drivers (revenue plan, attrition, ramp time, open requisitions) and treat approved budget as a constraint on supply.",
-        "I'd compare a seasonal baseline, a regression with drivers, and ARIMA using rolling-origin backtests.",
-        "If the model says 150 and Finance budgeted 80, I wouldn't defend or discard the number.",
-        "I'd show the gap, the assumptions driving it, and scenarios.",
-        "A hiring pause is a regime shift, so I'd flag those months instead of learning from them as normal."
+        "History only reflects past budgets, so model the demand drivers",
+        "Drivers include revenue plan, attrition, ramp time and open requisitions",
+        "Treat the approved budget as a constraint on supply",
+        "Compare a seasonal baseline, a driver regression and ARIMA with rolling-origin backtests",
+        "When the forecast conflicts with the budget, show the gap, assumptions and scenarios",
+        "Flag regime shifts like a hiring pause instead of learning from them"
       ]
     },
     {
       "id": "ml-004",
       "base": "Every feature is computed as of a cutoff date using only data available then, via as-of joins or a p",
+      "draft": true,
       "points": [
-        "Every feature is computed as of a cutoff date using only data available then, via as-of joins or a point-in-time feature store.",
-        "I'd verify by recomputing features at past cutoffs.",
-        "'Days since last payment' leaks if it's calculated from the full table.",
-        "From 10,000 candidates I'd prune by domain priors, stability across time, and importance under time-based validation, not on a single fold.",
-        "For credit score missing on 40% of customers, I'd keep missingness as a signal, impute inside a pipeline fit only on training data, and check whether missingness correlates with the target."
+        "Compute every feature as of a cutoff date with point-in-time joins",
+        "Verify by recomputing features at past cutoffs",
+        "Features like days since last payment leak if computed on the full table",
+        "Prune features by domain priors, stability over time and time-based importance",
+        "Keep missingness as a signal and impute inside a pipeline fit on training data",
+        "Check whether missingness correlates with the target"
       ]
     },
     {
       "id": "ml-005",
       "base": "First rule out a pipeline bug: schema, null rates, feature computation, and train/serve skew. Then c",
+      "draft": true,
       "points": [
-        "First rule out a pipeline bug: schema, null rates, feature computation, and train/serve skew.",
-        "Then compare feature and target distributions between 2023 and 2024 and slice performance by segment and month to see where it broke.",
-        "If the world changed, as with the rate spike, it's covariate or concept shift.",
-        "Retraining helps only if the new regime is represented in the data.",
-        "Otherwise I'd add macro features, shorten the training window, or add a guardrail.",
-        "I'd decide with a time-based backtest, not a gut call."
+        "First rule out a pipeline bug: schema, nulls, feature code, train-serve skew",
+        "Compare feature and target distributions between 2023 and 2024",
+        "Slice performance by segment and month to find where it broke",
+        "A changed world means covariate or concept shift",
+        "Retraining helps only if the new regime is in the data",
+        "Otherwise add macro features, shorten the window or add guardrails, chosen by backtest"
       ]
     },
     {
       "id": "ml-006",
       "base": "I'd diagnose before acting. If training and validation error are both high and close, that's bias: u",
+      "draft": true,
       "points": [
-        "I'd diagnose before acting.",
-        "If training and validation error are both high and close, that's bias: use a richer model, better features, or less regularization.",
-        "If training error is low and validation error is much higher, that's variance: more data, stronger regularization, simpler model, or bagging.",
-        "Learning curves show which regime I'm in, and more data mainly helps variance.",
-        "Regularization trades a little extra bias for a larger reduction in variance."
+        "Diagnose before acting by comparing training and validation error",
+        "Both errors high and close means bias: richer model, better features, less regularization",
+        "Low training and much higher validation error means variance",
+        "Fix variance with more data, stronger regularization, a simpler model or bagging",
+        "Learning curves show which regime you are in",
+        "Regularization trades a little bias for a larger cut in variance"
       ]
     },
     {
       "id": "ml-007",
       "base": "A model that always says 'not fraud' is 99.9% accurate, so accuracy tells me nothing. I'd look at pr",
+      "draft": true,
       "points": [
-        "A model that always says 'not fraud' is 99.9% accurate, so accuracy tells me nothing.",
-        "I'd look at precision-recall curves and PR-AUC, because ROC-AUC can stay high when the number of negatives is huge.",
-        "The threshold comes from costs and capacity: missed fraud has a dollar cost, each false alert costs analyst time and customer friction, and the review team can only handle so many cases a day.",
-        "I'd also account for label delay by evaluating on mature cohorts, and remember that unlabeled fraud makes recall look better than it is."
+        "Always predicting not-fraud is 99.9% accurate, so accuracy says nothing",
+        "Use precision-recall curves and PR-AUC rather than ROC-AUC",
+        "Set the threshold from the cost of missed fraud, false alerts and review capacity",
+        "Evaluate on mature cohorts because fraud labels arrive late",
+        "Unlabeled fraud makes recall look better than it is"
       ]
     },
     {
       "id": "ml-008",
       "base": "Random folds mix future and past, so the model can learn patterns from after the test period and the",
+      "draft": true,
       "points": [
-        "Random folds mix future and past, so the model can learn patterns from after the test period and the score is too optimistic.",
-        "I'd use walk-forward validation: train on data up to a cutoff, test on the next period, then move the cutoff forward.",
-        "If the label looks 30 days ahead, I'd leave a 30-day gap between train and test so labels don't overlap.",
-        "Expanding windows use all history and suit stable relationships, while sliding windows adapt faster when behavior drifts.",
-        "Hyperparameter tuning goes inside the training period with the same time-aware splits."
+        "Random k-fold mixes future into training, so scores are too optimistic",
+        "Use walk-forward validation: train up to a cutoff, test on the next period",
+        "Leave a gap between train and test when the label looks ahead",
+        "Expanding windows suit stable relationships; sliding windows adapt to drift",
+        "Tune hyperparameters inside the training period with time-aware splits"
       ]
     },
     {
       "id": "ml-009",
       "base": "Not automatically. First I'd check the difference is real with a confidence interval from bootstrapp",
+      "draft": true,
       "points": [
-        "Not automatically.",
-        "First I'd check the difference is real with a confidence interval from bootstrapping or repeated time-based folds, and translate it into the business metric (for example, extra customers retained per month) to see whether it covers the costs.",
-        "Then the non-metric factors: whether decisions must be explained, latency limits, how fragile the model is to drift, and the ongoing monitoring and retraining burden.",
-        "If the gain is small, I'd ship logistic regression, or ship the complex model only with SHAP-based explanations and monitoring in place."
+        "Don't ship automatically on a 1% AUC gain",
+        "Check the gain is real with a confidence interval from bootstrap or repeated folds",
+        "Translate the gain into the business metric and weigh it against costs",
+        "Consider explainability, latency, fragility to drift and maintenance burden",
+        "If the gain is small, ship logistic regression or add SHAP and monitoring"
       ]
     },
     {
       "id": "ml-010",
       "base": "I'd start by understanding why values are missing. If missingness is random, simple imputation is fi",
+      "draft": true,
       "points": [
-        "I'd start by understanding why values are missing.",
-        "If missingness is random, simple imputation is fine.",
-        "If it depends on the value itself, such as high earners skipping an income field, mean imputation biases the data, and I'd add a missing-indicator feature.",
-        "Imputation goes inside the pipeline, fitted on training data only, to avoid leakage.",
-        "Tree-based models like XGBoost can handle missing values natively.",
-        "Real ones carry information, so I'd keep them and use robust methods or transformations like log, and only remove confirmed errors."
+        "First understand why values are missing",
+        "If missingness depends on the value, mean imputation biases; add a missing indicator",
+        "Fit imputation inside the pipeline on training data only to avoid leakage",
+        "Tree models like XGBoost handle missing values natively",
+        "Check whether outliers are errors or real extremes",
+        "Keep real outliers with robust methods or log transforms; remove only confirmed errors"
       ]
     },
     {
       "id": "ml-011",
       "base": "That gap suggests the model has memorized training patterns that don't generalize, meaning high vari",
+      "draft": true,
       "points": [
-        "That gap suggests the model has memorized training patterns that don't generalize, meaning high variance.",
-        "Before changing the model I'd confirm the split is valid: no duplicates across sets, similar distributions, no leakage.",
-        "Then I'd plot learning curves: if validation error keeps falling with more data, collecting more helps; if it plateaus, reduce complexity.",
-        "I'd try, roughly in this order: a simpler model or stronger regularization, early stopping, feature pruning, more or augmented data, and cross-validation for a steadier estimate.",
-        "Each change is judged on the validation gap and the validation score together."
+        "A large train-validation gap means overfitting, high variance",
+        "First confirm the split is valid: no duplicates, similar distributions, no leakage",
+        "Use learning curves to see whether more data would help",
+        "Try a simpler model or stronger regularization and early stopping",
+        "Also feature pruning, more or augmented data, and cross-validation",
+        "Judge each change on the gap and the validation score together"
       ]
     },
     {
       "id": "ml-012",
       "base": "Bagging, as in a random forest, trains many deep, high-variance trees independently on bootstrap sam",
+      "draft": true,
       "points": [
-        "Bagging, as in a random forest, trains many deep, high-variance trees independently on bootstrap samples and averages them.",
-        "Averaging cancels much of the variance, so the individual trees can be deep.",
-        "Boosting builds trees sequentially, each fitting the errors of the ensemble so far, which reduces bias, so each tree can be shallow and weak; the learning rate scales how much each one contributes.",
-        "Boosting usually reaches higher accuracy on tabular data but is more sensitive to noisy labels and needs more tuning.",
-        "A random forest is a robust, low-tuning baseline that is hard to overfit badly.",
-        "I'd start with a forest and move to XGBoost when accuracy matters."
+        "Bagging trains deep trees independently on bootstrap samples and averages them",
+        "Averaging cancels variance, so random forest trees can be deep",
+        "Boosting builds trees sequentially, each fitting the remaining errors, reducing bias",
+        "Boosting trees are shallow and scaled by a learning rate",
+        "Boosting is usually more accurate but more sensitive to noisy labels and tuning",
+        "A random forest is a robust low-tuning baseline"
       ]
     },
     {
       "id": "ml-013",
       "base": "It depends on how the score is used. If we only rank cases and take the top K, AUC is what matters. ",
+      "draft": true,
       "points": [
-        "It depends on how the score is used.",
-        "If we only rank cases and take the top K, AUC is what matters.",
-        "If we use the output as a probability, for expected loss, pricing or cost-based thresholds, a score of 0.8 that really means 50% leads to wrong decisions.",
-        "I'd check with a reliability diagram and the Brier score, then recalibrate on a held-out set with Platt scaling or isotonic regression, which leaves AUC roughly unchanged.",
-        "Boosted trees and naive Bayes often need it; logistic regression is usually better behaved.",
-        "Calibration also drifts when class balance shifts, so I'd monitor it."
+        "It depends on whether scores are used for ranking or as probabilities",
+        "For top-K ranking, AUC is what matters",
+        "For expected loss, pricing or cost thresholds, miscalibration causes wrong decisions",
+        "Check with a reliability diagram and the Brier score",
+        "Recalibrate on held-out data with Platt scaling or isotonic regression",
+        "Monitor calibration because it drifts when class balance shifts"
       ]
     },
     {
       "id": "ml-014",
       "base": "One-hot would create 50,000 sparse columns, slow training and overfit rare values. Options: frequenc",
+      "draft": true,
       "points": [
-        "One-hot would create 50,000 sparse columns, slow training and overfit rare values.",
-        "Options: frequency or count encoding; target encoding computed out of fold with smoothing toward the global mean so rare categories can't memorize the label; learned embeddings for neural models; hashing; or grouping rare values into 'other' and using a coarser hierarchy such as region instead of zip.",
-        "CatBoost and LightGBM handle categories natively.",
-        "I'd always plan for unseen values at serving with a default bucket, and validate with a time-based split to check that the encoding isn't leaking."
+        "One-hot encoding 50,000 values is sparse, slow and overfits rare values",
+        "Use frequency or count encoding",
+        "Target encoding must be out of fold and smoothed toward the global mean",
+        "Other options: embeddings, hashing, grouping rare values or a coarser hierarchy",
+        "CatBoost and LightGBM handle categories natively",
+        "Plan for unseen values at serving and validate with a time-based split"
       ]
     },
     {
       "id": "ml-015",
       "base": "For prediction, mostly no: a regularized linear model and a boosted model predict about as well. In ",
+      "draft": true,
       "points": [
-        "For prediction, mostly no: a regularized linear model and a boosted model predict about as well.",
-        "In a linear model the coefficients become unstable with large standard errors, so individual signs and sizes can't be trusted even though the combined effect is fine; ridge regularization or dropping one helps.",
-        "Trees use whichever feature gives the split first, so importance gets split or flips between runs.",
-        "For explanation, SHAP divides credit between them, so I'd report them as a group or remove one.",
-        "I drop a feature when interpretation, collection cost or stability matters, not as a reflex."
+        "For prediction, correlated features mostly don't matter",
+        "In a linear model, coefficients become unstable and individual signs can't be trusted",
+        "Ridge regularization or dropping one feature stabilizes a linear model",
+        "In trees, importance gets split between the two or flips between runs",
+        "For explanation, report correlated features as a group or remove one",
+        "Drop a feature for interpretation, cost or stability, not as a reflex"
       ]
     },
     {
       "id": "ml-016",
       "base": "I'd turn it into expected value: flagging a customer costs the discount, and pays off only if the cu",
+      "draft": true,
       "points": [
-        "I'd turn it into expected value: flagging a customer costs the discount, and pays off only if the customer would have churned and the discount saves them.",
-        "So I need the cost of the offer, the value of a saved customer and the discount's actual effect on churn, ideally from an experiment, since a high churn probability doesn't mean a customer is persuadable.",
-        "Then I sweep thresholds on held-out data using calibrated probabilities, choose the one that maximizes expected profit, and check capacity limits such as how many offers the team can send.",
-        "0.5 is arbitrary and F1 treats the two errors as equally costly.",
-        "I'd re-tune when base rates or costs shift."
+        "Frame the threshold as expected value: discount cost versus value of a saved customer",
+        "You need the discount's real effect on churn, ideally from an experiment",
+        "High churn probability doesn't mean the customer is persuadable",
+        "Sweep thresholds on held-out data with calibrated probabilities to maximize profit",
+        "Respect capacity limits like how many offers the team can send",
+        "0.5 and F1 are arbitrary; re-tune when base rates or costs shift"
       ]
     },
     {
       "id": "ml-017",
       "base": "Fanning residuals mean the error variance rises with the predicted value, known as heteroscedasticit",
+      "draft": true,
       "points": [
-        "Fanning residuals mean the error variance rises with the predicted value, known as heteroscedasticity.",
-        "Point predictions can stay unbiased, but standard errors and confidence and prediction intervals are wrong, and large values may be fit worse in relative terms.",
-        "I'd plot residuals against fitted values and against each feature, then try modelling the log of the target (common for money), weighted least squares, robust standard errors, or a model that predicts spread too, such as quantile regression.",
-        "If only point accuracy matters it may be tolerable, but I'd check that the metric reflects relative error and not just absolute error."
+        "Fanning residuals mean heteroscedasticity: error variance grows with the prediction",
+        "Point predictions can stay unbiased but standard errors and intervals are wrong",
+        "Plot residuals against fitted values and each feature",
+        "Fix by modeling the log of the target or weighted least squares",
+        "Use robust standard errors or model the spread, for example quantile regression",
+        "Check the metric reflects relative error if large values matter"
       ]
     },
     {
       "id": "ml-018",
       "base": "Not yet. With 400 examples a single cross-validation estimate is very uncertain, so I'd report an in",
+      "draft": true,
       "points": [
-        "With 400 examples a single cross-validation estimate is very uncertain, so I'd report an interval and use repeated or stratified CV.",
-        "Scores that high on small data usually point to a problem: duplicate or near-duplicate rows across folds, grouped data (the same patient or customer) split across folds, a feature that encodes the label, or hyperparameters tuned on the same folds.",
-        "I'd use grouped splits, nested CV for tuning and a final untouched holdout.",
-        "I'd also compare with a trivial baseline, read the confusion matrix, and ask whether real-world data resembles this sample."
+        "Don't trust it yet: a CV estimate on 400 examples is very uncertain",
+        "Report an interval and use repeated or stratified CV",
+        "Look for duplicates or the same entity split across folds",
+        "Look for a feature that encodes the label or tuning on the same folds",
+        "Use grouped splits, nested CV and an untouched holdout",
+        "Compare with a trivial baseline and check whether real data resembles the sample"
       ]
     },
     {
       "id": "ml-019",
       "base": "ARIMA combines autoregression on past values (p), differencing to remove trend (d) and a moving aver",
+      "draft": true,
       "points": [
-        "ARIMA combines autoregression on past values (p), differencing to remove trend (d) and a moving average of past errors (q).",
-        "Differencing aims at a stationary series, whose mean and variance don't drift, because the model's coefficients assume stable relationships.",
-        "I'd choose orders using autocorrelation plots and information criteria, then check them by walk-forward validation.",
-        "It works well for a single, short, regular series with few external drivers and is easy to explain.",
-        "It is a poor fit for many series at once, multiple seasonalities, holidays and rich external features, where boosted trees or other models do better."
+        "ARIMA combines autoregression (p), differencing (d) and a moving average of errors (q)",
+        "Differencing makes the series stationary so coefficients stay stable",
+        "Choose orders with autocorrelation plots and information criteria",
+        "Validate with walk-forward backtests",
+        "Good for a single short regular series with few drivers, and easy to explain",
+        "Poor for many series, multiple seasonalities, holidays or rich external features"
       ]
     },
     {
       "id": "ml-020",
       "base": "Exponential smoothing is a quick, robust baseline for each series and needs little tuning. Prophet a",
+      "draft": true,
       "points": [
-        "Exponential smoothing is a quick, robust baseline for each series and needs little tuning.",
-        "Prophet adds trend changes, seasonality and holidays with readable components, but it is not always the most accurate.",
-        "Gradient boosting trains one global model across all 200 products using lag features, calendar features, price and promotions, so it can learn from related products and handle short histories.",
-        "I'd compare all three with walk-forward validation on the metric the business cares about, ship the simple baseline first, and move to the global model if it wins by a margin that justifies the extra pipeline."
+        "Exponential smoothing is a quick robust baseline per series",
+        "Prophet adds trend changes, seasonality and holidays but isn't always most accurate",
+        "Gradient boosting trains one global model across all products",
+        "A global model uses lag, calendar, price and promotion features and helps short histories",
+        "Compare all three with walk-forward validation on the business metric",
+        "Ship the simple baseline first and switch only if the global model clearly wins"
       ]
     },
     {
       "id": "ml-021",
       "base": "Separate models at each level won't sum. Bottom-up sums store forecasts, which is consistent but noi",
+      "draft": true,
       "points": [
-        "Separate models at each level won't sum.",
-        "Bottom-up sums store forecasts, which is consistent but noisy for sparse stores.",
-        "Top-down splits a company forecast by historical proportions, which is smooth but loses store detail.",
-        "Reconciliation methods take forecasts from every level and adjust them jointly so they add up, weighting each by how reliable it is; this often improves accuracy at all levels because each level contributes information.",
-        "I would evaluate with walk-forward validation at every level, since the right choice depends on which level decisions are made at."
+        "Separate models at each level won't add up",
+        "Bottom-up is consistent but noisy for sparse stores",
+        "Top-down is smooth but loses store detail",
+        "Reconciliation adjusts all levels jointly, weighted by reliability",
+        "Reconciliation often improves accuracy at every level",
+        "Evaluate at every level and choose by where decisions are made"
       ]
     },
     {
       "id": "ml-022",
       "base": "MAPE is easy to read but explodes when actuals are near zero and penalizes over-forecasts more than ",
+      "draft": true,
       "points": [
-        "MAPE is easy to read but explodes when actuals are near zero and penalizes over-forecasts more than under-forecasts, which can push models toward under-forecasting.",
-        "RMSE squares errors, so it punishes large misses and suits cases where a big miss is disproportionately costly.",
-        "WAPE divides total absolute error by total actuals, so it is stable and weights high-volume items more, which is often how the business thinks.",
-        "I would pick the metric from the cost of errors, report more than one, and evaluate at the level where decisions are made."
+        "MAPE explodes near zero and penalizes over-forecasts more, pushing toward under-forecasting",
+        "RMSE punishes large misses, for when big misses are disproportionately costly",
+        "WAPE divides total absolute error by total actuals and weights high-volume items",
+        "Choose the metric from the cost of errors",
+        "Report more than one metric at the level where decisions are made"
       ]
     },
     {
       "id": "ml-023",
       "base": "Matrix factorization learns a vector for each user and item from the interaction matrix so that thei",
+      "draft": true,
       "points": [
-        "Matrix factorization learns a vector for each user and item from the interaction matrix so that their product predicts affinity; it captures taste patterns without needing item attributes, but it needs history and handles new items poorly.",
-        "A content-based approach scores items by similarity to what a user liked using attributes or embeddings; it handles new items but tends to recommend more of the same.",
-        "Most sites use implicit feedback such as clicks and purchases, and combine the approaches, often with a ranking model on top.",
-        "I'd evaluate offline with ranking metrics like recall at k or NDCG, with time-based splits, and confirm with an online experiment."
+        "Matrix factorization learns user and item vectors from interactions",
+        "It captures taste without item attributes but struggles with new items",
+        "Content-based scores items by attribute or embedding similarity and handles new items",
+        "Content-based tends to recommend more of the same",
+        "Use implicit feedback and combine approaches, often with a ranking model on top",
+        "Evaluate offline with recall at k or NDCG on time splits, then an online experiment"
       ]
     },
     {
       "id": "ml-024",
       "base": "Models based on distances (k-NN, k-means, SVMs), penalized models (ridge, lasso) and gradient-based ",
+      "draft": true,
       "points": [
-        "Models based on distances (k-NN, k-means, SVMs), penalized models (ridge, lasso) and gradient-based models like neural networks are sensitive to feature scale: a feature measured in large units dominates distances or gets penalized differently.",
-        "Tree-based models split on thresholds, so monotonic rescaling changes nothing.",
-        "I fit the scaler on the training data only and apply it to validation and test data, otherwise information leaks.",
-        "Standardization is the default; min-max suits bounded inputs but is sensitive to outliers, where a robust scaler helps."
+        "Distance-based models like k-NN, k-means and SVM need scaling",
+        "Penalized models and gradient-based models like neural networks need scaling",
+        "Tree models split on thresholds, so scaling changes nothing",
+        "Fit the scaler on training data only to avoid leakage",
+        "Standardize by default; min-max for bounded inputs; robust scaler for outliers"
       ]
     }
   ]

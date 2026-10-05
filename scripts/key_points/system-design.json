@@ -3,154 +3,183 @@
     {
       "id": "system-design-001",
       "base": "I'd split it into candidate generation (fast retrieval from embeddings or an ANN index), ranking (a ",
+      "draft": true,
       "points": [
-        "I'd split it into candidate generation (fast retrieval from embeddings or an ANN index), ranking (a heavier model over a few hundred candidates), and re-ranking for business rules.",
-        "With a 100ms budget I'd spend roughly 20ms on feature fetch from an online store, 30ms on retrieval, 30ms on ranking, and keep the rest as buffer.",
-        "Freshness comes from training offline on a schedule while updating cheap features like recent clicks in real time.",
-        "For A/B tests I'd randomize by user through one experiment-assignment layer, not per-feature flags."
+        "Split into candidate generation, ranking and re-ranking",
+        "Generate candidates with fast retrieval from embeddings or an ANN index",
+        "Rank a few hundred candidates with a heavier model",
+        "Budget the 100ms across feature fetch, retrieval and ranking with a buffer",
+        "Train offline on a schedule but update cheap features like recent clicks in real time",
+        "Randomize A/B tests by user through one assignment layer"
       ]
     },
     {
       "id": "system-design-002",
       "base": "Forecasts are needed daily, not per request, so I'd batch: compute overnight, store versioned predic",
+      "draft": true,
       "points": [
-        "Forecasts are needed daily, not per request, so I'd batch: compute overnight, store versioned predictions in a table, and serve from there.",
-        "It's cheaper, reproducible, and auditable, and the dashboard never waits on a model.",
-        "For a sudden 50% drop I'd validate before alerting (data issue, model change, or real behavior?) and include the reason, because false alarms destroy trust.",
-        "I'd write predictions with a model-version column, run new versions in shadow, then cut over without changing the dashboard's schema."
+        "Forecasts are needed daily, so batch overnight instead of per request",
+        "Store versioned predictions in a table and serve from it",
+        "Batch is cheaper, reproducible and auditable",
+        "Before alerting on a big drop, check for data issues or model changes",
+        "Include the reason in alerts, since false alarms destroy trust",
+        "Run new model versions in shadow, then cut over"
       ]
     },
     {
       "id": "system-design-003",
       "base": "I'd treat intake as a decision process: a short standard template (problem, decision supported, succ",
+      "draft": true,
       "points": [
-        "I'd treat intake as a decision process: a short standard template (problem, decision supported, success metric, data availability, owner), a triage rubric (business value, feasibility, risk), and stage gates from idea to pilot to production with explicit exit criteria.",
-        "Ideas with no decision owner or no data get parked, which keeps it from becoming a dumping ground.",
-        "For differing SLOs I'd define a few standard tiers (daily batch, near-real-time, real-time), each with known costs and requirements, and let teams pick a tier instead of imposing one rigid standard."
+        "Treat intake as a decision process",
+        "Use a short template: problem, decision supported, metric, data, owner",
+        "Triage with a rubric: business value, feasibility, risk",
+        "Stage gates from idea to pilot to production with exit criteria",
+        "Park ideas with no decision owner or no data",
+        "Offer a few standard service tiers instead of one rigid standard"
       ]
     },
     {
       "id": "system-design-004",
       "base": "I'd assign by hashing the user id with an experiment-specific salt, so a user always gets the same v",
+      "draft": true,
       "points": [
-        "I'd assign by hashing the user id with an experiment-specific salt, so a user always gets the same variant and assignments are independent between experiments.",
-        "I'd log an exposure event only when the user actually sees the change, so analysis covers the right population.",
-        "The pipeline joins exposures to metric events and computes lifts with confidence intervals, plus guardrail metrics like latency and errors.",
-        "Automatic checks matter most: a sample ratio mismatch test flags broken assignment or logging, and a result with SRM isn't trusted.",
-        "Overlapping experiments run in separate layers, or are mutually exclusive when they touch the same surface."
+        "Assign variants by hashing the user id with an experiment-specific salt",
+        "Log exposure only when the user actually sees the change",
+        "Join exposures to metrics and compute lifts with confidence intervals",
+        "Track guardrail metrics like latency and errors",
+        "Run automatic sample ratio mismatch checks",
+        "Separate overlapping experiments into layers or make them mutually exclusive"
       ]
     },
     {
       "id": "system-design-005",
       "base": "I'd start by asking how quickly a change in the feature should change the prediction, and what that ",
+      "draft": true,
       "points": [
-        "I'd start by asking how quickly a change in the feature should change the prediction, and what that freshness is worth.",
-        "Many features, like a customer's 90-day average spend, don't need minute-level freshness, so daily batch is simpler, cheaper and easier to backfill and debug.",
-        "I'd use streaming only for signals where staleness costs money, like fraud velocity counts.",
-        "The key risk is two code paths computing the same feature differently, so I'd share the transformation logic or use a feature store.",
-        "For streaming I'd use event time with watermarks to handle late data."
+        "Decide by how fast the feature must affect predictions and what freshness is worth",
+        "Daily batch is simpler, cheaper and easier to backfill and debug",
+        "Use streaming only where staleness costs money, like fraud velocity",
+        "Avoid two code paths computing the same feature differently",
+        "Share transformation logic or use a feature store",
+        "Handle late data with event time and watermarks"
       ]
     },
     {
       "id": "system-design-006",
       "base": "I'd build a real-time path under the latency budget: fetch precomputed features such as per-card vel",
+      "draft": true,
       "points": [
-        "I'd build a real-time path under the latency budget: fetch precomputed features such as per-card velocity counts from an online store, apply hard rules for known patterns, then score a model.",
-        "The output isn't just yes or no: low scores approve, high scores decline, and the middle band goes to step-up authentication or manual review.",
-        "Thresholds come from costs: fraud loss versus lost sales and customer friction.",
-        "Labels arrive weeks later through chargebacks, so I'd train on mature data and watch leading indicators like score distributions.",
-        "Fraudsters adapt, so I'd monitor drift closely, retrain often, and keep rules as a fast-response layer."
+        "Real-time path fetches precomputed features like card velocity from an online store",
+        "Hard rules catch known patterns before the model scores",
+        "Use score bands: approve, step-up or manual review, decline",
+        "Set thresholds from fraud loss versus lost sales and friction",
+        "Labels arrive late via chargebacks; train on mature data",
+        "Fraudsters adapt: monitor drift, retrain often, keep rules for fast response"
       ]
     },
     {
       "id": "system-design-007",
       "base": "I'd start with the decision: the horizon, the accuracy needed and who acts on it. Data: invoices, pa",
+      "draft": true,
       "points": [
-        "I'd start with the decision: the horizon, the accuracy needed and who acts on it.",
-        "Data: invoices, payment terms, collection history and calendar effects, from a pipeline with freshness and quality checks.",
-        "Modelling: a global gradient-boosted model with unit features usually beats twenty small series, with a simple per-unit baseline to compare against; hierarchical reconciliation keeps unit forecasts summing to the total.",
-        "Evaluation: rolling-origin backtests by horizon, tracking error by unit.",
-        "Serving: a weekly batch with forecast intervals, versioned outputs, and a view where finance can see drivers and adjust assumptions.",
-        "Monitoring compares forecasts to actuals as they land and alerts on drift."
+        "Start with the decision: horizon, accuracy needed and who acts",
+        "Data pipeline with invoices, terms and collection history plus quality checks",
+        "A global boosted model across units, compared with per-unit baselines",
+        "Reconcile so unit forecasts sum to the total",
+        "Evaluate with rolling-origin backtests by horizon and unit",
+        "Weekly batch with intervals, versioned outputs, driver views and monitoring"
       ]
     },
     {
       "id": "system-design-008",
       "base": "I'd start with the decision: what can the retention team do, how many customers per week, and how ea",
+      "draft": true,
       "points": [
-        "I'd start with the decision: what can the retention team do, how many customers per week, and how early they need warning.",
-        "That fixes the churn definition (for example no activity for 60 days) and the prediction window, so labels are usable and not leaked.",
-        "Features come from usage, billing and support history, built point-in-time in a weekly batch.",
-        "The model outputs calibrated probabilities, and a layer on top ranks customers by expected value (likelihood times customer value) within the team's capacity, with reasons for each flag.",
-        "A random holdout group receives no outreach so we can measure real impact, and results feed back into evaluation.",
-        "Monitoring covers drift, calibration and the outreach results."
+        "Start with the decision: team actions, weekly capacity and warning time",
+        "Define churn and the prediction window so labels aren't leaked",
+        "Build point-in-time features from usage, billing and support",
+        "Rank by expected value within capacity using calibrated probabilities",
+        "Give reasons for each flag",
+        "Keep a random holdout with no outreach to measure real impact"
       ]
     },
     {
       "id": "system-design-009",
       "base": "I'd start with constraints: which inputs are legally allowed, what reasons must be given, and who ha",
+      "draft": true,
       "points": [
-        "I'd start with constraints: which inputs are legally allowed, what reasons must be given, and who has to approve changes.",
-        "Modelling choice is a trade: a constrained or monotonic model (or a scorecard) is easier to defend, while a boosted model with post-hoc explanations may perform better but needs validation that explanations are stable and honest.",
-        "Each decision stores the inputs, model version, score and top reasons, so any outcome can be reproduced and explained.",
-        "I'd monitor approval rates and errors across protected groups, plus drift and calibration, and set review gates for model changes with documentation and sign-off from risk and compliance.",
-        "A human override path handles exceptions."
+        "Start with constraints: allowed inputs, required reasons, approvals",
+        "Trade off a monotonic model or scorecard against boosting with explanations",
+        "Validate that explanations are stable and honest",
+        "Store inputs, model version, score and reasons for every decision",
+        "Monitor outcomes across protected groups, plus drift and calibration",
+        "Review gates for model changes and a human override path"
       ]
     },
     {
       "id": "system-design-010",
       "base": "I'd define each metric once, as code in version control, with its grain, filters, time logic and own",
+      "draft": true,
       "points": [
-        "I'd define each metric once, as code in version control, with its grain, filters, time logic and owner, and have dashboards, notebooks and models read through that layer rather than rewriting the SQL.",
-        "Changes go through review by the owner and the main consumers, and are versioned, with a changelog and a transition period so historical comparisons are not silently broken.",
-        "Automated tests check the definitions against known totals and compare dashboard outputs to the layer.",
-        "The layer also handles shared dimensions such as customer segment and time zone.",
-        "I'd start with the five metrics that cause the most disagreement and expand once teams trust them."
+        "Define each metric once as code in version control",
+        "Include grain, filters, time logic and owner",
+        "Dashboards, notebooks and models read through the layer",
+        "Review and version changes with a changelog and transition period",
+        "Test definitions against known totals",
+        "Start with the most disputed metrics and expand"
       ]
     },
     {
       "id": "system-design-011",
       "base": "Land each source's raw data unchanged in a staging area, then transform it into a common canonical s",
+      "draft": true,
       "points": [
-        "Land each source's raw data unchanged in a staging area, then transform it into a common canonical schema with explicit mappings and tests.",
-        "Validate at the boundary: schema, types, null rates, ranges and row counts against expectations, quarantining bad records instead of failing the whole run.",
-        "Make loads idempotent (partition overwrite or merge on a key) so reruns are safe, orchestrate with retries and alerting, and keep backfills possible.",
-        "Add reconciliation checks, such as daily totals against each source's control totals, and data contracts with source owners so schema changes are announced.",
-        "Version the mappings and document lineage."
+        "Land each source's raw data unchanged in staging",
+        "Map to a canonical schema with explicit, tested mappings",
+        "Validate at the boundary and quarantine bad records instead of failing the run",
+        "Make loads idempotent so reruns are safe",
+        "Orchestrate with retries, alerting and backfills",
+        "Reconcile against source totals and agree data contracts with owners"
       ]
     },
     {
       "id": "system-design-012",
       "base": "Start with which metrics matter and the cost of a miss versus a false alarm. Model an expected value",
+      "draft": true,
       "points": [
-        "Start with which metrics matter and the cost of a miss versus a false alarm.",
-        "Model an expected value that accounts for trend, weekly and yearly seasonality and holidays, such as a forecast with prediction intervals instead of a flat mean, and flag points outside the interval.",
-        "Reduce noise with minimum-impact thresholds, persistence requirements and grouping of related alerts.",
-        "With each alert show the metric against its expected range, the segments driving the change (dimension drill-down) and recent related changes such as deployments or data delays, because many anomalies are broken pipelines.",
-        "Add a feedback button to mark alerts useful or not, track alert precision, and review regularly."
+        "Start with which metrics matter and the cost of misses versus false alarms",
+        "Model the expected value with trend, seasonality and holidays",
+        "Flag points outside prediction intervals rather than a flat threshold",
+        "Reduce noise with impact thresholds, persistence and grouped alerts",
+        "Show expected range, driving segments and related changes like deployments",
+        "Collect feedback and track alert precision"
       ]
     },
     {
       "id": "system-design-013",
       "base": "Ingest: parse documents, split them into chunks that preserve meaning with some overlap and metadata",
+      "draft": true,
       "points": [
-        "Ingest: parse documents, split them into chunks that preserve meaning with some overlap and metadata (title, source, date, owner), embed each chunk, and store vectors in an approximate nearest-neighbor index alongside the text.",
-        "Query: embed the query, retrieve candidates, and combine with keyword search (BM25), since exact terms, codes and names are handled poorly by embeddings alone; rerank the top results with a cross-encoder.",
-        "Enforce permissions at retrieval by filtering on access metadata, not after generation.",
-        "Keep the index fresh with incremental updates.",
-        "Evaluate with a labeled set of queries (recall at k, mean reciprocal rank) plus user feedback.",
-        "Latency and cost scale with index size and reranking depth."
+        "Chunk documents with overlap and metadata, embed, store in an ANN index",
+        "Combine vector search with keyword search like BM25",
+        "Rerank top results with a cross-encoder",
+        "Enforce permissions at retrieval with access filters",
+        "Keep the index fresh with incremental updates",
+        "Evaluate with labeled queries using recall at k and MRR"
       ]
     },
     {
       "id": "system-design-014",
       "base": "Separate the baseline forecast from a scenario layer: a driver-based structure (volume, price, payme",
+      "draft": true,
       "points": [
-        "Separate the baseline forecast from a scenario layer: a driver-based structure (volume, price, payment terms, collection rates) that the ML forecast feeds or calibrates, so users change meaningful business levers rather than raw model features, which can produce nonsense outside the training range.",
-        "Changes are saved as named, versioned scenarios, compared against the baseline, with a waterfall showing each driver's contribution.",
-        "Show forecast intervals and flag assumptions outside historical ranges.",
-        "Make recomputation fast with precomputed components or a lightweight surrogate.",
-        "Label scenarios as 'if' statements, record who changed what, and let finance override with comments."
+        "Separate the baseline forecast from a scenario layer",
+        "Use business drivers like volume, price and terms, not raw model features",
+        "Save scenarios as named versions and compare against baseline",
+        "Show each driver's contribution with a waterfall",
+        "Show intervals and flag assumptions outside historical ranges",
+        "Fast recompute, change history and finance overrides with comments"
       ]
     }
   ]

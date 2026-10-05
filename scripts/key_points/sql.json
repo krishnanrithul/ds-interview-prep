@@ -3,172 +3,200 @@
     {
       "id": "sql-001",
       "base": "First I'd ask what counts as a duplicate: same email, same normalized email (case, whitespace, plus-",
+      "draft": true,
       "points": [
-        "First I'd ask what counts as a duplicate: same email, same normalized email (case, whitespace, plus-addressing), same phone, or the same person across several fields.",
-        "Then GROUP BY the normalized key with HAVING COUNT(*) > 1, and ROW_NUMBER() over that key ordered by created_at when I need to keep one record and flag the rest.",
-        "For duplicates across time periods I'd compare created_at gaps.",
-        "At 100M rows I'd precompute and index the normalized key instead of computing it per query.",
-        "GROUP BY surfaces the duplicate groups, while DISTINCT only collapses rows and hides them."
+        "First define what counts as a duplicate: email, normalized email, phone or several fields",
+        "Normalize the key: case, whitespace, plus-addressing",
+        "GROUP BY the normalized key with HAVING COUNT(*) > 1",
+        "Use ROW_NUMBER() over the key ordered by created_at to keep one and flag the rest",
+        "At 100M rows precompute and index the normalized key",
+        "GROUP BY surfaces duplicate groups; DISTINCT just hides them"
       ]
     },
     {
       "id": "sql-002",
       "base": "I'd define the unit first: the distribution of days from invoice to cash by segment, not just the av",
+      "draft": true,
       "points": [
-        "I'd define the unit first: the distribution of days from invoice to cash by segment, not just the average.",
-        "Unpaid invoices are censored observations, so dropping them would bias the pattern toward fast payers.",
-        "I'd build it as a daily incremental table so the 15-minute scan becomes a small partition read.",
-        "New customers with no history fall back to their segment prior.",
-        "For a regime change like COVID I'd compare recent against full-history distributions and decide on recency weighting or excluding the shock period with a backtest, not a guess."
+        "Define the unit: distribution of days from invoice to cash by segment, not the average",
+        "Unpaid invoices are censored; dropping them biases toward fast payers",
+        "Build a daily incremental table so the scan becomes a small partition read",
+        "New customers without history fall back to their segment prior",
+        "Handle regime changes like COVID with recency weighting or exclusion, decided by backtest"
       ]
     },
     {
       "id": "sql-003",
       "base": "LAG(payment_date) OVER (PARTITION BY customer_id ORDER BY payment_date), a date difference for each ",
+      "draft": true,
       "points": [
-        "LAG(payment_date) OVER (PARTITION BY customer_id ORDER BY payment_date), a date difference for each gap, then MAX per customer.",
-        "The business rules matter more than the syntax.",
-        "Refunds probably shouldn't reset the gap, because a refund isn't engagement.",
-        "The open gap since the last payment must be counted, or churned customers look healthy.",
-        "A single-payment customer has a NULL gap, not zero.",
-        "For churn risk I'd compare the current open gap to that customer's own history instead of using one global threshold."
+        "LAG(payment_date) OVER (PARTITION BY customer_id ORDER BY payment_date)",
+        "Take the date difference for each gap, then MAX per customer",
+        "Refunds shouldn't reset the gap",
+        "Count the open gap since the last payment, or churned customers look healthy",
+        "A single-payment customer has a NULL gap, not zero",
+        "Compare the current gap to the customer's own history, not one global threshold"
       ]
     },
     {
       "id": "sql-004",
       "base": "I'd define the cohort (signup month) and 'active' (at least one qualifying transaction in the window",
+      "draft": true,
       "points": [
-        "I'd define the cohort (signup month) and 'active' (at least one qualifying transaction in the window) explicitly, then LEFT JOIN cohort members to activity so inactive customers stay in the denominator.",
-        "Returners count as active in month N.",
-        "If lapses matter I'd also report 'never lapsed'.",
-        "Recent cohorts have less follow-up, so I'd compare cohorts at the same age and mask incomplete periods.",
-        "If January beats December I'd check confounders before crediting the product: seasonality, an acquisition channel or pricing change, a different customer mix, or survivorship."
+        "Define the cohort (signup month) and 'active' explicitly",
+        "LEFT JOIN cohort members to activity so inactive customers stay in the denominator",
+        "Returning customers count as active; report 'never lapsed' separately if needed",
+        "Compare cohorts at the same age and mask incomplete periods",
+        "Before crediting the product, check confounders: seasonality, channel, pricing, customer mix"
       ]
     },
     {
       "id": "sql-005",
       "base": "I'd rank within each department: DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC)",
+      "draft": true,
       "points": [
-        "I'd rank within each department: DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) in a CTE, then filter rank <= 3 in the outer query, because window functions are evaluated after WHERE.",
-        "I'd ask about ties first: ROW_NUMBER gives exactly 3 rows and breaks ties arbitrarily, RANK can return more than 3 and skips numbers, DENSE_RANK returns everyone within the top 3 salary levels.",
-        "Departments with fewer than three people simply return what they have."
+        "DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC)",
+        "Rank in a CTE and filter rank <= 3 outside, since window functions run after WHERE",
+        "Ask how ties should work first",
+        "ROW_NUMBER gives exactly 3, RANK can give more and skips, DENSE_RANK keeps top 3 salary levels",
+        "Departments with fewer than three people return what they have"
       ]
     },
     {
       "id": "sql-006",
       "base": "That works only if every day has a row. I'd generate a calendar of dates, LEFT JOIN revenue onto it ",
+      "draft": true,
       "points": [
-        "That works only if every day has a row.",
-        "I'd generate a calendar of dates, LEFT JOIN revenue onto it with COALESCE(revenue, 0), and then use AVG(revenue) OVER (ORDER BY date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW).",
-        "ROWS counts physical rows, while RANGE works on values, which matters with duplicate dates.",
-        "For the first six days I'd return NULL, or flag them as partial, instead of presenting an average over fewer than seven days as if it were comparable."
+        "Missing days break a row-based average",
+        "Generate a calendar of dates and LEFT JOIN revenue with COALESCE to 0",
+        "AVG(revenue) OVER (ORDER BY date ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)",
+        "ROWS counts rows while RANGE works on values, which matters with duplicate dates",
+        "Return NULL or flag the first six days as partial"
       ]
     },
     {
       "id": "sql-007",
       "base": "A date is not a session. I'd use LAG(event_time) OVER (PARTITION BY user_id ORDER BY event_time) to ",
+      "draft": true,
       "points": [
-        "A date is not a session.",
-        "I'd use LAG(event_time) OVER (PARTITION BY user_id ORDER BY event_time) to get the gap, set new_session = 1 when the gap is NULL or over 30 minutes, then SUM(new_session) OVER the same window to get a session number per user.",
-        "For scale I'd process incrementally by day, carrying over each user's last event and open session from the previous run so sessions that span midnight stay intact.",
-        "I'd sanity-check for bots (thousands of events per session) and cap or flag extreme sessions."
+        "Use LAG(event_time) per user ordered by time to get the gap",
+        "Flag a new session when the gap is NULL or over 30 minutes",
+        "A running SUM of the flag gives the session number",
+        "Process incrementally by day, carrying each user's open session over midnight",
+        "Check for bots and cap or flag extreme sessions"
       ]
     },
     {
       "id": "sql-008",
       "base": "That works until the subquery returns a NULL customer_id: then NOT IN evaluates to unknown for every",
+      "draft": true,
       "points": [
-        "That works until the subquery returns a NULL customer_id: then NOT IN evaluates to unknown for every row and returns nothing.",
-        "I'd write it with NOT EXISTS (or a LEFT JOIN with a IS NULL filter), which handle NULLs predictably and usually optimize well.",
-        "I'd also DISTINCT the January customers so repeat buyers aren't duplicated.",
-        "For the generalization I'd aggregate by customer and month into a CTE and use conditional counts in HAVING."
+        "NOT IN returns nothing if the subquery contains a NULL",
+        "Use NOT EXISTS or LEFT JOIN with IS NULL instead",
+        "DISTINCT the January customers so repeat buyers aren't duplicated",
+        "Generalize by aggregating per customer and month with conditional counts in HAVING"
       ]
     },
     {
       "id": "sql-009",
       "base": "I'd first confirm whether 'second highest' means the second distinct value or the second row. For di",
+      "draft": true,
       "points": [
-        "I'd first confirm whether 'second highest' means the second distinct value or the second row.",
-        "For distinct values I use DENSE_RANK() OVER (ORDER BY salary DESC) and keep rank 2, wrapped so an empty result returns NULL if the interviewer wants a row back.",
-        "The MAX-of-smaller-values version works but does not generalize.",
-        "For the Nth per department I add PARTITION BY department and filter on the rank.",
-        "I'd also say what ROW_NUMBER and RANK would do under ties, so the choice is deliberate."
+        "Clarify whether 'second highest' means second distinct value or second row",
+        "Use DENSE_RANK() ordered by salary descending and keep rank 2",
+        "Return NULL when there is no second value",
+        "MAX of smaller values works but doesn't generalize",
+        "For Nth per department, PARTITION BY department",
+        "Explain what ROW_NUMBER and RANK do with ties"
       ]
     },
     {
       "id": "sql-010",
       "base": "WHERE filters individual rows before grouping, so an aggregate like AVG(salary) does not exist yet a",
+      "draft": true,
       "points": [
-        "WHERE filters individual rows before grouping, so an aggregate like AVG(salary) does not exist yet and the query errors.",
-        "HAVING filters groups after aggregation, so the fix is GROUP BY dept HAVING AVG(salary) > 50000.",
-        "Conditions on raw columns, such as excluding terminated employees, should stay in WHERE because they cut rows early and can use indexes.",
-        "Using both is normal: WHERE for row filters, HAVING for group filters, for example HAVING COUNT(*) >= 5 for a minimum team size."
+        "WHERE filters rows before grouping, so aggregates don't exist yet",
+        "HAVING filters groups after aggregation",
+        "Fix: GROUP BY dept HAVING AVG(salary) > 50000",
+        "Keep row conditions in WHERE so they cut rows early and use indexes",
+        "Use both together: WHERE for rows, HAVING for groups"
       ]
     },
     {
       "id": "sql-011",
       "base": "Aggregate to product-month first, then use LAG partitioned by product and ordered by month. Two trap",
+      "draft": true,
       "points": [
-        "Aggregate to product-month first, then use LAG partitioned by product and ordered by month.",
-        "A month with no sales has no row, so LAG would compare against the wrong month; I'd join to a calendar of months and fill gaps with zero before taking LAG.",
-        "And I'd divide with NULLIF(previous, 0) so a zero base returns NULL instead of an error or infinite growth.",
-        "The first month per product has no prior value and should show NULL, not 0%.",
-        "I'd also ask what the stakeholder wants for tiny bases, since going from 5 to 50 dollars is a 900% jump that means little."
+        "Aggregate to product-month first",
+        "Use LAG partitioned by product, ordered by month",
+        "Join to a calendar of months and fill gaps with zero before LAG",
+        "Divide with NULLIF(previous, 0) so a zero base gives NULL",
+        "The first month has no prior value: NULL, not 0%",
+        "Ask how to treat tiny bases where percentages mislead"
       ]
     },
     {
       "id": "sql-012",
       "base": "Deduplicate to distinct user-day first. Then number each user's days with ROW_NUMBER() ordered by da",
+      "draft": true,
       "points": [
-        "Deduplicate to distinct user-day first.",
-        "Then number each user's days with ROW_NUMBER() ordered by date.",
-        "The date minus the row number is constant within a run of consecutive days, so grouping by user and that constant gives each streak, and HAVING COUNT(*) >= 3 keeps the qualifying ones.",
-        "The longest streak is the maximum count per user.",
-        "Self-joins work for a fixed length of 3 but break when the length changes.",
-        "I'd also confirm how 'day' is defined, since time zones can split or merge a late-night session."
+        "Deduplicate to distinct user-day first",
+        "Number each user's days with ROW_NUMBER() ordered by date",
+        "Date minus row number is constant within a consecutive run",
+        "Group by user and that constant; HAVING COUNT(*) >= 3",
+        "Self-joins work for exactly 3 but don't generalize",
+        "Confirm how 'day' is defined, since time zones shift days"
       ]
     },
     {
       "id": "sql-013",
       "base": "Payments are one-to-many per order (split payments, retries), so each order row is repeated once per",
+      "draft": true,
       "points": [
-        "Payments are one-to-many per order (split payments, retries), so each order row is repeated once per payment before the SUM runs.",
-        "DISTINCT only hides it when rows are identical and can delete legitimate duplicates.",
-        "The fix is to aggregate each table to one row per order before joining, or to compute each measure in its own CTE and join the results on order_id.",
-        "To prevent it, I check row counts and key uniqueness before and after every join (COUNT(*) versus COUNT(DISTINCT order_id)) and reconcile totals against the source table.",
-        "A LEFT JOIN does not help, because the duplication comes from matches, not from unmatched rows."
+        "Payments are one-to-many per order, so each order row repeats per payment",
+        "The SUM then counts revenue multiple times: join fan-out",
+        "DISTINCT only hides it and can drop legitimate rows",
+        "Aggregate each table to one row per order before joining, or use separate CTEs",
+        "Check row counts and key uniqueness before and after every join",
+        "A LEFT JOIN doesn't help; the duplication comes from matches"
       ]
     },
     {
       "id": "sql-014",
       "base": "COUNT(*) counts rows regardless of content, COUNT(col) counts rows where col is not NULL, and COUNT(",
+      "draft": true,
       "points": [
-        "COUNT(*) counts rows regardless of content, COUNT(col) counts rows where col is not NULL, and COUNT(DISTINCT col) counts distinct non-NULL values.",
-        "With 100 rows, 20 NULLs and 30 distinct values, that is 100, 80 and 30.",
-        "AVG and SUM skip NULLs, so AVG(col) divides by 80, not 100, which is why a NULL-heavy column can shift an average.",
-        "COUNT(DISTINCT) is expensive on large tables because it has to deduplicate, so at scale I'd consider an approximate distinct count when exactness is not required.",
-        "Comparing COUNT(*) with COUNT(col) is also a quick completeness check."
+        "COUNT(*) counts all rows",
+        "COUNT(col) skips NULLs",
+        "COUNT(DISTINCT col) counts distinct non-NULL values",
+        "AVG and SUM also skip NULLs, so AVG divides by the non-NULL count",
+        "COUNT(DISTINCT) is expensive at scale; use approximate distinct counts",
+        "Comparing COUNT(*) with COUNT(col) checks completeness"
       ]
     },
     {
       "id": "sql-015",
       "base": "If PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY amount) exists I'd use it. Otherwise I'd rank rows wi",
+      "draft": true,
       "points": [
-        "If PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY amount) exists I'd use it.",
-        "Otherwise I'd rank rows within each segment with ROW_NUMBER() and compute the segment's row count with a window, then average the one or two middle rows (where the rank is floor((n+1)/2) or ceil((n+1)/2)).",
-        "That handles even counts by averaging the two middle values.",
-        "The median resists whales and skew, which suits order value.",
-        "At a billion rows a full sort per segment is costly, so I'd use an approximate percentile function if exactness is not required, or sample."
+        "Use PERCENTILE_CONT(0.5) WITHIN GROUP if it exists",
+        "Otherwise ROW_NUMBER within segment plus a windowed row count",
+        "Average the one or two middle rows to handle even counts",
+        "The median resists skew and whales, which suits order value",
+        "At huge scale use an approximate percentile or sample"
       ]
     },
     {
       "id": "sql-016",
       "base": "I'd first line up the definitions: the denominator (all customers, or customers acquired in a period",
+      "draft": true,
       "points": [
-        "I'd first line up the definitions: the denominator (all customers, or customers acquired in a period), the numerator window (a second purchase within 30 days versus ever), the treatment of cancelled, refunded, test and internal orders, guest checkouts, currency, and time zone cut-offs.",
-        "Then I'd reproduce both numbers step by step from the same filtered base to see which step opens the gap; a few counts usually explain it.",
-        "Neither is wrong until we agree what decision the metric supports.",
-        "Afterwards I'd put one definition in a documented metrics layer so dashboards and finance read the same source."
+        "Line up the definitions first: denominator and numerator window",
+        "Check treatment of cancelled, refunded, test and internal orders",
+        "Check guest checkouts, currency and time zone cut-offs",
+        "Reproduce both numbers step by step from the same base to find where they diverge",
+        "Agree on the definition from the decision the metric supports",
+        "Put one documented definition in a shared metrics layer"
       ]
     }
   ]

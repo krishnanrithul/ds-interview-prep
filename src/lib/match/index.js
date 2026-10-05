@@ -1,15 +1,13 @@
 // Live key-point coverage. Topic match only: it can't tell a right claim from its opposite.
 // Correctness comes from the optional AI grade (src/lib/grade.js).
 
-// Topics with reviewed-format key points. Widen as other topics' points are rewritten.
-export const MATCH_TOPICS = new Set(['ML Algorithms'])
-
 // A key point counts as covered when an answer sentence scores at least this.
 // Set from first tests (strong answers 0.53 to 0.89 on every point, off-target sentences 0.43 or lower).
 // Re-tune on about 30 hand-labeled answers.
 export const THRESHOLD = 0.5
 
-export const matchEnabled = (q) => !!q && MATCH_TOPICS.has(q.topic) && (q.key_points?.length ?? 0) > 0
+// On for every question with key points (all 155 since 2026-10-05).
+export const matchEnabled = (q) => !!q && (q.key_points?.length ?? 0) > 0
 
 export function splitSentences(text) {
   return text
