@@ -109,3 +109,33 @@ To check the extraction:
 ---
 
 **Commit**: Extract 4–6 key points from 41 priority ML and real-interview questions
+
+## Update: 2026-10-05 — All 155 questions now have key points
+
+**Second pass completed**: Extracted and applied key points for remaining 114 questions.
+
+### Full coverage
+| Topic | Questions | Avg points/Q |
+|-------|-----------|-------------|
+| Deep Learning & NLP | 12 | 4.4 |
+| LLMs & AI | 14 | 5.2 |
+| ML Algorithms | 24 | 4.8 |
+| Production ML | 15 | 4.5 |
+| Python | 17 | 5.0 |
+| SQL | 16 | 4.5 |
+| Statistics | 19 | 5.2 |
+| System Design | 14 | 5.3 |
+| **ML** (original 24) | 24 | 4.8 |
+| **Total** | **155** | **4.9** |
+
+### Final distribution
+- 4 questions with 3 points (very concise answers)
+- 48 questions with 4 points
+- 73 questions with 5 points
+- 30 questions with 6 points
+
+All 155 questions now have key_points in `src/data/questions.json`, ready for:
+- Real-time match score (embeddings-based coverage scoring)
+- AI feedback (grade against key points)
+- Reactive Mock follow-ups (probe missing points)
+

@@ -13,6 +13,7 @@ Living list for Gradient Ascent. What has already been built is recorded in `doc
 **Work.** Write key points for every question (first the 22 real ones), add a checklist step to the debrief, suggest a rating from it. The key points must be reviewed for accuracy because a wrong point would mislead.
 **Notes.** Key points should be reusable as the rubric an AI grader checks against.
 **Update (2026-10-03).** The score should be automatic and real-time, not self-ticked. Plan: in-browser embeddings (transformers.js) score key-point coverage as the learner types; they measure topic match, not correctness, so optional AI grading on submit checks correctness. Tune the match threshold on about 30 hand-labeled answers.
+**Status (2026-10-05).** Key points exist for all 155 questions (`key_points` in `questions.json`; source of truth `scripts/key_points/<topic>.json`, applied with `python3 scripts/apply_key_points.py`, which checks the first 100 characters of the senior answer). See docs/implemented/16. They are a first pass: whole sentences picked from the senior answer by a keyword-scoring script, not short points written by hand. Some are filler (sql-003: "The business rules matter more than the syntax."), some sentences bundle two or three ideas, and they are not marked draft. Before the coverage score is built they should be rewritten as short points (5 to 12 words, one idea each, `draft: true`) and reviewed. No screen reads them yet.
 
 ### 1.2 AI-based feedback
 **Idea.** A model reads the learner's answer against the senior answer and the key points, returns a match score and specific feedback (what was covered, what was missed, what a senior answer would add).
@@ -96,9 +97,10 @@ Done (second session):
 Recommended next, in order:
 1. Push any local commits (the sandbox has no GitHub credentials).
 2. Review the variants, topic by topic, and flip `"draft"` to false for the good ones. Start with ML and the 22 real-interview questions.
-3. Key points for every question (1.1), starting with the 24 ML questions and the 22 real-interview ones. Everything else depends on them: match score, AI feedback and reactive Mock.
-4. Real-time coverage score: embed key points at build time, embed the learner's answer in the browser (transformers.js, all-MiniLM-L6-v2), show "3 of 5 key points covered" live. Set the threshold from about 30 hand-labeled answers.
-5. Bring-your-own-key setting, then reactive Mock (1.5).
+3. ~~Key points for every question (1.1).~~ First pass done 2026-10-05 for all 155 (docs/implemented/16).
+4. Rewrite the key points as short, one-idea points marked draft, starting with the 24 ML and 22 real-interview questions, then review them. Show them in the Practice debrief under the senior answer so they can be checked in the app.
+5. Real-time coverage score: embed key points at build time, embed the learner's answer in the browser (transformers.js, all-MiniLM-L6-v2), show "3 of 5 key points covered" live. Set the threshold from about 30 hand-labeled answers.
+6. Bring-your-own-key setting, then reactive Mock (1.5).
 
 Still open:
 - Logo: the current mark (dots, trend line, arrow) may resemble others. Plan: contour hill with climbing dots; keep `Logo.jsx` and `public/favicon.svg` in sync; run a real trademark and logo search before public launch.

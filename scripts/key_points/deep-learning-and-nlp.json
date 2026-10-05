@@ -1,0 +1,129 @@
+{
+  "key_points": [
+    {
+      "id": "dl-001",
+      "base": "A network is a stack of simple functions: each layer multiplies inputs by weights and applies a non-",
+      "points": [
+        "A network is a stack of simple functions: each layer multiplies inputs by weights and applies a non-linear activation.",
+        "Training starts with random weights, makes predictions, measures the error with a loss, then uses backpropagation, the chain rule applied layer by layer, to compute how much each weight contributed to the error.",
+        "Gradient descent nudges every weight slightly to reduce it, and this repeats over many batches.",
+        "Without the non-linearities the layers would collapse into one linear model.",
+        "Typical problems are overfitting, unstable learning rates and vanishing gradients, handled with regularization, tuning and normalization."
+      ]
+    },
+    {
+      "id": "dl-002",
+      "base": "Gradient descent moves the weights against the gradient of the loss computed on all the data; SGD us",
+      "points": [
+        "Gradient descent moves the weights against the gradient of the loss computed on all the data; SGD uses one example or a mini-batch, which is far cheaper per step and adds noise that can help escape poor spots.",
+        "Momentum smooths the steps.",
+        "Adam keeps running averages of the gradient and its square and gives each weight its own effective step size, so it usually converges fast with little tuning.",
+        "The learning rate matters most: too high and the loss oscillates or diverges, too low and it crawls or stalls.",
+        "I'd use a warmup and decay schedule, watch loss curves, and note that well-tuned SGD with momentum sometimes generalizes slightly better."
+      ]
+    },
+    {
+      "id": "dl-003",
+      "base": "The loss encodes what counts as an error. MSE penalizes large errors quadratically, so it targets th",
+      "points": [
+        "The loss encodes what counts as an error.",
+        "MSE penalizes large errors quadratically, so it targets the mean and is sensitive to outliers; MAE targets the median and is robust but has a constant gradient; Huber is quadratic for small errors and linear for large ones, a compromise.",
+        "Cross-entropy (log loss) trains classifiers to output well-behaved probabilities and is smooth, unlike accuracy, which has no usable gradient.",
+        "When errors have asymmetric business costs, such as under-forecasting being worse than over-forecasting, I'd use a quantile or custom weighted loss, and still evaluate with the metric the business uses."
+      ]
+    },
+    {
+      "id": "dl-004",
+      "base": "Options in rough order of effort: get more or augmented data, simplify the architecture, add weight ",
+      "points": [
+        "Options in rough order of effort: get more or augmented data, simplify the architecture, add weight decay, use early stopping on validation loss, and add dropout.",
+        "Dropout randomly zeroes units during training so the network can't rely on any single path, which acts like averaging many sub-networks.",
+        "Batch normalization standardizes layer inputs within each batch, which stabilizes gradients and allows higher learning rates; it has a mild regularizing side effect but is mainly an optimization aid.",
+        "I'd first diagnose with train versus validation curves to be sure it is overfitting and not a leak or a bug."
+      ]
+    },
+    {
+      "id": "dl-005",
+      "base": "I'd start with a boosted-tree baseline: on mid-sized tabular data it usually matches or beats deep m",
+      "points": [
+        "I'd start with a boosted-tree baseline: on mid-sized tabular data it usually matches or beats deep models, trains in minutes, handles mixed types and missing values, and is easier to explain and monitor.",
+        "Tabular features are heterogeneous and often have sharp thresholds that trees capture well, while neural networks need careful scaling, encoding and tuning.",
+        "A network earns its place with a specific advantage: very large data, learned embeddings for high-cardinality categories, multi-task or multimodal inputs, or online updates.",
+        "I'd compare both on the same time-aware folds with comparable tuning effort, including calibration, latency and maintenance cost, and decide on the whole picture."
+      ]
+    },
+    {
+      "id": "dl-006",
+      "base": "A convolutional layer slides a small filter over the input and records how strongly each location ma",
+      "points": [
+        "A convolutional layer slides a small filter over the input and records how strongly each location matches a pattern, such as an edge.",
+        "Early layers detect simple patterns and deeper layers combine them into shapes and objects.",
+        "Because the same filter is reused everywhere, the network needs far fewer parameters than a fully connected one and recognizes a pattern regardless of where it appears.",
+        "Pooling summarizes regions and adds some tolerance to small shifts.",
+        "The same idea works for any grid-like data with local structure, including audio spectrograms and some time series, although for most new work a pretrained model is the starting point."
+      ]
+    },
+    {
+      "id": "dl-007",
+      "base": "RNNs and LSTMs read a sequence one step at a time, passing a hidden state forward. That is inherentl",
+      "points": [
+        "RNNs and LSTMs read a sequence one step at a time, passing a hidden state forward.",
+        "That is inherently sequential, so training can't be parallelized across positions, and information from early tokens has to survive many steps, which makes long-range dependencies hard.",
+        "Transformers use attention so every token can directly weigh every other token, and all positions are processed in parallel, which maps well onto GPUs and scales with data and size.",
+        "The cost is attention that grows quadratically with sequence length, which drives work on efficient variants and long-context methods.",
+        "RNN-style models are still used for streaming or very small-footprint settings."
+      ]
+    },
+    {
+      "id": "dl-008",
+      "base": "For each word, the model asks a question (the query) and compares it against a label (the key) on ev",
+      "points": [
+        "For each word, the model asks a question (the query) and compares it against a label (the key) on every other word; a high match means this word is relevant to me.",
+        "Those match scores are turned into weights that sum to one, and the word's new representation is a weighted blend of the other words' content (their values).",
+        "So in 'the animal didn't cross the street because it was tired', the representation of 'it' can pull in information from 'animal'.",
+        "Scores are scaled so the softmax stays well behaved, and multiple heads let the model track different relationships, such as syntax and reference, at the same time."
+      ]
+    },
+    {
+      "id": "dl-009",
+      "base": "Training from scratch on 500 images would overfit, so I'd start from a model pretrained on a large d",
+      "points": [
+        "Training from scratch on 500 images would overfit, so I'd start from a model pretrained on a large dataset such as ImageNet, whose early layers already detect general patterns.",
+        "First I'd freeze the backbone and train a new classification head, which is cheap and hard to overfit, then optionally unfreeze the top layers with a small learning rate.",
+        "Augmentation (crops, flips, color jitter) and early stopping help, and I'd use stratified cross-validation since a single validation split of 100 images is noisy.",
+        "If the domain is very different, such as medical scans, generic features may transfer less well, so I'd check against a baseline and consider a domain-specific pretrained model."
+      ]
+    },
+    {
+      "id": "dl-010",
+      "base": "I'd start with TF-IDF and logistic regression: it trains in seconds, needs little data, is easy to d",
+      "points": [
+        "I'd start with TF-IDF and logistic regression: it trains in seconds, needs little data, is easy to debug and often performs well when topics are signalled by distinctive words.",
+        "TF-IDF weights words by how specific they are to a document but has no notion of meaning, so synonyms and paraphrases look unrelated.",
+        "Embeddings from a pretrained model capture meaning and help on short or varied text, and they can feed the same simple classifier.",
+        "An LLM can classify with few or no labels, at higher cost, latency and variability.",
+        "I'd compare on one labeled test set for accuracy, cost per ticket and latency, and choose the simplest option that meets the target."
+      ]
+    },
+    {
+      "id": "dl-011",
+      "base": "word2vec trains a small network on a prediction task: given a word, predict its neighbors (skip-gram",
+      "points": [
+        "word2vec trains a small network on a prediction task: given a word, predict its neighbors (skip-gram), or the reverse.",
+        "The vectors that make that prediction work well end up placing words used in similar contexts near each other, following the idea that a word is defined by the company it keeps.",
+        "Limits: each word has one vector regardless of sense, so 'bank' for rivers and 'bank' for money are blended; rare words get poor vectors; and embeddings absorb biases in the training text.",
+        "Contextual embeddings from transformer models produce a different vector for each occurrence, which fixes much of the ambiguity problem."
+      ]
+    },
+    {
+      "id": "dl-012",
+      "base": "Stage one is pretraining on a huge text corpus to predict the next token, which gives broad knowledg",
+      "points": [
+        "Stage one is pretraining on a huge text corpus to predict the next token, which gives broad knowledge but not good behavior.",
+        "Stage two is supervised instruction tuning on examples of good responses so the model follows prompts.",
+        "Stage three, RLHF, collects human comparisons between model answers, trains a reward model to predict which is preferred, and then optimizes the chat model against that reward with reinforcement learning while keeping it close to the original.",
+        "The risk is that the reward model is only a proxy: models can learn to please raters, becoming sycophantic or verbose, which is why evaluation, diverse rater guidelines and newer preference-optimization methods matter."
+      ]
+    }
+  ]
+}

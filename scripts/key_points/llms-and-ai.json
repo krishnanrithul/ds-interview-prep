@@ -1,0 +1,161 @@
+{
+  "key_points": [
+    {
+      "id": "llm-001",
+      "base": "I'd design the pipeline in stages: ingest and clean the documents, chunk them with enough context to",
+      "points": [
+        "I'd design the pipeline in stages: ingest and clean the documents, chunk them with enough context to be meaningful (with metadata like source and date), embed and index them, and retrieve with hybrid search (keyword plus vector) followed by a reranker.",
+        "The prompt includes the retrieved passages and asks for answers grounded in them, with citations, and to say so when the answer isn't there.",
+        "Permissions must be applied as filters at retrieval time, so the model never sees documents the user can't access.",
+        "For evaluation, I'd measure retrieval separately (did the right passage appear in the top k?) and generation separately (is the answer faithful to the passages?), because the fixes are different."
+      ]
+    },
+    {
+      "id": "llm-002",
+      "base": "I'd start by collecting real or realistic inputs, including hard and adversarial cases, and writing ",
+      "points": [
+        "I'd start by collecting real or realistic inputs, including hard and adversarial cases, and writing a rubric that defines good (correctness, groundedness, tone, format).",
+        "A human-labeled set is the anchor.",
+        "For scale I'd use an LLM judge, but I'd check its agreement with human labels first, because judges have biases such as preferring longer answers, favoring the first option shown, and favoring their own style.",
+        "I'd run the set on every prompt or model change as a regression suite and track failure categories, not just one average score.",
+        "Offline scores can miss what users care about, so I'd confirm with online signals like task completion and feedback."
+      ]
+    },
+    {
+      "id": "llm-003",
+      "base": "I'd go in order of cost. Prompt engineering first: clearer instructions, examples, and structured ou",
+      "points": [
+        "I'd go in order of cost.",
+        "Prompt engineering first: clearer instructions, examples, and structured output.",
+        "If the model lacks private or fast-changing knowledge, add RAG, since fine-tuning is a poor way to inject facts and goes stale.",
+        "Fine-tuning fits when I need a consistent style or format, specialized behavior, or lower latency and cost by moving to a smaller model, and when I have enough quality examples to train on.",
+        "They combine well, for example RAG for knowledge on top of a fine-tuned model for tone.",
+        "I'd decide using the evaluation set, not intuition."
+      ]
+    },
+    {
+      "id": "llm-004",
+      "base": "I'd combine several measures. Ground answers in retrieved or provided sources and require citations,",
+      "points": [
+        "I'd combine several measures.",
+        "Ground answers in retrieved or provided sources and require citations, so claims can be checked.",
+        "Instruct and test the model to say 'I don't know' when the sources don't contain the answer, and measure this with an evaluation set that includes unanswerable questions.",
+        "Add a verification step where a second pass checks that each claim is supported by the sources.",
+        "Lower temperature helps with consistency, and structured outputs constrain what can be said.",
+        "In high-stakes settings I'd prefer abstaining or escalating to a human over a confident wrong answer, and I'd monitor flagged answers in production."
+      ]
+    },
+    {
+      "id": "llm-005",
+      "base": "Prompts alone aren't a safety mechanism, so I'd add controls around the agent. Give each tool the le",
+      "points": [
+        "Prompts alone aren't a safety mechanism, so I'd add controls around the agent.",
+        "Give each tool the least privilege it needs, set step and cost limits to stop loops, validate tool arguments against schemas, and require human approval for irreversible or high-impact actions like payments or deletions.",
+        "Content the agent reads from tools or the web is untrusted and must not be able to change its instructions or permissions, which is the defense against prompt injection.",
+        "I'd trace every step and tool call for debugging, and evaluate on full trajectories (did it finish the task, safely, within budget) using a set of scenarios, including adversarial ones, run on every change."
+      ]
+    },
+    {
+      "id": "llm-006",
+      "base": "A token is a chunk of text, often a word fragment, produced by the model's tokenizer. In English it ",
+      "points": [
+        "In English it averages about three quarters of a word, but it varies by language and content, and code and numbers tokenize poorly.",
+        "Providers charge per input and output token, usually more for output, and the context window caps input plus output.",
+        "Latency also scales with output tokens.",
+        "To estimate cost I'd multiply average input and output tokens per request by volume and price, adding retrieval context and retries.",
+        "When the input exceeds the window I'd retrieve only the relevant parts, summarize older context, or cache repeated prefixes.",
+        "I'd measure with the real tokenizer, not word counts."
+      ]
+    },
+    {
+      "id": "llm-007",
+      "base": "Classification wants consistent labels, so I'd use a low temperature, often 0, and constrain the out",
+      "points": [
+        "Classification wants consistent labels, so I'd use a low temperature, often 0, and constrain the output to the label set (an enum or structured output) instead of free text.",
+        "Temperature rescales the token probabilities before sampling, and higher values flatten them so unlikely tokens appear more often.",
+        "Top-p further restricts sampling to the most likely tokens whose probabilities add up to p; I'd normally tune one of the two, not both.",
+        "Even at temperature 0 outputs are not strictly guaranteed identical, because of batching and hardware nondeterminism, so I'd evaluate across repeated runs.",
+        "A higher temperature is for brainstorming and varied writing."
+      ]
+    },
+    {
+      "id": "llm-008",
+      "base": "First I'd look at the failures: truncated output (max tokens too low), extra prose around the JSON, ",
+      "points": [
+        "First I'd look at the failures: truncated output (max tokens too low), extra prose around the JSON, or wrong types and missing fields.",
+        "Then I'd reduce the problem at the source: use the provider's schema-constrained or tool-calling mode, give a schema and examples, keep outputs short and set adequate max tokens.",
+        "I'd always validate against a schema in code; on failure retry once with the error fed back, then fall back to a default or a human queue instead of letting bad data into the pipeline.",
+        "I'd log the failure rate by prompt version and model so changes are measurable, with alerts for spikes.",
+        "Never parse with a regex and hope."
+      ]
+    },
+    {
+      "id": "llm-009",
+      "base": "The model may follow the injected text, because instructions and data share one channel. Prompt-leve",
+      "points": [
+        "The model may follow the injected text, because instructions and data share one channel.",
+        "Prompt-level warnings (delimiters, 'treat the document as data') help but don't stop a determined attacker.",
+        "Real defenses reduce impact: give the model least privilege, with no secrets in the system prompt and no write or send actions without confirmation; restrict tool access and outbound traffic; treat outputs as untrusted (don't render raw links or run generated code); and filter or flag suspicious content.",
+        "With tools, the risk rises because an injection can trigger actions, so human approval for sensitive steps matters.",
+        "I'd test with an adversarial suite and monitor in production."
+      ]
+    },
+    {
+      "id": "llm-010",
+      "base": "Small chunks give precise matches but lose surrounding context and may split an answer across chunks",
+      "points": [
+        "Small chunks give precise matches but lose surrounding context and may split an answer across chunks.",
+        "Large chunks keep context but dilute the embedding, waste prompt tokens and can bury the relevant sentence.",
+        "Overlap protects against splitting at a boundary, at the cost of a larger index.",
+        "I'd pick candidates (say 200, 400 and 800 tokens), build a set of real questions with known source passages, and compare recall at k and answer quality.",
+        "I'd also chunk by structure (headings, clauses, messages) instead of fixed windows, attach metadata such as title and section, and consider retrieving small chunks and expanding to the parent section."
+      ]
+    },
+    {
+      "id": "llm-011",
+      "base": "I'd collect a sample of failures with the query, the retrieved chunks and the final answer. For each",
+      "points": [
+        "I'd collect a sample of failures with the query, the retrieved chunks and the final answer.",
+        "For each I'd ask: was the needed information in the corpus, was it in the top-k retrieved, and did the answer follow the retrieved text?",
+        "Missing from the corpus is a coverage problem; present but not retrieved is a retrieval problem (chunking, embeddings, hybrid search, reranking); retrieved but ignored or distorted is a generation problem (prompt, context order, model).",
+        "I'd measure recall at k and answer faithfulness separately on a labeled set, with an LLM judge checked against human labels.",
+        "To mitigate, I'd add citations and an instruction plus a retrieval-score threshold to say 'I don't know' when retrieval is weak."
+      ]
+    },
+    {
+      "id": "llm-012",
+      "base": "I'd start from real usage: collect 50 to 100 representative inputs, including edge cases. I'd have s",
+      "points": [
+        "I'd start from real usage: collect 50 to 100 representative inputs, including edge cases.",
+        "I'd have stakeholders grade the same sample independently, then discuss the disagreements and write a rubric with concrete criteria (correct, complete, safe, tone) and examples of each score.",
+        "That turns opinion into labels.",
+        "Add automated checks where possible (format, citations, banned content).",
+        "An LLM judge can scale the grading, but I'd calibrate it against human labels, check for position and verbosity bias, and keep humans on a rotating sample.",
+        "I'd refresh the set with production failures and track metrics per version so changes are comparable."
+      ]
+    },
+    {
+      "id": "llm-013",
+      "base": "First I'd instrument cost: tokens in and out per request, per feature, per user type, and find the h",
+      "points": [
+        "First I'd instrument cost: tokens in and out per request, per feature, per user type, and find the heavy tail (long prompts, retries, chatty outputs).",
+        "The lowest-risk savings come first: trim prompts and context, cap output length, cache repeated prefixes and identical requests, and batch non-urgent work.",
+        "Next, route easy requests to a smaller model and escalate hard ones, or move to a cheaper model for steps that don't need the strongest one.",
+        "Fine-tuning a small model can pay off at high volume.",
+        "After every change I'd rerun the evaluation set and track quality, latency and cost together, so a saving that quietly breaks quality is caught.",
+        "Some of the target may need product changes, such as limiting free usage."
+      ]
+    },
+    {
+      "id": "llm-014",
+      "base": "LoRA keeps the pretrained weights frozen and learns small low-rank matrices added to selected layers",
+      "points": [
+        "LoRA keeps the pretrained weights frozen and learns small low-rank matrices added to selected layers, so only a tiny share of parameters is trained.",
+        "That cuts GPU memory, speeds up training and lets you store one small adapter per task and swap them on one base model.",
+        "Full fine-tuning can capture larger changes in behavior but costs far more and risks forgetting.",
+        "I'd use LoRA for style, format or domain adaptation with limited data and budget.",
+        "Before either, I'd check whether prompting or retrieval solves the problem, since fine-tuning is better for behavior than for adding facts."
+      ]
+    }
+  ]
+}

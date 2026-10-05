@@ -32,6 +32,185 @@
         "I'd detect it by always slicing key metrics by likely confounders and checking whether the direction flips.",
         "For the board I'd report the stratified or adjusted comparison with a plain explanation, and say which question each number answers, because the aggregate answers a different question than the one they're asking."
       ]
+    },
+    {
+      "id": "stats-004",
+      "base": "I'd fix four inputs before starting: the baseline metric and its variance, the minimum detectable ef",
+      "points": [
+        "I'd fix four inputs before starting: the baseline metric and its variance, the minimum detectable effect that would actually change a decision, the significance level (usually 5%), and the power (usually 80%).",
+        "Sample size grows with variance and with 1 over the MDE squared, so halving the effect needs about four times the users.",
+        "If we can't wait that long, I'd raise the MDE honestly, pick a less noisy metric, or use CUPED, which uses pre-experiment behavior as a covariate to cut variance.",
+        "I'd also commit to the sample size up front and not stop when the p-value first dips below 0.05."
+      ]
+    },
+    {
+      "id": "stats-005",
+      "base": "I'd say: 'Our best estimate is X, and given the noise in our data, values from A to B are all plausi",
+      "points": [
+        "I'd say: 'Our best estimate is X, and given the noise in our data, values from A to B are all plausible.",
+        "If we repeated this study many times, intervals built this way would capture the true value about 95% of the time.' Strictly, the true value is fixed, so 95% describes the procedure and not this particular interval.",
+        "Quadrupling the sample size roughly halves the width.",
+        "If they want one number, I give the estimate and always pair it with the range, and say what decision would change within that range."
+      ]
+    },
+    {
+      "id": "stats-006",
+      "base": "With 20 independent tests at the 5% level, the chance of at least one false positive is 1 - 0.95^20,",
+      "points": [
+        "With 20 independent tests at the 5% level, the chance of at least one false positive is 1 - 0.95^20, about 64%, so one p=0.04 is weak evidence.",
+        "I'd check whether this was a pre-declared primary metric.",
+        "If not, I'd treat it as a hypothesis to confirm in a follow-up test.",
+        "For the analysis I'd correct: Bonferroni or Holm control the chance of any false positive but cost power, while Benjamini-Hochberg controls the false discovery rate and is better for exploratory work.",
+        "Going forward I'd pre-register one primary metric plus a few guardrail metrics."
+      ]
+    },
+    {
+      "id": "stats-007",
+      "base": "Bootstrapping estimates the sampling distribution of any statistic, such as a median, a ratio or an ",
+      "points": [
+        "Bootstrapping estimates the sampling distribution of any statistic, such as a median, a ratio or an AUC, by resampling the data with replacement many times and recomputing it.",
+        "I'd use it when there's no clean analytical formula.",
+        "It breaks when observations aren't independent: resampling points of a time series destroys the autocorrelation, so I'd use a block bootstrap.",
+        "It also behaves badly for extreme statistics like the maximum, and for very small samples.",
+        "A thousand or more resamples is usually fine for a standard error, and more for stable tail percentiles."
+      ]
+    },
+    {
+      "id": "stats-008",
+      "base": "Under a fair coin, 7 or more heads in 10 flips has probability about 17%, and the two-sided p-value ",
+      "points": [
+        "Under a fair coin, 7 or more heads in 10 flips has probability about 17%, and the two-sided p-value (7 or more, or 3 or fewer) is about 0.34, so there is no evidence of bias.",
+        "With 70 heads out of 100 the p-value is far below 0.001, which is strong evidence.",
+        "The p-value is the probability of data this extreme if the coin is fair, not the probability that the coin is fair.",
+        "I'd also report a confidence interval for the heads rate, which for 10 flips spans roughly 35% to 93%, to show how little 10 flips tell us.",
+        "One-sided versus two-sided should be chosen before seeing the data."
+      ]
+    },
+    {
+      "id": "stats-009",
+      "base": "I'd say: individual users' spending is messy and skewed, but if you repeatedly take samples and aver",
+      "points": [
+        "I'd say: individual users' spending is messy and skewed, but if you repeatedly take samples and average them, those averages form a bell shape centered on the true mean, with a spread that shrinks as samples grow.",
+        "That is why we can put a margin of error on an average and compare two groups with a standard test.",
+        "The common misconception is that the data itself becomes normal; it is the distribution of the average.",
+        "How large n must be depends on the skew: 30 is a rough rule for mild skew, but a metric dominated by rare big spenders may need thousands.",
+        "With a heavy-tailed metric I'd check with a bootstrap."
+      ]
+    },
+    {
+      "id": "stats-010",
+      "base": "It depends on the decision. If we care about total revenue, the mean is the right quantity even thou",
+      "points": [
+        "It depends on the decision.",
+        "If we care about total revenue, the mean is the right quantity even though it is noisy, since totals are mean times users.",
+        "If we care about a typical user's experience, the median or a trimmed mean is better.",
+        "For testing the mean, the central limit theorem usually still rescues a t-test at large n, but with heavy tails I'd confirm with a bootstrap interval or reduce variance with CUPED or winsorizing, stating what that does to the quantity being estimated.",
+        "Mann-Whitney tests whether one group tends to produce larger values, not specifically whether medians differ.",
+        "I'd report both mean and median with intervals."
+      ]
+    },
+    {
+      "id": "stats-011",
+      "base": "No. p = 0.03 means that if A and B truly performed the same, data this extreme would show up about 3",
+      "points": [
+        "p = 0.03 means that if A and B truly performed the same, data this extreme would show up about 3% of the time.",
+        "It is not the probability that B is better.",
+        "To answer the PM's actual question I'd fit a Bayesian model: put priors on each conversion rate (often weakly informative Beta priors), update with the data, and report P(B > A) from the posterior along with the expected lift and the expected loss if we choose wrong.",
+        "The answer depends on the prior, which should be stated and tested for sensitivity.",
+        "With lots of data and weak priors the two approaches usually agree closely.",
+        "I'd frame it for the PM in terms of decision risk."
+      ]
+    },
+    {
+      "id": "stats-012",
+      "base": "A fixed-horizon p-value is only valid if you look once, at the pre-planned sample size. Stopping whe",
+      "points": [
+        "A fixed-horizon p-value is only valid if you look once, at the pre-planned sample size.",
+        "Stopping when it first dips below 0.05 exploits random fluctuation: with daily looks over a few weeks, the real false-positive rate can reach 20 to 30%.",
+        "Options: pre-commit to a sample size and read results once; or use a sequential design such as group-sequential or alpha-spending boundaries, always-valid p-values, or a Bayesian stopping rule with calibrated thresholds.",
+        "If stakeholders need early reads, I'd allow monitoring for harm on guardrail metrics but not for declaring wins.",
+        "Novelty effects and day-of-week cycles are another reason to run full weeks."
+      ]
+    },
+    {
+      "id": "stats-013",
+      "base": "First I'd learn how discounts were assigned: if marketing targeted engaged customers, or at-risk cus",
+      "points": [
+        "First I'd learn how discounts were assigned: if marketing targeted engaged customers, or at-risk customers, the groups differ before treatment.",
+        "I'd map the likely causal structure, then compare like with like: propensity-score matching or weighting, or regression adjustment on pre-treatment covariates only.",
+        "If there is a rollout date, a region or an eligibility cutoff, difference-in-differences or regression discontinuity gives a stronger estimate.",
+        "I'd check covariate balance and run a sensitivity analysis for unmeasured factors.",
+        "Adjustment only handles what we measured, so I'd say so and recommend a small holdout experiment going forward."
+      ]
+    },
+    {
+      "id": "stats-014",
+      "base": "With p1 and p2 as the arm rates, the standard error of the difference is sqrt(p1(1-p1)/n1 + p2(1-p2)",
+      "points": [
+        "With p1 and p2 as the arm rates, the standard error of the difference is sqrt(p1(1-p1)/n1 + p2(1-p2)/n2), and the 95% interval is the difference plus or minus 1.96 times that.",
+        "For about 2% and 100,000 users per arm the standard error is roughly 0.063 percentage points, so differences under about 0.12 points are inside the noise.",
+        "The formula assumes independent users and a large enough n for the normal approximation, both fine here.",
+        "A common error is analyzing clicks or sessions while randomizing users, which understates variance; I'd analyze per user or use cluster-robust errors.",
+        "A bootstrap is a good cross-check."
+      ]
+    },
+    {
+      "id": "stats-015",
+      "base": "It can mislead. A/B tests assume one user's outcome doesn't depend on anyone else's assignment. In a",
+      "points": [
+        "It can mislead.",
+        "A/B tests assume one user's outcome doesn't depend on anyone else's assignment.",
+        "In a marketplace, treated buyers who grab limited inventory take it from control buyers, so the measured lift overstates what launching to everyone would deliver.",
+        "In social products, treated users influence their control friends, which shrinks the measured effect.",
+        "Better designs randomize at the level where the interaction happens: clusters of connected users, geographies or time-based switchbacks, accepting lower power.",
+        "I'd compare cluster-level and user-level estimates as a diagnostic and consider modelling the equilibrium effect."
+      ]
+    },
+    {
+      "id": "stats-016",
+      "base": "Given a model with parameters, the likelihood is the probability it assigns to the data we saw. Maxi",
+      "points": [
+        "Given a model with parameters, the likelihood is the probability it assigns to the data we saw.",
+        "Maximum likelihood chooses the parameters that maximize it.",
+        "For independent points the likelihood is a product, so we maximize the log, which turns it into a sum and avoids underflow.",
+        "Squared error is the negative log-likelihood of Gaussian noise, and cross-entropy is the negative log-likelihood of Bernoulli labels, so training those models is maximum likelihood.",
+        "It can fail with little data, where it overfits, and with perfectly separable classes, where logistic coefficients diverge; priors or regularization fix both."
+      ]
+    },
+    {
+      "id": "stats-017",
+      "base": "Conversions are counts in a channel-by-outcome table, so a chi-square test of independence asks whet",
+      "points": [
+        "Conversions are counts in a channel-by-outcome table, so a chi-square test of independence asks whether conversion rate depends on channel.",
+        "It needs independent users and reasonably large expected counts; otherwise use Fisher's exact test.",
+        "A significant result only says some channels differ.",
+        "To find which, I'd run pairwise comparisons with a correction such as Holm or Tukey rather than six uncorrected tests, and report effect sizes with intervals, since a huge sample makes tiny differences significant.",
+        "For revenue per user the analogue is ANOVA, or a rank-based test if the data are heavily skewed."
+      ]
+    },
+    {
+      "id": "stats-018",
+      "base": "A bandit shifts traffic toward better-performing variants as evidence accumulates, which cuts the co",
+      "points": [
+        "A bandit shifts traffic toward better-performing variants as evidence accumulates, which cuts the cost of showing a loser.",
+        "That fits headline testing, promotions and recommendations, where options are many, decisions are short-lived and the goal is reward, not a report.",
+        "An A/B test fits product changes where you need an unbiased estimate, a guardrail check and a decision you can defend.",
+        "With a bandit the unequal, adaptive allocation makes estimates for the weaker arms noisy and biased and complicates p-values.",
+        "Thompson sampling draws a plausible rate for each arm from its posterior and plays the best draw.",
+        "If the effect drifts, for example by day of week, a bandit can lock onto a stale winner unless it discounts old data."
+      ]
+    },
+    {
+      "id": "stats-019",
+      "base": "Customers who are still active have an unknown churn time: we only know it is longer than what we ha",
+      "points": [
+        "Customers who are still active have an unknown churn time: we only know it is longer than what we have observed.",
+        "Averaging observed lifetimes of churned customers biases the answer downward, and treating active customers as churned at today's date is also wrong.",
+        "Survival analysis handles this censoring.",
+        "A Kaplan-Meier curve estimates the share still subscribed at each tenure, and I would compare curves by plan or cohort.",
+        "To include features I'd use a Cox proportional hazards model, which gives hazard ratios, after checking that the proportionality assumption holds.",
+        "If the goal is a score for who will churn in the next 30 days, a classifier on a fixed window can be simpler."
+      ]
     }
   ]
 }

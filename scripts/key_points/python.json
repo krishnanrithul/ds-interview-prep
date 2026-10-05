@@ -29,6 +29,160 @@
         "A backtest RMSE of 0.05 against 0.2 live usually means leakage, a different data-availability timeline, or a regime shift.",
         "I'd rebuild the live features at the same cutoff and compare them with the backtest features."
       ]
+    },
+    {
+      "id": "python-004",
+      "base": "Duplicate keys on both sides produce a many-to-many join, so every match is multiplied. I'd diagnose",
+      "points": [
+        "Duplicate keys on both sides produce a many-to-many join, so every match is multiplied.",
+        "I'd diagnose it by checking df[key].is_unique and the duplicate counts on each side before merging.",
+        "To prevent it I'd state the expected relationship with merge(..., validate='many_to_one'), which raises an error if the right-hand keys aren't unique, and use indicator=True to see which rows matched.",
+        "Dropping duplicates afterward hides the problem.",
+        "I'd also compare row counts before and after every join, because inner joins can silently drop rows and left joins can silently introduce NaNs."
+      ]
+    },
+    {
+      "id": "python-005",
+      "base": "I'd avoid loading everything. First I'd read only the needed columns and set compact dtypes (int32, ",
+      "points": [
+        "I'd avoid loading everything.",
+        "First I'd read only the needed columns and set compact dtypes (int32, category).",
+        "Then I'd either process in chunks and aggregate incrementally, or use an engine that works out of core, like DuckDB or Polars in lazy mode, which can query the CSV directly.",
+        "If I'll reuse the data, I'd convert it once to Parquet: columnar, compressed, and much faster to scan.",
+        "I'd move to Spark or a warehouse when the data keeps growing, several people need it, or the jobs must run on a schedule."
+      ]
+    },
+    {
+      "id": "python-006",
+      "base": "I'd test at three levels. Transformations get unit tests with tiny hand-made inputs and expected out",
+      "points": [
+        "I'd test at three levels.",
+        "Transformations get unit tests with tiny hand-made inputs and expected outputs, including edge cases like nulls and empty groups.",
+        "The data gets schema and quality checks (types, ranges, null rates, uniqueness) that run in the pipeline.",
+        "The model gets regression tests: train on a small fixed dataset with a fixed seed and assert metrics stay above a floor, and compare new results to a stored baseline so a silent quality drop fails CI.",
+        "For randomness I'd set seeds and use tolerances instead of exact equality.",
+        "Fast tests run on every commit, and heavier end-to-end runs on a schedule."
+      ]
+    },
+    {
+      "id": "python-007",
+      "base": "List: ordered, mutable, linear-time membership. Tuple: ordered and immutable, hashable if its conten",
+      "points": [
+        "Tuple: ordered and immutable, hashable if its contents are, good for fixed records and dict keys.",
+        "Set: unordered unique items with average constant-time membership.",
+        "Dict: key-value mapping with average constant-time lookup, insertion-ordered in modern Python.",
+        "For repeated membership checks on a million items I convert the list to a set once, because a list would scan every item on each check.",
+        "Lists cannot be dict keys because they are mutable and unhashable.",
+        "I choose by the access pattern: ordered iteration, fast lookups, deduplication or a fixed record."
+      ]
+    },
+    {
+      "id": "python-008",
+      "base": "The expression first selects rows, which can return a copy, and then assigns the column into that te",
+      "points": [
+        "The expression first selects rows, which can return a copy, and then assigns the column into that temporary object, so the original DataFrame never changes, or pandas warns that it can't tell.",
+        "The fix is a single indexing call: df.loc[df['score'] > 0, 'label'] = 1, or np.where when creating a column.",
+        "Silencing the warning or adding .copy() only hides the problem.",
+        "In recent pandas, copy-on-write means chained assignment never modifies the original, which removes the ambiguity but breaks old code that relied on it.",
+        "I'd make writes explicit and cover them with a test."
+      ]
+    },
+    {
+      "id": "python-009",
+      "base": "Count TP, FP and FN in one pass over zip(y_true, y_pred); precision = TP / (TP + FP) and recall = TP",
+      "points": [
+        "Count TP, FP and FN in one pass over zip(y_true, y_pred); precision = TP / (TP + FP) and recall = TP / (TP + FN).",
+        "Edge cases: unequal lengths should raise an error, no predicted positives leaves precision undefined, and no actual positives leaves recall undefined.",
+        "I'd return 0.0 or NaN explicitly and document it, like a zero_division parameter, instead of letting ZeroDivisionError happen.",
+        "For multiclass I'd compute per class and report macro, micro or weighted averages depending on whether rare classes matter.",
+        "I'd test against sklearn on random inputs plus hand-built degenerate cases."
+      ]
+    },
+    {
+      "id": "python-010",
+      "base": "A generator is a function (or expression) that yields values lazily: it computes the next item only ",
+      "points": [
+        "A generator is a function (or expression) that yields values lazily: it computes the next item only when asked, so memory use does not grow with the data.",
+        "That suits pipelines that read a large file line by line, transform each record, and write it out, since stages can be chained without ever holding everything.",
+        "The trade-offs: you can iterate once, you can't index or take len() without consuming it, and iterating twice silently yields nothing the second time, a classic bug.",
+        "If I need several passes or random access I materialize a list or reload the source.",
+        "For heavy numeric work I'd still prefer vectorized operations on chunks over item-at-a-time loops."
+      ]
+    },
+    {
+      "id": "python-011",
+      "base": "Count with collections.Counter in linear time, then use heapq.nlargest(k, counts.items(), key=...), ",
+      "points": [
+        "Count with collections.Counter in linear time, then use heapq.nlargest(k, counts.items(), key=...), which costs O(m log k) for m distinct items instead of sorting all of them; Counter.most_common(k) does this.",
+        "Memory is proportional to the number of distinct items.",
+        "If a stream has too many distinct values to hold, I'd switch to an approximate method such as a Count-Min Sketch with a heap, or the Misra-Gries algorithm, and say that counts become estimates.",
+        "I'd also define tie-breaking (alphabetical or first seen) so results are deterministic."
+      ]
+    },
+    {
+      "id": "python-012",
+      "base": "The default list is evaluated once at definition time and stored on the function, so every call that",
+      "points": [
+        "The default list is evaluated once at definition time and stored on the function, so every call that omits items mutates the same list.",
+        "Items leak across calls, and in a long-running service even across users.",
+        "The standard fix is items=None and then items = [] inside the function when it is None.",
+        "The same trap affects dicts, sets and dataclass fields, where field(default_factory=list) is the equivalent.",
+        "It is a good example of a bug that tests miss: each test passes alone but fails when run in a different order."
+      ]
+    },
+    {
+      "id": "python-013",
+      "base": "I'd refactor the cells into pure functions with explicit inputs and outputs and no hidden notebook s",
+      "points": [
+        "I'd refactor the cells into pure functions with explicit inputs and outputs and no hidden notebook state, put them in a package with pinned dependencies, and add unit tests for edge cases such as empty frames, NaNs and unexpected categories.",
+        "I'd add data validation at the boundary (schema, ranges, null rates) that fails loudly with a clear message.",
+        "The same functions must serve training and inference to avoid skew.",
+        "Add logging, config instead of hardcoded paths, code review and a CI run.",
+        "The notebook stays as documentation or exploration and calls the package rather than owning the logic."
+      ]
+    },
+    {
+      "id": "python-014",
+      "base": "First I'd check whether it can be vectorized with pandas, NumPy or Polars, or pushed to the warehous",
+      "points": [
+        "First I'd check whether it can be vectorized with pandas, NumPy or Polars, or pushed to the warehouse as SQL, which often beats naive parallel Python by a wide margin.",
+        "If it is CPU-bound and has to be Python, use processes, because the GIL stops threads from running Python bytecode in parallel; threads suit I/O-bound work.",
+        "Multiprocessing has costs: pickling data between processes, duplicated memory and per-task overhead, so I'd partition into large chunks and avoid shipping big objects around.",
+        "Beyond one machine I'd use Spark, Dask or the warehouse.",
+        "And I'd profile first so I parallelize the real bottleneck."
+      ]
+    },
+    {
+      "id": "python-015",
+      "base": "Initialize k centers by sampling points (ideally k-means++), then repeat: compute distances from eve",
+      "points": [
+        "Initialize k centers by sampling points (ideally k-means++), then repeat: compute distances from every point to every center with broadcasting, assign each point to its nearest center with argmin, and set each center to the mean of its points.",
+        "If a cluster is empty, re-seed it from a far-away point.",
+        "Stop when assignments stop changing or the centers move less than a tolerance, with an iteration cap.",
+        "Run it several times with different seeds and keep the lowest within-cluster sum of squares.",
+        "Before trusting it I'd check that features are scaled and that the clusters are stable and interpretable."
+      ]
+    },
+    {
+      "id": "python-016",
+      "base": "With X as an n by d matrix, predictions are X @ w, the gradient of mean squared error is (2/n) * X.T",
+      "points": [
+        "With X as an n by d matrix, predictions are X @ w, the gradient of mean squared error is (2/n) * X.T @ (X @ w - y), and each step is w -= lr * gradient, repeated for a fixed number of iterations or until the loss stops improving.",
+        "I'd scale features first, because very different scales make the loss surface a narrow valley that forces a tiny learning rate.",
+        "I'd plot loss per iteration: smooth decline means the rate is fine, oscillation or growth means it is too high, and a very slow decline means it is too low.",
+        "The closed form is exact for small problems; gradient descent scales to large ones and generalizes to other models.",
+        "Mini-batches trade noisier steps for much cheaper updates."
+      ]
+    },
+    {
+      "id": "python-017",
+      "base": "Fit a TF-IDF vectorizer on the documents to get a sparse matrix, transform the query with the same v",
+      "points": [
+        "Fit a TF-IDF vectorizer on the documents to get a sparse matrix, transform the query with the same vectorizer, compute cosine similarity as a sparse dot product (rows are L2-normalized by default), and return the top-scoring documents with argsort.",
+        "Cosine ignores document length, which Euclidean distance does not.",
+        "The limits are that it only matches shared words, so synonyms and paraphrases are missed, and that stop words and tokenization choices matter.",
+        "At large scale I'd use an inverted index such as BM25 in a search engine, or embeddings with an approximate nearest-neighbor index, often combining both."
+      ]
     }
   ]
 }
