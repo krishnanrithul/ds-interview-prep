@@ -7,7 +7,7 @@ import DraftBadge from './DraftBadge'
 import TagChips from './TagChips'
 import KeyTerms from './KeyTerms'
 import { pickVariants, markSeen, followUpText } from '../lib/variants'
-import { matchEnabled } from '../lib/match'
+import { matchEnabled, ratingFromScore, toSavedScore } from '../lib/match'
 import { useMatchScore } from '../hooks/useMatchScore'
 import { CoverageMeter, KeyPointsReview } from './KeyPoints'
 
@@ -53,6 +53,7 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
   const [text, setText] = useState('')
   const [deepOpen, setDeepOpen] = useState(false) // an interactive explainer is open
   const [results, setResults] = useState([])
+  const [kp, setKp] = useState(null) // { id, pct, status, basis } from the key-points panel for the current question
   const textRef = useRef(null)
   const endRef = useRef(null)
 
@@ -76,8 +77,10 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
     setTurns((t) => [...t, text.trim()])
     setText('')
   }
+  const score = kp && q && kp.id === q.id ? kp : null
+  const suggested = score?.basis ? ratingFromScore(score.pct) : null
   const rate = (r) => {
-    onRate(q.id, r, draft)
+    onRate(q.id, r, draft, 'practice', toSavedScore(score))
     setResults((x) => [...x, { id: q.id, rating: r }])
     setI((x) => x + 1)
     setTurns([])
@@ -218,7 +221,7 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
               <p className="text-sm text-muted-foreground mb-1">Here's how that lands for this question</p>
               <p className="font-serif text-lg leading-snug">{q.question}</p>
             </div>
-            {matchEnabled(q) && <KeyPointsReview key={q.id} q={q} answer={turns[0]} sims={match.sims} />}
+            {matchEnabled(q) && <KeyPointsReview key={q.id} q={q} answer={turns[0]} sims={match.sims} onScore={(sc) => setKp({ id: q.id, ...sc })} />}
             <AnswerLadder q={q} />
             {q.tags?.length > 0 && (
               <div>
@@ -288,12 +291,15 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
           </div>
         ) : (
           <div className="anim-msg rounded-2xl border border-border bg-card shadow-lg p-4">
-            <p className="text-center text-sm text-muted-foreground mb-3">How did you do?</p>
+            <p className="text-center text-sm text-muted-foreground mb-3">
+              How did you do?{suggested && <> Your score of {score.pct}% suggests <span className="font-semibold text-foreground">{RATINGS[suggested].label}</span>.</>}
+            </p>
             <div className="grid grid-cols-3 gap-3">
               {Object.entries(RATINGS).map(([k, v]) => (
-                <button key={k} onClick={() => rate(k)} className={`rounded-xl border py-3 font-semibold transition-all active:scale-95 ${v.button}`}>
+                <button key={k} onClick={() => rate(k)} aria-describedby={k === suggested ? 'suggested-rating' : undefined}
+                  className={`rounded-xl border py-3 font-semibold transition-all active:scale-95 ${v.button} ${k === suggested ? 'ring-2 ring-offset-2 ring-offset-card ring-current' : ''}`}>
                   {v.label}
-                  <span className="block text-xs font-normal opacity-70">{v.hint} · {v.key}</span>
+                  <span className="block text-xs font-normal opacity-70">{k === suggested ? <span id="suggested-rating">Suggested · {v.key}</span> : <>{v.hint} · {v.key}</>}</span>
                 </button>
               ))}
             </div>

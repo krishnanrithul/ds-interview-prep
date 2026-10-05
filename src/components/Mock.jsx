@@ -9,7 +9,7 @@ import ConfirmDialog from './ConfirmDialog'
 import DraftBadge from './DraftBadge'
 import { generateProbe, reactiveEnabled, REACTIVE_TOPICS } from '../lib/probe'
 import { getApiKey } from '../lib/grade'
-import { matchEnabled, ratingFromScore, interviewVerdict } from '../lib/match'
+import { matchEnabled, ratingFromScore, interviewVerdict, toSavedScore } from '../lib/match'
 import { useMatchScore } from '../hooks/useMatchScore'
 import { KeyPointsReview } from './KeyPoints'
 
@@ -175,7 +175,7 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
   const save = () => {
     const results = ids
       .filter((id) => ratings[id])
-      .map((id) => ({ id, rating: ratings[id], answer: transcriptText(id) }))
+      .map((id) => ({ id, rating: ratings[id], answer: transcriptText(id), scored: toSavedScore(scores[id]) }))
     onSave(results)
     setStage('setup')
   }

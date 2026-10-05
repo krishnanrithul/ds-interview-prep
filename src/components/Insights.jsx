@@ -11,6 +11,16 @@ const FILL = { solid: RATINGS.solid.bar, shaky: RATINGS.shaky.bar, missed: RATIN
 const TOPICS = [...new Set(QUESTIONS.map((q) => q.topic))]
 
 const statusOf = (progress, q) => progress[q.id]?.rating || 'unseen'
+// Score of your latest scored attempt on a question ("of a senior answer"), or null.
+const latestScore = (notes, id) => {
+  const a = [...(notes?.[id] || [])].reverse().find((x) => typeof x.score === 'number')
+  return a ? a.score : null
+}
+const avgScore = (notes, qs) => {
+  const xs = qs.map((q) => latestScore(notes, q.id)).filter((x) => x !== null)
+  return { avg: xs.length ? Math.round(xs.reduce((a, b) => a + b, 0) / xs.length) : null, n: xs.length }
+}
+
 const split = (progress, qs) => {
   const c = { solid: 0, shaky: 0, missed: 0, unseen: 0 }
   qs.forEach((q) => { c[statusOf(progress, q)]++ })
@@ -28,7 +38,7 @@ function Bar({ counts, total, ready, className = 'h-4' }) {
   )
 }
 
-export default function Insights({ progress, onStart, onTag }) {
+export default function Insights({ progress, notes, onStart, onTag }) {
   const [topic, setTopic] = useState('all')
   const [segment, setSegment] = useState(null)
   const [ready, setReady] = useState(false)
@@ -36,6 +46,7 @@ export default function Insights({ progress, onStart, onTag }) {
 
   const scope = useMemo(() => (topic === 'all' ? QUESTIONS : QUESTIONS.filter((q) => q.topic === topic)), [topic])
   const counts = useMemo(() => split(progress, scope), [progress, scope])
+  const scoreAll = useMemo(() => avgScore(notes, scope), [notes, scope])
   const total = scope.length
   const seen = total - counts.unseen
   const pct = (n) => (total ? Math.round((n / total) * 100) : 0)
@@ -67,7 +78,7 @@ export default function Insights({ progress, onStart, onTag }) {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-3xl font-semibold">Insights</h2>
-          <p className="text-muted-foreground mt-1">How your self-ratings split, overall and by topic.</p>
+          <p className="text-muted-foreground mt-1">Your scores and self-ratings, overall and by topic.</p>
         </div>
         <label className="block text-sm">
           <span className="block text-muted-foreground mb-1">Topic</span>
@@ -86,6 +97,15 @@ export default function Insights({ progress, onStart, onTag }) {
       </div>
 
       <section className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+        {scoreAll.avg !== null && (
+          <div className="mb-5 pb-5 border-b border-border">
+            <p><span className="text-4xl font-semibold tabular-nums">{scoreAll.avg}%</span> <span className="text-muted-foreground">average score, of a senior answer</span></p>
+            <div className="h-2 rounded-full bg-muted overflow-hidden mt-2.5" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={scoreAll.avg} aria-label="Average score">
+              <div className="h-full rounded-full bg-primary transition-[width] duration-700 ease-out" style={{ width: ready ? `${scoreAll.avg}%` : '0%' }} />
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">From your latest scored attempt on {scoreAll.n} {scoreAll.n === 1 ? 'question' : 'questions'}{topic === 'all' ? '' : ` in ${topic}`}.</p>
+          </div>
+        )}
         <p className="font-serif text-2xl font-medium mb-4" aria-live="polite">{headline}</p>
         <Bar counts={counts} total={total} ready={ready} className="h-5" />
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4">
@@ -129,7 +149,7 @@ export default function Insights({ progress, onStart, onTag }) {
                 <div className="flex-1 min-w-0">
                   <p className="leading-snug">{q.question}</p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {q.topic}{progress[q.id] ? `, ${describeDue(progress[q.id])}` : ''}
+                    {q.topic}{progress[q.id] ? `, ${describeDue(progress[q.id])}` : ''}{latestScore(notes, q.id) !== null ? `, last score ${latestScore(notes, q.id)}%` : ''}
                   </p>
                 </div>
                 <button onClick={() => onStart({ only: [q.id] })} className="text-sm font-medium text-primary hover:opacity-80 shrink-0">Practice</button>
@@ -164,14 +184,17 @@ export default function Insights({ progress, onStart, onTag }) {
             {TOPICS.map((t) => {
               const qs = QUESTIONS.filter((q) => q.topic === t)
               const c = split(progress, qs)
+              const sc = avgScore(notes, qs)
               return (
                 <li key={t}>
-                  <button onClick={() => { setTopic(t); setSegment(null); window.scrollTo?.({ top: 0 }) }} className="w-full text-left grid grid-cols-[1fr_auto] sm:grid-cols-[14rem_1fr_6.5rem] items-center gap-x-4 gap-y-2 p-4 hover:bg-muted/50 transition-colors">
+                  <button onClick={() => { setTopic(t); setSegment(null); window.scrollTo?.({ top: 0 }) }} className="w-full text-left grid grid-cols-[1fr_auto] sm:grid-cols-[14rem_1fr_10rem] items-center gap-x-4 gap-y-2 p-4 hover:bg-muted/50 transition-colors">
                     <span className="order-1 flex items-center gap-2 text-sm font-medium">
                       <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${dot(t)}`} />{t}
                     </span>
                     <span className="order-3 col-span-2 sm:col-span-1 sm:order-2"><Bar counts={c} total={qs.length} ready={ready} className="h-2.5" /></span>
-                    <span className="order-2 sm:order-3 text-sm text-muted-foreground tabular-nums text-right">{c.solid} of {qs.length} solid</span>
+                    <span className="order-2 sm:order-3 text-sm text-muted-foreground tabular-nums text-right">
+                      {c.solid} of {qs.length} solid{sc.avg !== null && <> · <span className="font-semibold text-foreground/80" title={`Average of your latest score on ${sc.n} ${sc.n === 1 ? 'question' : 'questions'}`}>{sc.avg}%</span></>}
+                    </span>
                   </button>
                 </li>
               )

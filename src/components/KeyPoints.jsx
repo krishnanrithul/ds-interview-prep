@@ -57,7 +57,7 @@ function PointList({ q, idx, grade, sims, text }) {
 // Debrief panel: overall score, then each key point with its live match or AI verdict.
 // answer: the learner's own words (shown, and used for the live score). gradeText: what Haiku grades,
 // e.g. a labeled Mock transcript; defaults to the answer.
-// onScore({ pct, status }): status is 'graded', 'estimate' (live match only), 'empty' (nothing written),
+// onScore({ pct, status, basis }): basis is 'haiku', 'match' or null; status is 'graded', 'estimate' (live match only), 'empty' (nothing written),
 // 'pending' (still scoring) or 'unavailable'.
 export function KeyPointsReview({ q, answer, sims, gradeText, onScore }) {
   const text = (answer || '').trim()
@@ -88,7 +88,8 @@ export function KeyPointsReview({ q, answer, sims, gradeText, onScore }) {
     : state === 'busy' || state === 'idle' ? 'pending'
     : sims ? 'estimate'
     : 'unavailable' // no grade and the in-browser matcher couldn't run
-  useEffect(() => { onScore?.({ pct, status }) }, [pct, status]) // eslint-disable-line react-hooks/exhaustive-deps
+  const basis = grade ? 'haiku' : text && sims ? 'match' : null // what the current pct is computed from
+  useEffect(() => { onScore?.({ pct, status, basis }) }, [pct, status, basis]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const counts = grade && grade.points.reduce((a, p) => ({ ...a, [p.status]: (a[p.status] || 0) + 1 }), {})
 

@@ -85,3 +85,6 @@ export function interviewVerdict(pct) {
   if (pct >= 25) return 'Partly there: important ideas were missing'
   return 'Not ready yet: most key points were missing'
 }
+
+// What gets saved with an attempt, from a key-points panel report. Null when there's nothing to save.
+export const toSavedScore = (sc) => (sc && sc.basis ? { score: sc.pct, scoredBy: sc.basis } : null)

@@ -42,14 +42,14 @@ export default function App() {
   useReminderScheduler(() => countToday(activity) > 0)
 
   // One place that records a rated question: schedule, activity (streak/goal), and your answer.
-  const handleRate = useCallback((id, rating, answer, source = 'practice') => {
+  const handleRate = useCallback((id, rating, answer, source = 'practice', scored = null) => {
     rate(id, rating)
     record(1)
-    addAttempt(id, answer, rating, source)
+    addAttempt(id, answer, rating, source, scored)
   }, [rate, record, addAttempt])
 
   const saveMock = useCallback((results) => {
-    results.forEach((r) => handleRate(r.id, r.rating, r.answer, 'mock'))
+    results.forEach((r) => handleRate(r.id, r.rating, r.answer, 'mock', r.scored))
     flash(results.length ? `Saved ${results.length} result${results.length === 1 ? '' : 's'}. They'll shape your next sessions.` : 'Nothing was rated, so nothing was saved')
   }, [handleRate, flash])
 
@@ -120,7 +120,7 @@ export default function App() {
           <Mock progress={progress} byId={byId} active={view === 'mock'} onSave={saveMock} />
         </div>
 
-        {view === 'insights' && <Insights progress={progress} onStart={start} onTag={openTag} />}
+        {view === 'insights' && <Insights progress={progress} notes={notes} onStart={start} onTag={openTag} />}
         {view === 'library' && <Library progress={progress} notes={notes} onPractice={(id) => start({ only: [id] })} tags={libraryTags} setTags={setLibraryTags} onPracticeMany={(ids) => start({ only: ids })} />}
         {view === 'settings' && <Settings settings={settings} update={update} flash={flash} />}
       </main>
