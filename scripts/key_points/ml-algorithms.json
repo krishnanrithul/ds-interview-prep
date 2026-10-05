@@ -11,11 +11,6 @@
         "Constant variance and normality mainly affect intervals, not point predictions",
         "Outliers drag least squares; check leverage or use a robust loss like Huber",
         "Diagnose with residual plots; fix with transforms, interactions or a flexible model"
-      ],
-      "core": [
-        0,
-        1,
-        3
       ]
     },
     {
@@ -29,11 +24,6 @@
         "With correlated features lasso picks one arbitrarily; elastic net keeps the group",
         "Standardize features before applying the penalty",
         "Choose the penalty strength by cross-validation, time-aware for time data"
-      ],
-      "core": [
-        1,
-        2,
-        3
       ]
     },
     {
@@ -47,10 +37,6 @@
         "Unlimited depth fits noise until leaves are pure, so it overfits",
         "Control it with max depth, minimum samples per leaf, pruning or ensembles",
         "Trees predict piecewise constants and cannot extrapolate beyond the training range"
-      ],
-      "core": [
-        0,
-        3
       ]
     },
     {
@@ -64,11 +50,6 @@
         "Out-of-bag samples give a built-in validation estimate",
         "Impurity importance is biased toward high-cardinality features and computed on training data",
         "Use permutation importance on held-out data or SHAP; importance is not causation"
-      ],
-      "core": [
-        0,
-        2,
-        4
       ]
     },
     {
@@ -82,10 +63,6 @@
         "CatBoost handles categorical features natively with ordered target statistics",
         "With many categoricals, start with CatBoost",
         "Compare all three on the same time-aware folds and tuning budget, including calibration"
-      ],
-      "core": [
-        3,
-        5
       ]
     },
     {
@@ -99,11 +76,6 @@
         "C trades margin width against training errors; gamma sets how local the kernel is",
         "Features must be standardized because it is distance-based",
         "Good on small, high-dimensional data like text; slow on large data and scores are not probabilities"
-      ],
-      "core": [
-        0,
-        4,
-        5
       ]
     },
     {
@@ -117,11 +89,6 @@
         "Only points on or outside the tube are support vectors, so it is robust to small noise and outliers",
         "Needs scaled features and tuning of epsilon, C and gamma",
         "Prefer it for small, smooth non-linear problems; otherwise regularized linear or boosting"
-      ],
-      "core": [
-        1,
-        3,
-        5
       ]
     },
     {
@@ -134,11 +101,6 @@
         "Features must be scaled and irrelevant ones removed",
         "In high dimensions distances become similar, so neighbors lose meaning",
         "Prediction is slow on large data without an index or approximate search"
-      ],
-      "core": [
-        0,
-        2,
-        3
       ]
     },
     {
@@ -152,11 +114,6 @@
         "Trains in one pass and needs little data",
         "Works well on high-dimensional sparse text, a strong baseline",
         "Smoothing stops an unseen word from zeroing out a class"
-      ],
-      "core": [
-        0,
-        1,
-        4
       ]
     },
     {
@@ -170,11 +127,6 @@
         "Check linearity in the log-odds; add splines, bins or interactions",
         "Choose it when regulators need reasons, data is small, or the accuracy gap is within noise",
         "Verify with a held-out comparison and calibration check"
-      ],
-      "core": [
-        0,
-        1,
-        4
       ]
     },
     {
@@ -188,11 +140,6 @@
         "Unusual is not the same as fraud",
         "Have analysts label the top of the ranking and measure precision",
         "Feed the labels into a supervised model over time"
-      ],
-      "core": [
-        0,
-        3,
-        4
       ]
     },
     {
@@ -206,10 +153,6 @@
         "Add zero inflation when many customers have no claims",
         "Use an exposure offset for customers observed for different periods",
         "Gradient boosting with a Poisson objective is a flexible alternative"
-      ],
-      "core": [
-        0,
-        1
       ]
     },
     {
@@ -223,11 +166,6 @@
         "Fails on elongated shapes, very different cluster sizes and outliers",
         "Needs scaled numeric features",
         "DBSCAN or Gaussian mixtures are alternatives"
-      ],
-      "core": [
-        0,
-        2,
-        3
       ]
     },
     {
@@ -241,11 +179,6 @@
         "Struggles when clusters have very different densities",
         "Struggles in high dimensions where distances lose meaning",
         "Pick eps from a k-distance plot and scale features"
-      ],
-      "core": [
-        0,
-        2,
-        3
       ]
     },
     {
@@ -259,11 +192,6 @@
         "Useful when the number of groups is unknown or structure is nested",
         "Cut the tree at large gaps in merge height or where the business can act",
         "Needs pairwise distances, so impractical beyond tens of thousands of points"
-      ],
-      "core": [
-        0,
-        1,
-        3
       ]
     },
     {
@@ -277,10 +205,6 @@
         "Fitted with expectation-maximization and can hit local optima",
         "Choose the number of components with BIC or held-out likelihood",
         "k-means is faster when clusters are round and hard labels are enough"
-      ],
-      "core": [
-        1,
-        2
       ]
     },
     {
@@ -293,11 +217,6 @@
         "Check stability by re-clustering on bootstrap samples or different seeds",
         "Profile clusters on outcomes not used in clustering, like churn or revenue",
         "A good segment can be described in a sentence and acted on"
-      ],
-      "core": [
-        0,
-        2,
-        3
       ]
     },
     {
@@ -311,11 +230,6 @@
         "Compare values of k on stability and interpretability",
         "Explain segments by fitting a shallow decision tree on the labels",
         "Refresh on a schedule and track membership drift"
-      ],
-      "core": [
-        0,
-        1,
-        3
       ]
     },
     {
@@ -329,11 +243,6 @@
         "Choose components by cumulative explained variance, scree plot or downstream performance",
         "Components are linear mixtures and hard to interpret",
         "Poor fit for non-linear structure or when individual features must be explained"
-      ],
-      "core": [
-        0,
-        1,
-        2
       ]
     },
     {
@@ -347,11 +256,6 @@
         "Results change with perplexity and seed and can show clusters in pure noise",
         "Re-run with several settings and cluster in the original or PCA space",
         "Check stability and whether groups differ on outcomes the embedding never saw"
-      ],
-      "core": [
-        0,
-        1,
-        4
       ]
     },
     {
@@ -365,11 +269,6 @@
         "Do selection inside each cross-validation fold",
         "Selecting on the full dataset first leaks labels and inflates the score",
         "Regularized models or boosting often make heavy selection unnecessary"
-      ],
-      "core": [
-        0,
-        1,
-        3
       ]
     },
     {
@@ -383,11 +282,6 @@
         "Blending uses a holdout set instead",
         "Gains are small when base models are highly correlated boosted trees",
         "Try a simple average first; ship only if the gain beats maintenance and latency cost"
-      ],
-      "core": [
-        0,
-        2,
-        5
       ]
     },
     {
@@ -401,11 +295,6 @@
         "SMOTE interpolates synthetic points that can be unrealistic or overlap",
         "Resample only inside the training fold, or validation leaks",
         "Resampling distorts probabilities, so recalibrate; try weights plus threshold tuning first"
-      ],
-      "core": [
-        0,
-        1,
-        4
       ]
     },
     {
@@ -419,11 +308,6 @@
         "Bayesian optimization like Optuna is worth it when each run is expensive",
         "Repeated tuning overfits the validation folds",
         "Keep a final holdout or use nested cross-validation; stop when gains are within noise"
-      ],
-      "core": [
-        2,
-        4,
-        5
       ]
     }
   ]

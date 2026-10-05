@@ -44,11 +44,10 @@ Earlier offline check: off-topic answers scored 0.30 or less on every point.
 - Use the same key points and grade call for reactive Mock (THINGS_TO_DO 1.5).
 - Review the 24 rewritten ML Algorithms points, then remove the draft flag.
 
-## Update: core points and overall score (2026-10-05)
-Prompted by a real answer (k-means: how it works and choosing k, nothing on failure modes) that read "1 of 6", which made a passable answer look like a failure.
-- **Tiers.** Each ML Algorithms question now marks 2 or 3 points as core (`"core": [indices]` in `scripts/key_points/ml-algorithms.json`, applied to `key_points_core`). Core points are what a passing answer needs, roughly one per part of the question; the rest are senior extras.
-- **Overall score.** `summarize()` in `src/lib/match/index.js`: core points weigh 2, extras 1, shown as "x% of a senior answer". Live credits are 0 or 1 from the embedding match; graded credits are correct 1, partial 0.5, wrong and missing 0. Questions without a core list weigh every point equally.
-- **Live meter:** "Core 1/3 · Extras 0/3 · 22%" (dots grouped by tier, hidden below 640 px).
-- **Debrief:** score bar, labeled "Live estimate" or "Graded by Haiku", with points grouped under Core and Senior extras.
-- **Grader:** new `partial` status (amber, half credit) for points that are partly right; core points are tagged `[core]` in the prompt. Cached grades from before this change are not reused (the cache key now includes a version and the core list).
-- Example, the k-means answer above: live 22% (only "choose k" matched; "assign to centroids" scored 0.45, under the 0.5 line), graded 33% with a mocked response (the assignment point as partial).
+## Update: overall score (2026-10-05)
+- **Overall score.** `scorePct()` in `src/lib/match/index.js`: the average credit over all key points, shown as "x% of a senior answer". Live credits are 0 or 1 from the embedding match; graded credits are correct 1, partial 0.5, wrong and missing 0. Every point weighs the same.
+- **Live meter:** one dot per point (hidden below 640 px) and "17% of a senior answer".
+- **Debrief:** the percentage, a bar, and one line saying what it is based on: "Based on which ideas you mentioned", or "Graded for correctness by Haiku" plus counts (1 correct · 1 partial · 4 missing).
+- **Grader:** new `partial` status (amber, half credit) for points that are partly right. Grades cached before this change are not reused (versioned cache key).
+- **Tried and removed the same day:** core points (counted double) and senior extras, with "Core 1/3 · Extras 0/3" in the meter and grouped lists in the debrief. Rithul found the split confusing, so it was dropped; the `core` field was removed from the data and the apply script. The "Live estimate · Draft" header label went too: both were author-side terms. The key-point draft flag stays in the data for review, but is not shown to learners.
+- Example, a real k-means answer (how it works and choosing k, nothing on failure modes): live 17% (only "choose k" matched; "assign to centroids" scored 0.45, under the 0.5 line); graded 25% with a mocked response that marks the assignment point partial.

@@ -11,7 +11,7 @@ export const getApiKey = () => { try { return localStorage.getItem(API_KEY_STORA
 export const setApiKey = (k) => { try { k ? localStorage.setItem(API_KEY_STORAGE, k) : localStorage.removeItem(API_KEY_STORAGE) } catch { /* ignore */ } }
 
 const hash = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36) }
-const cacheId = (q, answer) => `${q.id}:${hash('v2|' + (q.key_points_core || []).join(',') + '|' + q.key_points.join('|') + '\n' + answer)}`
+const cacheId = (q, answer) => `${q.id}:${hash('v3|' + q.key_points.join('|') + '\n' + answer)}`
 
 export function cachedGrade(q, answer) {
   return safeParse(CACHE_KEY, {})[cacheId(q, answer)] || null
@@ -30,7 +30,6 @@ For each key point decide:
 - "partial": the answer gets part of the point right but leaves out an essential part of it (for example describes one step of a two-step process).
 - "wrong": the answer addresses this point but says something incorrect, or the opposite of it.
 - "missing": the answer does not address it.
-Points marked [core] are what a passing answer needs; the others are what lifts it to a senior answer. Grade both the same way.
 Judge meaning, not wording. Do not give credit for vague gestures toward a point. Do not invent claims the candidate did not make.
 Each note is one short sentence addressed to the candidate. For "wrong", say what is wrong and why. For "partial", say what part is missing. For "missing", say what they should have added. For "correct", note can be empty.
 The summary is one or two sentences: the most important thing to fix, or what made the answer strong.`
@@ -66,7 +65,7 @@ export async function gradeAnswer(q, answer, key, signal) {
   const user = [
     `Question: ${q.question}`,
     `Reference senior answer: ${q.senior_answer}`,
-    `Key points:\n${q.key_points.map((p, i) => `${i + 1}. ${(q.key_points_core || []).includes(i) ? '[core] ' : ''}${p}`).join('\n')}`,
+    `Key points:\n${q.key_points.map((p, i) => `${i + 1}. ${p}`).join('\n')}`,
     `Candidate answer:\n<answer>\n${text}\n</answer>`,
   ].join('\n\n')
   const res = await fetch('https://api.anthropic.com/v1/messages', {

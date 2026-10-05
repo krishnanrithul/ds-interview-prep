@@ -67,28 +67,11 @@ export function scoreAnswer(q, text) {
   })
 }
 
-// Overall score: how close the answer is to a complete senior answer.
-// Core points (what a passing answer needs, roughly one per part of the question) count double;
-// senior extras count once. Credits are 0 to 1 per point: live matching gives 0 or 1,
-// the AI grade gives 1 (correct), 0.5 (partial) or 0 (wrong, missing).
-export const CORE_WEIGHT = 2
-
-export function summarize(q, credits) {
-  const core = new Set(q.key_points_core || [])
-  const tiered = core.size > 0 && core.size < q.key_points.length
-  let got = 0, max = 0
-  const t = { core: { hit: 0, total: 0 }, extra: { hit: 0, total: 0 } }
-  q.key_points.forEach((_, i) => {
-    const isCore = !tiered || core.has(i)
-    const w = tiered && isCore ? CORE_WEIGHT : 1
-    const c = credits?.[i] ?? 0
-    got += w * c
-    max += w
-    const bucket = isCore ? t.core : t.extra
-    bucket.total += 1
-    if (c >= 1) bucket.hit += 1
-  })
-  return { pct: max ? Math.round((100 * got) / max) : 0, tiered, isCore: (i) => !tiered || core.has(i), ...t }
+// Overall score: how close the answer is to a complete senior answer, every key point weighted equally.
+// Credits are 0 to 1 per point: live matching gives 0 or 1; the AI grade gives 1 (correct), 0.5 (partial) or 0 (wrong, missing).
+export function scorePct(credits) {
+  if (!credits?.length) return 0
+  return Math.round((100 * credits.reduce((a, c) => a + c, 0)) / credits.length)
 }
 
 export const liveCredits = (sims) => sims?.map((s) => (s >= THRESHOLD ? 1 : 0)) ?? null
