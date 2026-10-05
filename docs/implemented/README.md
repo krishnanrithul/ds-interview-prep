@@ -20,4 +20,9 @@ Each file states what changed, which files were touched, the decisions made and 
 | 13 | [Eleven more explainers (17 in total)](13-more-explainers.md) | Built, last edits not re-screenshotted |
 | 14 | [Follow-up variants: 910 alternative wordings](14-follow-up-variants.md) | Built and committed, variants are draft |
 | 15 | [Practice and mastery map changes: tile preview, easier-first queue, redo, replies in debrief](15-practice-and-map-changes.md) | Built and committed |
-| 16 | Learn section: concept lessons | Not started |
+| 16 | [Key points, first pass (sentence extracts, later replaced)](16_key_points_extraction.md) | Committed; superseded by 17 |
+| 17 | [Match score: key points, live score, Haiku grade, API key](17_match_score.md) | Committed |
+| 18 | [Reactive Mock: back-and-forth, follow-ups that react, overall grade](18_reactive_mock.md) | Committed; reactive for Production ML only |
+| 19 | [Saved scores, suggested ratings, scores in Insights](19_saved_scores.md) | Built, uncommitted at time of writing |
+| 20 | [Rename to Saddle Point](20_rename_saddle_point.md) | Built, uncommitted at time of writing |
+| – | Learn section: concept lessons | Not started |

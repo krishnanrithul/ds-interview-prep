@@ -71,7 +71,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center gap-4">
           <div className="flex items-center gap-2.5 mr-2">
             <Logo />
-            <span className="font-serif font-semibold text-lg hidden md:block">Gradient Ascent</span>
+            <span className="font-serif font-semibold text-lg hidden md:block">Saddle Point</span>
           </div>
 
           <nav className="flex gap-1 flex-1 h-full">
