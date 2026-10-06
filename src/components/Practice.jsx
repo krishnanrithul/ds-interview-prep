@@ -11,6 +11,14 @@ import { matchEnabled, ratingFromScore, toSavedScore } from '../lib/match'
 import { useMatchScore } from '../hooks/useMatchScore'
 import { CoverageMeter, KeyPointsReview } from './KeyPoints'
 
+// Haiku's verdict on each follow-up reply, shown in the debrief.
+const VERDICT = {
+  good: { label: 'Answered well', cls: 'text-emerald-700 dark:text-emerald-300' },
+  partial: { label: 'Partly there', cls: 'text-amber-700 dark:text-amber-300' },
+  weak: { label: 'Missed the point', cls: 'text-rose-700 dark:text-rose-300' },
+  none: { label: 'No reply', cls: 'text-muted-foreground' },
+}
+
 const reduced = () => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
 
 function Interviewer({ children, label }) {
@@ -54,6 +62,7 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
   const [deepOpen, setDeepOpen] = useState(false) // an interactive explainer is open
   const [results, setResults] = useState([])
   const [kp, setKp] = useState(null) // { id, pct, status, basis } from the key-points panel for the current question
+  const [fuGrade, setFuGrade] = useState(null) // { id, followUps: [{ verdict, note }] } from the Haiku grade
   const textRef = useRef(null)
   const endRef = useRef(null)
 
@@ -221,7 +230,12 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
               <p className="text-sm text-muted-foreground mb-1">Here's how that lands for this question</p>
               <p className="font-serif text-lg leading-snug">{q.question}</p>
             </div>
-            {matchEnabled(q) && <KeyPointsReview key={q.id} q={q} answer={turns[0]} sims={match.sims} onScore={(sc) => setKp({ id: q.id, ...sc })} />}
+            {matchEnabled(q) && <KeyPointsReview
+                key={q.id} q={q} answer={turns[0]} sims={match.sims}
+                followUps={q.follow_ups.map((fu, k) => ({ text: followUpText(q, picks, k), intent: fu.intent, reply: turns[k + 1] || '' }))}
+                onScore={(sc) => setKp({ id: q.id, ...sc })}
+                onGrade={(g) => setFuGrade({ id: q.id, followUps: g.followUps })}
+              />}
             <AnswerLadder q={q} />
             {q.tags?.length > 0 && (
               <div>
@@ -247,6 +261,15 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
                             ? <p className="whitespace-pre-wrap text-foreground/80">{reply}</p>
                             : <p className="italic text-muted-foreground">No written reply</p>}
                         </div>
+                        {(() => {
+                          const v = fuGrade?.id === q.id ? fuGrade.followUps?.[k] : null
+                          return v && VERDICT[v.verdict] && (
+                            <p className="mt-1.5 ml-5 text-xs">
+                              <span className={`font-semibold ${VERDICT[v.verdict].cls}`}>{VERDICT[v.verdict].label}</span>
+                              {v.note && <span className="text-muted-foreground"> · {v.note}</span>}
+                            </p>
+                          )
+                        })()}
                         <p className="text-muted-foreground flex gap-1.5 mt-1.5 ml-5">
                           <CornerDownRight className="w-3.5 h-3.5 mt-0.5 shrink-0" />
                           Testing: {fu.intent}

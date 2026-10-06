@@ -7,7 +7,7 @@ import { DIFFICULTY, RATINGS, dot } from '../lib/topics'
 import AnswerLadder from './AnswerLadder'
 import ConfirmDialog from './ConfirmDialog'
 import DraftBadge from './DraftBadge'
-import { generateProbe, reactiveEnabled, REACTIVE_TOPICS } from '../lib/probe'
+import { generateProbe, reactiveEnabled } from '../lib/probe'
 import { getApiKey } from '../lib/grade'
 import { matchEnabled, ratingFromScore, interviewVerdict, toSavedScore } from '../lib/match'
 import { useMatchScore } from '../hooks/useMatchScore'
@@ -222,12 +222,11 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
           Start interview <ArrowRight className="w-4 h-4" />
         </button>
         <p className="text-center text-xs text-muted-foreground mt-3">About {count * cfg.minutes} minutes in total</p>
-        {(cfg.topic === 'all' || REACTIVE_TOPICS.has(cfg.topic)) && (
-          <p className="text-center text-xs text-muted-foreground mt-1">
-            {[...REACTIVE_TOPICS].join(', ')} questions get follow-ups that react to your answers
-            {getApiKey() ? '.' : ' once you add an API key in Settings.'}
-          </p>
-        )}
+        <p className="text-center text-xs text-muted-foreground mt-1">
+          {getApiKey()
+            ? 'The interviewer reacts to your answers, and each question is graded at the end.'
+            : 'Add an API key in Settings and the interviewer reacts to your answers and grades them.'}
+        </p>
       </div>
     )
   }

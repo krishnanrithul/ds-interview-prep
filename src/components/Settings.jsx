@@ -6,7 +6,7 @@ import {
   getReminderHour, isReminderEnabled, isReminderSupported, setReminderEnabled, setReminderHour,
 } from '../lib/reminders'
 import ConfirmDialog from './ConfirmDialog'
-import { getApiKey, setApiKey } from '../lib/grade'
+import { getApiKey, setApiKey, apiKeySource } from '../lib/grade'
 
 const formatHour = (h) => `${h % 12 === 0 ? 12 : h % 12}:00 ${h < 12 ? 'AM' : 'PM'}`
 
@@ -226,10 +226,12 @@ export default function Settings({ settings, update, flash }) {
           <div>
             <p className="font-medium">Anthropic API key</p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Optional. Checks whether your answer is right, not just whether it mentions the key points. One Haiku call per answer, roughly $0.004, billed to your key. Your answer and the question go to Anthropic. The key is stored only in this browser and is left out of backups. Used in Practice.
+              Optional. Checks whether your answer is right, not just whether it mentions the key points. One Haiku call per answer, roughly $0.004, billed to your key. Your answer and the question go to Anthropic. The key is stored only in this browser and is left out of backups. Used in Practice and Mock.
             </p>
           </div>
-          {savedKey ? (
+          {savedKey && apiKeySource() === 'env' ? (
+            <p className="text-sm text-muted-foreground"><KeyRound size={14} className="inline -mt-0.5 mr-1.5" />Using the key from <code className="font-mono text-xs">.env.development.local</code> (dev server only)</p>
+          ) : savedKey ? (
             <div className="flex items-center justify-between gap-3">
               <span className="inline-flex items-center gap-2 text-sm font-mono text-muted-foreground"><KeyRound size={14} />…{savedKey.slice(-4)}</span>
               <button onClick={removeKey} className={buttonCls}>Remove</button>

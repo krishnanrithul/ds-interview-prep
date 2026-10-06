@@ -2,9 +2,9 @@
 // The question's fixed follow-ups guide what the interview should cover and are the fallback on any failure.
 import { callTool } from './grade'
 
-// Topics where Mock follow-ups react to the learner. Widen after testing.
-export const REACTIVE_TOPICS = new Set(['Production ML'])
-export const reactiveEnabled = (q) => !!q && REACTIVE_TOPICS.has(q.topic) && (q.key_points?.length ?? 0) > 0
+// Mock follow-ups react to the learner for every question with key points (all topics since 2026-10-06;
+// Production ML only before that).
+export const reactiveEnabled = (q) => !!q && (q.key_points?.length ?? 0) > 0
 
 const TIMEOUT_MS = 10000 // total, including one retry
 

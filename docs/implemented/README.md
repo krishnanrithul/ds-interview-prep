@@ -25,4 +25,5 @@ Each file states what changed, which files were touched, the decisions made and 
 | 18 | [Reactive Mock: back-and-forth, follow-ups that react, overall grade](18_reactive_mock.md) | Committed; reactive for Production ML only |
 | 19 | [Saved scores, suggested ratings, scores in Insights](19_saved_scores.md) | Built, uncommitted at time of writing |
 | 20 | [Rename to Saddle Point](20_rename_saddle_point.md) | Built, uncommitted at time of writing |
+| 21 | [Quick fixes: reactive Mock for all topics, tap targets, follow-up grading in Practice](21_quick_fixes.md) | Built, uncommitted at time of writing |
 | – | Learn section: concept lessons | Not started |

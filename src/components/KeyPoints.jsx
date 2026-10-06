@@ -59,10 +59,11 @@ function PointList({ q, idx, grade, sims, text }) {
 // e.g. a labeled Mock transcript; defaults to the answer.
 // onScore({ pct, status, basis }): basis is 'haiku', 'match' or null; status is 'graded', 'estimate' (live match only), 'empty' (nothing written),
 // 'pending' (still scoring) or 'unavailable'.
-export function KeyPointsReview({ q, answer, sims, gradeText, onScore }) {
+// followUps (optional, Practice): [{ text, intent, reply }] graded in the same call; onGrade(grade) passes the result up.
+export function KeyPointsReview({ q, answer, sims, gradeText, onScore, followUps, onGrade }) {
   const text = (answer || '').trim()
   const toGrade = (gradeText || answer || '').trim()
-  const [grade, setGrade] = useState(() => (text ? cachedGrade(q, toGrade.slice(0, 4000)) : null))
+  const [grade, setGrade] = useState(() => (text ? cachedGrade(q, toGrade.slice(0, 4000), followUps) : null))
   const [state, setState] = useState(grade ? 'done' : 'idle') // idle | busy | done | error | nokey
   const [error, setError] = useState('')
 
@@ -72,7 +73,7 @@ export function KeyPointsReview({ q, answer, sims, gradeText, onScore }) {
     if (!key) { setState('nokey'); return }
     const ctl = new AbortController()
     setState('busy')
-    gradeAnswer(q, toGrade, key, ctl.signal)
+    gradeAnswer(q, toGrade, key, ctl.signal, followUps)
       .then((g) => { setGrade(g); setState('done') })
       .catch((e) => { if (e.name !== 'AbortError') { setError(e.message); setState('error') } })
     return () => ctl.abort()
@@ -88,6 +89,7 @@ export function KeyPointsReview({ q, answer, sims, gradeText, onScore }) {
     : state === 'busy' || state === 'idle' ? 'pending'
     : sims ? 'estimate'
     : 'unavailable' // no grade and the in-browser matcher couldn't run
+  useEffect(() => { if (grade) onGrade?.(grade) }, [grade]) // eslint-disable-line react-hooks/exhaustive-deps
   const basis = grade ? 'haiku' : text && sims ? 'match' : null // what the current pct is computed from
   useEffect(() => { onScore?.({ pct, status, basis }) }, [pct, status, basis]) // eslint-disable-line react-hooks/exhaustive-deps
 

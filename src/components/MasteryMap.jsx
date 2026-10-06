@@ -92,7 +92,8 @@ export default function MasteryMap({ progress, onStart }) {
                     return (
                       <div key={lv.id}>
                         <p className="text-xs text-muted-foreground mb-1.5">{lv.label} <span className="tabular-nums">({group.length})</span></p>
-                        <div className="flex flex-wrap gap-1.5">
+                        {/* On touch screens each tile sits in a 44px hit area (the visible tile stays 32px), so spacing comes from the hit areas. */}
+                        <div className="flex flex-wrap gap-1.5 [@media(pointer:coarse)]:gap-0">
                           {group.map((q) => {
                             const e = progress[q.id]
                             const st = e?.rating || 'unseen'
@@ -102,9 +103,14 @@ export default function MasteryMap({ progress, onStart }) {
                                 key={q.id}
                                 onClick={() => setFocusedQuestion(focusedQuestion?.id === q.id ? null : q)}
                                 aria-label={`${q.question} ${NAME[st]}${isDueNow ? ', due for review' : ''}`}
-                                className={`tile-pop w-7 h-7 sm:w-8 sm:h-8 rounded-lg border transition-transform hover:scale-110 hover:-translate-y-0.5 active:scale-95 ${TILE[st]} ${isDueNow ? 'due-pulse' : ''} ${focusedQuestion?.id === q.id ? 'ring-2 ring-primary ring-offset-2 ring-offset-card' : ''}`}
-                                style={{ animationDelay: `${Math.min(order++, 20) * 14}ms` }}
-                              />
+                                className="group flex items-center justify-center rounded-lg w-7 h-7 sm:w-8 sm:h-8 [@media(pointer:coarse)]:w-11 [@media(pointer:coarse)]:h-11"
+                              >
+                                <span
+                                  aria-hidden="true"
+                                  className={`tile-pop block w-full h-full [@media(pointer:coarse)]:w-8 [@media(pointer:coarse)]:h-8 rounded-lg border transition-transform group-hover:scale-110 group-hover:-translate-y-0.5 group-active:scale-95 ${TILE[st]} ${isDueNow ? 'due-pulse' : ''} ${focusedQuestion?.id === q.id ? 'ring-2 ring-primary ring-offset-2 ring-offset-card' : ''}`}
+                                  style={{ animationDelay: `${Math.min(order++, 20) * 14}ms` }}
+                                />
+                              </button>
                             )
                           })}
                         </div>

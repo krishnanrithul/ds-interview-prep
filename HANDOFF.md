@@ -15,7 +15,7 @@ Paste this into a new conversation, or tell it to read HANDOFF.md in the repo. I
 |---|---|
 | Git | Everything through doc 18 is committed and pushed (`e574d2f`). **Uncommitted:** doc 19 (saved scores) and doc 20 (rename to Saddle Point); he asked for them to be committed as two commits once reviewed. |
 | Bank | 155 questions (133 draft; the 22 without `draft` are the real-interview ones), 9 topics, 455 follow-ups with 910 draft variants, 910 key points (all hand-written short points, all draft), 88 tags, 165 glossary terms, 17 explainers |
-| AI | Live match score in Practice for all topics; Haiku grade in Practice and Mock review when a key is set; reactive Mock follow-ups for Production ML only |
+| AI | Live match score in Practice for all topics; Haiku grade in Practice (main answer plus a verdict per follow-up reply) and in the Mock review when a key is set; reactive Mock follow-ups for all topics (since doc 21) |
 | Tested | Built app in headless Chromium with the model served locally and the Anthropic API mocked. Real Haiku calls have been checked by Rithul only a few times (grading works; one reactive Mock run). Safari, Firefox and real phones untested. |
 
 ## 3. What was built (see `docs/implemented/` for each)
@@ -36,7 +36,7 @@ Never hand-edit the generated parts of `src/data/questions.json`.
 ## 5. AI features: how they work
 - **Live match score** (`src/lib/match/`, `src/hooks/useMatchScore.js`, `src/components/KeyPoints.jsx`): a web worker runs transformers.js with `Xenova/all-MiniLM-L6-v2` (quantized, about 23 MB from huggingface.co). The ONNX runtime (about 27 MB WASM plus a 53 KB loader) is served from this site via `?url` imports in `worker.js`, not jsdelivr. The answer is split into sentences; each key point takes its closest sentence's cosine similarity; covered at `THRESHOLD = 0.5`; score = covered share. Measures topic match, not correctness: off-topic answers stay near 0, on-topic ones can be off by about one point either way. Loads only when a question opens in Practice; fails quietly ("Match score unavailable").
 - **Haiku grade** (`src/lib/grade.js`): `callTool()` makes one forced tool call from the browser with the learner's key (`anthropic-dangerous-direct-browser-access`), model `claude-haiku-4-5`. Grades each point correct (1), partial (0.5), wrong or missing (0). Answers capped at 4,000 characters; results cached in `ds-grades` (versioned key). In Mock it grades a labeled transcript and credits only the candidate's lines. About $0.004 per grade.
-- **Reactive Mock** (`src/lib/probe.js`): `REACTIVE_TOPICS = ['Production ML']`. Each follow-up call gets the question, key points, conversation and the planned fixed follow-up; returns question, target (claim, scaffold, reask, missed_point, deeper), quote (kept only if it really appears in the candidate's words) and point. 10 s timeout with one retry; fallback to the fixed follow-up with a visible reason. About $0.008 per question.
+- **Reactive Mock** (`src/lib/probe.js`): on for every question with key points (doc 21). Each follow-up call gets the question, key points, conversation and the planned fixed follow-up; returns question, target (claim, scaffold, reask, missed_point, deeper), quote (kept only if it really appears in the candidate's words) and point. 10 s timeout with one retry; fallback to the fixed follow-up with a visible reason. About $0.008 per question.
 - **API key**: `localStorage['ds-anthropic-key']`, never written into backups (`src/lib/backup.js` skips it); importing a backup clears it.
 - **Saved scores**: attempts in `ds-notes` carry `score` and `scoredBy` (`haiku` or `match`); `ratingFromScore`: 70%+ Solid, 40 to 69 Shaky, under 40 Missed it.
 
@@ -51,10 +51,10 @@ The worker serves the ONNX runtime files from the installed `onnxruntime-web`. I
 
 ## 7. Next (THINGS_TO_DO section 4 has the full list)
 1. Commit docs 19 and 20 (two commits), and he pushes.
-2. A few real Mock runs on Production ML to confirm the new rules (no "Good—", one re-ask), then widen `REACTIVE_TOPICS` to all topics.
+2. A few real Mock runs to confirm the stricter rules (no "Good—", one re-ask); reactive Mock is already on for all topics.
 3. Review: the 910 key points, 910 variants and 133 draft questions; split bundled key points.
 4. Tune `THRESHOLD` from saved answers and scores (about 30 labeled).
-5. Grade follow-up replies in Practice (Mock already grades the whole conversation).
+5. ~~Grade follow-up replies in Practice~~ Done (doc 21).
 6. Launch: trademark search and domain for Saddle Point, a new logo that fits the name, decision on bring-your-own-key versus a hosted backend, privacy note, feedback link, Vercel deploy, PWA. iOS: see `docs/IOS_READINESS.md`.
 
 ## 8. Rules and preferences to keep

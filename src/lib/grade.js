@@ -7,18 +7,25 @@ const CACHE_KEY = 'ds-grades'
 const MODEL = 'claude-haiku-4-5'
 const MAX_ANSWER = 4000 // room for a Mock transcript; Practice answers are usually far shorter
 
-export const getApiKey = () => { try { return localStorage.getItem(API_KEY_STORAGE) || '' } catch { return '' } }
+// Local development only: VITE_ANTHROPIC_API_KEY from .env.development.local (gitignored). Vite loads that file only
+// for the dev server, and the DEV check lets the production build drop this branch, so a deployed build never
+// carries the key. A key saved in Settings takes priority.
+const DEV_KEY = import.meta.env.DEV ? (import.meta.env.VITE_ANTHROPIC_API_KEY || '') : ''
+const storedKey = () => { try { return localStorage.getItem(API_KEY_STORAGE) || '' } catch { return '' } }
+export const getApiKey = () => storedKey() || DEV_KEY
+export const apiKeySource = () => (storedKey() ? 'settings' : DEV_KEY ? 'env' : null)
 export const setApiKey = (k) => { try { k ? localStorage.setItem(API_KEY_STORAGE, k) : localStorage.removeItem(API_KEY_STORAGE) } catch { /* ignore */ } }
 
 const hash = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36) }
-const cacheId = (q, answer) => `${q.id}:${hash('v4|' + q.key_points.join('|') + '\n' + answer)}`
+const fuSig = (fus) => (fus?.length ? fus.map((f) => `${f.text}=>${f.reply || ''}`).join('|') : '')
+const cacheId = (q, answer, fus) => `${q.id}:${hash('v5|' + q.key_points.join('|') + '\n' + answer + '\n' + fuSig(fus))}`
 
-export function cachedGrade(q, answer) {
-  return safeParse(CACHE_KEY, {})[cacheId(q, answer)] || null
+export function cachedGrade(q, answer, fus = null) {
+  return safeParse(CACHE_KEY, {})[cacheId(q, answer, fus)] || null
 }
-function storeGrade(q, answer, result) {
+function storeGrade(q, answer, fus, result) {
   const all = safeParse(CACHE_KEY, {})
-  all[cacheId(q, answer)] = result
+  all[cacheId(q, answer, fus)] = result
   const keys = Object.keys(all)
   if (keys.length > 200) keys.slice(0, keys.length - 200).forEach((k) => delete all[k])
   try { localStorage.setItem(CACHE_KEY, JSON.stringify(all)) } catch { /* full storage: skip caching */ }
@@ -89,17 +96,55 @@ const TOOL = {
   },
 }
 
-export async function gradeAnswer(q, answer, key, signal) {
+// fus (optional): Practice follow-ups [{ text, intent, reply }]. Each reply gets its own verdict; the key points
+// are still judged on the main answer only, so the score stays comparable across attempts.
+const FU_RULES = `
+Follow-up replies: for each, give a verdict:
+- "good": answers what was asked and is right.
+- "partial": on the right track but incomplete or vague.
+- "weak": wrong, off the point, or doesn't answer what was asked.
+- "none": no reply.
+The note is one short sentence addressed to the candidate: for partial, weak or none, what a strong reply would have said; for good it can be empty. Don't repeat the follow-up back.`
+
+const TOOL_FU = {
+  ...TOOL,
+  input_schema: {
+    ...TOOL.input_schema,
+    properties: {
+      ...TOOL.input_schema.properties,
+      follow_ups: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            n: { type: 'integer', description: 'Follow-up number, starting at 1' },
+            verdict: { type: 'string', enum: ['good', 'partial', 'weak', 'none'] },
+            note: { type: 'string' },
+          },
+          required: ['n', 'verdict', 'note'],
+        },
+      },
+    },
+    required: [...TOOL.input_schema.required, 'follow_ups'],
+  },
+}
+
+export async function gradeAnswer(q, answer, key, signal, fus = null) {
   const text = answer.trim().slice(0, MAX_ANSWER)
-  const cached = cachedGrade(q, text)
+  const cached = cachedGrade(q, text, fus)
   if (cached) return cached
+  const withFus = !!fus?.length
   const user = [
     `Question: ${q.question}`,
     `Reference senior answer: ${q.senior_answer}`,
     `Key points:\n${q.key_points.map((p, i) => `${i + 1}. ${p}`).join('\n')}`,
     `Candidate answer:\n<answer>\n${text}\n</answer>`,
+    ...(withFus ? [
+      'Judge the key points on the candidate answer above only. Then judge each follow-up reply on its own:',
+      fus.map((f, i) => `Follow-up ${i + 1}: ${f.text}\n(It tests: ${f.intent})\nCandidate reply: <reply>${(f.reply || '').trim().slice(0, 1200) || '(no reply)'}</reply>`).join('\n\n'),
+    ] : []),
   ].join('\n\n')
-  const input = await callTool({ key, signal, system: SYSTEM, user, tool: TOOL, maxTokens: 800 })
+  const input = await callTool({ key, signal, system: withFus ? SYSTEM + FU_RULES : SYSTEM, user, tool: withFus ? TOOL_FU : TOOL, maxTokens: withFus ? 1200 : 800 })
   if (!input?.points) throw new Error('The grader returned an unexpected response.')
   const byN = new Map(input.points.map((p) => [p.n, p]))
   const result = {
@@ -108,8 +153,14 @@ export async function gradeAnswer(q, answer, key, signal) {
       return { status: p?.status || 'missing', note: p?.note || '' }
     }),
     summary: input.summary || '',
+    followUps: withFus
+      ? fus.map((f, i) => {
+        const r = (input.follow_ups || []).find((x) => x.n === i + 1)
+        return { verdict: r?.verdict || (f.reply?.trim() ? 'partial' : 'none'), note: r?.note || '' }
+      })
+      : null,
     model: MODEL,
   }
-  storeGrade(q, text, result)
+  storeGrade(q, text, fus, result)
   return result
 }
