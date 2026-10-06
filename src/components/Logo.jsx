@@ -1,17 +1,14 @@
-// The app mark (from the Gradient Ascent days): data points, a fitted line climbing up and to the right, and an arrowhead.
-// Kept for now; a mark that fits the name Saddle Point is planned (THINGS_TO_DO).
-// Keep in sync with public/favicon.svg.
+// The Saddle Point mark: two peaks with the saddle point (yellow) in the pass between them, and the dotted path
+// a climber takes up to it. Keep in sync with public/favicon.svg, which is the bolder small version (no path).
+const PEAKS = 'M7 47 L20 21 Q22 17.5 24 21 L32 34 L40 21 Q42 17.5 44 21 L57 47'
+
 export default function Logo({ className = 'w-9 h-9' }) {
   return (
     <svg viewBox="0 0 64 64" className={className} role="img" aria-label="Saddle Point">
       <rect width="64" height="64" rx="14" fill="hsl(var(--ink))" />
-      <g fill="hsl(var(--ink-foreground))" fillOpacity=".92">
-        <circle cx="17" cy="41" r="3.2" /> <circle cx="26" cy="49" r="3.2" /> <circle cx="31" cy="30" r="3.2" /> <circle cx="41" cy="38" r="3.2" /> <circle cx="48" cy="30" r="3.2" />
-      </g>
-      <g fill="none" stroke="hsl(var(--marker))" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 51 C26 47 34 35 50 17" />
-        <path d="M41 14h11v11" />
-      </g>
+      <path d={PEAKS} fill="none" stroke="hsl(var(--ink-foreground))" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14 54 Q24 40 32 34" fill="none" stroke="hsl(var(--marker))" strokeWidth="3" strokeLinecap="round" strokeDasharray="0.1 6" />
+      <circle cx="32" cy="34" r="4.6" fill="hsl(var(--marker))" />
     </svg>
   )
 }

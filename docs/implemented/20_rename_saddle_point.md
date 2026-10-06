@@ -11,5 +11,11 @@ Gradient Ascent is already the name of an ML newsletter (Art of Saience), anothe
 
 **Open:**
 - A trademark search (USPTO, IP India) and a domain.
-- A new mark: the current logo is a line climbing with an arrow, which suited "ascent". A saddle surface or a mountain pass would fit the new name. Keep `Logo.jsx` and `public/favicon.svg` in sync.
+- ~~A new mark~~ Done 2026-10-06: the mountain pass (see below).
 - A tagline, e.g. "Stuck at a saddle point? Practice your way out."
+
+## Update: new mark (2026-10-06)
+Three directions were drawn in the brand colors and compared at full, header and tab size, in light and dark: A, a saddle surface (a wireframe hyperbolic paraboloid); B, a mountain pass; C, a contour map whose line crosses itself at the saddle. Rithul chose **B**: two peaks with the saddle point as a yellow dot in the pass, and a dotted yellow path climbing to it. It was the clearest at small sizes and keeps the climbing feel of the old name.
+- `src/components/Logo.jsx`: full mark (peaks, dotted path, dot), theme colors via `--ink`, `--ink-foreground`, `--marker`.
+- `public/favicon.svg`: the bolder small version (thicker peaks, bigger dot, no path) so it reads at 16 px.
+- Still to make for the PWA and iOS: PNG icons (180, 192, 512 and 1024 px) from the same artwork.
