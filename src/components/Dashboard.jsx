@@ -4,6 +4,7 @@ import MasteryMap from './MasteryMap'
 import { QUESTIONS } from '../data/questions'
 import { summarize, countDue } from '../lib/queue'
 import { currentStreak, bestStreak, countToday } from '../lib/streak'
+import { SendFeedback } from './FeedbackLink'
 
 export default function Dashboard({ progress, settings, activity, onStart, onMock }) {
   const overall = summarize(QUESTIONS, progress)
@@ -101,6 +102,8 @@ export default function Dashboard({ progress, settings, activity, onStart, onMoc
       </section>
 
       <MasteryMap progress={progress} onStart={onStart} />
+
+      <div className="flex justify-center pt-2"><SendFeedback /></div>
     </div>
   )
 }

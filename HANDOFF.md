@@ -55,7 +55,7 @@ The worker serves the ONNX runtime files from the installed `onnxruntime-web`. I
 3. Review: the 910 key points, 910 variants and 133 draft questions; split bundled key points.
 4. Tune `THRESHOLD` from saved answers and scores (about 30 labeled).
 5. ~~Grade follow-up replies in Practice~~ Done (doc 21).
-6. Launch: trademark search and domain for Saddle Point, a new logo that fits the name, decision on bring-your-own-key versus a hosted backend, privacy note, feedback link, Vercel deploy, PWA. iOS: see `docs/IOS_READINESS.md`.
+6. Launch: trademark search and domain for Saddle Point, PNG icons from the new mountain-pass mark (doc 20), decision on bring-your-own-key versus a hosted backend, privacy note, feedback link, Vercel deploy, PWA. iOS: see `docs/IOS_READINESS.md`.
 
 ## 8. Rules and preferences to keep
 - Rithul prefers direct, honest answers without hedging, dislikes repetition and emoji-heavy replies. Answer in the reply; ask only when a wrong guess is expensive. Explain in plain words when he asks what something is.

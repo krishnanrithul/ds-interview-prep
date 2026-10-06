@@ -7,6 +7,7 @@ import {
 } from '../lib/reminders'
 import ConfirmDialog from './ConfirmDialog'
 import { getApiKey, setApiKey, apiKeySource } from '../lib/grade'
+import { generalFeedbackUrl } from '../lib/feedback'
 
 const formatHour = (h) => `${h % 12 === 0 ? 12 : h % 12}:00 ${h < 12 ? 'AM' : 'PM'}`
 
@@ -253,6 +254,12 @@ export default function Settings({ settings, update, flash }) {
             </div>
           )}
         </div>
+      </Section>
+
+      <Section title="Feedback">
+        <Row label="Send feedback" hint="Opens your email app. Ideas, bugs and wrong answers all welcome.">
+          <a href={generalFeedbackUrl()} className={buttonCls}>Email us</a>
+        </Row>
       </Section>
 
       <Section title="Data">

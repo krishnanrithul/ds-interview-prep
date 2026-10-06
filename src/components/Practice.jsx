@@ -10,6 +10,7 @@ import { pickVariants, markSeen, followUpText } from '../lib/variants'
 import { matchEnabled, ratingFromScore, toSavedScore } from '../lib/match'
 import { useMatchScore } from '../hooks/useMatchScore'
 import { CoverageMeter, KeyPointsReview } from './KeyPoints'
+import { ReportQuestion } from './FeedbackLink'
 
 // Haiku's verdict on each follow-up reply, shown in the debrief.
 const VERDICT = {
@@ -281,6 +282,7 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
               </div>
             )}
             <Attempts attempts={notes[q.id]} title="Your previous attempts" limit={1} />
+            <ReportQuestion q={q} where="Practice debrief" />
           </div>
         )}
         <div ref={endRef} style={{ scrollMarginBottom: '12rem' }} />

@@ -12,6 +12,7 @@ import { getApiKey } from '../lib/grade'
 import { matchEnabled, ratingFromScore, interviewVerdict, toSavedScore } from '../lib/match'
 import { useMatchScore } from '../hooks/useMatchScore'
 import { KeyPointsReview } from './KeyPoints'
+import { ReportQuestion } from './FeedbackLink'
 
 function Reply({ text }) {
   return (
@@ -455,6 +456,7 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
 
               {matchEnabled(item) && <div className="mb-4"><MockKeyPoints q={item} thread={threads[id]} onScore={(sc) => setScore(id, sc)} /></div>}
               <div className="mb-4"><AnswerLadder q={item} /></div>
+              <ReportQuestion q={item} where="Mock review" className="mb-4" />
 
               <div className="grid grid-cols-3 gap-2">
                 {Object.entries(RATINGS).map(([r, v]) => (

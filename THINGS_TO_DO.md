@@ -64,7 +64,7 @@ Living list for Saddle Point (formerly Gradient Ascent). What has already been b
 - **More "go deeper" explainers.** Done (17): attention, Bayesian updating, bias-variance, boosting, CLT, clustering, drift, false positives, gradient descent, SQL join fan-out, k-NN, PCA, regularization, sampling, SVM, time splits, trees. Next: temperature and top-p, plus the optional ones in section 4.
 - **Review my drafts.** The 133 draft questions, all senior answers, the key-term definitions in `scripts/terms.map.json`, and the 910 follow-up variants in `scripts/variants/`.
 - **Insights over time.** The Insights tab shows the latest rating only. A weekly trend needs a longer attempts history than the 5 attempts kept per question.
-- **Launch polish.** Renamed to Saddle Point on 2026-10-05 (Gradient Ascent clashed with an ML newsletter and a podcast; a quick web search found no product called Saddle Point). Still to do: a proper trademark search (USPTO, IP India) and a domain, a new mark that fits the name (the current one is a climbing line with an arrow; a saddle surface or a mountain pass would fit), add a share image and PNG icon, a feedback or "suggest a question" link, and deploy (for example to Vercel).
+- **Launch polish.** Renamed to Saddle Point on 2026-10-05 (Gradient Ascent clashed with an ML newsletter and a podcast; a quick web search found no product called Saddle Point). Still to do: a proper trademark search (USPTO, IP India) and a domain, ~~a new mark~~ (done 2026-10-06: mountain pass, doc 20), add a share image and PNG icon, ~~a feedback link~~ (done 2026-10-06, doc 22; swap in a dedicated address before sharing), and deploy (for example to Vercel).
 
 ## 3) Coverage gaps (audit of 2026-10-03, bank of 105) — mostly resolved
 

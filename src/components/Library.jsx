@@ -9,6 +9,7 @@ import DraftBadge from './DraftBadge'
 import TagChips, { TagChip } from './TagChips'
 import { TAGS, tagLabel } from '../lib/tags'
 import { LEVELS, KINDS, levelLabel, kindLabel } from '../lib/levels'
+import { ReportQuestion } from './FeedbackLink'
 
 const STATUS = ['all', 'unseen', 'due', 'missed', 'shaky', 'solid']
 
@@ -191,12 +192,15 @@ export default function Library({ progress, notes, onPractice, tags, setTags, on
                   </ol>
                   <AnswerLadder q={q} />
                   <Attempts attempts={notes[q.id]} />
+                  <div className="flex flex-wrap items-center justify-between gap-3">
                   <button
                     onClick={() => onPractice(q.id)}
                     className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" /> Practice this question
                   </button>
+                  <ReportQuestion q={q} where="Library" />
+                  </div>
                 </div>
               )}
             </article>
