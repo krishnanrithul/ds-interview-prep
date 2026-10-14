@@ -6,11 +6,11 @@
       "draft": true,
       "points": [
         "Layers multiply inputs by weights and apply a non-linear activation",
-        "Training starts with random weights and measures error with a loss",
+        "Training measures prediction error with a loss",
         "Backpropagation uses the chain rule to find each weight's contribution",
         "Gradient descent nudges weights to reduce the loss over many batches",
         "Without non-linearities the layers collapse into one linear model",
-        "Problems like overfitting and vanishing gradients need regularization and normalization"
+        "Overfitting and vanishing gradients are typical training problems"
       ]
     },
     {
@@ -20,10 +20,10 @@
       "points": [
         "Gradient descent uses the gradient over all the data",
         "SGD uses small random mini-batches for cheaper, noisier steps",
-        "Momentum smooths the steps",
-        "Adam gives each weight its own adaptive step size and converges fast",
+        "Momentum smooths the noisy update steps",
+        "Adam gives each weight its own adaptive step size",
         "Too high a learning rate diverges and too low trains slowly",
-        "Use warmup and decay schedules and watch loss curves"
+        "Use a learning-rate warmup and decay schedule"
       ]
     },
     {
@@ -35,8 +35,8 @@
         "MSE penalizes large errors heavily and targets the mean",
         "MAE is robust to outliers and targets the median",
         "Huber is quadratic for small errors and linear for large ones",
-        "Cross-entropy trains well-calibrated class probabilities",
-        "Use quantile or weighted loss for asymmetric costs, evaluated on the business metric"
+        "Cross-entropy gives a smooth gradient, unlike accuracy",
+        "Use a quantile or weighted loss for asymmetric costs"
       ]
     },
     {
@@ -46,7 +46,7 @@
       "points": [
         "Confirm it is overfitting first with train and validation curves",
         "Get more or augmented data",
-        "Simplify the architecture, add weight decay and early stopping",
+        "Use early stopping on validation loss",
         "Dropout randomly zeroes units, like averaging many sub-networks",
         "Batch normalization standardizes layer inputs to stabilize training",
         "Batch norm mainly helps optimization, not regularization"
@@ -59,10 +59,10 @@
       "points": [
         "Start with a boosted-tree baseline",
         "Trees usually match or beat deep models on mid-sized tabular data",
-        "Trees handle mixed types, missing values and sharp thresholds",
+        "Trees capture sharp thresholds in heterogeneous features",
         "Neural networks need careful scaling, encoding and tuning",
         "A network earns its place with huge data or multimodal inputs",
-        "Compare on the same time-aware folds including calibration, latency and maintenance"
+        "Compare both on time-aware folds with comparable tuning effort"
       ]
     },
     {
@@ -70,11 +70,11 @@
       "base": "A convolutional layer slides a small filter over the input and records how strongly each location ma",
       "draft": true,
       "points": [
-        "A filter slides over the input and records how well each spot matches a pattern",
+        "A small filter slides over the input detecting a pattern",
         "Layers build up from edges to shapes to objects",
         "Shared filters need far fewer parameters than a fully connected network",
-        "Patterns are recognized wherever they appear",
-        "Pooling summarizes regions and tolerates small shifts",
+        "Shared filters detect a pattern at any position",
+        "Pooling makes the prediction tolerant to small shifts",
         "For most new work, start from a pretrained model"
       ]
     },
@@ -96,9 +96,9 @@
       "base": "For each word, the model asks a question (the query) and compares it against a label (the key) on ev",
       "draft": true,
       "points": [
-        "Each word compares a query against the keys of every other word",
+        "Each word compares its query against every word's key",
         "Match scores become weights that sum to one via softmax",
-        "The new representation is a weighted blend of other words' values",
+        "The new representation is a weighted blend of values",
         "Example: 'it' pulls in information from 'animal'",
         "Scores are scaled to keep the softmax well behaved",
         "Multiple heads track different relationships at once"
@@ -114,7 +114,7 @@
         "Then unfreeze the top layers with a small learning rate",
         "Use augmentation and early stopping",
         "Use stratified cross-validation since one small split is noisy",
-        "For very different domains, check against a baseline or use a domain-specific model"
+        "Check whether pretrained features transfer to a very different domain"
       ]
     },
     {
@@ -148,11 +148,11 @@
       "base": "Stage one is pretraining on a huge text corpus to predict the next token, which gives broad knowledg",
       "draft": true,
       "points": [
-        "Pretraining on huge text to predict the next token gives knowledge, not behavior",
+        "Next-token pretraining gives knowledge but not good behavior",
         "Supervised instruction tuning teaches it to follow prompts",
-        "RLHF collects human comparisons between answers",
-        "A reward model learns preferences and the chat model is optimized against it",
-        "Training stays close to the original model",
+        "A reward model learns from human comparisons between answers",
+        "RL optimizes the chat model against the reward model",
+        "A KL penalty keeps it close to the instruction-tuned model",
         "Optimizing a proxy reward can make models sycophantic or verbose"
       ]
     }

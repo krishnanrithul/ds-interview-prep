@@ -14,7 +14,7 @@ Paste this into a new conversation, or tell it to read HANDOFF.md in the repo. I
 | Item | State |
 |---|---|
 | Git | Everything through doc 18 is committed and pushed (`e574d2f`). **Uncommitted:** doc 19 (saved scores) and doc 20 (rename to Saddle Point); he asked for them to be committed as two commits once reviewed. |
-| Bank | 155 questions (133 draft; the 22 without `draft` are the real-interview ones), 9 topics, 455 follow-ups with 910 draft variants, 914 key points (hand-written, one idea each, all draft), 88 tags, 165 glossary terms, 17 explainers |
+| Bank | 155 questions (133 draft; the 22 without `draft` are the real-interview ones), 9 topics, 455 follow-ups with 910 draft variants, 917 key points (hand-written, one idea each, all draft), 88 tags, 171 glossary terms, 17 explainers |
 | AI | Live match score in Practice for all topics; Haiku grade in Practice (main answer plus a verdict per follow-up reply) and in the Mock review when a key is set; reactive Mock follow-ups for all topics (since doc 21) |
 | Tested | Built app in headless Chromium with the model served locally and the Anthropic API mocked. Real Haiku calls have been checked by Rithul only a few times (grading works; one reactive Mock run). Safari, Firefox and real phones untested. |
 
@@ -52,7 +52,7 @@ The worker serves the ONNX runtime files from the installed `onnxruntime-web`. I
 ## 7. Next (THINGS_TO_DO section 0 is the single prioritized list)
 1. Commit docs 19 and 20 (two commits), and he pushes.
 2. A few real Mock runs to confirm the stricter rules (no "Good—", one re-ask); reactive Mock is already on for all topics.
-3. Review: the 914 key points, 910 variants and 133 draft questions (bundled key points already split, doc 25).
+3. Review: the reviewer's first pass is applied (`docs/reviews/CONTENT_REVIEW_2026-10-14.md`); Rithul's own read of the 133 draft questions is still open.
 4. Tune `THRESHOLD` from saved answers and scores (about 30 labeled).
 5. ~~Grade follow-up replies in Practice~~ Done (doc 21).
 6. Launch: trademark search and domain for Saddle Point, PNG icons from the new mountain-pass mark (doc 20), decision on bring-your-own-key versus a hosted backend, privacy note, feedback link, Vercel deploy, PWA. iOS: see `docs/IOS_READINESS.md`.

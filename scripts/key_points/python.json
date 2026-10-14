@@ -18,7 +18,7 @@
       "base": "I'd layer the checks: schema and types, null rates, ranges, uniqueness, freshness and volume, then d",
       "draft": true,
       "points": [
-        "Layer checks: schema, types, null rates, ranges, uniqueness, freshness, volume",
+        "Layer basic checks like schema, null rates and freshness",
         "Add distribution checks against a recent baseline",
         "Give each check a severity: hard failures block, soft ones warn",
         "A key feature suddenly half missing should fail, not be imputed",
@@ -32,7 +32,7 @@
       "draft": true,
       "points": [
         "Use rolling-origin walk-forward evaluation",
-        "At each cutoff build features only from data available then, train, forecast, advance",
+        "At each cutoff build features only from data available then",
         "Respect real publication lags like late-recorded payments",
         "Much better backtest than live error suggests leakage, timeline mismatch or regime shift",
         "Rebuild live features at the same cutoff and compare with backtest features"
@@ -40,10 +40,10 @@
     },
     {
       "id": "python-004",
-      "base": "Duplicate keys on both sides produce a many-to-many join, so every match is multiplied. I'd diagnose",
+      "base": "Each row is repeated once for every row it matches on the other side, so duplicate keys in a table I",
       "draft": true,
       "points": [
-        "Duplicate keys on both sides make a many-to-many join that multiplies rows",
+        "Duplicate keys in a supposedly unique table repeat matching rows",
         "Check key uniqueness and duplicate counts before merging",
         "Use merge validate='many_to_one' to raise an error on unexpected duplicates",
         "Use indicator=True to see which rows matched",
@@ -59,9 +59,9 @@
         "Don't load everything into memory",
         "Read only needed columns with compact dtypes like int32 and category",
         "Process in chunks and aggregate incrementally",
-        "Or use an out-of-core engine like DuckDB or lazy Polars",
+        "Or use an out-of-core engine like DuckDB or streaming Polars",
         "Convert once to Parquet if the data will be reused",
-        "Move to Spark or a warehouse when jobs outgrow one machine"
+        "Move to Spark or a warehouse when data grows or is shared"
       ]
     },
     {
@@ -69,10 +69,10 @@
       "base": "I'd test at three levels. Transformations get unit tests with tiny hand-made inputs and expected out",
       "draft": true,
       "points": [
-        "Unit-test transformations with tiny hand-made inputs and expected outputs",
-        "Include edge cases like nulls and empty groups",
+        "Unit-test transformations on tiny inputs, including nulls and empty groups",
         "Run schema and data quality checks inside the pipeline",
-        "Regression-test the model on a fixed dataset and seed with a metric floor",
+        "Assert model metrics stay above a floor on fixed data",
+        "Compare new metrics to a stored baseline so drops fail CI",
         "Use seeds and tolerances for randomness instead of exact equality",
         "Run fast tests on every commit and end-to-end runs on a schedule"
       ]
@@ -83,7 +83,7 @@
       "draft": true,
       "points": [
         "List: ordered, mutable, linear-time membership",
-        "Tuple: ordered, immutable, hashable, good for fixed records and dict keys",
+        "Tuple: ordered, immutable, hashable only if its contents are",
         "Set: unique items with constant-time membership",
         "Dict: key-value mapping with constant-time lookup, insertion-ordered",
         "Convert a list to a set once for repeated membership checks",
@@ -151,7 +151,7 @@
         "Every call that omits items mutates the same shared list",
         "Items leak across calls, even across users in a long-running service",
         "Fix: items=None, then create a new list inside the function",
-        "The same trap applies to dict and set defaults",
+        "In dataclasses use field(default_factory=list) for mutable defaults",
         "Tests miss it because each passes alone but fails in a different order"
       ]
     },
@@ -165,7 +165,7 @@
         "Unit-test edge cases like empty frames, NaNs and unexpected categories",
         "Validate data at the boundary and fail loudly",
         "Use the same functions for training and inference to avoid skew",
-        "Add logging, config, code review and CI"
+        "Gate changes with code review and a CI run"
       ]
     },
     {
@@ -186,12 +186,12 @@
       "base": "Initialize k centers by sampling points (ideally k-means++), then repeat: compute distances from eve",
       "draft": true,
       "points": [
-        "Initialize centers by sampling points, ideally k-means++",
-        "Compute point-to-center distances with broadcasting and assign with argmin",
+        "Initialize centers with k-means++ or sampled points",
+        "Compute distances with broadcasting and assign each point with argmin",
         "Move each center to the mean of its points",
-        "Re-seed empty clusters",
-        "Stop when assignments stop changing or within tolerance, with an iteration cap",
-        "Run several seeds and keep the lowest inertia"
+        "Stop when assignments stabilize or centers barely move, with a cap",
+        "Run several seeds and keep the lowest inertia",
+        "Before trusting it, check feature scaling and cluster stability"
       ]
     },
     {
@@ -212,12 +212,12 @@
       "base": "Fit a TF-IDF vectorizer on the documents to get a sparse matrix, transform the query with the same v",
       "draft": true,
       "points": [
-        "Fit a TF-IDF vectorizer on the documents",
-        "Transform the query with the same vectorizer",
+        "Fit TF-IDF on the documents and reuse it for the query",
         "Rank documents by cosine similarity and return the top ones",
-        "Cosine ignores document length",
+        "Cosine ignores vector length, unlike raw Euclidean distance",
         "It only matches shared words, so synonyms and paraphrases are missed",
-        "At scale use BM25 with an inverted index or embeddings with approximate search"
+        "At scale use BM25 scoring over an inverted index",
+        "Or use embeddings with an approximate nearest-neighbor index"
       ]
     }
   ]

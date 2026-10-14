@@ -21,7 +21,7 @@
         "Collect real inputs including hard and adversarial cases",
         "Write a rubric for correctness, groundedness, tone and format",
         "A human-labeled set is the anchor",
-        "Scale with an LLM judge checked against human labels for bias",
+        "Check an LLM judge's agreement with human labels first",
         "Run the set as a regression suite on every change",
         "Confirm with online signals like task completion and feedback"
       ]
@@ -33,9 +33,9 @@
       "points": [
         "Go in order of cost: prompt engineering first",
         "Use RAG for private or fast-changing knowledge",
-        "Fine-tuning is a poor way to inject facts",
-        "Fine-tune for consistent style or format, specialized behavior, or a cheaper smaller model",
-        "Fine-tuning needs quality examples and ongoing curation and retraining",
+        "Fine-tune for consistent style or format",
+        "Fine-tuning adds ongoing curation, evaluation and retraining costs",
+        "Combine RAG for knowledge with fine-tuning for tone",
         "Decide between the options with an evaluation set"
       ]
     },
@@ -46,10 +46,10 @@
       "points": [
         "Ground answers in sources and require citations",
         "Instruct and test the model to say 'I don't know'",
-        "Evaluate with unanswerable questions",
+        "Evaluate on a set that includes unanswerable questions",
         "Add a verification pass that checks each claim against the sources",
-        "Lower temperature and structured outputs constrain answers",
-        "In high stakes, abstain or escalate to a human and monitor flagged answers"
+        "Allow 'unknown' in structured outputs so fields aren't invented",
+        "In high-stakes settings, abstain or escalate to a human"
       ]
     },
     {
@@ -58,11 +58,11 @@
       "draft": true,
       "points": [
         "Prompts alone aren't a safety mechanism",
-        "Give tools least privilege and validate arguments against schemas",
+        "Give each tool the least privilege it needs",
         "Set step and cost limits to stop loops",
         "Require human approval for irreversible actions",
-        "Treat tool and web content as untrusted to defend against prompt injection",
-        "Trace every step and evaluate full trajectories including adversarial scenarios"
+        "Don't give one agent untrusted input, private data and outbound access",
+        "Evaluate full trajectories, including adversarial scenarios"
       ]
     },
     {
@@ -96,11 +96,11 @@
       "base": "First I'd look at the failures: truncated output (max tokens too low), extra prose around the JSON, ",
       "draft": true,
       "points": [
-        "Inspect the failures: truncation, extra prose, wrong types or missing fields",
+        "Inspect failures: truncation, extra prose, wrong types, missing fields",
         "Use schema-constrained or tool-calling output mode",
-        "Give a schema and examples and set adequate max tokens",
         "Always validate against a schema in code",
         "On failure, retry once with the validation error",
+        "Send residual failures to a review queue, not a default",
         "Log the failure rate by prompt version and model"
       ]
     },
@@ -109,10 +109,10 @@
       "base": "The model may follow the injected text, because instructions and data share one channel. Prompt-leve",
       "draft": true,
       "points": [
-        "The model may follow injected text because instructions and data share one channel",
+        "The model may follow injected text: instructions and data share one channel",
         "Delimiters and warnings help but don't stop a determined attacker",
+        "Keep secrets out of the system prompt",
         "Give the model least privilege over tools and data",
-        "Treat model outputs as untrusted input",
         "Require human approval before tool actions with side effects",
         "Test with an adversarial suite and monitor"
       ]
@@ -152,8 +152,8 @@
         "Have stakeholders grade the same sample independently",
         "Discuss disagreements and write a rubric with examples",
         "Add automated checks for format, citations and banned content",
-        "Calibrate an LLM judge against human labels and check its biases",
-        "Refresh the set with production failures and track per version"
+        "Calibrate an LLM judge against human labels",
+        "Refresh the eval set with production failures"
       ]
     },
     {

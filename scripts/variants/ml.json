@@ -17,7 +17,7 @@
    ]
   },
   {
-   "base": "You achieved 92% accuracy but 50% false positive rate. How do you decide if this is production-ready?",
+   "base": "Your model has 92% accuracy, but half the customers it flags as churners would have stayed anyway. How do you decide if it's production-ready?",
    "draft": true,
    "variants": [
     "Half the customers your model flags as churners would have stayed anyway, and each flag triggers a $40 discount. How do you decide whether to launch?",
@@ -487,7 +487,7 @@
  ],
  "ml-020": [
   {
-   "base": "What can boosting use that the classical models can't?",
+   "base": "What can a global boosting model do that per-series models can't?",
    "draft": true,
    "variants": [
     "Promotions and price changes drive much of the variation. Which approach can use that information, and how?",

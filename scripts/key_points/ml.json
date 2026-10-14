@@ -6,8 +6,8 @@
       "draft": true,
       "points": [
         "Start from the decision: who gets a retention offer",
-        "Define churn and the prediction window explicitly",
-        "Build features only from data available at prediction time and split by time",
+        "Build features only from data available at prediction time",
+        "Split train and test by time",
         "Baseline with logistic regression before a complex model",
         "Use precision and recall at an actionable top-k, not accuracy",
         "Ship when the false-positive cost is acceptable, not on a metric"
@@ -33,7 +33,7 @@
         "History only reflects past budgets, so model the demand drivers",
         "Drivers include revenue plan, attrition, ramp time and open requisitions",
         "Treat the approved budget as a constraint on supply",
-        "Compare a seasonal baseline, a driver regression and ARIMA with rolling-origin backtests",
+        "Compare candidate models with rolling-origin backtests",
         "When the forecast conflicts with the budget, show the gap, assumptions and scenarios",
         "Flag regime shifts like a hiring pause instead of learning from them"
       ]
@@ -61,7 +61,7 @@
         "Slice performance by segment and month to find where it broke",
         "A changed world means covariate or concept shift",
         "Retraining helps only if the new regime is in the data",
-        "Otherwise add macro features, shorten the window or add guardrails, chosen by backtest"
+        "Pick macro features, a shorter window or guardrails by backtest"
       ]
     },
     {
@@ -116,10 +116,10 @@
     },
     {
       "id": "ml-010",
-      "base": "I'd start by understanding why values are missing. If missingness is random, simple imputation is fi",
+      "base": "I'd start by understanding why values are missing. If it's missing completely at random (MCAR), simp",
       "draft": true,
       "points": [
-        "First understand why values are missing",
+        "The missingness mechanism, MCAR, MAR or MNAR, decides the treatment",
         "Add a missing indicator when missingness carries information",
         "Fit imputation inside the pipeline on training data only to avoid leakage",
         "Tree models like XGBoost handle missing values natively",
@@ -142,15 +142,15 @@
     },
     {
       "id": "ml-012",
-      "base": "Bagging, as in a random forest, trains many deep, high-variance trees independently on bootstrap sam",
+      "base": "Bagging trains many deep, high-variance trees independently on bootstrap samples and averages them. ",
       "draft": true,
       "points": [
-        "Bagging trains deep trees independently on bootstrap samples and averages them",
-        "Averaging cancels variance, so random forest trees can be deep",
-        "Boosting builds trees sequentially, each fitting the remaining errors, reducing bias",
-        "Boosting trees are shallow and scaled by a learning rate",
-        "Boosting is more sensitive to noisy labels and tuning",
-        "A random forest is a robust low-tuning baseline"
+        "Bagging trains deep trees on bootstrap samples and averages them",
+        "A random forest samples features at each split to decorrelate trees",
+        "Averaging decorrelated trees cancels variance, so trees can be deep",
+        "Boosting fits each tree to the remaining errors, reducing bias",
+        "Boosting uses shallow trees scaled by a learning rate",
+        "Boosting is more sensitive to noisy labels than a random forest"
       ]
     },
     {
@@ -168,15 +168,15 @@
     },
     {
       "id": "ml-014",
-      "base": "One-hot would create 50,000 sparse columns, slow training and overfit rare values. Options: frequenc",
+      "base": "One-hot gives 50,000 sparse columns. A regularized linear model can handle that, but trees can only ",
       "draft": true,
       "points": [
-        "One-hot encoding 50,000 values is sparse, slow and overfits rare values",
+        "One-hot works poorly for trees and for rare values",
         "Use frequency or count encoding",
-        "Target encoding must be out of fold and smoothed toward the global mean",
-        "Other options: embeddings, hashing, grouping rare values or a coarser hierarchy",
-        "CatBoost and LightGBM handle categories natively",
-        "Plan for unseen values at serving and validate with a time-based split"
+        "Compute target encoding out of fold, smoothed toward the global mean",
+        "Group rare values or use a coarser hierarchy such as region",
+        "Plan a default bucket for unseen values at serving",
+        "Validate the encoding with a time-based split"
       ]
     },
     {
@@ -215,19 +215,19 @@
         "Plot residuals against fitted values and each feature",
         "Fix by modeling the log of the target or weighted least squares",
         "Use robust standard errors or model the spread, for example quantile regression",
-        "Check the metric reflects relative error if large values matter"
+        "Check the metric reflects relative error, not just absolute error"
       ]
     },
     {
       "id": "ml-018",
-      "base": "Not yet. With 400 examples a single cross-validation estimate is very uncertain, so I'd report an in",
+      "base": "Not yet. At 98% on 400 examples the sampling noise is modest (roughly 96 to 99%), so I'd still repor",
       "draft": true,
       "points": [
-        "A CV estimate on 400 examples is very uncertain",
-        "Report an interval and use repeated or stratified CV",
+        "A 98% score on small data more likely signals bias than noise",
+        "Report an interval and use repeated stratified CV",
         "Look for duplicates or the same entity split across folds",
         "Look for a feature that encodes the label",
-        "Use grouped splits, nested CV and an untouched holdout",
+        "Tune with nested CV and keep an untouched holdout",
         "Compare with a trivial baseline"
       ]
     },
@@ -272,14 +272,15 @@
     },
     {
       "id": "ml-022",
-      "base": "MAPE is easy to read but explodes when actuals are near zero and penalizes over-forecasts more than ",
+      "base": "MAPE is easy to read but explodes when actuals are near zero and caps under-forecast error at 100% w",
       "draft": true,
       "points": [
-        "MAPE explodes near zero and penalizes over-forecasts more, pushing toward under-forecasting",
-        "RMSE punishes large misses, for when big misses are disproportionately costly",
-        "WAPE divides total absolute error by total actuals and weights high-volume items",
+        "MAPE explodes when actuals are near zero",
+        "MAPE biases models toward under-forecasting",
+        "RMSE punishes large misses that are disproportionately costly",
+        "WAPE is stable and weights high-volume items more",
         "Choose the metric from the cost of errors",
-        "Report more than one metric at the level where decisions are made"
+        "Evaluate at the level where decisions are made"
       ]
     },
     {
@@ -288,11 +289,11 @@
       "draft": true,
       "points": [
         "Matrix factorization learns user and item vectors from interactions",
-        "Matrix factorization struggles with new items",
-        "Content-based handles new items through attribute similarity",
+        "Content-based handles new items that matrix factorization struggles with",
         "Content-based tends to recommend more of the same",
         "Combine both approaches, often with a ranking model on top",
-        "Evaluate offline on time splits, then with an online test"
+        "Train on implicit feedback like clicks and purchases",
+        "Evaluate with ranking metrics like NDCG on time-based splits"
       ]
     },
     {
@@ -301,10 +302,10 @@
       "draft": true,
       "points": [
         "Distance-based models like k-NN, k-means and SVM need scaling",
-        "Penalized models and gradient-based models like neural networks need scaling",
+        "Ridge and lasso need scaling because the penalty depends on units",
+        "Gradient-trained models like neural networks need scaling",
         "Tree models split on thresholds, so scaling changes nothing",
         "Fit the scaler on training data only to avoid leakage",
-        "Standardize by default",
         "Use a robust scaler when there are outliers"
       ]
     }

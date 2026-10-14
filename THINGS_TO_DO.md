@@ -25,7 +25,7 @@ The single prioritized list. Sections 1 to 4 below are history: the original ide
 13. ~~Split bundled key points~~ Done (doc 25): 93 questions rewritten so each point holds one idea. Points where a single idea scored under 0.6 against its own point fell from 78 to 37; the rest are a framing phrase plus one idea ("Start from the decision: …"), which is fine.
 
 **Content (Rithul's review, deferred)**
-14. Review draft questions, senior answers, key points (914), follow-up variants (910) and key-term definitions. Start each topic with `/review-content <topic>` and fix what it flags.
+14. ~~Content review~~ First full pass done 2026-10-14 (`docs/reviews/CONTENT_REVIEW_2026-10-14.md`): the content-reviewer checked all 155 questions; 175 fixes applied (7 wrong, 63 misleading, the rule flags), 2 rejected, invented "asked Nx" frequency labels replaced. Still open: 56 polish flags, and Rithul's own read of the draft questions. Re-run `/review-content <topic>` after content changes.
 15. More Foundations (easy) questions: only 25, and new learners start with them.
 16. Missing dedicated questions: instrumental variables, UMAP, topic models, NDCG, log loss, RNN and LSTM beyond dl-007.
 

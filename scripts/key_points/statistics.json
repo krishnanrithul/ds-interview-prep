@@ -8,19 +8,19 @@
         "Type I error is shipping a change that does nothing",
         "Type II error is missing a real improvement",
         "Which error is worse depends on its cost",
+        "Use a stricter alpha when false positives are costly",
         "Control Type II by planning power and sample size before the test",
-        "Peeking and stopping early inflate false positives",
-        "Use sequential methods if early looks are needed"
+        "Fix the stopping rule in advance, since peeking inflates false positives"
       ]
     },
     {
       "id": "stats-002",
-      "base": "I'd compute the sample size needed to detect the effect I care about. Detecting 0.1 percentage point",
+      "base": "I can't call it without the sample size. Detecting 0.1 percentage points on a 2% base rate (a 5% rel",
       "draft": true,
       "points": [
-        "A 0.1 point difference on a 2% base rate needs a very large sample",
-        "The test is probably underpowered",
-        "Translate the difference into money: 'not significant' doesn't mean safe",
+        "Detecting 0.1 points on a 2% base needs about 315,000 loans per arm",
+        "Translate the default difference into money",
+        "'Not significant' doesn't mean safe",
         "Report a confidence interval for the difference",
         "Defaults mature over 90 days, so short windows see incomplete outcomes",
         "Use early proxies, fixed-maturity cohorts or survival analysis"
@@ -33,9 +33,9 @@
       "points": [
         "The overall comparison reverses within every subgroup",
         "It happens because the groups have different mixes across subgroups",
-        "Example: approval rates by segment flip within each income band",
         "Detect it by slicing key metrics by likely confounders",
-        "Report the stratified or adjusted comparison with a plain explanation",
+        "Report the stratified comparison when the split variable is a confounder",
+        "Report the aggregate when the policy itself changes the mix",
         "Say which question each number answers"
       ]
     },
@@ -48,7 +48,7 @@
         "Choose the minimum detectable effect that would change a decision",
         "Set significance level (usually 5%) and power (usually 80%)",
         "Halving the detectable effect needs about four times the users",
-        "If too slow, raise the MDE honestly, pick a less noisy metric or use CUPED",
+        "If too slow, use CUPED to cut variance with pre-experiment data",
         "Commit to the sample size up front and don't stop early"
       ]
     },
@@ -61,7 +61,8 @@
         "Repeated studies would capture the true value about 95% of the time",
         "95% describes the procedure, not this particular interval",
         "Quadrupling the sample roughly halves the width",
-        "Always pair the estimate with the range and say what decision would change"
+        "Always pair a single number with the range",
+        "Say what decision would change within that range"
       ]
     },
     {
@@ -70,10 +71,10 @@
       "draft": true,
       "points": [
         "With 20 tests the chance of at least one false positive is about 64%",
-        "One p = 0.04 among 20 metrics is weak evidence",
         "Check whether it was the pre-declared primary metric",
         "Treat it as a hypothesis to confirm in a follow-up test",
-        "Correct with Bonferroni or Holm, or Benjamini-Hochberg for false discovery rate",
+        "Bonferroni or Holm control any false positive but cost power",
+        "Benjamini-Hochberg controls the false discovery rate",
         "Pre-register one primary metric plus a few guardrails"
       ]
     },
@@ -161,10 +162,10 @@
       "draft": true,
       "points": [
         "Learn how discounts were assigned, since targeting creates selection bias",
-        "Compare like with like: propensity matching, weighting or regression on pre-treatment covariates",
+        "Compare like with like on pre-treatment covariates",
         "Use difference-in-differences or regression discontinuity if there's a rollout or cutoff",
         "Check covariate balance after adjustment",
-        "Adjustment only handles measured confounders",
+        "Run a sensitivity analysis for unmeasured confounders",
         "Recommend a small holdout experiment going forward"
       ]
     },
@@ -202,7 +203,7 @@
         "The likelihood is the probability the model assigns to the observed data",
         "MLE chooses the parameters that maximize it",
         "Maximize the log-likelihood to turn products into sums",
-        "Squared error is Gaussian MLE; cross-entropy is Bernoulli MLE",
+        "Squared error and cross-entropy are negative log-likelihoods",
         "MLE overfits with little data",
         "With separable classes, logistic coefficients diverge without regularization"
       ]
@@ -215,7 +216,7 @@
         "Use a chi-square test of independence on the channel-by-outcome table",
         "Use Fisher's exact test when expected counts are small",
         "A significant result only says some channels differ",
-        "Find which with pairwise comparisons corrected by Holm or Tukey",
+        "Find which with Holm-corrected pairwise two-proportion tests",
         "Report effect sizes with intervals, since big samples make tiny gaps significant",
         "For revenue use ANOVA or a rank-based test if skewed"
       ]

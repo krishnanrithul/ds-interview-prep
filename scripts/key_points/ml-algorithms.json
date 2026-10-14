@@ -2,14 +2,14 @@
   "key_points": [
     {
       "id": "algo-001",
-      "base": "The classic list is a linear relationship, independent errors, constant error variance, roughly norm",
+      "base": "The classic list is a linear relationship, errors with zero mean given the features (no omitted conf",
       "draft": true,
       "points": [
-        "Lists the assumptions: linearity, independent errors, constant variance, normal errors, no collinearity",
         "For prediction, linearity matters most: a missed curve gives systematic error",
-        "Independence between train and test matters: leakage breaks predictions",
-        "Constant variance and normality mainly affect intervals, not point predictions",
-        "Handle high-leverage outliers with a robust loss like Huber",
+        "Exogeneity (no omitted confounders) matters most for inference",
+        "Correlated or uneven errors mainly affect intervals, not point predictions",
+        "Huber loss limits outliers in the target",
+        "Check high-leverage points separately, such as with Cook's distance",
         "Diagnose violations with residual plots"
       ]
     },
@@ -44,11 +44,11 @@
       "base": "Each tree trains on a bootstrap sample and considers a random subset of features at each split, so t",
       "draft": true,
       "points": [
-        "Each tree trains on a bootstrap sample of the rows",
-        "Each split considers a random subset of features, which decorrelates the trees",
+        "Bootstrap rows and random feature subsets decorrelate the trees",
         "Averaging decorrelated trees reduces variance without adding much bias",
         "Out-of-bag samples give a built-in validation estimate",
-        "Impurity importance is biased toward high-cardinality features and computed on training data",
+        "Impurity importance is biased toward high-cardinality features",
+        "Correlated features split importance between them",
         "Prefer permutation importance on held-out data or SHAP"
       ]
     },
@@ -58,11 +58,11 @@
       "draft": true,
       "points": [
         "All three are gradient-boosted trees with similar accuracy when tuned equally",
-        "LightGBM is fast because it grows trees leaf-wise with histograms",
-        "XGBoost is the most widely deployed and documented, level-wise by default",
-        "CatBoost handles categorical features natively with ordered target statistics",
+        "LightGBM grows leaf-wise, which can overfit small data",
+        "XGBoost grows trees level-wise by default",
+        "CatBoost encodes categoricals with ordered target statistics to limit leakage",
         "With many categoricals, start with CatBoost",
-        "Compare all three on the same time-aware folds and tuning budget, including calibration"
+        "Compare all three on the same time-aware folds and tuning budget"
       ]
     },
     {
@@ -70,12 +70,12 @@
       "base": "An SVM finds the separating boundary with the largest margin between classes; only the points neares",
       "draft": true,
       "points": [
-        "SVM finds the boundary with the largest margin between classes",
-        "Only the support vectors nearest the boundary define it",
+        "SVM finds the largest-margin boundary, defined by the support vectors",
         "Kernels like RBF allow non-linear boundaries",
         "C trades margin width against training errors",
+        "Gamma sets how local the RBF kernel is",
         "Features must be standardized because it is distance-based",
-        "Suits small, high-dimensional data like text but scales poorly"
+        "Training cost grows roughly quadratically with rows, so it scales poorly"
       ]
     },
     {
@@ -113,7 +113,7 @@
         "Ranking the right class first often survives the wrong assumption",
         "Its probabilities are poorly calibrated",
         "Trains in one pass and needs little data",
-        "Works well on high-dimensional sparse text, a strong baseline",
+        "Handles high-dimensional sparse features like words well",
         "Smoothing stops an unseen word from zeroing out a class"
       ]
     },
@@ -124,9 +124,9 @@
       "points": [
         "A coefficient is the change in log-odds per unit increase, others held fixed",
         "Exponentiate a coefficient to get an odds ratio",
-        "Reading coefficients needs comparable scales and little collinearity",
-        "Check that effects are linear in the log-odds",
-        "Choose it when regulators need reasons or the accuracy gap is small",
+        "Comparing coefficient sizes needs features on comparable scales",
+        "Strong collinearity makes individual coefficients unstable",
+        "Choose it when regulators or stakeholders need clear reasons",
         "Verify with a held-out comparison and calibration check"
       ]
     },
@@ -151,7 +151,7 @@
         "Linear regression can predict negative counts and assumes constant variance",
         "Use a Poisson GLM with a log link",
         "Check for overdispersion and use negative binomial if variance exceeds the mean",
-        "Add zero inflation when many customers have no claims",
+        "Add zero inflation when zeros exceed what the model predicts",
         "Use an exposure offset for customers observed for different periods",
         "Gradient boosting with a Poisson objective is a flexible alternative"
       ]
@@ -179,7 +179,7 @@
         "Choose it for irregular shapes, unknown k, or when outliers matter",
         "Struggles when clusters have very different densities",
         "Struggles in high dimensions where distances lose meaning",
-        "Pick eps from a k-distance plot and scale features"
+        "Pick eps from a k-distance plot"
       ]
     },
     {
@@ -252,11 +252,11 @@
       "draft": true,
       "points": [
         "A t-SNE plot is a prompt, not proof",
-        "t-SNE preserves local neighborhoods but distorts global structure",
-        "Cluster sizes, gaps and positions in the plot are not reliable",
+        "t-SNE preserves local neighborhoods but distorts cluster sizes and gaps",
         "t-SNE can show clusters in pure noise",
-        "Re-run with several settings and cluster in the original or PCA space",
-        "Check stability and whether groups differ on outcomes the embedding never saw"
+        "Re-run with several perplexities and seeds",
+        "Cluster in the original or PCA space and compare",
+        "Check whether groups differ on outcomes the embedding never saw"
       ]
     },
     {
@@ -267,7 +267,7 @@
         "Start with cheap filters like dropping constant or correlated features",
         "Use embedded methods like lasso or tree importance to rank features",
         "Wrapper methods like recursive elimination refine at higher cost",
-        "Do selection inside each cross-validation fold",
+        "Do selection that uses the target inside each fold",
         "Selecting on the full dataset first leaks labels and inflates the score",
         "Regularized models or boosting often make heavy selection unnecessary"
       ]
@@ -291,11 +291,11 @@
       "draft": true,
       "points": [
         "Evaluate with precision-recall and PR AUC, not accuracy",
+        "Tune the decision threshold to business costs",
         "Class weights change the loss without changing the data",
-        "Undersampling discards useful majority-class data",
         "SMOTE interpolates synthetic points that can be unrealistic or overlap",
         "Resample only inside the training fold, or validation leaks",
-        "Resampling distorts probabilities, so recalibrate afterwards"
+        "Resampling and class weights distort probabilities, so recalibrate"
       ]
     },
     {

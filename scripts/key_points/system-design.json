@@ -45,7 +45,7 @@
       "draft": true,
       "points": [
         "Assign variants by hashing the user id with an experiment-specific salt",
-        "Log exposure only when the user actually sees the change",
+        "Log exposure at the same trigger point in every arm",
         "Join exposures to metrics and compute lifts with confidence intervals",
         "Track guardrail metrics like latency and errors",
         "Run automatic sample ratio mismatch checks",
@@ -84,11 +84,11 @@
       "draft": true,
       "points": [
         "Start with the decision: horizon, accuracy needed and who acts",
-        "Data pipeline with invoices, terms and collection history plus quality checks",
-        "A global boosted model across units, compared with per-unit baselines",
+        "Build the data pipeline with freshness and quality checks",
+        "Use a global boosted model, tested against per-unit baselines",
         "Reconcile so unit forecasts sum to the total",
         "Evaluate with rolling-origin backtests by horizon and unit",
-        "Weekly batch with intervals, versioned outputs, driver views and monitoring"
+        "Show finance the drivers and let them adjust assumptions"
       ]
     },
     {
@@ -99,7 +99,7 @@
         "Start with the decision: team actions, weekly capacity and warning time",
         "Define churn and the prediction window so labels aren't leaked",
         "Build point-in-time features from usage, billing and support",
-        "Rank by expected value within capacity using calibrated probabilities",
+        "Rank by expected value of outreach within capacity, not risk alone",
         "Give reasons for each flag",
         "Keep a random holdout with no outreach to measure real impact"
       ]
@@ -111,10 +111,10 @@
       "points": [
         "Start with constraints: allowed inputs, required reasons, approvals",
         "Trade off a monotonic model or scorecard against boosting with explanations",
-        "Validate that explanations are stable and honest",
         "Store inputs, model version, score and reasons for every decision",
         "Monitor outcomes across protected groups, plus drift and calibration",
-        "Review gates for model changes and a human override path"
+        "Gate model changes with risk and compliance sign-off",
+        "Provide a human override path for exceptions"
       ]
     },
     {
@@ -123,10 +123,10 @@
       "draft": true,
       "points": [
         "Define each metric once as code in version control",
-        "Include grain, filters, time logic and owner",
         "Dashboards, notebooks and models read through the layer",
         "Review and version changes with a changelog and transition period",
         "Test definitions against known totals",
+        "Automatically compare dashboard outputs to the layer",
         "Start with the most disputed metrics and expand"
       ]
     },
@@ -137,10 +137,10 @@
       "points": [
         "Land each source's raw data unchanged in staging",
         "Map to a canonical schema with explicit, tested mappings",
-        "Validate at the boundary and quarantine bad records instead of failing the run",
+        "Validate at the boundary, halting a source on schema breaks",
         "Make loads idempotent so reruns are safe",
-        "Orchestrate with retries, alerting and backfills",
-        "Reconcile against source totals and agree data contracts with owners"
+        "Reconcile daily totals against each source's control totals",
+        "Agree data contracts so schema changes are announced"
       ]
     },
     {
@@ -161,11 +161,11 @@
       "base": "Ingest: parse documents, split them into chunks that preserve meaning with some overlap and metadata",
       "draft": true,
       "points": [
-        "Chunk documents with overlap and metadata, embed, store in an ANN index",
+        "Chunk documents with overlap and keep metadata",
+        "Embed chunks and store them in an ANN index",
         "Combine vector search with keyword search like BM25",
         "Rerank top results with a cross-encoder",
         "Enforce permissions at retrieval with access filters",
-        "Keep the index fresh with incremental updates",
         "Evaluate with labeled queries using recall at k and MRR"
       ]
     },
@@ -175,11 +175,11 @@
       "draft": true,
       "points": [
         "Separate the baseline forecast from a scenario layer",
-        "Use business drivers like volume, price and terms, not raw model features",
-        "Save scenarios as named versions and compare against baseline",
+        "Let users change business drivers, not raw model features",
         "Show each driver's contribution with a waterfall",
-        "Show intervals and flag assumptions outside historical ranges",
-        "Fast recompute, change history and finance overrides with comments"
+        "Show forecast intervals for each scenario",
+        "Flag assumptions outside historical ranges",
+        "Label scenarios as 'if' statements, not forecasts"
       ]
     }
   ]

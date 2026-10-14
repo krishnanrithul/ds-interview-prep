@@ -4,7 +4,7 @@
    "base": "Is it data drift, label drift, or concept drift? How do you distinguish?",
    "draft": true,
    "variants": [
-    "Input feature distributions are unchanged, but the share of positive labels has doubled. Which kind of drift is that, and what does it imply for the model?",
+    "Fraud's share of transactions has doubled, but fraudulent transactions look the same as before. Which kind of drift is that, and what does it imply for the model?",
     "How would you work out whether the relationship between features and target has changed, rather than just the inputs?"
    ]
   },

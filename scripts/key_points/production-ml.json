@@ -6,11 +6,11 @@
       "draft": true,
       "points": [
         "Triage the pipeline first: missing data, schema changes, delayed features",
-        "Compare input distributions for data drift and the prediction distribution",
-        "Where labels exist, check performance by segment and time for concept drift",
+        "Compare input distributions to detect data drift",
+        "Check accuracy within the same segments over time for concept drift",
         "Label drift is a change in the base rate",
-        "Fix the cheapest cause first, retraining only if needed",
-        "Validate the fix with a backtest"
+        "If full retraining is too costly, use a recent window or warm start",
+        "Add telemetry so the next incident is faster to diagnose"
       ]
     },
     {
@@ -21,7 +21,7 @@
         "Monitor in layers: system health, data quality, input and prediction drift",
         "Add outcome metrics when delayed labels arrive",
         "Track segment-level and fairness metrics",
-        "Tie thresholds to impact and require persistence over several days",
+        "Tie drift thresholds to impact and require persistence over days",
         "Page only for actionable issues",
         "Automate retraining a candidate but keep human approval to promote it"
       ]
@@ -31,12 +31,12 @@
       "base": "I'd measure first: approval and error rates by group (demographic parity, equalized odds), and invol",
       "draft": true,
       "points": [
-        "Measure first: approval and error rates by group",
-        "Use fairness metrics like demographic parity and equalized odds",
+        "Measure group outcomes with demographic parity and equalized odds",
         "Involve legal and compliance, since lending is regulated",
         "Removing protected attributes fails when proxies like zip code carry the signal",
-        "Audit and constrain proxies, or use fairness-constrained training or thresholds",
-        "The accuracy-fairness tradeoff is a business decision, not a modeling one"
+        "Audit features and drop or constrain proxies",
+        "Consider fairness-constrained training against a less-discriminatory alternative",
+        "The accuracy-fairness tradeoff is a business decision for stakeholders"
       ]
     },
     {
@@ -44,7 +44,7 @@
       "base": "Backtest first, then shadow mode: run old and new side by side on live inputs with no user impact. N",
       "draft": true,
       "points": [
-        "Backtest first",
+        "Backtest the new model on past periods first",
         "Run in shadow mode side by side on live inputs with no user impact",
         "Then a canary or segment rollout with one-step rollback",
         "If better only for some segments, consider routing by segment",
@@ -58,10 +58,10 @@
       "points": [
         "Skew is a mismatch between training features and features served in production",
         "Often from duplicated logic, like SQL for training and app code for serving",
-        "Also from different null or time zone handling, or leaked future data",
+        "Also from different handling of nulls or time zones",
         "Prevent with one shared feature definition, such as a feature store",
         "Build training data with point-in-time correct joins",
-        "Log served features and compare their distributions with training"
+        "Log served features and recompute them offline to compare row by row"
       ]
     },
     {
@@ -72,8 +72,8 @@
         "Reproducible means you can recreate a past model and its predictions",
         "Version the code, data snapshot, config and environment",
         "Record everything in a model registry linked to the artifact",
+        "Log the features behind each prediction to reproduce it",
         "Seeds help but parallelism, library versions and GPUs add non-determinism",
-        "Test that a re-run lands within tolerance",
         "It matters for debugging, audits and trusting version comparisons"
       ]
     },
@@ -86,8 +86,8 @@
         "Precompute predictions in batch or cache them if freshness allows",
         "Use fewer or cheaper features",
         "Use a smaller model, distillation or quantization",
-        "Batch inference requests",
-        "Pick the cheapest option that meets the latency SLA"
+        "Measure each option's accuracy loss against its latency and cost gain",
+        "Pick the cheapest option that meets the SLA and business metric"
       ]
     },
     {
@@ -105,15 +105,15 @@
     },
     {
       "id": "prodml-009",
-      "base": "The training set only contains applicants the old model liked, so the new model never learns what ha",
+      "base": "The training set only contains applicants the old model liked (selection bias), so the new model nev",
       "draft": true,
       "points": [
-        "You only observe outcomes for approved applicants: selection bias",
+        "Outcomes exist only for approved applicants: selection bias",
         "The model never learns about rejected applicants, so it extrapolates",
         "Wrongly rejected good applicants are never discovered, so errors persist",
-        "Approve a small random slice of borderline applicants to get unbiased labels",
-        "Use reject inference with caveats and evaluate on the random holdout",
-        "Tell the business what's unknowable and what it costs"
+        "Approve a small random slice of borderline applicants for unbiased labels",
+        "Evaluate on the random holdout, not approved-only data",
+        "Use reject inference with clear caveats"
       ]
     },
     {
@@ -125,8 +125,8 @@
         "A schedule is simple and suits gradual drift",
         "A trigger on drift or performance saves cost when changes are irregular",
         "Continuous learning fits fast, low-risk domains but is hardest to control",
-        "Always validate against the current model, shadow or canary, with rollback",
-        "Start with a schedule plus alerts and adapt"
+        "Validate a retrained model against the current one on a time-forward holdout",
+        "Shadow or canary the new model with rollback ready"
       ]
     },
     {
@@ -138,8 +138,8 @@
         "Sum (current minus reference) times ln(current over reference) across bins",
         "Rule of thumb: under 0.1 stable, 0.1 to 0.25 moderate, above 0.25 large",
         "Thresholds are heuristics that depend on bins and sample size",
-        "PSI misses shifts within bins, is unstable for sparse bins and ignores performance",
-        "Investigate a PSI alert before retraining"
+        "PSI misses within-bin shifts and is unstable for sparse bins",
+        "PSI says nothing about whether performance suffered"
       ]
     },
     {
@@ -173,12 +173,12 @@
       "base": "I'd define a shared baseline for all models: data freshness and volume, schema and null checks, pred",
       "draft": true,
       "points": [
-        "Define a shared baseline for every model",
-        "Baseline: freshness, volume, schema, nulls, prediction distribution, latency, errors",
+        "Every model gets a shared baseline of data, prediction and latency checks",
         "Teams add their own business metrics",
         "Severity tiers: page for outages, ticket for degradation, dashboard for the rest",
-        "Each alert has an owner and a runbook",
-        "Tune thresholds, group alerts and review alert precision to retire noisy ones"
+        "Each alert has a named owner and a runbook",
+        "Tune thresholds on history and group related alerts",
+        "Review alert precision quarterly and retire noisy alerts"
       ]
     },
     {
@@ -186,12 +186,12 @@
       "base": "First I'd work out what the overrides mean by slicing them by reviewer, case type and model confiden",
       "draft": true,
       "points": [
-        "Slice overrides by reviewer, case type and model confidence",
         "Overrides concentrated in a segment suggest the model is wrong there",
         "Overrides from a few reviewers suggest preference or inconsistency",
         "Overrides using information the model lacks suggest a missing feature",
         "Audit a sample against real outcomes to see who is right",
-        "Overrides used as labels carry reviewer bias"
+        "Overrides used as labels carry reviewer bias",
+        "Check for rubber-stamping using cases the model is known to get wrong"
       ]
     }
   ]

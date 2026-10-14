@@ -13,7 +13,7 @@
    "draft": true,
    "variants": [
     "What would a 10-layer network with no activation functions be able to learn?",
-    "Why did ReLU largely replace sigmoid in hidden layers?"
+    "If you remove every activation function from a deep network, what kind of function can it still represent?"
    ]
   },
   {
@@ -99,7 +99,7 @@
    "draft": true,
    "variants": [
     "What was batch normalization originally designed to do?",
-    "Why does dropout behave differently during training and inference?"
+    "Your model already uses batch normalization. Can you drop dropout and expect the same regularization?"
    ]
   }
  ],

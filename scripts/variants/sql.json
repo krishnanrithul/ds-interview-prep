@@ -345,7 +345,7 @@
    "draft": true,
    "variants": [
     "A segment has four orders: 10, 20, 40 and 100. What should the median be, and does your query return that?",
-    "Your query picks the middle row with ROW_NUMBER. What does it return for a segment with six orders?"
+    "A colleague's query picks the single middle row with ROW_NUMBER. What does it return for a segment with six orders?"
    ]
   },
   {

@@ -19,11 +19,11 @@
       "draft": true,
       "points": [
         "Model the distribution of days to pay, not the average",
-        "Unpaid invoices are censored, not missing",
-        "Dropping unpaid invoices biases toward fast payers",
-        "Build a daily incremental table so the scan becomes a small partition read",
+        "LEFT JOIN payments so open invoices stay in as censored",
+        "Written-off invoices are a separate outcome, not censored",
+        "Build a daily incremental table so each run reads one partition",
         "New customers without history fall back to their segment prior",
-        "Handle regime changes like COVID with recency weighting or exclusion, decided by backtest"
+        "Pick recency weighting or excluding the shock by backtest"
       ]
     },
     {
@@ -35,7 +35,7 @@
         "Take the date difference for each gap, then MAX per customer",
         "Refunds shouldn't reset the gap",
         "Count the open gap since the last payment, or churned customers look healthy",
-        "A single-payment customer has a NULL gap, not zero",
+        "A single-payment customer has no completed gap, only the open one",
         "Compare the current gap to the customer's own history, not one global threshold"
       ]
     },
@@ -60,7 +60,8 @@
         "Filter rank <= 3 in an outer query, since windows run after WHERE",
         "Ask how ties should work first",
         "ROW_NUMBER and RANK treat ties differently from DENSE_RANK",
-        "Departments with fewer than three people return what they have"
+        "Departments with fewer than three people return what they have",
+        "Filter NULL salaries or use NULLS LAST, since DESC sorts NULLs first"
       ]
     },
     {
@@ -171,7 +172,7 @@
         "COUNT(col) skips NULLs",
         "COUNT(DISTINCT col) counts distinct non-NULL values",
         "AVG and SUM also skip NULLs, so AVG divides by the non-NULL count",
-        "At scale use approximate distinct counts",
+        "At scale use approximate distinct counts if exactness isn't needed",
         "Comparing COUNT(*) with COUNT(col) checks completeness"
       ]
     },
@@ -194,7 +195,7 @@
       "points": [
         "Line up the definitions first: denominator and numerator window",
         "Check treatment of cancelled, refunded, test and internal orders",
-        "Check guest checkouts, currency and time zone cut-offs",
+        "Check how guest checkouts are matched to customers",
         "Reproduce both numbers step by step from the same base",
         "Agree on the definition from the decision the metric supports",
         "Put one documented definition in a shared metrics layer"
