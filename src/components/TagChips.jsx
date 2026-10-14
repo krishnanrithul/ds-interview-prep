@@ -10,7 +10,7 @@ const KIND = {
 export function TagChip({ id, onClick, active }) {
   const t = TAG_BY_ID[id]
   if (!t) return null
-  const cls = `inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap transition-colors ${
+  const cls = `inline-flex items-center rounded-full px-2.5 py-1 [@media(pointer:coarse)]:min-h-11 [@media(pointer:coarse)]:px-3 text-xs font-medium whitespace-nowrap transition-colors ${
     active ? 'bg-foreground text-background' : KIND[t.kind]
   }`
   return onClick ? (

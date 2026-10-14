@@ -13,6 +13,7 @@ export const dot = (t) => TOPIC_DOT[t] || 'bg-slate-400'
 
 export const RATINGS = {
   missed: {
+    status: 'Missed', // short label for lists such as the Library
     label: 'Missed it',
     hint: 'Tomorrow',
     key: '1',
@@ -22,6 +23,7 @@ export const RATINGS = {
     bar: 'bg-rose-400',
   },
   shaky: {
+    status: 'Shaky', // short label for lists such as the Library
     label: 'Shaky',
     hint: 'In 2 days',
     key: '2',
@@ -31,6 +33,7 @@ export const RATINGS = {
     bar: 'bg-amber-400',
   },
   solid: {
+    status: 'Solid', // short label for lists such as the Library
     label: 'Solid',
     hint: 'Spaces out',
     key: '3',
