@@ -40,7 +40,10 @@ const TOOL = {
 // history: [{ who: 'interviewer' | 'candidate', text }], starting with the candidate's main answer.
 // guide: the fixed follow-up for this position, { text, intent }.
 export async function generateProbe(q, history, guide, key) {
-  const said = history.filter((h) => h.who === 'candidate').map((h) => h.text).join('\n')
+  const said = history
+    .filter((h) => h.who === 'candidate')
+    .map((h) => h.text)
+    .join('\n')
   const transcript = history
     .map((h) => (h.who === 'interviewer' ? `Interviewer: ${h.text}` : `Candidate: ${h.text.trim().slice(0, 1500) || '(no reply)'}`))
     .join('\n')

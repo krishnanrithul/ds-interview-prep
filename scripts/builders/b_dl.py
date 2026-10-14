@@ -1,6 +1,7 @@
 from h2 import *
+
 C="common in DS interviews"
-I="increasingly common"
+INC="increasingly common"
 write("dl", [
 Q("dl-001","Explain how a neural network learns, in terms a non-technical colleague would follow.","Deep Learning & NLP","easy",C,"Phone screen, stakeholder communication",
  [("What does backpropagation actually compute?","test the chain rule and gradients"),
@@ -58,7 +59,7 @@ Q("dl-007","Why did transformers largely replace RNNs and LSTMs for language tas
  "Transformers use attention and can be parallelized.",
  "RNNs and LSTMs read a sequence one step at a time, passing a hidden state forward. That is inherently sequential, so training can't be parallelized across positions, and information from early tokens has to survive many steps, which makes long-range dependencies hard. Transformers use attention so every token can directly weigh every other token, and all positions are processed in parallel, which maps well onto GPUs and scales with data and size. The cost is attention that grows quadratically with sequence length, which drives work on efficient variants and long-context methods. RNN-style models are still used for streaming or very small-footprint settings.",
  ["sequence-models"],["rnn","transformer"],"concept"),
-Q("dl-008","Explain attention to a colleague who has never studied deep learning.","Deep Learning & NLP","hard",I,"Senior DS interview, explaining concepts",
+Q("dl-008","Explain attention to a colleague who has never studied deep learning.","Deep Learning & NLP","hard",INC,"Senior DS interview, explaining concepts",
  [("What are queries, keys and values?","test the roles of the three"),
   ("Why divide by the square root of the dimension?","test scaling for a stable softmax"),
   ("What is multi-head attention for?","test tracking several relationships at once")],
@@ -74,7 +75,7 @@ Q("dl-009","You have 500 labeled images and need a classifier. How would you app
  "Use transfer learning with a pretrained model like ResNet.",
  "Training from scratch on 500 images would overfit, so I'd start from a model pretrained on a large dataset such as ImageNet, whose early layers already detect general patterns. First I'd freeze the backbone and train a new classification head, which is cheap and hard to overfit, then optionally unfreeze the top layers with a small learning rate. Augmentation (crops, flips, color jitter) and early stopping help, and I'd use stratified cross-validation since a single validation split of 100 images is noisy. If the domain is very different, such as medical scans, generic features may transfer less well, so I'd check against a baseline and consider a domain-specific pretrained model.",
  ["transfer-learning","neural-networks","edge-cases"],["pretrained-model"],"case"),
-Q("dl-010","You need to classify support tickets by topic. Would you start with TF-IDF and logistic regression, or with embeddings or an LLM?","Deep Learning & NLP","medium",I,"Mid-level DS interview, NLP",
+Q("dl-010","You need to classify support tickets by topic. Would you start with TF-IDF and logistic regression, or with embeddings or an LLM?","Deep Learning & NLP","medium",INC,"Mid-level DS interview, NLP",
  [("What does TF-IDF capture and miss?","test word weighting without meaning"),
   ("When would embeddings beat TF-IDF?","test synonyms and short texts"),
   ("How would you decide between the options?","test baseline, cost, latency and labeled data")],
@@ -90,7 +91,7 @@ Q("dl-011","How are word embeddings like word2vec learned, and what are their li
  "They turn words into vectors so similar words are close together.",
  "word2vec trains a small network on a prediction task: given a word, predict its neighbors (skip-gram), or the reverse. The vectors that make that prediction work well end up placing words used in similar contexts near each other, following the idea that a word is defined by the company it keeps. Limits: each word has one vector regardless of sense, so 'bank' for rivers and 'bank' for money are blended; rare words get poor vectors; and embeddings absorb biases in the training text. Contextual embeddings from transformer models produce a different vector for each occurrence, which fixes much of the ambiguity problem.",
  ["text-features","embeddings-and-search"],["word2vec","embedding"],"concept"),
-Q("dl-012","At a high level, how is a chat model like ChatGPT trained after pretraining? What does RLHF add?","Deep Learning & NLP","hard",I,"Senior DS interview, LLM fundamentals",
+Q("dl-012","At a high level, how is a chat model like ChatGPT trained after pretraining? What does RLHF add?","Deep Learning & NLP","hard",INC,"Senior DS interview, LLM fundamentals",
  [("What is the difference between pretraining and instruction tuning?","test knowing the stages"),
   ("What is a reward model?","test preference data and learned rewards"),
   ("What are the risks of optimizing against a reward model?","test reward hacking and sycophancy")],

@@ -15,7 +15,11 @@ const pointCache = new Map() // question id -> key-point vectors
 const sentenceCache = new Map() // sentence text -> vector (so unchanged sentences aren't re-embedded on every pause)
 
 const embed = async (texts) => (await (await getExtractor())(texts, { pooling: 'mean', normalize: true })).tolist()
-const dot = (a, b) => { let s = 0; for (let i = 0; i < a.length; i++) s += a[i] * b[i]; return s }
+const dot = (a, b) => {
+  let s = 0
+  for (let i = 0; i < a.length; i++) s += a[i] * b[i]
+  return s
+}
 
 self.onmessage = async ({ data }) => {
   const { type, reqId } = data

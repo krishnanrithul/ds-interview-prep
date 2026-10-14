@@ -23,7 +23,10 @@ const listeners = new Set()
 const pending = new Map()
 let nextId = 1
 
-const setStatus = (s) => { status = s; listeners.forEach((fn) => fn(s)) }
+const setStatus = (s) => {
+  status = s
+  listeners.forEach((fn) => fn(s))
+}
 
 function getWorker() {
   if (worker || typeof Worker === 'undefined') return worker
@@ -51,9 +54,16 @@ function getWorker() {
   return worker
 }
 
-export function warmMatcher() { getWorker() }
-export function matcherStatus() { return status }
-export function onMatcherStatus(fn) { listeners.add(fn); return () => listeners.delete(fn) }
+export function warmMatcher() {
+  getWorker()
+}
+export function matcherStatus() {
+  return status
+}
+export function onMatcherStatus(fn) {
+  listeners.add(fn)
+  return () => listeners.delete(fn)
+}
 
 export function scoreAnswer(q, text) {
   const w = getWorker()

@@ -9,7 +9,11 @@ export function exportBackup() {
     const key = localStorage.key(i)
     if (!key || key === 'ds-anthropic-key' || key === 'ds-invite-code') continue // never write the API key or invite code into a backup file
     const raw = localStorage.getItem(key)
-    try { data[key] = raw ? JSON.parse(raw) : raw } catch { data[key] = raw }
+    try {
+      data[key] = raw ? JSON.parse(raw) : raw
+    } catch {
+      data[key] = raw
+    }
   }
   return JSON.stringify({ app: APP, version: 3, exportedAt: new Date().toISOString(), data }, null, 2)
 }
@@ -17,7 +21,11 @@ export function exportBackup() {
 // Returns an error message, or null on success. Caller should reload afterwards.
 export function importBackup(json) {
   let parsed
-  try { parsed = JSON.parse(json) } catch { return "That file isn't valid JSON." }
+  try {
+    parsed = JSON.parse(json)
+  } catch {
+    return "That file isn't valid JSON."
+  }
   if (typeof parsed !== 'object' || parsed === null) return "That doesn't look like a backup file."
 
   try {

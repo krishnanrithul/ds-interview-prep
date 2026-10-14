@@ -16,7 +16,10 @@ export function getReminderHour() {
 export const setReminderHour = (h) => localStorage.setItem(REMINDER_HOUR_KEY, String(h))
 
 export async function setReminderEnabled(enabled) {
-  if (!enabled) { localStorage.setItem(REMINDER_ENABLED_KEY, 'false'); return false }
+  if (!enabled) {
+    localStorage.setItem(REMINDER_ENABLED_KEY, 'false')
+    return false
+  }
   if (!isReminderSupported()) return false
   let permission = Notification.permission
   if (permission === 'default') permission = await Notification.requestPermission()
@@ -43,7 +46,9 @@ function show() {
       tag: 'ds-daily-reminder',
     })
     localStorage.setItem(LAST_FIRED_KEY, todayKey())
-  } catch (err) { console.warn('Reminder failed', err) }
+  } catch (err) {
+    console.warn('Reminder failed', err)
+  }
 }
 
 export function fireIfDue(hasPracticedToday) {
@@ -57,7 +62,10 @@ export function scheduleReminder(getHasPracticedToday) {
   let timer
   const arm = () => {
     window.clearTimeout(timer)
-    timer = window.setTimeout(() => { fireIfDue(getHasPracticedToday()); arm() }, nextFireDelayMs(getReminderHour()))
+    timer = window.setTimeout(() => {
+      fireIfDue(getHasPracticedToday())
+      arm()
+    }, nextFireDelayMs(getReminderHour()))
   }
   arm()
   return () => window.clearTimeout(timer)

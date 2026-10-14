@@ -6,7 +6,11 @@ export function safeParse(key, fallback) {
     return JSON.parse(raw)
   } catch (err) {
     console.error(`Corrupted localStorage key "${key}", resetting to default.`, err)
-    try { localStorage.removeItem(key) } catch { /* ignore */ }
+    try {
+      localStorage.removeItem(key)
+    } catch {
+      /* ignore */
+    }
     return fallback
   }
 }

@@ -21,7 +21,12 @@ export default function MasteryMap({ progress, onStart }) {
   const overall = summarize(QUESTIONS, progress)
   const dueIn = (t) => QUESTIONS.filter((q) => q.topic === t && isDue(progress[q.id])).length
   const [open, setOpen] = useState(() => new Set(topics.filter((t) => dueIn(t) > 0)))
-  const toggle = (t) => setOpen((s) => { const n = new Set(s); n.has(t) ? n.delete(t) : n.add(t); return n })
+  const toggle = (t) =>
+    setOpen((s) => {
+      const n = new Set(s)
+      n.has(t) ? n.delete(t) : n.add(t)
+      return n
+    })
 
   const caption = focusedQuestion
     ? (() => {
@@ -70,8 +75,14 @@ export default function MasteryMap({ progress, onStart }) {
                       {c.solid} of {qs.length} solid{due > 0 && <span className="text-foreground font-medium">, {due} due</span>}
                     </span>
                   </span>
-                  <span className="flex h-2.5 rounded-full overflow-hidden bg-muted col-span-2 sm:col-span-1 order-3 sm:order-none" role="img" aria-label={`${c.solid} solid, ${c.shaky} shaky, ${c.missed} missed, ${c.unseen} unseen`}>
-                    {['solid', 'shaky', 'missed'].map((k) => c[k] > 0 && <span key={k} className={BAR[k]} style={{ width: `${(c[k] / qs.length) * 100}%` }} />)}
+                  <span
+                    className="flex h-2.5 rounded-full overflow-hidden bg-muted col-span-2 sm:col-span-1 order-3 sm:order-none"
+                    role="img"
+                    aria-label={`${c.solid} solid, ${c.shaky} shaky, ${c.missed} missed, ${c.unseen} unseen`}
+                  >
+                    {['solid', 'shaky', 'missed'].map(
+                      (k) => c[k] > 0 && <span key={k} className={BAR[k]} style={{ width: `${(c[k] / qs.length) * 100}%` }} />,
+                    )}
                   </span>
                   <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -91,7 +102,9 @@ export default function MasteryMap({ progress, onStart }) {
                     if (!group.length) return null
                     return (
                       <div key={lv.id}>
-                        <p className="text-xs text-muted-foreground mb-1.5">{lv.label} <span className="tabular-nums">({group.length})</span></p>
+                        <p className="text-xs text-muted-foreground mb-1.5">
+                          {lv.label} <span className="tabular-nums">({group.length})</span>
+                        </p>
                         {/* On touch screens each tile sits in a 44px hit area (the visible tile stays 32px), so spacing comes from the hit areas. */}
                         <div className="flex flex-wrap gap-1.5 [@media(pointer:coarse)]:gap-0">
                           {group.map((q) => {
@@ -126,13 +139,18 @@ export default function MasteryMap({ progress, onStart }) {
                       {focusedQuestion.tags?.length > 0 && (
                         <div className="flex flex-wrap gap-1.5">
                           {focusedQuestion.tags.slice(0, 3).map((tag) => (
-                            <span key={tag} className="px-2 py-0.5 rounded-full bg-muted text-xs text-muted-foreground">{tag}</span>
+                            <span key={tag} className="px-2 py-0.5 rounded-full bg-muted text-xs text-muted-foreground">
+                              {tag}
+                            </span>
                           ))}
                         </div>
                       )}
                       <div className="flex items-center gap-3">
                         <button
-                          onClick={() => { onStart({ only: [focusedQuestion.id] }); setFocusedQuestion(null) }}
+                          onClick={() => {
+                            onStart({ only: [focusedQuestion.id] })
+                            setFocusedQuestion(null)
+                          }}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90"
                         >
                           <Play className="w-3.5 h-3.5 fill-current" /> Practice
@@ -150,7 +168,9 @@ export default function MasteryMap({ progress, onStart }) {
         })}
       </div>
 
-      <p className="mt-3 text-sm text-muted-foreground px-1">Open a topic to see its questions. Each tile is one question; pulsing tiles are due for review.</p>
+      <p className="mt-3 text-sm text-muted-foreground px-1">
+        Open a topic to see its questions. Each tile is one question; pulsing tiles are due for review.
+      </p>
     </section>
   )
 }

@@ -17,9 +17,13 @@ import { ReportQuestion } from './FeedbackLink'
 function Reply({ text }) {
   return (
     <div className="flex justify-end">
-      {text
-        ? <p className="max-w-[88%] whitespace-pre-wrap rounded-2xl rounded-br-md bg-primary text-primary-foreground px-4 py-3 text-[15px] leading-relaxed">{text}</p>
-        : <p className="text-sm italic text-muted-foreground">You passed</p>}
+      {text ? (
+        <p className="max-w-[88%] whitespace-pre-wrap rounded-2xl rounded-br-md bg-primary text-primary-foreground px-4 py-3 text-[15px] leading-relaxed">
+          {text}
+        </p>
+      ) : (
+        <p className="text-sm italic text-muted-foreground">You passed</p>
+      )}
     </div>
   )
 }
@@ -29,8 +33,10 @@ function Reply({ text }) {
 function MockKeyPoints({ q, thread, onScore }) {
   const mine = [thread?.main || '', ...(thread?.fus || []).map((f) => f.reply || '')].filter((t) => t.trim()).join('\n\n')
   const transcript = thread
-    ? [`Candidate (answer to the main question): ${thread.main || '(no answer)'}`,
-       ...thread.fus.map((f) => `Interviewer: ${f.text}\nCandidate: ${f.reply?.trim() || '(no reply)'}`)].join('\n\n')
+    ? [
+        `Candidate (answer to the main question): ${thread.main || '(no answer)'}`,
+        ...thread.fus.map((f) => `Interviewer: ${f.text}\nCandidate: ${f.reply?.trim() || '(no reply)'}`),
+      ].join('\n\n')
     : ''
   const match = useMatchScore(q, mine)
   return <KeyPointsReview q={q} answer={mine} sims={match.sims} gradeText={transcript} onScore={onScore} />
@@ -41,13 +47,19 @@ const mmss = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 function Stepper({ value, onChange, min, max, label }) {
   return (
     <div className="flex items-center gap-3" role="group" aria-label={label}>
-      <button onClick={() => onChange(Math.max(min, value - 1))} aria-label={`Decrease ${label}`}
-        className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors">
+      <button
+        onClick={() => onChange(Math.max(min, value - 1))}
+        aria-label={`Decrease ${label}`}
+        className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
+      >
         <Minus size={16} />
       </button>
       <span className="text-2xl font-bold w-10 text-center tabular-nums">{value}</span>
-      <button onClick={() => onChange(Math.min(max, value + 1))} aria-label={`Increase ${label}`}
-        className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors">
+      <button
+        onClick={() => onChange(Math.min(max, value + 1))}
+        aria-label={`Increase ${label}`}
+        className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors"
+      >
         <Plus size={16} />
       </button>
     </div>
@@ -86,7 +98,9 @@ export default function Mock({ progress, byId, active, onSave }) {
     return () => clearInterval(t)
   }, [stage, startedAt])
 
-  useEffect(() => { if (active && stage === 'run' && !thinking) textRef.current?.focus() }, [idx, stage, active, thinking, threads])
+  useEffect(() => {
+    if (active && stage === 'run' && !thinking) textRef.current?.focus()
+  }, [idx, stage, active, thinking, threads])
 
   const q = stage === 'run' ? byId[ids[idx]] : null
   const n = q ? q.follow_ups.length : 0
@@ -97,7 +111,15 @@ export default function Mock({ progress, byId, active, onSave }) {
     const chosen = Object.fromEntries(picked.map((id) => [id, pickVariants(byId[id])]))
     Object.entries(chosen).forEach(([id, p]) => markSeen(id, p))
     setPicks(chosen)
-    setIdx(0); setThreads({}); setDraft(''); setTimes({}); setRatings({}); setScores({}); setTouched({}); setElapsed(0); setThinking(false)
+    setIdx(0)
+    setThreads({})
+    setDraft('')
+    setTimes({})
+    setRatings({})
+    setScores({})
+    setTouched({})
+    setElapsed(0)
+    setThinking(false)
     setStartedAt(Date.now())
     setStage('run')
   }
@@ -115,7 +137,10 @@ export default function Mock({ progress, byId, active, onSave }) {
     const key = getApiKey()
     if (reactiveEnabled(item) && key) {
       const history = [{ who: 'candidate', text: t.main }]
-      t.fus.forEach((f) => { history.push({ who: 'interviewer', text: f.text }); history.push({ who: 'candidate', text: f.reply || '' }) })
+      t.fus.forEach((f) => {
+        history.push({ who: 'interviewer', text: f.text })
+        history.push({ who: 'candidate', text: f.reply || '' })
+      })
       setThinking(true)
       try {
         const p = await generateProbe(item, history, guide, key)
@@ -146,7 +171,10 @@ export default function Mock({ progress, byId, active, onSave }) {
   const finishQuestion = () => {
     setTimes((t) => ({ ...t, [q.id]: Math.floor((Date.now() - startedAt) / 1000) }))
     if (idx + 1 < ids.length) {
-      setIdx(idx + 1); setDraft(''); setElapsed(0); setStartedAt(Date.now())
+      setIdx(idx + 1)
+      setDraft('')
+      setElapsed(0)
+      setStartedAt(Date.now())
     } else {
       setStage('review')
     }
@@ -169,8 +197,15 @@ export default function Mock({ progress, byId, active, onSave }) {
   const transcriptText = (id) => {
     const t = threads[id]
     if (!t) return ''
-    return [t.main || '', ...t.fus.map((f, k) => `Follow-up ${k + 1}: ${f.text}
-${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
+    return [
+      t.main || '',
+      ...t.fus.map(
+        (f, k) => `Follow-up ${k + 1}: ${f.text}
+${f.reply || '(no reply)'}`,
+      ),
+    ]
+      .filter(Boolean)
+      .join('\n\n')
   }
 
   const save = () => {
@@ -190,27 +225,45 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
           <h1 className="text-2xl font-bold">Mock interview</h1>
         </div>
         <p className="text-muted-foreground mb-6">
-          A rehearsal, not a study session. Questions come from different topics, follow-ups arrive one at a time,
-          and you won't see any answers until the end.
+          A rehearsal, not a study session. Questions come from different topics, follow-ups arrive one at a time, and you won't see any
+          answers until the end.
         </p>
 
         <div className="bg-card border border-border rounded-2xl divide-y divide-border mb-6">
           <div className="flex items-center justify-between gap-4 p-4">
-            <div><p className="font-medium">Questions</p><p className="text-xs text-muted-foreground mt-0.5">How many to ask</p></div>
-            <Stepper label="questions" value={count} min={1} max={Math.max(1, Math.min(10, poolSize))} onChange={(v) => setCfg({ ...cfg, count: v })} />
+            <div>
+              <p className="font-medium">Questions</p>
+              <p className="text-xs text-muted-foreground mt-0.5">How many to ask</p>
+            </div>
+            <Stepper
+              label="questions"
+              value={count}
+              min={1}
+              max={Math.max(1, Math.min(10, poolSize))}
+              onChange={(v) => setCfg({ ...cfg, count: v })}
+            />
           </div>
           <div className="flex items-center justify-between gap-4 p-4">
-            <div><p className="font-medium">Minutes per question</p><p className="text-xs text-muted-foreground mt-0.5">A soft limit: you can go over, and it's recorded</p></div>
+            <div>
+              <p className="font-medium">Minutes per question</p>
+              <p className="text-xs text-muted-foreground mt-0.5">A soft limit: you can go over, and it's recorded</p>
+            </div>
             <Stepper label="minutes" value={cfg.minutes} min={2} max={15} onChange={(v) => setCfg({ ...cfg, minutes: v })} />
           </div>
           <div className="p-4">
             <p className="font-medium mb-3">Topics</p>
             <div className="flex flex-wrap gap-2">
               {['all', ...topics].map((t) => (
-                <button key={t} onClick={() => setCfg({ ...cfg, topic: t })} aria-pressed={cfg.topic === t}
+                <button
+                  key={t}
+                  onClick={() => setCfg({ ...cfg, topic: t })}
+                  aria-pressed={cfg.topic === t}
                   className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-                    cfg.topic === t ? 'bg-foreground text-background border-foreground' : 'bg-card text-muted-foreground border-border hover:border-foreground/30'
-                  }`}>
+                    cfg.topic === t
+                      ? 'bg-foreground text-background border-foreground'
+                      : 'bg-card text-muted-foreground border-border hover:border-foreground/30'
+                  }`}
+                >
                   {t === 'all' ? 'Mixed' : t}
                 </button>
               ))}
@@ -218,8 +271,11 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
           </div>
         </div>
 
-        <button onClick={start} disabled={poolSize === 0}
-          className="w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-40 text-primary-foreground font-semibold py-3.5 rounded-xl transition-colors">
+        <button
+          onClick={start}
+          disabled={poolSize === 0}
+          className="w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-40 text-primary-foreground font-semibold py-3.5 rounded-xl transition-colors"
+        >
           Start interview <ArrowRight className="w-4 h-4" />
         </button>
         <p className="text-center text-xs text-muted-foreground mt-3">About {count * cfg.minutes} minutes in total</p>
@@ -245,11 +301,20 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
           <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
             <div className="h-full bg-primary transition-all duration-300" style={{ width: `${(idx / ids.length) * 100}%` }} />
           </div>
-          <span className="text-sm text-muted-foreground tabular-nums">Question {idx + 1} of {ids.length}</span>
-          <span className={`text-sm font-semibold tabular-nums px-2.5 py-1 rounded-lg ${over ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400' : 'bg-muted'}`} aria-label="Time">
+          <span className="text-sm text-muted-foreground tabular-nums">
+            Question {idx + 1} of {ids.length}
+          </span>
+          <span
+            className={`text-sm font-semibold tabular-nums px-2.5 py-1 rounded-lg ${over ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400' : 'bg-muted'}`}
+            aria-label="Time"
+          >
             {timeLabel}
           </span>
-          <button onClick={() => setConfirmEnd(true)} title="End interview" className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted">
+          <button
+            onClick={() => setConfirmEnd(true)}
+            title="End interview"
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted"
+          >
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -257,7 +322,8 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
         <div className="bg-card border border-border rounded-3xl shadow-sm p-6 sm:p-8">
           <div className="flex items-center gap-3 text-xs mb-4">
             <span className="flex items-center gap-1.5 font-semibold text-foreground/80">
-              <span className={`w-2 h-2 rounded-full ${dot(q.topic)}`} />{q.topic}
+              <span className={`w-2 h-2 rounded-full ${dot(q.topic)}`} />
+              {q.topic}
             </span>
             <span className={`px-2 py-0.5 rounded-md ring-1 capitalize font-medium ${DIFFICULTY[q.difficulty] || ''}`}>{q.difficulty}</span>
             <DraftBadge q={q} />
@@ -272,14 +338,24 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
                 <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
                   <p className="text-sm font-semibold text-primary mb-1">Interviewer follow-up {k + 1}</p>
                   <p className="text-[15px] leading-relaxed">{f.text}</p>
-                  {f.error && <p className="text-xs text-muted-foreground mt-2">Couldn't react to your answer ({f.error}), so this is a standard follow-up.</p>}
+                  {f.error && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Couldn't react to your answer ({f.error}), so this is a standard follow-up.
+                    </p>
+                  )}
                 </div>
                 {f.reply !== null && <Reply text={f.reply} />}
               </div>
             ))}
             {thinking && (
               <div className="inline-flex items-center gap-2 rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground" role="status">
-                {[0, 1, 2].map((d) => <span key={d} className="typing-dot w-1.5 h-1.5 rounded-full bg-muted-foreground" style={{ animationDelay: `${d * 140}ms` }} />)}
+                {[0, 1, 2].map((d) => (
+                  <span
+                    key={d}
+                    className="typing-dot w-1.5 h-1.5 rounded-full bg-muted-foreground"
+                    style={{ animationDelay: `${d * 140}ms` }}
+                  />
+                ))}
                 <span className="ml-1">The interviewer is thinking</span>
               </div>
             )}
@@ -293,15 +369,19 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
                 onChange={(e) => setDraft(e.target.value)}
                 rows={thread.main === null ? 6 : 3}
                 aria-label={thread.main === null ? 'Your answer' : 'Your reply'}
-                placeholder={thread.main === null
-                  ? 'Answer as you would out loud: your approach, trade-offs, and what you would check.'
-                  : 'Reply to the interviewer'}
+                placeholder={
+                  thread.main === null
+                    ? 'Answer as you would out loud: your approach, trade-offs, and what you would check.'
+                    : 'Reply to the interviewer'
+                }
                 className="w-full resize-y bg-transparent px-4 pt-3.5 pb-1 text-sm leading-relaxed placeholder:text-muted-foreground focus:outline-none"
               />
               <div className="flex items-center justify-between gap-3 px-3 pb-3">
                 <span className="text-xs text-muted-foreground pl-1 hidden sm:block">Cmd/Ctrl + Enter to send</span>
-                <button onClick={send}
-                  className="ml-auto inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-sm pl-4 pr-3 py-2 rounded-xl hover:opacity-90 transition">
+                <button
+                  onClick={send}
+                  className="ml-auto inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold text-sm pl-4 pr-3 py-2 rounded-xl hover:opacity-90 transition"
+                >
                   {draft.trim() ? 'Send' : "Skip, I'd pass"} <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -311,8 +391,10 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
 
         {questionDone && (
           <>
-            <button onClick={finishQuestion}
-              className="mt-5 w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3.5 rounded-xl transition-colors">
+            <button
+              onClick={finishQuestion}
+              className="mt-5 w-full inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3.5 rounded-xl transition-colors"
+            >
               {last ? 'Finish interview' : 'Next question'} <ArrowRight className="w-4 h-4" />
             </button>
             <p className="text-center text-xs text-muted-foreground mt-3">Cmd/Ctrl + Enter to continue</p>
@@ -326,7 +408,10 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
           description="Your answers from this run won't be saved or rated."
           confirmLabel="End interview"
           cancelLabel="Keep going"
-          onConfirm={() => { setConfirmEnd(false); setStage('setup') }}
+          onConfirm={() => {
+            setConfirmEnd(false)
+            setStage('setup')
+          }}
           onCancel={() => setConfirmEnd(false)}
         />
       </div>
@@ -357,26 +442,57 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
 
       <div className="bg-card border border-border rounded-2xl p-5 sm:p-6 mb-4">
         {overall === null ? (
-          <p className="text-sm text-muted-foreground" role="status">{scoring ? 'Scoring your interview…' : 'No score: no question in this interview has key points.'}</p>
+          <p className="text-sm text-muted-foreground" role="status">
+            {scoring ? 'Scoring your interview…' : 'No score: no question in this interview has key points.'}
+          </p>
         ) : (
           <>
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-              <p><span className="text-4xl font-semibold tabular-nums">{overall}%</span> <span className="text-muted-foreground">of a senior answer, across the interview</span></p>
+              <p>
+                <span className="text-4xl font-semibold tabular-nums">{overall}%</span>{' '}
+                <span className="text-muted-foreground">of a senior answer, across the interview</span>
+              </p>
               <p className="text-xs text-muted-foreground">
-                {scoring ? 'Still scoring…' : graded === scored.length ? 'Graded for correctness by Haiku' : graded ? `${graded} of ${scored.length} graded by Haiku, the rest by which ideas you mentioned` : 'Based on which ideas you mentioned'}
+                {scoring
+                  ? 'Still scoring…'
+                  : graded === scored.length
+                    ? 'Graded for correctness by Haiku'
+                    : graded
+                      ? `${graded} of ${scored.length} graded by Haiku, the rest by which ideas you mentioned`
+                      : 'Based on which ideas you mentioned'}
               </p>
             </div>
-            <div className="h-2 rounded-full bg-muted overflow-hidden mt-3" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={overall} aria-label="Interview score">
+            <div
+              className="h-2 rounded-full bg-muted overflow-hidden mt-3"
+              role="meter"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={overall}
+              aria-label="Interview score"
+            >
               <div className="h-full rounded-full bg-primary transition-[width] duration-500" style={{ width: `${overall}%` }} />
             </div>
             <p className="font-semibold mt-3">{interviewVerdict(overall)}</p>
             {ranked.length > 1 && (
               <ul className="mt-3 space-y-1.5 text-sm">
-                <li className="flex gap-2"><span className="text-muted-foreground shrink-0 w-24">Strongest</span><span><span className="tabular-nums font-medium">{scores[ranked[0]].pct}%</span> · {byId[ranked[0]].question}</span></li>
-                <li className="flex gap-2"><span className="text-muted-foreground shrink-0 w-24">Biggest gap</span><span><span className="tabular-nums font-medium">{scores[ranked[ranked.length - 1]].pct}%</span> · {byId[ranked[ranked.length - 1]].question}</span></li>
+                <li className="flex gap-2">
+                  <span className="text-muted-foreground shrink-0 w-24">Strongest</span>
+                  <span>
+                    <span className="tabular-nums font-medium">{scores[ranked[0]].pct}%</span> · {byId[ranked[0]].question}
+                  </span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-muted-foreground shrink-0 w-24">Biggest gap</span>
+                  <span>
+                    <span className="tabular-nums font-medium">{scores[ranked[ranked.length - 1]].pct}%</span> ·{' '}
+                    {byId[ranked[ranked.length - 1]].question}
+                  </span>
+                </li>
               </ul>
             )}
-            <p className="text-xs text-muted-foreground mt-3">Each question's rating below is suggested from its score. Change any you disagree with before saving.</p>
+            <p className="text-xs text-muted-foreground mt-3">
+              Each question's rating below is suggested from its score. Change any you disagree with before saving.
+            </p>
           </>
         )}
       </div>
@@ -411,7 +527,8 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
               <div className="flex items-center flex-wrap gap-3 text-xs mb-2">
                 <span className="text-muted-foreground">Question {k + 1}</span>
                 <span className="flex items-center gap-1.5 font-semibold text-foreground/80">
-                  <span className={`w-2 h-2 rounded-full ${dot(item.topic)}`} />{item.topic}
+                  <span className={`w-2 h-2 rounded-full ${dot(item.topic)}`} />
+                  {item.topic}
                 </span>
                 <span className={`font-medium tabular-nums ${t > limit ? 'text-rose-600 dark:text-rose-400' : 'text-muted-foreground'}`}>
                   {mmss(t)} of {mmss(limit)}
@@ -421,50 +538,73 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
 
               <div className="rounded-xl bg-muted/50 border border-border p-4 mb-4">
                 <p className="text-sm font-semibold text-muted-foreground mb-1">Your answer</p>
-                {threads[id]?.main?.trim()
-                  ? <p className="text-sm whitespace-pre-wrap text-foreground/80">{threads[id].main}</p>
-                  : <p className="text-sm text-muted-foreground italic">You didn't write an answer.</p>}
+                {threads[id]?.main?.trim() ? (
+                  <p className="text-sm whitespace-pre-wrap text-foreground/80">{threads[id].main}</p>
+                ) : (
+                  <p className="text-sm text-muted-foreground italic">You didn't write an answer.</p>
+                )}
               </div>
 
               <ol className="space-y-4 mb-4">
                 {(threads[id]?.fus || []).map((f, j) => (
                   <li key={j} className="text-sm">
-                    <p><span className="font-semibold text-primary mr-1.5">{j + 1}.</span>{f.text}</p>
+                    <p>
+                      <span className="font-semibold text-primary mr-1.5">{j + 1}.</span>
+                      {f.text}
+                    </p>
                     <p className="text-xs text-muted-foreground ml-5 mt-0.5 flex gap-1.5">
                       <CornerDownRight className="w-3 h-3 mt-0.5 shrink-0" />
-                      {f.probe
-                        ? f.probe.quote
-                          ? <span>Asked because you said “{f.probe.quote}”</span>
-                          : f.probe.target === 'scaffold'
-                            ? <span>A simpler step, because your last reply was thin</span>
-                            : f.probe.target === 'reask'
-                              ? <span>Asked again, because your reply didn't answer it</span>
-                            : f.probe.point >= 0
-                              ? <span>Asked to steer you toward: {item.key_points[f.probe.point]}</span>
-                              : <span>Asked to push deeper on your answer</span>
-                        : <span>Testing: {f.intent}</span>}
+                      {f.probe ? (
+                        f.probe.quote ? (
+                          <span>Asked because you said “{f.probe.quote}”</span>
+                        ) : f.probe.target === 'scaffold' ? (
+                          <span>A simpler step, because your last reply was thin</span>
+                        ) : f.probe.target === 'reask' ? (
+                          <span>Asked again, because your reply didn't answer it</span>
+                        ) : f.probe.point >= 0 ? (
+                          <span>Asked to steer you toward: {item.key_points[f.probe.point]}</span>
+                        ) : (
+                          <span>Asked to push deeper on your answer</span>
+                        )
+                      ) : (
+                        <span>Testing: {f.intent}</span>
+                      )}
                     </p>
                     <div className="ml-5 mt-1.5 rounded-lg bg-muted/50 border border-border px-3 py-2">
                       <p className="text-xs text-muted-foreground mb-0.5">You said</p>
-                      {f.reply?.trim()
-                        ? <p className="whitespace-pre-wrap text-foreground/80">{f.reply}</p>
-                        : <p className="italic text-muted-foreground">No reply</p>}
+                      {f.reply?.trim() ? (
+                        <p className="whitespace-pre-wrap text-foreground/80">{f.reply}</p>
+                      ) : (
+                        <p className="italic text-muted-foreground">No reply</p>
+                      )}
                     </div>
                   </li>
                 ))}
               </ol>
 
-              {matchEnabled(item) && <div className="mb-4"><MockKeyPoints q={item} thread={threads[id]} onScore={(sc) => setScore(id, sc)} /></div>}
-              <div className="mb-4"><AnswerLadder q={item} /></div>
+              {matchEnabled(item) && (
+                <div className="mb-4">
+                  <MockKeyPoints q={item} thread={threads[id]} onScore={(sc) => setScore(id, sc)} />
+                </div>
+              )}
+              <div className="mb-4">
+                <AnswerLadder q={item} />
+              </div>
               <ReportQuestion q={item} where="Mock review" className="mb-4" />
 
               <div className="grid grid-cols-3 gap-2">
                 {Object.entries(RATINGS).map(([r, v]) => (
-                  <button key={r} onClick={() => { setTouched({ ...touched, [id]: true }); setRatings({ ...ratings, [id]: ratings[id] === r ? undefined : r }) }}
+                  <button
+                    key={r}
+                    onClick={() => {
+                      setTouched({ ...touched, [id]: true })
+                      setRatings({ ...ratings, [id]: ratings[id] === r ? undefined : r })
+                    }}
                     aria-pressed={ratings[id] === r}
                     className={`rounded-xl border py-2.5 text-sm font-semibold transition-colors ${v.button} ${
                       ratings[id] === r ? 'ring-2 ring-offset-2 ring-offset-card ring-current' : 'opacity-70 hover:opacity-100'
-                    }`}>
+                    }`}
+                  >
                     {v.label}
                   </button>
                 ))}
@@ -475,11 +615,16 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
       </div>
 
       <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
-        <button onClick={save}
-          className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3.5 rounded-xl transition-colors">
+        <button
+          onClick={save}
+          className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3.5 rounded-xl transition-colors"
+        >
           Save results
         </button>
-        <button onClick={() => setStage('setup')} className="px-6 py-3.5 rounded-xl border border-border font-semibold hover:bg-muted transition-colors">
+        <button
+          onClick={() => setStage('setup')}
+          className="px-6 py-3.5 rounded-xl border border-border font-semibold hover:bg-muted transition-colors"
+        >
           Discard
         </button>
         <p className="text-sm text-muted-foreground">

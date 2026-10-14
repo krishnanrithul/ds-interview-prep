@@ -18,7 +18,9 @@ function Chip({ active, onClick, children }) {
     <button
       onClick={onClick}
       className={`px-3 py-1.5 rounded-full text-sm font-medium border whitespace-nowrap transition-colors capitalize ${
-        active ? 'bg-foreground text-background border-foreground' : 'bg-card text-muted-foreground border-border hover:border-foreground/30'
+        active
+          ? 'bg-foreground text-background border-foreground'
+          : 'bg-card text-muted-foreground border-border hover:border-foreground/30'
       }`}
     >
       {children}
@@ -63,26 +65,51 @@ export default function Library({ progress, notes, onPractice, tags, setTags, on
           className="w-full h-11 pl-10 pr-9 rounded-xl bg-card border border-border text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition"
         />
         {query && (
-          <button onClick={() => setQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+          <button
+            onClick={() => setQuery('')}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          >
             <X className="w-4 h-4" />
           </button>
         )}
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 [scrollbar-width:none]">
-        <Chip active={topic === 'all'} onClick={() => setTopic('all')}>All topics</Chip>
-        {topics.map((t) => <Chip key={t} active={topic === t} onClick={() => setTopic(t)}>{t}</Chip>)}
+        <Chip active={topic === 'all'} onClick={() => setTopic('all')}>
+          All topics
+        </Chip>
+        {topics.map((t) => (
+          <Chip key={t} active={topic === t} onClick={() => setTopic(t)}>
+            {t}
+          </Chip>
+        ))}
       </div>
       <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 [scrollbar-width:none]" role="group" aria-label="Level">
-        <Chip active={level === 'all'} onClick={() => setLevel('all')}>All levels</Chip>
-        {LEVELS.map((l) => <Chip key={l.id} active={level === l.id} onClick={() => setLevel(l.id)}>{l.label}</Chip>)}
+        <Chip active={level === 'all'} onClick={() => setLevel('all')}>
+          All levels
+        </Chip>
+        {LEVELS.map((l) => (
+          <Chip key={l.id} active={level === l.id} onClick={() => setLevel(l.id)}>
+            {l.label}
+          </Chip>
+        ))}
       </div>
       <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 [scrollbar-width:none]" role="group" aria-label="Question type">
-        <Chip active={kind === 'all'} onClick={() => setKind('all')}>All types</Chip>
-        {KINDS.map((k) => <Chip key={k.id} active={kind === k.id} onClick={() => setKind(k.id)}>{k.label}</Chip>)}
+        <Chip active={kind === 'all'} onClick={() => setKind('all')}>
+          All types
+        </Chip>
+        {KINDS.map((k) => (
+          <Chip key={k.id} active={kind === k.id} onClick={() => setKind(k.id)}>
+            {k.label}
+          </Chip>
+        ))}
       </div>
       <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 [scrollbar-width:none]" role="group" aria-label="Status">
-        {STATUS.map((s) => <Chip key={s} active={status === s} onClick={() => setStatus(s)}>{s}</Chip>)}
+        {STATUS.map((s) => (
+          <Chip key={s} active={status === s} onClick={() => setStatus(s)}>
+            {s}
+          </Chip>
+        ))}
       </div>
 
       <div>
@@ -97,7 +124,10 @@ export default function Library({ progress, notes, onPractice, tags, setTags, on
         </button>
         {tagPanel && (
           <div className="anim-msg mt-3 rounded-2xl border border-border bg-card p-4 space-y-4">
-            {[['subject', 'Topics'], ['skill', 'What the interviewer is testing']].map(([kind, title]) => (
+            {[
+              ['subject', 'Topics'],
+              ['skill', 'What the interviewer is testing'],
+            ].map(([kind, title]) => (
               <div key={kind}>
                 <p className="text-sm font-semibold mb-2">{title}</p>
                 <div className="flex flex-wrap gap-1.5">
@@ -119,7 +149,12 @@ export default function Library({ progress, notes, onPractice, tags, setTags, on
             </p>
             <div className="flex flex-wrap gap-1.5 mt-2">
               {tags.map((id) => (
-                <button key={id} onClick={() => toggleTag(id)} className="inline-flex items-center gap-1 rounded-full bg-foreground text-background pl-2.5 pr-2 py-1 text-xs font-medium" aria-label={`Remove tag ${tagLabel(id)}`}>
+                <button
+                  key={id}
+                  onClick={() => toggleTag(id)}
+                  className="inline-flex items-center gap-1 rounded-full bg-foreground text-background pl-2.5 pr-2 py-1 text-xs font-medium"
+                  aria-label={`Remove tag ${tagLabel(id)}`}
+                >
                   {tagLabel(id)} <X className="w-3 h-3" />
                 </button>
               ))}
@@ -127,11 +162,16 @@ export default function Library({ progress, notes, onPractice, tags, setTags, on
           </div>
           <div className="flex gap-2">
             {list.length > 0 && (
-              <button onClick={() => onPracticeMany(list.map((q) => q.id))} className="inline-flex items-center gap-2 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-xl hover:opacity-90">
+              <button
+                onClick={() => onPracticeMany(list.map((q) => q.id))}
+                className="inline-flex items-center gap-2 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-xl hover:opacity-90"
+              >
                 <Play className="w-3.5 h-3.5 fill-current" /> Practice these
               </button>
             )}
-            <button onClick={() => setTags([])} className="text-sm font-medium px-3 py-2 rounded-xl border border-border hover:bg-muted">Clear</button>
+            <button onClick={() => setTags([])} className="text-sm font-medium px-3 py-2 rounded-xl border border-border hover:bg-muted">
+              Clear
+            </button>
           </div>
         </div>
       )}
@@ -140,9 +180,15 @@ export default function Library({ progress, notes, onPractice, tags, setTags, on
         <div className="anim-msg flex items-center justify-between gap-3 rounded-2xl border border-border bg-card px-4 py-3">
           <p className="text-sm font-medium">
             {list.length} {list.length === 1 ? 'question' : 'questions'}
-            {[topic !== 'all' && topic, level !== 'all' && levelLabel(level), kind !== 'all' && kindLabel(kind)].filter(Boolean).map((x) => ` · ${x}`).join('')}
+            {[topic !== 'all' && topic, level !== 'all' && levelLabel(level), kind !== 'all' && kindLabel(kind)]
+              .filter(Boolean)
+              .map((x) => ` · ${x}`)
+              .join('')}
           </p>
-          <button onClick={() => onPracticeMany(list.map((q) => q.id))} className="inline-flex items-center gap-2 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-xl hover:opacity-90 shrink-0">
+          <button
+            onClick={() => onPracticeMany(list.map((q) => q.id))}
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground text-sm font-semibold px-4 py-2 rounded-xl hover:opacity-90 shrink-0"
+          >
             <Play className="w-3.5 h-3.5 fill-current" /> Practice these
           </button>
         </div>
@@ -161,21 +207,31 @@ export default function Library({ progress, notes, onPractice, tags, setTags, on
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-xs mb-1.5">
                     <span className="flex items-center gap-1.5 font-semibold text-foreground/80">
-                      <span className={`w-2 h-2 rounded-full ${dot(q.topic)}`} />{q.topic}
+                      <span className={`w-2 h-2 rounded-full ${dot(q.topic)}`} />
+                      {q.topic}
                     </span>
-                    <span className={`px-2 py-0.5 rounded-md ring-1 capitalize font-medium ${DIFFICULTY[q.difficulty] || ''}`}>{levelLabel(q.difficulty)}</span>
+                    <span className={`px-2 py-0.5 rounded-md ring-1 capitalize font-medium ${DIFFICULTY[q.difficulty] || ''}`}>
+                      {levelLabel(q.difficulty)}
+                    </span>
                     {q.kind && <span className="text-muted-foreground">{kindLabel(q.kind)}</span>}
                     <DraftBadge q={q} />
-                    {r
-                      ? <span className={`px-2 py-0.5 rounded-md ring-1 font-medium ${RATINGS[r].badge}`}>{RATINGS[r].label}</span>
-                      : <span className="text-muted-foreground">Unseen</span>}
+                    {r ? (
+                      <span className={`px-2 py-0.5 rounded-md ring-1 font-medium ${RATINGS[r].badge}`}>{RATINGS[r].label}</span>
+                    ) : (
+                      <span className="text-muted-foreground">Unseen</span>
+                    )}
                     {p && <span className="text-muted-foreground">{describeDue(p)}</span>}
                   </div>
                   <h3 className="font-medium leading-snug">{q.question}</h3>
                 </div>
                 <ChevronDown className={`w-5 h-5 mt-1 text-muted-foreground shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
               </button>
-              <TagChips tags={q.tags} onTag={(id) => !tags.includes(id) && setTags([...tags, id])} max={isOpen ? 99 : 4} className="px-5 pb-4 -mt-2" />
+              <TagChips
+                tags={q.tags}
+                onTag={(id) => !tags.includes(id) && setTags([...tags, id])}
+                max={isOpen ? 99 : 4}
+                className="px-5 pb-4 -mt-2"
+              />
 
               {isOpen && (
                 <div className="px-5 pb-5 space-y-5 border-t border-border pt-4">
@@ -183,9 +239,13 @@ export default function Library({ progress, notes, onPractice, tags, setTags, on
                   <ol className="space-y-3">
                     {q.follow_ups.map((fu, k) => (
                       <li key={k} className="text-sm">
-                        <p><span className="font-semibold text-primary mr-1.5">{k + 1}.</span>{fu.text}</p>
+                        <p>
+                          <span className="font-semibold text-primary mr-1.5">{k + 1}.</span>
+                          {fu.text}
+                        </p>
                         <p className="text-xs text-muted-foreground mt-1 flex gap-1.5 ml-5">
-                          <CornerDownRight className="w-3 h-3 mt-0.5 shrink-0" />{fu.intent}
+                          <CornerDownRight className="w-3 h-3 mt-0.5 shrink-0" />
+                          {fu.intent}
                         </p>
                       </li>
                     ))}
@@ -193,13 +253,13 @@ export default function Library({ progress, notes, onPractice, tags, setTags, on
                   <AnswerLadder q={q} />
                   <Attempts attempts={notes[q.id]} />
                   <div className="flex flex-wrap items-center justify-between gap-3">
-                  <button
-                    onClick={() => onPractice(q.id)}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80"
-                  >
-                    <Play className="w-3.5 h-3.5 fill-current" /> Practice this question
-                  </button>
-                  <ReportQuestion q={q} where="Library" />
+                    <button
+                      onClick={() => onPractice(q.id)}
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80"
+                    >
+                      <Play className="w-3.5 h-3.5 fill-current" /> Practice this question
+                    </button>
+                    <ReportQuestion q={q} where="Library" />
                   </div>
                 </div>
               )}

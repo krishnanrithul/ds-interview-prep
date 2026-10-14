@@ -32,7 +32,9 @@ function solve(A, b) {
 export function fitPoly(points, degree, ridge = 1e-3) {
   const rows = points.map((p) => basis(p.x, degree))
   const m = degree + 1
-  const A = Array.from({ length: m }, (_, i) => Array.from({ length: m }, (_, j) => rows.reduce((s, r) => s + r[i] * r[j], 0) + (i === j ? ridge : 0)))
+  const A = Array.from({ length: m }, (_, i) =>
+    Array.from({ length: m }, (_, j) => rows.reduce((s, r) => s + r[i] * r[j], 0) + (i === j ? ridge : 0)),
+  )
   const b = Array.from({ length: m }, (_, i) => rows.reduce((s, r, k) => s + r[i] * points[k].y, 0))
   const w = solve(A, b)
   return (x) => basis(x, degree).reduce((s, v, i) => s + v * w[i], 0)

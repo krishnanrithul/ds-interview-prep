@@ -13,11 +13,19 @@ const systemDark = () => window.matchMedia('(prefers-color-scheme: dark)').match
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
-    try { return localStorage.getItem(KEY) || 'system' } catch { return 'system' }
+    try {
+      return localStorage.getItem(KEY) || 'system'
+    } catch {
+      return 'system'
+    }
   })
 
   useEffect(() => {
-    try { localStorage.setItem(KEY, theme) } catch { /* ignore */ }
+    try {
+      localStorage.setItem(KEY, theme)
+    } catch {
+      /* ignore */
+    }
     const apply = () => {
       const dark = theme === 'dark' || (theme === 'system' && systemDark())
       const root = document.documentElement

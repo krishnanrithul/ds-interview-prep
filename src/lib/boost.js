@@ -26,7 +26,10 @@ function fitTree(xs, rs, depth, lambda) {
       right: build(idx.slice(best.k + 1), d - 1),
     }
   }
-  return build(xs.map((_, i) => i), depth)
+  return build(
+    xs.map((_, i) => i),
+    depth,
+  )
 }
 
 const predictTree = (t, x) => (t.leaf !== undefined ? t.leaf : predictTree(x <= t.thr ? t.left : t.right, x))
@@ -50,7 +53,12 @@ export function boost(train, valid, { eta = 0.3, rounds = 40, depth = 2, lambda 
   }
   snap()
   for (let k = 0; k < rounds; k++) {
-    const tree = fitTree(xs, ys.map((y, i) => y - Ft[i]), depth, lambda)
+    const tree = fitTree(
+      xs,
+      ys.map((y, i) => y - Ft[i]),
+      depth,
+      lambda,
+    )
     Ft = Ft.map((v, i) => v + eta * predictTree(tree, xs[i]))
     Fg = Fg.map((v, i) => v + eta * predictTree(tree, grid[i]))
     Fv = Fv.map((v, i) => v + eta * predictTree(tree, valid[i].x))

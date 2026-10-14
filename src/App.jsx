@@ -37,31 +37,51 @@ export default function App() {
   const [status, setStatus] = useState(null)
   const [libraryTags, setLibraryTags] = useState([])
   const [privacyFrom, setPrivacyFrom] = useState('settings') // where the privacy page's Back goes
-  const openPrivacy = (from) => { setPrivacyFrom(from); setView('privacy'); window.scrollTo?.({ top: 0 }) }
+  const openPrivacy = (from) => {
+    setPrivacyFrom(from)
+    setView('privacy')
+    window.scrollTo?.({ top: 0 })
+  }
   const byId = useMemo(() => Object.fromEntries(QUESTIONS.map((q) => [q.id, q])), [])
 
-  const flash = useCallback((m) => { setStatus(m); setTimeout(() => setStatus(null), 3000) }, [])
+  const flash = useCallback((m) => {
+    setStatus(m)
+    setTimeout(() => setStatus(null), 3000)
+  }, [])
 
   useReminderScheduler(() => countToday(activity) > 0)
 
   // One place that records a rated question: schedule, activity (streak/goal), and your answer.
-  const handleRate = useCallback((id, rating, answer, source = 'practice', scored = null) => {
-    rate(id, rating)
-    record(1)
-    addAttempt(id, answer, rating, source, scored)
-  }, [rate, record, addAttempt])
+  const handleRate = useCallback(
+    (id, rating, answer, source = 'practice', scored = null) => {
+      rate(id, rating)
+      record(1)
+      addAttempt(id, answer, rating, source, scored)
+    },
+    [rate, record, addAttempt],
+  )
 
-  const saveMock = useCallback((results) => {
-    results.forEach((r) => handleRate(r.id, r.rating, r.answer, 'mock', r.scored))
-    flash(results.length ? `Saved ${results.length} result${results.length === 1 ? '' : 's'}. They'll shape your next sessions.` : 'Nothing was rated, so nothing was saved')
-  }, [handleRate, flash])
+  const saveMock = useCallback(
+    (results) => {
+      results.forEach((r) => handleRate(r.id, r.rating, r.answer, 'mock', r.scored))
+      flash(
+        results.length
+          ? `Saved ${results.length} result${results.length === 1 ? '' : 's'}. They'll shape your next sessions.`
+          : 'Nothing was rated, so nothing was saved',
+      )
+    },
+    [handleRate, flash],
+  )
 
   const start = ({ topic = 'all', only = null } = {}) => {
     setSession({ ids: buildQueue(QUESTIONS, progress, { topic, only, size: settings.sessionSize }), topic, key: Date.now() })
     setView('practice')
   }
 
-  const openTag = (id) => { setLibraryTags([id]); setView('library') }
+  const openTag = (id) => {
+    setLibraryTags([id])
+    setView('library')
+  }
 
   const go = (id) => {
     if (id === 'practice' && !session) return start()
@@ -90,7 +110,9 @@ export default function App() {
               >
                 <Icon className="w-4 h-4" />
                 <span className="hidden sm:inline">{label}</span>
-                <span className={`absolute left-2 right-2 bottom-0 h-[3px] rounded-t-full bg-marker origin-left transition-transform duration-300 ${view === id ? 'scale-x-100' : 'scale-x-0'}`} />
+                <span
+                  className={`absolute left-2 right-2 bottom-0 h-[3px] rounded-t-full bg-marker origin-left transition-transform duration-300 ${view === id ? 'scale-x-100' : 'scale-x-0'}`}
+                />
               </button>
             ))}
           </nav>
@@ -99,7 +121,15 @@ export default function App() {
 
       <main className="max-w-4xl mx-auto px-4 py-8 pb-[calc(2rem+env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         {view === 'dashboard' && (
-          <Dashboard progress={progress} settings={settings} activity={activity} onStart={start} onMock={() => setView('mock')} onPrivacy={() => openPrivacy('dashboard')} onSettings={() => setView('settings')} />
+          <Dashboard
+            progress={progress}
+            settings={settings}
+            activity={activity}
+            onStart={start}
+            onMock={() => setView('mock')}
+            onPrivacy={() => openPrivacy('dashboard')}
+            onSettings={() => setView('settings')}
+          />
         )}
 
         {/* Practice and Mock stay mounted while hidden so switching tabs doesn't lose your place. */}
@@ -113,7 +143,10 @@ export default function App() {
               active={view === 'practice'}
               onRate={handleRate}
               onTag={openTag}
-              onExit={() => { setSession(null); setView('dashboard') }}
+              onExit={() => {
+                setSession(null)
+                setView('dashboard')
+              }}
               onAgain={() => start({ topic: session.topic })}
               onRedo={(ids) => start({ topic: session.topic, only: ids })}
             />
@@ -124,7 +157,16 @@ export default function App() {
         </div>
 
         {view === 'insights' && <Insights progress={progress} notes={notes} onStart={start} onTag={openTag} />}
-        {view === 'library' && <Library progress={progress} notes={notes} onPractice={(id) => start({ only: [id] })} tags={libraryTags} setTags={setLibraryTags} onPracticeMany={(ids) => start({ only: ids })} />}
+        {view === 'library' && (
+          <Library
+            progress={progress}
+            notes={notes}
+            onPractice={(id) => start({ only: [id] })}
+            tags={libraryTags}
+            setTags={setLibraryTags}
+            onPracticeMany={(ids) => start({ only: ids })}
+          />
+        )}
         {view === 'settings' && <Settings settings={settings} update={update} flash={flash} onPrivacy={() => openPrivacy('settings')} />}
         {view === 'privacy' && <Privacy onBack={() => setView(privacyFrom)} />}
       </main>

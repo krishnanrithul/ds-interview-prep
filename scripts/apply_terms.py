@@ -2,6 +2,7 @@
 Key terms are words and phrases that appear in the question itself, with a short neutral definition.
 Definitions must not give away the answer. Run from the repo root: python3 scripts/apply_terms.py"""
 import json
+
 m = json.load(open('scripts/terms.map.json'))
 tags = {t['id'] for t in json.load(open('src/data/tags.json'))['tags']}
 data = json.load(open('src/data/questions.json'))

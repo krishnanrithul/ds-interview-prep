@@ -30,9 +30,14 @@ export default function TagChips({ tags = [], onTag, max = 5, className = '' }) 
   const hidden = tags.length - shown.length
   return (
     <div className={`flex flex-wrap gap-1.5 ${className}`}>
-      {shown.map((id) => <TagChip key={id} id={id} onClick={onTag} />)}
+      {shown.map((id) => (
+        <TagChip key={id} id={id} onClick={onTag} />
+      ))}
       {hidden > 0 && (
-        <button onClick={() => setAll(true)} className="rounded-full px-2.5 py-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+        <button
+          onClick={() => setAll(true)}
+          className="rounded-full px-2.5 py-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+        >
           +{hidden} more
         </button>
       )}

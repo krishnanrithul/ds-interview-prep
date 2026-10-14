@@ -9,7 +9,11 @@ export function useTween(target, ms = 450) {
   useEffect(() => {
     const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
     cancelAnimationFrame(raf.current)
-    if (reduce) { last.current = target; setValue(target); return }
+    if (reduce) {
+      last.current = target
+      setValue(target)
+      return
+    }
     const from = last.current
     const t0 = performance.now()
     const step = (now) => {

@@ -1,4 +1,5 @@
 from h2 import *
+
 C="common in DS interviews"
 write("algo1", [
 Q("algo-001","What assumptions does linear regression make, and which ones matter most when you only care about prediction?","ML Algorithms","medium",C,"Mid-level DS interview",

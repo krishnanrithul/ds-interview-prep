@@ -18,12 +18,22 @@ export function useMatchScore(q, text, delay = 450) {
   useEffect(() => {
     if (!on || status === 'error') return
     const trimmed = text.trim()
-    if (!trimmed) { setResult({ qid: q.id, text: '', sims: q.key_points.map(() => 0) }); return }
+    if (!trimmed) {
+      setResult({ qid: q.id, text: '', sims: q.key_points.map(() => 0) })
+      return
+    }
     let live = true
     const t = setTimeout(() => {
-      scoreAnswer(q, trimmed).then((sims) => { if (live) setResult({ qid: q.id, text: trimmed, sims }) }).catch(() => {})
+      scoreAnswer(q, trimmed)
+        .then((sims) => {
+          if (live) setResult({ qid: q.id, text: trimmed, sims })
+        })
+        .catch(() => {})
     }, delay)
-    return () => { live = false; clearTimeout(t) }
+    return () => {
+      live = false
+      clearTimeout(t)
+    }
   }, [on, q?.id, text, status]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!on) return { status: 'off', sims: null }

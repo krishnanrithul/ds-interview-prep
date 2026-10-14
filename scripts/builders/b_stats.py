@@ -1,4 +1,5 @@
 from h import *
+
 C="common in DS interviews"
 write("stats", [
 Q("stats-008","A coin lands heads 7 times out of 10. Is it biased?","Statistics","easy",C,"Phone screen, statistics fundamentals",

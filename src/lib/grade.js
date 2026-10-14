@@ -11,18 +11,46 @@ const MAX_ANSWER = 4000 // room for a Mock transcript; Practice answers are usua
 // Local development only: VITE_ANTHROPIC_API_KEY from .env.development.local (gitignored). Vite loads that file only
 // for the dev server, and the DEV check lets the production build drop this branch, so a deployed build never
 // carries the key. A key saved in Settings takes priority.
-const DEV_KEY = import.meta.env.DEV ? (import.meta.env.VITE_ANTHROPIC_API_KEY || '') : ''
-const storedKey = () => { try { return localStorage.getItem(API_KEY_STORAGE) || '' } catch { return '' } }
+const DEV_KEY = import.meta.env.DEV ? import.meta.env.VITE_ANTHROPIC_API_KEY || '' : ''
+const storedKey = () => {
+  try {
+    return localStorage.getItem(API_KEY_STORAGE) || ''
+  } catch {
+    return ''
+  }
+}
 export const INVITE_STORAGE = 'ds-invite-code'
-export const getInviteCode = () => { try { return localStorage.getItem(INVITE_STORAGE) || '' } catch { return '' } }
-export const setInviteCode = (c) => { try { c ? localStorage.setItem(INVITE_STORAGE, c) : localStorage.removeItem(INVITE_STORAGE) } catch { /* ignore */ } }
+export const getInviteCode = () => {
+  try {
+    return localStorage.getItem(INVITE_STORAGE) || ''
+  } catch {
+    return ''
+  }
+}
+export const setInviteCode = (c) => {
+  try {
+    c ? localStorage.setItem(INVITE_STORAGE, c) : localStorage.removeItem(INVITE_STORAGE)
+  } catch {
+    /* ignore */
+  }
+}
 // The credential AI calls use: your own key first, then the dev key, then an invite code (as "invite:<code>").
 // Truthy means grading and the reacting interviewer are available.
 export const getApiKey = () => storedKey() || DEV_KEY || (getInviteCode() ? `invite:${getInviteCode()}` : '')
 export const apiKeySource = () => (storedKey() ? 'settings' : DEV_KEY ? 'env' : getInviteCode() ? 'invite' : null)
-export const setApiKey = (k) => { try { k ? localStorage.setItem(API_KEY_STORAGE, k) : localStorage.removeItem(API_KEY_STORAGE) } catch { /* ignore */ } }
+export const setApiKey = (k) => {
+  try {
+    k ? localStorage.setItem(API_KEY_STORAGE, k) : localStorage.removeItem(API_KEY_STORAGE)
+  } catch {
+    /* ignore */
+  }
+}
 
-const hash = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36) }
+const hash = (s) => {
+  let h = 5381
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0
+  return (h >>> 0).toString(36)
+}
 const fuSig = (fus) => (fus?.length ? fus.map((f) => `${f.text}=>${f.reply || ''}`).join('|') : '')
 const cacheId = (q, answer, fus) => `${q.id}:${hash('v5|' + q.key_points.join('|') + '\n' + answer + '\n' + fuSig(fus))}`
 
@@ -34,7 +62,11 @@ function storeGrade(q, answer, fus, result) {
   all[cacheId(q, answer, fus)] = result
   const keys = Object.keys(all)
   if (keys.length > 200) keys.slice(0, keys.length - 200).forEach((k) => delete all[k])
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify(all)) } catch { /* full storage: skip caching */ }
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(all))
+  } catch {
+    /* full storage: skip caching */
+  }
 }
 
 // One forced tool call to Claude from the browser with the learner's own key. Returns the tool input.
@@ -46,11 +78,11 @@ export async function callTool({ key, signal, system, user, tool, maxTokens = 80
     headers: viaInvite
       ? { 'content-type': 'application/json', 'x-invite-code': key.slice('invite:'.length) }
       : {
-        'content-type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
+          'content-type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
     body: JSON.stringify({
       model: MODEL,
       max_tokens: maxTokens,
@@ -62,8 +94,13 @@ export async function callTool({ key, signal, system, user, tool, maxTokens = 80
   })
   if (!res.ok) {
     let msg = `Request failed (${res.status})`
-    try { msg = (await res.json())?.error?.message || msg } catch { /* keep default */ }
-    if (res.status === 401) msg = viaInvite ? "The invite code wasn't accepted. Check it in Settings." : 'The API key was rejected. Check it in Settings.'
+    try {
+      msg = (await res.json())?.error?.message || msg
+    } catch {
+      /* keep default */
+    }
+    if (res.status === 401)
+      msg = viaInvite ? "The invite code wasn't accepted. Check it in Settings." : 'The API key was rejected. Check it in Settings.'
     if (viaInvite && res.status === 404) msg = 'Invite codes only work on the deployed site.'
     throw new Error(msg)
   }
@@ -149,12 +186,26 @@ export async function gradeAnswer(q, answer, key, signal, fus = null) {
     `Reference senior answer: ${q.senior_answer}`,
     `Key points:\n${q.key_points.map((p, i) => `${i + 1}. ${p}`).join('\n')}`,
     `Candidate answer:\n<answer>\n${text}\n</answer>`,
-    ...(withFus ? [
-      'Judge the key points on the candidate answer above only. Then judge each follow-up reply on its own:',
-      fus.map((f, i) => `Follow-up ${i + 1}: ${f.text}\n(It tests: ${f.intent})\nCandidate reply: <reply>${(f.reply || '').trim().slice(0, 1200) || '(no reply)'}</reply>`).join('\n\n'),
-    ] : []),
+    ...(withFus
+      ? [
+          'Judge the key points on the candidate answer above only. Then judge each follow-up reply on its own:',
+          fus
+            .map(
+              (f, i) =>
+                `Follow-up ${i + 1}: ${f.text}\n(It tests: ${f.intent})\nCandidate reply: <reply>${(f.reply || '').trim().slice(0, 1200) || '(no reply)'}</reply>`,
+            )
+            .join('\n\n'),
+        ]
+      : []),
   ].join('\n\n')
-  const input = await callTool({ key, signal, system: withFus ? SYSTEM + FU_RULES : SYSTEM, user, tool: withFus ? TOOL_FU : TOOL, maxTokens: withFus ? 1200 : 800 })
+  const input = await callTool({
+    key,
+    signal,
+    system: withFus ? SYSTEM + FU_RULES : SYSTEM,
+    user,
+    tool: withFus ? TOOL_FU : TOOL,
+    maxTokens: withFus ? 1200 : 800,
+  })
   if (!input?.points) throw new Error('The grader returned an unexpected response.')
   const byN = new Map(input.points.map((p) => [p.n, p]))
   const result = {
@@ -165,9 +216,9 @@ export async function gradeAnswer(q, answer, key, signal, fus = null) {
     summary: input.summary || '',
     followUps: withFus
       ? fus.map((f, i) => {
-        const r = (input.follow_ups || []).find((x) => x.n === i + 1)
-        return { verdict: r?.verdict || (f.reply?.trim() ? 'partial' : 'none'), note: r?.note || '' }
-      })
+          const r = (input.follow_ups || []).find((x) => x.n === i + 1)
+          return { verdict: r?.verdict || (f.reply?.trim() ? 'partial' : 'none'), note: r?.note || '' }
+        })
       : null,
     model: MODEL,
   }

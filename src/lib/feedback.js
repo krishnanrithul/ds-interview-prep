@@ -5,7 +5,10 @@ export const FEEDBACK_EMAIL = 'krishnanrithul@gmail.com'
 const mailto = (subject, body) => `mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
 
 export const generalFeedbackUrl = () =>
-  mailto('Saddle Point feedback', 'What would you like to tell us?\n\n\n---\nBrowser: ' + (typeof navigator !== 'undefined' ? navigator.userAgent : ''))
+  mailto(
+    'Saddle Point feedback',
+    'What would you like to tell us?\n\n\n---\nBrowser: ' + (typeof navigator !== 'undefined' ? navigator.userAgent : ''),
+  )
 
 export const questionFeedbackUrl = (q, where) =>
   mailto(

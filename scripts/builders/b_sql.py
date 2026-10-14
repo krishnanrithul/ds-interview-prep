@@ -1,5 +1,6 @@
-import sys; sys.path.insert(0, sys.path[0])
+import sys; sys.path.insert(0, sys.path[0])  # noqa: I001 -- must run before the helper import
 from h import *
+
 C="common in DS interviews"
 write("sql", [
 Q("sql-009","Write a query to find the second highest salary in an employees table.","SQL","easy",C,"Phone screen, data analyst or data scientist",

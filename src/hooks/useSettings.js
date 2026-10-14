@@ -6,7 +6,9 @@ export const DEFAULT_SETTINGS = { sessionSize: 10, dailyGoal: 5, interviewDate: 
 
 export function useSettings() {
   const [settings, setSettings] = useState(() => ({ ...DEFAULT_SETTINGS, ...safeParse(KEY, {}) }))
-  useEffect(() => { localStorage.setItem(KEY, JSON.stringify(settings)) }, [settings])
+  useEffect(() => {
+    localStorage.setItem(KEY, JSON.stringify(settings))
+  }, [settings])
   const update = useCallback((patch) => setSettings((s) => ({ ...s, ...patch })), [])
   return { settings, update }
 }

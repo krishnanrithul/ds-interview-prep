@@ -24,7 +24,9 @@ export function markSeen(id, picks) {
     const seen = safeParse(KEY, {})
     seen[id] = picks
     localStorage.setItem(KEY, JSON.stringify(seen))
-  } catch { /* storage unavailable: variants still work, just without avoiding repeats */ }
+  } catch {
+    /* storage unavailable: variants still work, just without avoiding repeats */
+  }
 }
 
 export const followUpText = (q, picks, k) => options(q.follow_ups[k])[picks?.[k] ?? 0] ?? q.follow_ups[k].text

@@ -1,4 +1,5 @@
 import json
+
 TAGS = {k: {"label": v, "kind": "subject"} for k, v in {
  "sql-fundamentals": "SQL fundamentals", "python-fundamentals": "Python fundamentals",
  "sampling-distributions": "Sampling & the CLT", "causal-inference": "Causal inference",

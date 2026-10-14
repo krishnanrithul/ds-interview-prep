@@ -1,4 +1,5 @@
 from h import *
+
 C="common in DS interviews"
 write("python", [
 Q("python-007","What are the differences between a list, a tuple, a set and a dict, and how do you decide which to use?","Python","easy",C,"Phone screen, Python fundamentals",

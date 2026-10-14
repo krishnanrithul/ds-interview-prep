@@ -2,6 +2,7 @@
 Run from the repo root: python3 scripts/apply_tags.py
 The map (tag -> question ids) is the source of truth; re-running is idempotent."""
 import json
+
 m = json.load(open('scripts/tags.map.json'))
 data = json.load(open('src/data/questions.json'))
 byid = {q['id']: q for q in data['questions']}

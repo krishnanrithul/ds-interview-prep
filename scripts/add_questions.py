@@ -10,7 +10,10 @@ The script appends unseen questions to src/data/questions.json (marked draft), r
 terms in scripts/tags.map.json and scripts/terms.map.json, then runs apply_tags.py and apply_terms.py.
 Re-running is safe: questions already in questions.json are skipped, and a batch's new_terms are
 registered only when a newly added question uses them, so terms removed later don't come back. Run from the repo root: python3 scripts/add_questions.py"""
-import glob, json, subprocess, sys
+import glob
+import json
+import subprocess
+import sys
 
 TOPICS = {'SQL', 'ML', 'Statistics', 'System Design', 'Python', 'Production ML', 'LLMs & AI', 'ML Algorithms', 'Deep Learning & NLP'}
 DIFFS = {'easy', 'medium', 'hard'}

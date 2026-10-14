@@ -9,8 +9,15 @@ import Welcome, { welcomeDismissed, setWelcomeDismissed } from './Welcome'
 
 export default function Dashboard({ progress, settings, activity, onStart, onMock, onPrivacy, onSettings }) {
   const [welcome, setWelcome] = useState(() => !welcomeDismissed())
-  const closeWelcome = () => { setWelcomeDismissed(true); setWelcome(false) }
-  const openWelcome = () => { setWelcomeDismissed(false); setWelcome(true); window.scrollTo?.({ top: 0 }) }
+  const closeWelcome = () => {
+    setWelcomeDismissed(true)
+    setWelcome(false)
+  }
+  const openWelcome = () => {
+    setWelcomeDismissed(false)
+    setWelcome(true)
+    window.scrollTo?.({ top: 0 })
+  }
   const overall = summarize(QUESTIONS, progress)
   const topics = [...new Set(QUESTIONS.map((q) => q.topic))]
   const due = countDue(QUESTIONS, progress)
@@ -19,11 +26,15 @@ export default function Dashboard({ progress, settings, activity, onStart, onMoc
   const best = bestStreak(activity)
   const goalPct = Math.min(100, Math.round((today / settings.dailyGoal) * 100))
   const [shownPct, setShownPct] = useState(0)
-  useEffect(() => { const t = setTimeout(() => setShownPct(goalPct), 250); return () => clearTimeout(t) }, [goalPct])
+  useEffect(() => {
+    const t = setTimeout(() => setShownPct(goalPct), 250)
+    return () => clearTimeout(t)
+  }, [goalPct])
 
   let daysLeft = null
   if (settings.interviewDate) {
-    const start = new Date(); start.setHours(0, 0, 0, 0)
+    const start = new Date()
+    start.setHours(0, 0, 0, 0)
     daysLeft = Math.ceil((new Date(`${settings.interviewDate}T00:00:00`) - start) / 86400000)
   }
 
@@ -35,9 +46,11 @@ export default function Dashboard({ progress, settings, activity, onStart, onMoc
     .sort((a, b) => b.weak - a.weak)[0]
 
   const heading =
-    due > 0 ? `${due} ${due === 1 ? 'question is' : 'questions are'} due for review`
-    : overall.unseen > 0 ? `${Math.min(settings.sessionSize, overall.unseen)} new questions to try`
-    : 'All caught up. Try a mock interview to stay sharp.'
+    due > 0
+      ? `${due} ${due === 1 ? 'question is' : 'questions are'} due for review`
+      : overall.unseen > 0
+        ? `${Math.min(settings.sessionSize, overall.unseen)} new questions to try`
+        : 'All caught up. Try a mock interview to stay sharp.'
 
   return (
     <div className="space-y-8">
@@ -48,13 +61,20 @@ export default function Dashboard({ progress, settings, activity, onStart, onMoc
           {daysLeft !== null && (
             <span className="inline-flex items-center gap-1.5 text-xs font-medium bg-white/10 rounded-full px-3 py-1">
               <CalendarDays className="w-3.5 h-3.5" />
-              {daysLeft > 1 ? `${daysLeft} days to interview` : daysLeft === 1 ? 'Interview tomorrow' : daysLeft === 0 ? 'Interview today' : 'Interview passed'}
+              {daysLeft > 1
+                ? `${daysLeft} days to interview`
+                : daysLeft === 1
+                  ? 'Interview tomorrow'
+                  : daysLeft === 0
+                    ? 'Interview today'
+                    : 'Interview passed'}
             </span>
           )}
         </div>
         <h2 className="font-serif text-3xl sm:text-[2.6rem] font-medium leading-[1.15] mb-4 max-w-2xl">{heading}</h2>
         <p className="text-ink-foreground/75 mb-8 max-w-xl leading-relaxed">
-          Answer out loud or in writing, take the follow-ups the way an interviewer would push them, then see how close you got to a senior answer. Missed questions come back tomorrow.
+          Answer out loud or in writing, take the follow-ups the way an interviewer would push them, then see how close you got to a senior
+          answer. Missed questions come back tomorrow.
           {nextTopic && nextTopic.weak > 0 && <> Your weakest area right now is {nextTopic.t}.</>}
         </p>
         <div className="flex flex-wrap gap-3">
@@ -80,9 +100,15 @@ export default function Dashboard({ progress, settings, activity, onStart, onMoc
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
             <Flame className={`w-4 h-4 ${streak > 0 ? 'text-orange-500' : ''}`} /> Streak
           </div>
-          <p className="text-3xl font-semibold tabular-nums">{streak} <span className="text-base font-medium text-muted-foreground">{streak === 1 ? 'day' : 'days'}</span></p>
+          <p className="text-3xl font-semibold tabular-nums">
+            {streak} <span className="text-base font-medium text-muted-foreground">{streak === 1 ? 'day' : 'days'}</span>
+          </p>
           <p className="text-xs text-muted-foreground mt-1">
-            {streak === 0 ? 'Practice today to start one' : today === 0 ? 'Practice today to keep it going' : `Best: ${Math.max(best, streak)} ${Math.max(best, streak) === 1 ? 'day' : 'days'}`}
+            {streak === 0
+              ? 'Practice today to start one'
+              : today === 0
+                ? 'Practice today to keep it going'
+                : `Best: ${Math.max(best, streak)} ${Math.max(best, streak) === 1 ? 'day' : 'days'}`}
           </p>
         </div>
         <div className="p-5">
@@ -95,7 +121,9 @@ export default function Dashboard({ progress, settings, activity, onStart, onMoc
         <div className="p-5">
           <div className="flex items-center justify-between text-sm text-muted-foreground mb-1">
             <span>Daily goal</span>
-            <span className="tabular-nums">{today} of {settings.dailyGoal}</span>
+            <span className="tabular-nums">
+              {today} of {settings.dailyGoal}
+            </span>
           </div>
           <div className="h-2 w-full rounded-full bg-muted overflow-hidden mt-3">
             <div className="h-full bg-primary rounded-full bar-grow" style={{ width: `${shownPct}%` }} />
@@ -109,9 +137,13 @@ export default function Dashboard({ progress, settings, activity, onStart, onMoc
       <MasteryMap progress={progress} onStart={onStart} />
 
       <div className="flex flex-wrap justify-center items-center gap-x-5 gap-y-2 pt-2">
-        <button onClick={openWelcome} className="text-sm text-muted-foreground hover:text-foreground">How it works</button>
+        <button onClick={openWelcome} className="text-sm text-muted-foreground hover:text-foreground">
+          How it works
+        </button>
         <SendFeedback />
-        <button onClick={onPrivacy} className="text-sm text-muted-foreground hover:text-foreground">Privacy</button>
+        <button onClick={onPrivacy} className="text-sm text-muted-foreground hover:text-foreground">
+          Privacy
+        </button>
       </div>
     </div>
   )

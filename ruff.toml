@@ -7,5 +7,7 @@ select = ["E", "F", "W", "B", "I"]
 ignore = ["E501"] # long content strings in the builders are expected
 
 [lint.per-file-ignores]
+# The pipeline scripts use a compact one-line style on purpose (`if x: problems.append(...)`).
+"scripts/*.py" = ["E701", "E702", "E731"]
 # The builders are compact data files that import the shared helpers with `from h import *` on purpose.
 "scripts/builders/*.py" = ["F403", "F405", "E701", "E702", "E731"]

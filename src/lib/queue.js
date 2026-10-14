@@ -6,8 +6,7 @@ export function summarize(questions, progress) {
   return out
 }
 
-export const countDue = (questions, progress, now = Date.now()) =>
-  questions.filter((q) => isDue(progress[q.id], now)).length
+export const countDue = (questions, progress, now = Date.now()) => questions.filter((q) => isDue(progress[q.id], now)).length
 
 // Unseen questions ramp up by level so a new learner starts with Foundations, then Core,
 // then Advanced. The gaps are larger than the random nudge, so a Foundations question always
@@ -37,7 +36,9 @@ function scored(pool, progress, now, rand) {
 export function buildQueue(questions, progress, { topic = 'all', size = 10, only = null, now = Date.now(), rand = Math.random } = {}) {
   if (only) return only
   const pool = questions.filter((q) => topic === 'all' || q.topic === topic)
-  return scored(pool, progress, now, rand).slice(0, size).map((x) => x.q.id)
+  return scored(pool, progress, now, rand)
+    .slice(0, size)
+    .map((x) => x.q.id)
 }
 
 // Mock interviews should feel like a real loop: spread across topics first,
@@ -51,7 +52,10 @@ export function buildMockQueue(questions, progress, { count = 5, topic = 'all', 
   const seen = new Set()
   for (const x of ranked) {
     if (picked.length >= count) break
-    if (!seen.has(x.q.topic)) { seen.add(x.q.topic); picked.push(x.q.id) }
+    if (!seen.has(x.q.topic)) {
+      seen.add(x.q.topic)
+      picked.push(x.q.id)
+    }
   }
   for (const x of ranked) {
     if (picked.length >= count) break

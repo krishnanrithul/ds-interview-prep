@@ -28,7 +28,9 @@ export function currentStreak(activity, now = Date.now()) {
 }
 
 export function bestStreak(activity) {
-  const days = Object.keys(activity).filter((k) => activity[k] > 0).sort()
+  const days = Object.keys(activity)
+    .filter((k) => activity[k] > 0)
+    .sort()
   let best = 0
   let run = 0
   let prev = null

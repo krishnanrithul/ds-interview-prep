@@ -47,7 +47,11 @@ function You({ text }) {
 
 function Typing() {
   return (
-    <div className="anim-msg inline-flex items-center gap-1.5 rounded-2xl rounded-bl-md bg-muted px-4 py-3" role="status" aria-label="Interviewer is typing">
+    <div
+      className="anim-msg inline-flex items-center gap-1.5 rounded-2xl rounded-bl-md bg-muted px-4 py-3"
+      role="status"
+      aria-label="Interviewer is typing"
+    >
       {[0, 1, 2].map((d) => (
         <span key={d} className="typing-dot w-1.5 h-1.5 rounded-full bg-muted-foreground" style={{ animationDelay: `${d * 140}ms` }} />
       ))}
@@ -80,7 +84,9 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
 
   // One wording per follow-up for this question, avoiding the wording shown last time.
   const picks = useMemo(() => (q ? pickVariants(q) : []), [q?.id, i]) // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { if (q) markSeen(q.id, picks) }, [q, picks])
+  useEffect(() => {
+    if (q) markSeen(q.id, picks)
+  }, [q, picks])
 
   const send = () => {
     if (typing || rating) return
@@ -110,18 +116,27 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
     if (done || !active) return
     const onKey = (e) => {
       const inField = ['TEXTAREA', 'INPUT'].includes(e.target.tagName)
-      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); send(); return }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault()
+        send()
+        return
+      }
       if (inField) return
       if (rating) {
         const hit = Object.entries(RATINGS).find(([, v]) => v.key === e.key)
         if (hit) rate(hit[0])
-      } else if ((e.key === ' ' || e.key === 'Enter') && !e.target.closest?.('button, a')) { e.preventDefault(); send() }
+      } else if ((e.key === ' ' || e.key === 'Enter') && !e.target.closest?.('button, a')) {
+        e.preventDefault()
+        send()
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   })
 
-  useEffect(() => { if (active && !typing && !rating && !done) textRef.current?.focus() }, [i, step, revealed, active, typing, rating, done])
+  useEffect(() => {
+    if (active && !typing && !rating && !done) textRef.current?.focus()
+  }, [i, step, revealed, active, typing, rating, done])
   useEffect(() => {
     if (!active || (step === 0 && revealed === 0)) return
     endRef.current?.scrollIntoView?.({ behavior: reduced() ? 'auto' : 'smooth', block: 'end' })
@@ -137,7 +152,9 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
     return (
       <div className="max-w-xl mx-auto py-8">
         <h2 className="anim-msg text-3xl font-semibold mb-1">That's the session</h2>
-        <p className="text-muted-foreground mb-8">{results.length} {results.length === 1 ? 'question' : 'questions'} answered</p>
+        <p className="text-muted-foreground mb-8">
+          {results.length} {results.length === 1 ? 'question' : 'questions'} answered
+        </p>
         <div className="grid grid-cols-3 gap-3 mb-8">
           {Object.entries(RATINGS).map(([k, v], idx) => (
             <div key={k} className="tile-pop rounded-2xl border border-border bg-card p-4" style={{ animationDelay: `${idx * 90}ms` }}>
@@ -161,7 +178,10 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
           </div>
         )}
         <div className="flex flex-wrap gap-3">
-          <button onClick={onAgain} className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-5 py-3 rounded-xl hover:opacity-90 transition-opacity">
+          <button
+            onClick={onAgain}
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-5 py-3 rounded-xl hover:opacity-90 transition-opacity"
+          >
             <RotateCcw className="w-4 h-4" /> Another session
           </button>
           <button
@@ -187,11 +207,21 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
       <div className="flex items-center gap-4 mb-8">
         <div className="flex-1 flex gap-1.5" role="progressbar" aria-valuemin={0} aria-valuemax={ids.length} aria-valuenow={i}>
           {ids.map((id, k) => (
-            <span key={id} className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${k < i ? 'bg-primary' : k === i ? 'bg-primary/40' : 'bg-muted'}`} />
+            <span
+              key={id}
+              className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${k < i ? 'bg-primary' : k === i ? 'bg-primary/40' : 'bg-muted'}`}
+            />
           ))}
         </div>
-        <span className="text-sm text-muted-foreground tabular-nums">{i + 1} of {ids.length}</span>
-        <button onClick={onExit} title="End session" aria-label="End session" className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted">
+        <span className="text-sm text-muted-foreground tabular-nums">
+          {i + 1} of {ids.length}
+        </span>
+        <button
+          onClick={onExit}
+          title="End session"
+          aria-label="End session"
+          className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted"
+        >
           <X className="w-4 h-4" />
         </button>
       </div>
@@ -200,7 +230,8 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
         <div key={q.id} className="anim-msg">
           <div className="flex items-center flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground mb-3">
             <span className="inline-flex items-center gap-1.5 font-medium text-foreground/80">
-              <span className={`w-2 h-2 rounded-full ${dot(q.topic)}`} />{q.topic}
+              <span className={`w-2 h-2 rounded-full ${dot(q.topic)}`} />
+              {q.topic}
             </span>
             <span className="capitalize">{q.difficulty}</span>
             <span>{q.frequency}</span>
@@ -231,12 +262,17 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
               <p className="text-sm text-muted-foreground mb-1">Here's how that lands for this question</p>
               <p className="font-serif text-lg leading-snug">{q.question}</p>
             </div>
-            {matchEnabled(q) && <KeyPointsReview
-                key={q.id} q={q} answer={turns[0]} sims={match.sims}
+            {matchEnabled(q) && (
+              <KeyPointsReview
+                key={q.id}
+                q={q}
+                answer={turns[0]}
+                sims={match.sims}
                 followUps={q.follow_ups.map((fu, k) => ({ text: followUpText(q, picks, k), intent: fu.intent, reply: turns[k + 1] || '' }))}
                 onScore={(sc) => setKp({ id: q.id, ...sc })}
                 onGrade={(g) => setFuGrade({ id: q.id, followUps: g.followUps })}
-              />}
+              />
+            )}
             <AnswerLadder q={q} />
             {q.tags?.length > 0 && (
               <div>
@@ -258,17 +294,22 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
                         </p>
                         <div className="mt-1.5 ml-5 rounded-lg bg-muted/50 border border-border px-3 py-2">
                           <p className="text-xs text-muted-foreground mb-0.5">You said</p>
-                          {reply
-                            ? <p className="whitespace-pre-wrap text-foreground/80">{reply}</p>
-                            : <p className="italic text-muted-foreground">No written reply</p>}
+                          {reply ? (
+                            <p className="whitespace-pre-wrap text-foreground/80">{reply}</p>
+                          ) : (
+                            <p className="italic text-muted-foreground">No written reply</p>
+                          )}
                         </div>
                         {(() => {
                           const v = fuGrade?.id === q.id ? fuGrade.followUps?.[k] : null
-                          return v && VERDICT[v.verdict] && (
-                            <p className="mt-1.5 ml-5 text-xs">
-                              <span className={`font-semibold ${VERDICT[v.verdict].cls}`}>{VERDICT[v.verdict].label}</span>
-                              {v.note && <span className="text-muted-foreground"> · {v.note}</span>}
-                            </p>
+                          return (
+                            v &&
+                            VERDICT[v.verdict] && (
+                              <p className="mt-1.5 ml-5 text-xs">
+                                <span className={`font-semibold ${VERDICT[v.verdict].cls}`}>{VERDICT[v.verdict].label}</span>
+                                {v.note && <span className="text-muted-foreground"> · {v.note}</span>}
+                              </p>
+                            )
                           )
                         })()}
                         <p className="text-muted-foreground flex gap-1.5 mt-1.5 ml-5">
@@ -297,13 +338,21 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
               onChange={(e) => setText(e.target.value)}
               rows={3}
               aria-label={step === 0 ? 'Your answer' : 'Your reply'}
-              placeholder={step === 0 ? 'Answer as you would in the room. Writing is optional, and whatever you write is saved for later.' : 'Reply to the follow-up'}
+              placeholder={
+                step === 0
+                  ? 'Answer as you would in the room. Writing is optional, and whatever you write is saved for later.'
+                  : 'Reply to the follow-up'
+              }
               className="w-full resize-none bg-transparent px-4 pt-3.5 pb-1 text-[15px] leading-relaxed placeholder:text-muted-foreground focus:outline-none"
             />
             <div className="flex items-center justify-between gap-3 px-3 pb-3">
-              {step === 0 && match.status !== 'off'
-                ? <div className="pl-1"><CoverageMeter q={q} status={match.status} sims={match.sims} /></div>
-                : <span className="text-xs text-muted-foreground pl-1 hidden sm:block">Ctrl or Cmd + Enter to send</span>}
+              {step === 0 && match.status !== 'off' ? (
+                <div className="pl-1">
+                  <CoverageMeter q={q} status={match.status} sims={match.sims} />
+                </div>
+              ) : (
+                <span className="text-xs text-muted-foreground pl-1 hidden sm:block">Ctrl or Cmd + Enter to send</span>
+              )}
               <button
                 onClick={send}
                 disabled={typing}
@@ -317,14 +366,32 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
         ) : (
           <div className="anim-msg rounded-2xl border border-border bg-card shadow-lg p-4">
             <p className="text-center text-sm text-muted-foreground mb-3">
-              How did you do?{suggested && <> Your score of {score.pct}% suggests <span className="font-semibold text-foreground">{RATINGS[suggested].label}</span>.</>}
+              How did you do?
+              {suggested && (
+                <>
+                  {' '}
+                  Your score of {score.pct}% suggests <span className="font-semibold text-foreground">{RATINGS[suggested].label}</span>.
+                </>
+              )}
             </p>
             <div className="grid grid-cols-3 gap-3">
               {Object.entries(RATINGS).map(([k, v]) => (
-                <button key={k} onClick={() => rate(k)} aria-describedby={k === suggested ? 'suggested-rating' : undefined}
-                  className={`rounded-xl border py-3 font-semibold transition-all active:scale-95 ${v.button} ${k === suggested ? 'ring-2 ring-offset-2 ring-offset-card ring-current' : ''}`}>
+                <button
+                  key={k}
+                  onClick={() => rate(k)}
+                  aria-describedby={k === suggested ? 'suggested-rating' : undefined}
+                  className={`rounded-xl border py-3 font-semibold transition-all active:scale-95 ${v.button} ${k === suggested ? 'ring-2 ring-offset-2 ring-offset-card ring-current' : ''}`}
+                >
                   {v.label}
-                  <span className="block text-xs font-normal opacity-70">{k === suggested ? <span id="suggested-rating">Suggested · {v.key}</span> : <>{v.hint} · {v.key}</>}</span>
+                  <span className="block text-xs font-normal opacity-70">
+                    {k === suggested ? (
+                      <span id="suggested-rating">Suggested · {v.key}</span>
+                    ) : (
+                      <>
+                        {v.hint} · {v.key}
+                      </>
+                    )}
+                  </span>
                 </button>
               ))}
             </div>

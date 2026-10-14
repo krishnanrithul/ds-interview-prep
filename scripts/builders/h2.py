@@ -1,12 +1,14 @@
 from h import *
-def _tag(i, l): TAGS[i] = {"label": l, "kind": "subject"}
-for i, l in [("linear-models","Linear & regularized models"),("decision-trees","Decision trees & forests"),("svm","Support vector machines"),("knn","k-nearest neighbors"),
+
+
+def _tag(i, label): TAGS[i] = {"label": label, "kind": "subject"}
+for i, label in [("linear-models","Linear & regularized models"),("decision-trees","Decision trees & forests"),("svm","Support vector machines"),("knn","k-nearest neighbors"),
  ("probabilistic-models","Probabilistic models"),("anomaly-detection","Anomaly detection"),("clustering","Clustering"),("dimensionality-reduction","Dimensionality reduction"),
  ("feature-selection","Feature selection"),("ensembling","Ensembling & stacking"),("hyperparameter-tuning","Hyperparameter tuning"),("optimization","Gradient descent & optimizers"),
  ("loss-functions","Loss functions"),("neural-networks","Neural networks"),("sequence-models","Sequence models & attention"),("transfer-learning","Transfer learning"),
  ("text-features","Text representations"),("llm-training","How LLMs are trained"),("maximum-likelihood","Maximum likelihood"),("categorical-tests","Chi-square & ANOVA"),
  ("bandits","Bandits & adaptive tests"),("survival-analysis","Survival analysis"),("forecasting-models","Classical forecasting models"),("forecast-metrics","Forecast accuracy metrics"),
- ("recommender-systems","Recommender systems"),("feature-scaling","Feature scaling")]: _tag(i, l)
+ ("recommender-systems","Recommender systems"),("feature-scaling","Feature scaling")]: _tag(i, label)
 def T(id, label, d, tag): TERMS[id] = {"label": label, "definition": d, "tag": tag}
 T("linear-regression","Linear regression","A model that predicts a number as a weighted sum of input features.","linear-models")
 T("ridge","Ridge regression","Linear regression with a penalty on the squared size of its coefficients (an L2 penalty).","linear-models")

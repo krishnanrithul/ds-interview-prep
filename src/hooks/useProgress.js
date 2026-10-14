@@ -38,7 +38,9 @@ function load() {
 export function useProgress() {
   const [progress, setProgress] = useState(load)
 
-  useEffect(() => { localStorage.setItem(KEY, JSON.stringify(progress)) }, [progress])
+  useEffect(() => {
+    localStorage.setItem(KEY, JSON.stringify(progress))
+  }, [progress])
 
   const rate = useCallback((id, rating) => {
     setProgress((p) => {

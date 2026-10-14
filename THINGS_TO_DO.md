@@ -17,7 +17,7 @@ The single prioritized list. Sections 1 to 4 below are history: the original ide
 7. Trademark search for Saddle Point (USPTO, IP India) and a domain.
 8. ~~PNG icons and share image~~ Done (docs 24 and 25). **Rithul to do:** put the live site URL in `VITE_SITE_URL` in `.env.production` so link previews use an absolute image URL (LinkedIn and Slack ignore relative ones).
 9. ~~PWA~~ Done (doc 24); check "Add to Home Screen" on the iPhone (item 3).
-10. Positioning: practice, not learning ("courses teach you; Saddle Point interviews you"), aimed at senior and staff candidates. Practice and the live score free; graded Mock interviews paid. Free competitors (for example Krish Naik's AI tutorials hub, which has interview Q&A sets and an AI voice tutor but no mock interviews or grading) make a free tier necessary.
+10. Positioning: practice, not learning ("courses teach you; Saddle Point interviews you"), for data science candidates at every level, from a first DS role to staff. Each answer is still measured against a senior answer, because that is the bar interviewers hold. Practice and the live score free; graded Mock interviews paid. Free competitors (for example Krish Naik's AI tutorials hub, which has interview Q&A sets and an AI voice tutor but no mock interviews or grading) make a free tier necessary. No Learn section (decided 2026-10-14): teaching happens through senior answers, key terms, explainers and spaced retries, not lessons.
 11. Hosted backend for paying users: sign-in, quotas, spend cap, payments (the proxy from step 1 grows into this). iOS after that: `docs/IOS_READINESS.md`.
 
 **Score accuracy**
@@ -25,14 +25,14 @@ The single prioritized list. Sections 1 to 4 below are history: the original ide
 13. ~~Split bundled key points~~ Done (doc 25): 93 questions rewritten so each point holds one idea. Points where a single idea scored under 0.6 against its own point fell from 78 to 37; the rest are a framing phrase plus one idea ("Start from the decision: …"), which is fine.
 
 **Content (Rithul's review, deferred)**
-14. ~~Content review~~ First full pass done 2026-10-14 (`docs/reviews/CONTENT_REVIEW_2026-10-14.md`): the content-reviewer checked all 155 questions; 175 fixes applied (7 wrong, 63 misleading, the rule flags), 2 rejected, invented "asked Nx" frequency labels replaced. Still open: 56 polish flags, and Rithul's own read of the draft questions. Re-run `/review-content <topic>` after content changes.
+14. ~~Content review~~ First full pass done 2026-10-14 (`docs/reviews/CONTENT_REVIEW_2026-10-14.md`): the content-reviewer checked all 155 questions; 175 fixes applied (7 wrong, 63 misleading, the rule flags), 2 rejected, invented "asked Nx" frequency labels replaced. Polish flags applied too (55 of 57; 4 rejected). Still open: Rithul's own read of the draft questions. Re-run `/review-content <topic>` after content changes.
 15. ~~More Foundations questions~~ Done (doc 26): 15 easy questions added across all 9 topics (now 40 of 176), including the first easy System Design ones.
 16. ~~Missing topics~~ Done (doc 26): stats-022 instrumental variables, algo-027 UMAP, dl-016 topic models, ml-026 NDCG, algo-026 log loss, dl-015 RNN and LSTM mechanics.
 
 **Later**
-17. Junior and senior answers for each follow-up (1.4); a Learn section; a weekly trend in Insights (needs more than 5 attempts kept per question); optional explainers (class imbalance and threshold, hierarchical clustering, LightGBM residuals).
+17. Junior and senior answers for each follow-up (1.4); a weekly trend in Insights (needs more than 5 attempts kept per question); optional explainers (class imbalance and threshold, hierarchical clustering; boosting on residuals is already covered by the Boosting explainer).
 18. Draft badge shows on 133 of 155 questions: show it only in the Library, or quietly in the debrief.
-19. ~~Housekeeping~~ Mostly done (doc 25): obsolete extraction scripts deleted, ESLint clean, Ruff unused imports fixed. Still open: 81 Ruff style issues in older scripts (none affect behavior), and whether to run Prettier over the codebase once (58 files would change, formatting only).
+19. ~~Housekeeping~~ Done (docs 25 and 26): obsolete scripts deleted, ESLint clean, Ruff clean (`ruff check scripts` passes; the pipeline scripts' one-line style is allowed in `ruff.toml`), Prettier run once over `src/` and `npm run format:check` passes.
 
 **Tooling (2026-10-14, doc 23):** review agents in `.claude/agents/` (content-reviewer, ai-prompt-reviewer, ui-reviewer, launch-reviewer) with shortcut commands `/review-content`, `/review-prompts`, `/review-ui`, `/prelaunch`, `/lint`; ESLint, Prettier and Ruff configured.
 

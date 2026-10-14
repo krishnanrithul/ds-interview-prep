@@ -7,7 +7,12 @@ import { getApiKey, gradeAnswer, cachedGrade } from '../lib/grade'
 export function CoverageMeter({ status, sims }) {
   if (status === 'off') return null
   if (status === 'error') return <p className="text-xs text-muted-foreground">Match score unavailable in this browser</p>
-  if (status === 'loading' || !sims) return <p className="text-xs text-muted-foreground" role="status">Loading match score…</p>
+  if (status === 'loading' || !sims)
+    return (
+      <p className="text-xs text-muted-foreground" role="status">
+        Loading match score…
+      </p>
+    )
   const credits = liveCredits(sims)
   return (
     <div className="flex items-center gap-2 text-xs text-muted-foreground" aria-live="polite">
@@ -16,7 +21,9 @@ export function CoverageMeter({ status, sims }) {
           <span key={i} className={`w-2 h-2 rounded-full transition-colors duration-300 ${c ? 'bg-primary' : 'bg-muted-foreground/25'}`} />
         ))}
       </span>
-      <span className="tabular-nums"><span className="font-semibold text-foreground/80">{scorePct(credits)}%</span> of a senior answer</span>
+      <span className="tabular-nums">
+        <span className="font-semibold text-foreground/80">{scorePct(credits)}%</span> of a senior answer
+      </span>
     </div>
   )
 }
@@ -39,13 +46,22 @@ function PointList({ q, idx, grade, sims, text }) {
         const Icon = m?.icon
         return (
           <li key={k} className="flex gap-2.5 text-sm">
-            <span title={m?.label || 'Not mentioned'} className={`mt-0.5 w-5 h-5 shrink-0 rounded-full flex items-center justify-center ${m ? m.cls : 'border border-border'}`}>
+            <span
+              title={m?.label || 'Not mentioned'}
+              className={`mt-0.5 w-5 h-5 shrink-0 rounded-full flex items-center justify-center ${m ? m.cls : 'border border-border'}`}
+            >
               {Icon && <Icon className="w-3 h-3" strokeWidth={3} />}
               <span className="sr-only">{m?.label || 'Not mentioned'}</span>
             </span>
             <div className="min-w-0">
               <p className={kind === 'missing' || (!kind && text) ? 'text-foreground/70' : ''}>{q.key_points[k]}</p>
-              {g?.note && <p className={`text-xs mt-0.5 ${g.status === 'wrong' ? 'text-rose-700 dark:text-rose-300' : g.status === 'partial' ? 'text-amber-700 dark:text-amber-300' : 'text-muted-foreground'}`}>{g.note}</p>}
+              {g?.note && (
+                <p
+                  className={`text-xs mt-0.5 ${g.status === 'wrong' ? 'text-rose-700 dark:text-rose-300' : g.status === 'partial' ? 'text-amber-700 dark:text-amber-300' : 'text-muted-foreground'}`}
+                >
+                  {g.note}
+                </p>
+              )}
             </div>
           </li>
         )
@@ -70,28 +86,37 @@ export function KeyPointsReview({ q, answer, sims, gradeText, onScore, followUps
   useEffect(() => {
     if (grade || !text) return
     const key = getApiKey()
-    if (!key) { setState('nokey'); return }
+    if (!key) {
+      setState('nokey')
+      return
+    }
     const ctl = new AbortController()
     setState('busy')
     gradeAnswer(q, toGrade, key, ctl.signal, followUps)
-      .then((g) => { setGrade(g); setState('done') })
-      .catch((e) => { if (e.name !== 'AbortError') { setError(e.message); setState('error') } })
+      .then((g) => {
+        setGrade(g)
+        setState('done')
+      })
+      .catch((e) => {
+        if (e.name !== 'AbortError') {
+          setError(e.message)
+          setState('error')
+        }
+      })
     return () => ctl.abort()
   }, [q.id, toGrade]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const credits = grade
-    ? grade.points.map((p) => GRADE_CREDIT[p.status] ?? 0)
-    : text ? liveCredits(sims) : q.key_points.map(() => 0) // a blank answer scores 0%
+  const credits = grade ? grade.points.map((p) => GRADE_CREDIT[p.status] ?? 0) : text ? liveCredits(sims) : q.key_points.map(() => 0) // a blank answer scores 0%
   const pct = scorePct(credits)
   const all = q.key_points.map((_, i) => i)
-  const status = !text ? 'empty'
-    : grade ? 'graded'
-    : state === 'busy' || state === 'idle' ? 'pending'
-    : sims ? 'estimate'
-    : 'unavailable' // no grade and the in-browser matcher couldn't run
-  useEffect(() => { if (grade) onGrade?.(grade) }, [grade]) // eslint-disable-line react-hooks/exhaustive-deps
+  const status = !text ? 'empty' : grade ? 'graded' : state === 'busy' || state === 'idle' ? 'pending' : sims ? 'estimate' : 'unavailable' // no grade and the in-browser matcher couldn't run
+  useEffect(() => {
+    if (grade) onGrade?.(grade)
+  }, [grade]) // eslint-disable-line react-hooks/exhaustive-deps
   const basis = grade ? 'haiku' : text && sims ? 'match' : null // what the current pct is computed from
-  useEffect(() => { onScore?.({ pct, status, basis }) }, [pct, status, basis]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    onScore?.({ pct, status, basis })
+  }, [pct, status, basis]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const counts = grade && grade.points.reduce((a, p) => ({ ...a, [p.status]: (a[p.status] || 0) + 1 }), {})
 
@@ -101,17 +126,32 @@ export function KeyPointsReview({ q, answer, sims, gradeText, onScore, followUps
       {credits && (
         <div className="mt-3">
           <div className="flex items-baseline justify-between gap-3 mb-1.5">
-            <p className="text-sm"><span className="text-2xl font-semibold tabular-nums">{pct}%</span> <span className="text-muted-foreground">of a senior answer</span></p>
+            <p className="text-sm">
+              <span className="text-2xl font-semibold tabular-nums">{pct}%</span>{' '}
+              <span className="text-muted-foreground">of a senior answer</span>
+            </p>
             {grade && (
               <p className="text-xs text-muted-foreground tabular-nums">
-                {['correct', 'partial', 'wrong', 'missing'].filter((k) => counts[k]).map((k) => `${counts[k]} ${k}`).join(' · ')}
+                {['correct', 'partial', 'wrong', 'missing']
+                  .filter((k) => counts[k])
+                  .map((k) => `${counts[k]} ${k}`)
+                  .join(' · ')}
               </p>
             )}
           </div>
-          <div className="h-1.5 rounded-full bg-muted overflow-hidden" role="meter" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} aria-label="Score">
+          <div
+            className="h-1.5 rounded-full bg-muted overflow-hidden"
+            role="meter"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={pct}
+            aria-label="Score"
+          >
             <div className="h-full rounded-full bg-primary transition-[width] duration-500" style={{ width: `${pct}%` }} />
           </div>
-          <p className="text-xs text-muted-foreground mt-1.5">{grade ? 'Graded for correctness by Haiku' : 'Based on which ideas you mentioned'}</p>
+          <p className="text-xs text-muted-foreground mt-1.5">
+            {grade ? 'Graded for correctness by Haiku' : 'Based on which ideas you mentioned'}
+          </p>
         </div>
       )}
       <div className="mt-4">
@@ -119,10 +159,25 @@ export function KeyPointsReview({ q, answer, sims, gradeText, onScore, followUps
       </div>
       <div className="mt-3 pt-3 border-t border-border text-xs text-muted-foreground">
         {!text && <p>Write an answer next time to see how close it gets.</p>}
-        {text && state === 'busy' && <p className="flex items-center gap-1.5" role="status"><Sparkles className="w-3.5 h-3.5" />Checking correctness with Haiku…</p>}
-        {text && state === 'done' && grade?.summary && <p className="text-sm text-foreground/90"><Sparkles className="inline w-3.5 h-3.5 mr-1.5 -mt-0.5 text-muted-foreground" />{grade.summary}</p>}
+        {text && state === 'busy' && (
+          <p className="flex items-center gap-1.5" role="status">
+            <Sparkles className="w-3.5 h-3.5" />
+            Checking correctness with Haiku…
+          </p>
+        )}
+        {text && state === 'done' && grade?.summary && (
+          <p className="text-sm text-foreground/90">
+            <Sparkles className="inline w-3.5 h-3.5 mr-1.5 -mt-0.5 text-muted-foreground" />
+            {grade.summary}
+          </p>
+        )}
         {text && state === 'error' && <p>Correctness check failed: {error}. The score above is based on which ideas you mentioned.</p>}
-        {text && state === 'nokey' && <p>This score checks which ideas you mentioned, not whether you got them right. Add an invite code or an API key in Settings to have each point graded for correctness.</p>}
+        {text && state === 'nokey' && (
+          <p>
+            This score checks which ideas you mentioned, not whether you got them right. Add an invite code or an API key in Settings to
+            have each point graded for correctness.
+          </p>
+        )}
       </div>
     </div>
   )

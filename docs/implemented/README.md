@@ -31,4 +31,4 @@ Each file states what changed, which files were touched, the decisions made and 
 | 24 | [Privacy note, invite-code proxy, icons and PWA](24_privacy_proxy_pwa.md) | Built, uncommitted at time of writing; proxy needs Vercel env vars |
 | 25 | [Link preview, welcome card, housekeeping, split key points](25_preview_welcome_split_points.md) | Built, uncommitted at time of writing |
 | 26 | [Content review fixes and 21 new questions](26_content_review_and_new_questions.md) | Built, uncommitted at time of writing |
-| – | Learn section: concept lessons | Not started |
+| – | Learn section: concept lessons | Dropped 2026-10-14: a course-style section conflicts with "practice, not a course" |

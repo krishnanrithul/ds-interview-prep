@@ -7,7 +7,9 @@ Each variants file maps a question id to a list with one entry per follow-up, in
   refuses to apply stale variants for it until the variants file is updated.
 - "draft": true marks variants as unreviewed. Flip it to false once you've checked them.
 The variants files are the source of truth; re-running is idempotent."""
-import glob, json, sys
+import glob
+import json
+import sys
 
 QPATH = 'src/data/questions.json'
 data = json.load(open(QPATH))
@@ -25,7 +27,7 @@ for path in files:
             problems.append(f'{path}: unknown question {qid}'); continue
         if len(entries) != len(q['follow_ups']):
             problems.append(f'{qid}: {len(entries)} entries but {len(q["follow_ups"])} follow-ups'); continue
-        for k, (e, fu) in enumerate(zip(entries, q['follow_ups'])):
+        for k, (e, fu) in enumerate(zip(entries, q['follow_ups'], strict=True)):
             if e['base'] != fu['text']:
                 problems.append(f'{qid} follow-up {k + 1}: text changed since variants were written, skipped'); continue
             texts = [t.strip() for t in e['variants']]

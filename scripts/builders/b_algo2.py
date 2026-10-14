@@ -1,4 +1,5 @@
 from h2 import *
+
 C="common in DS interviews"
 write("algo2", [
 Q("algo-013","How does k-means work, how do you choose k, and when does it fail?","ML Algorithms","easy",C,"Phone screen, unsupervised learning",

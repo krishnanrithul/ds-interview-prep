@@ -28,3 +28,8 @@ The bank now has 176 questions (40 easy, 83 medium, 53 hard), 1043 key points, 1
 
 ## 3. `add_questions.py` fix
 The script used to re-register every batch's `new_terms` on each run, which brought back the 4 terms the review removed. It now skips questions already merged and registers a batch term only when a newly added question uses it.
+
+## 4. Polish pass and code tidy (items 14 and 19)
+- **Polish flags**: 55 of the 57 polish entries applied (wording, precision, a few missing caveats such as NULL amounts in sql-015's median, the LEFT JOIN filter in sql-004, and the intercept column in python-016). 4 rejected; reasons in the review report.
+- **Ruff**: `ruff check scripts` passes. Safe fixes applied (import sorting, whitespace). `zip(..., strict=True)` in `apply_variants.py` (lengths are checked just before). Ambiguous names renamed (`I` to `INC` in two builders, `l` to `label` in `h2.py`). The compact one-line style in the pipeline scripts is now allowed in `ruff.toml` rather than rewritten. All builders regenerate byte-identical batch files.
+- **Prettier**: run once over `src/` (61 files, formatting only). Before and after builds were compared: the only differences are how JSX text is split into strings, which renders identically. The Bayes explainer's lint exception moved to a block comment because Prettier reflowed the line it was attached to. ESLint passes; the build passes.

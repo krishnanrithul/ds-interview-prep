@@ -23,11 +23,12 @@ export default function Attempts({ attempts, title = 'Your attempts', limit = 5 
         {list.map((a) => (
           <li key={a.ts} className="rounded-xl border border-border bg-muted/50 p-3">
             <div className="flex flex-wrap items-center gap-2 text-xs mb-1.5">
-              <span className="text-muted-foreground">{fmt(a.ts)}{a.source === 'mock' ? ' · mock interview' : ''}</span>
+              <span className="text-muted-foreground">
+                {fmt(a.ts)}
+                {a.source === 'mock' ? ' · mock interview' : ''}
+              </span>
               {a.rating && RATINGS[a.rating] && (
-                <span className={`px-2 py-0.5 rounded-md ring-1 font-medium ${RATINGS[a.rating].badge}`}>
-                  {RATINGS[a.rating].label}
-                </span>
+                <span className={`px-2 py-0.5 rounded-md ring-1 font-medium ${RATINGS[a.rating].badge}`}>{RATINGS[a.rating].label}</span>
               )}
               {hasScore(a) && (
                 <span title={scoreTitle(a)} className="px-2 py-0.5 rounded-md ring-1 ring-border font-medium tabular-nums">
