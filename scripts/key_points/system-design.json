@@ -57,7 +57,7 @@
       "base": "I'd start by asking how quickly a change in the feature should change the prediction, and what that ",
       "draft": true,
       "points": [
-        "Decide by how fast the feature must affect predictions and what freshness is worth",
+        "Decide by how much freshness is worth to predictions",
         "Daily batch is simpler, cheaper and easier to backfill and debug",
         "Use streaming only where staleness costs money, like fraud velocity",
         "Avoid two code paths computing the same feature differently",

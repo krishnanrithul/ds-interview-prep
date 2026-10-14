@@ -41,7 +41,7 @@
     },
     {
       "id": "dl-004",
-      "base": "Options in rough order of effort: get more or augmented data, simplify the architecture, add weight ",
+      "base": "Options, from cheapest to costliest: augment the data, add weight decay, use early stopping on valid",
       "draft": true,
       "points": [
         "Confirm it is overfitting first with train and validation curves",
@@ -93,13 +93,13 @@
     },
     {
       "id": "dl-008",
-      "base": "For each word, the model asks a question (the query) and compares it against a label (the key) on ev",
+      "base": "For each word, the model uses learned projections to form a question (the query) and compares it aga",
       "draft": true,
       "points": [
         "Each word compares its query against every word's key",
         "Match scores become weights that sum to one via softmax",
         "The new representation is a weighted blend of values",
-        "Example: 'it' pulls in information from 'animal'",
+        "Each word's representation absorbs context from related words",
         "Scores are scaled to keep the softmax well behaved",
         "Multiple heads track different relationships at once"
       ]

@@ -347,7 +347,7 @@
     {
       "id": "recommendation-system",
       "label": "Recommendation system",
-      "definition": "A system that suggests items a user is likely to want, using their history and the behavior of similar users."
+      "definition": "A system that suggests items a user is likely to want, using signals such as their history, item attributes and the behavior of similar users."
     },
     {
       "id": "ml-intake",
@@ -460,7 +460,7 @@
     {
       "id": "token",
       "label": "Token",
-      "definition": "A chunk of text, often a word fragment, that a language model reads and generates one at a time.",
+      "definition": "A chunk of text, often a word fragment, that a language model reads and generates; models generate output one token at a time.",
       "tag": "llm-fundamentals"
     },
     {
@@ -729,13 +729,13 @@
     {
       "id": "lightgbm",
       "label": "LightGBM",
-      "definition": "A gradient boosting library from Microsoft.",
+      "definition": "A gradient-boosting library designed for speed on large datasets.",
       "tag": "gradient-boosting"
     },
     {
       "id": "catboost",
       "label": "CatBoost",
-      "definition": "A gradient boosting library from Yandex.",
+      "definition": "A gradient-boosting library with built-in handling of categorical features.",
       "tag": "gradient-boosting"
     },
     {
@@ -938,7 +938,7 @@
     {
       "id": "likelihood",
       "label": "Likelihood",
-      "definition": "The probability a model assigns to the observed data, viewed as a function of the model's parameters.",
+      "definition": "The probability (or probability density) a model assigns to the observed data, viewed as a function of the model's parameters.",
       "tag": "maximum-likelihood"
     },
     {

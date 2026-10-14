@@ -176,7 +176,7 @@
       "points": [
         "SE of the difference is sqrt(p1(1-p1)/n1 + p2(1-p2)/n2)",
         "The 95% interval is the difference plus or minus 1.96 standard errors",
-        "Here differences under about 0.12 points are noise",
+        "Here differences under about 0.12 points aren't significant",
         "Assumes independent users and a large enough n",
         "Analyze per user when randomizing users, not per click or session",
         "Cross-check with a bootstrap"
@@ -197,7 +197,7 @@
     },
     {
       "id": "stats-016",
-      "base": "Given a model with parameters, the likelihood is the probability it assigns to the data we saw. Maxi",
+      "base": "Given a model with parameters, the likelihood is the probability (or, for continuous data, the densi",
       "draft": true,
       "points": [
         "The likelihood is the probability the model assigns to the observed data",

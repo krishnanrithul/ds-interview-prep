@@ -86,7 +86,7 @@
         "Use low temperature, often 0, for classification",
         "Constrain output to the label set with an enum or structured output",
         "Temperature flattens token probabilities so unlikely tokens appear more",
-        "Top-p samples only from the most likely tokens",
+        "Top-p samples from the smallest token set whose probabilities sum to p",
         "Even at temperature 0 outputs aren't guaranteed identical",
         "Use higher temperature for brainstorming and varied writing"
       ]
@@ -177,7 +177,7 @@
         "LoRA freezes pretrained weights and trains small low-rank matrices",
         "It cuts GPU memory and training time",
         "Store a small adapter per task and swap on one base model",
-        "Full fine-tuning costs more and risks forgetting",
+        "Full fine-tuning changes more but risks more forgetting",
         "Use LoRA for style, format or domain adaptation with limited data",
         "Try prompting or retrieval before fine-tuning"
       ]

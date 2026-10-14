@@ -171,7 +171,7 @@
     },
     {
       "id": "algo-014",
-      "base": "DBSCAN grows clusters from dense neighborhoods: a point with at least min_samples neighbors within d",
+      "base": "DBSCAN grows clusters from dense neighborhoods: a point with at least min_samples points (itself inc",
       "draft": true,
       "points": [
         "DBSCAN builds clusters from dense regions defined by eps and min_samples",
@@ -197,7 +197,7 @@
     },
     {
       "id": "algo-016",
-      "base": "k-means is a special case that assumes equal, round clusters and gives hard labels. A Gaussian mixtu",
+      "base": "k-means behaves like a limiting case of a mixture with equal, round clusters and hard labels. A Gaus",
       "draft": true,
       "points": [
         "k-means assumes equal, round clusters",

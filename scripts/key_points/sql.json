@@ -90,7 +90,7 @@
     },
     {
       "id": "sql-008",
-      "base": "That works until the subquery returns a NULL customer_id: then NOT IN evaluates to unknown for every",
+      "base": "That works until the subquery returns a NULL customer_id: then NOT IN evaluates to false or unknown ",
       "draft": true,
       "points": [
         "NOT IN returns nothing if the subquery contains a NULL",
@@ -152,7 +152,7 @@
     },
     {
       "id": "sql-013",
-      "base": "Payments are one-to-many per order (split payments, retries), so each order row is repeated once per",
+      "base": "Payments are one-to-many per order (split payments, retries), so each order-item row is repeated onc",
       "draft": true,
       "points": [
         "Payments are one-to-many per order, so each order row repeats per payment",

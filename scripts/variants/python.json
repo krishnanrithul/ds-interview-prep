@@ -37,7 +37,7 @@
  ],
  "python-003": [
   {
-   "base": "How do you avoid look-ahead bias when building features from future information?",
+   "base": "How do you avoid look-ahead bias when building features in a backtest?",
    "draft": true,
    "variants": [
     "Your backtest uses customer attributes from today's snapshot. Why could that inflate the results?",

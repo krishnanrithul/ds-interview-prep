@@ -222,7 +222,7 @@
    "base": "When does a filter belong in WHERE and when in HAVING, if both would give the same result?",
    "draft": true,
    "variants": [
-    "You filter WHERE region = 'EU' and HAVING region = 'EU'. Both give the same result. Which is better, and why?",
+    "The query groups by region. You filter WHERE region = 'EU' or HAVING region = 'EU'. Both give the same result. Which is better, and why?",
     "On a 1-billion-row table, what is the cost of putting a non-aggregate condition in HAVING instead of WHERE?"
    ]
   },

@@ -98,7 +98,7 @@
         "Data drift: the input distribution shifts",
         "Concept drift: the same inputs now lead to different outcomes",
         "Detect data drift from inputs alone with PSI or KS",
-        "Detecting concept drift needs labels",
+        "Detecting concept drift needs labels or a proxy",
         "Data drift hurts only where the model was weak",
         "Concept drift usually needs retraining"
       ]

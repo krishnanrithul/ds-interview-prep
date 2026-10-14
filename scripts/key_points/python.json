@@ -21,7 +21,7 @@
         "Layer basic checks like schema, null rates and freshness",
         "Add distribution checks against a recent baseline",
         "Give each check a severity: hard failures block, soft ones warn",
-        "A key feature suddenly half missing should fail, not be imputed",
+        "A key feature suddenly half missing should fail or fall back, not be imputed",
         "Alert the upstream owner with the failing check and sample rows",
         "Batch alerts into a daily digest to avoid a flood"
       ]
@@ -92,7 +92,7 @@
     },
     {
       "id": "python-008",
-      "base": "The expression first selects rows, which can return a copy, and then assigns the column into that te",
+      "base": "The boolean-mask selection returns a copy, and then assigns the column into that temporary object, s",
       "draft": true,
       "points": [
         "It's chained assignment: the first selection can return a copy",
@@ -196,7 +196,7 @@
     },
     {
       "id": "python-016",
-      "base": "With X as an n by d matrix, predictions are X @ w, the gradient of mean squared error is (2/n) * X.T",
+      "base": "With X as an n by d matrix plus a column of ones for the intercept, predictions are X @ w, the gradi",
       "draft": true,
       "points": [
         "Predictions are X @ w",
