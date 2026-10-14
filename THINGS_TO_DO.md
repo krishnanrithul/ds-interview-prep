@@ -30,8 +30,8 @@ The single prioritized list. Sections 1 to 4 below are history: the original ide
 16. ~~Missing topics~~ Done (doc 26): stats-022 instrumental variables, algo-027 UMAP, dl-016 topic models, ml-026 NDCG, algo-026 log loss, dl-015 RNN and LSTM mechanics.
 
 **Later**
-17. Junior and senior answers for each follow-up (1.4); a weekly trend in Insights (needs more than 5 attempts kept per question); optional explainers (class imbalance and threshold, hierarchical clustering; boosting on residuals is already covered by the Boosting explainer).
-18. Draft badge shows on 133 of 155 questions: show it only in the Library, or quietly in the debrief.
+17. Junior and senior answers for each follow-up (1.4); ~~a weekly trend in Insights~~ done (doc 29); optional explainers (class imbalance and threshold, hierarchical clustering; boosting on residuals is already covered by the Boosting explainer).
+18. ~~Draft badge~~ Done (doc 26): the badge now shows only in the Library. Practice and Mock show "New question, not yet checked by the author. Flag anything that looks off." above "Report a problem with this question" in the debrief.
 19. ~~Housekeeping~~ Done (docs 25 and 26): obsolete scripts deleted, ESLint clean, Ruff clean (`ruff check scripts` passes; the pipeline scripts' one-line style is allowed in `ruff.toml`), Prettier run once over `src/` and `npm run format:check` passes.
 
 **Tooling (2026-10-14, doc 23):** review agents in `.claude/agents/` (content-reviewer, ai-prompt-reviewer, ui-reviewer, launch-reviewer) with shortcut commands `/review-content`, `/review-prompts`, `/review-ui`, `/prelaunch`, `/lint`; ESLint, Prettier and Ruff configured.

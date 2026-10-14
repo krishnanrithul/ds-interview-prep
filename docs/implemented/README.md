@@ -31,4 +31,7 @@ Each file states what changed, which files were touched, the decisions made and 
 | 24 | [Privacy note, invite-code proxy, icons and PWA](24_privacy_proxy_pwa.md) | Built, uncommitted at time of writing; proxy needs Vercel env vars |
 | 25 | [Link preview, welcome card, housekeeping, split key points](25_preview_welcome_split_points.md) | Built, uncommitted at time of writing |
 | 26 | [Content review fixes and 21 new questions](26_content_review_and_new_questions.md) | Built, uncommitted at time of writing |
+| 27 | [Library redesign: topic groups, filter bar, one-line rows](27_library_redesign.md) | Built, uncommitted at time of writing |
+| 28 | [Insights: less text](28_insights_less_text.md) | Built, uncommitted at time of writing |
+| 29 | [Insights trend, topic picker and shared topic rows](29_insights_trend_and_shared_topic_rows.md) | Built, uncommitted at time of writing |
 | – | Learn section: concept lessons | Dropped 2026-10-14: a course-style section conflicts with "practice, not a course" |
