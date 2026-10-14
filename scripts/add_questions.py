@@ -8,7 +8,8 @@ Each file in scripts/batches/*.json looks like:
 
 The script appends unseen questions to src/data/questions.json (marked draft), records their tags and
 terms in scripts/tags.map.json and scripts/terms.map.json, then runs apply_tags.py and apply_terms.py.
-Re-running is safe. Run from the repo root: python3 scripts/add_questions.py"""
+Re-running is safe: questions already in questions.json are skipped, and a batch's new_terms are
+registered only when a newly added question uses them, so terms removed later don't come back. Run from the repo root: python3 scripts/add_questions.py"""
 import glob, json, subprocess, sys
 
 TOPICS = {'SQL', 'ML', 'Statistics', 'System Design', 'Python', 'Production ML', 'LLMs & AI', 'ML Algorithms', 'Deep Learning & NLP'}
@@ -26,11 +27,14 @@ for path in sorted(glob.glob('scripts/batches/*.json')):
     b = load(path)
     for tid, t in b.get('new_tags', {}).items():
         tagmap[t.get('kind', 'subject')].setdefault(tid, {'label': t['label'], 'questions': []})
-    for tid, t in b.get('new_terms', {}).items():
-        termmap['terms'].setdefault(tid, t)
+    batch_terms = b.get('new_terms', {})
     for q in b['questions']:
         qid = q['id']
         where = f'{path}:{qid}'
+        if qid in have:
+            continue  # already merged: questions.json and the maps are the source of truth now
+        for t in q.get('terms', []):
+            if t not in termmap['terms'] and t in batch_terms: termmap['terms'][t] = batch_terms[t]
         for f in ('question', 'topic', 'difficulty', 'frequency', 'context', 'key_insight', 'junior_answer', 'senior_answer'):
             if not q.get(f): problems.append(f'{where} missing {f}')
         if q.get('topic') not in TOPICS: problems.append(f"{where} bad topic {q.get('topic')}")
@@ -46,8 +50,6 @@ for path in sorted(glob.glob('scripts/batches/*.json')):
         if not q.get('terms'): problems.append(f'{where} needs at least one key term')
         for t in q.get('terms', []):
             if t not in termmap['terms']: problems.append(f'{where} unknown term {t}')
-        if qid in have:
-            continue
         # register membership in the maps
         for t in q.get('tags', []):
             for k in ('subject', 'skill'):

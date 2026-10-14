@@ -614,5 +614,57 @@
     "You're feeding pixel intensities between 0 and 255 into a neural network. Which scaling makes sense?"
    ]
   }
+ ],
+ "ml-025": [
+  {
+   "base": "What actually goes wrong if you keep checking the test set while you tune?",
+   "draft": true,
+   "variants": [
+    "You tried 40 feature sets and kept the one with the best test AUC. Is that AUC a fair estimate of production performance?",
+    "A teammate reports test accuracy after each of 15 tuning rounds and picks the best round. What would you tell them?"
+   ]
+  },
+  {
+   "base": "How should the split change when rows are not independent?",
+   "draft": true,
+   "variants": [
+    "You're forecasting next month's sales from three years of history. How do you split the data?",
+    "Each patient has many visits in your dataset. What goes wrong with a random row-level split?"
+   ]
+  },
+  {
+   "base": "What do you do when there isn't enough data for three separate sets?",
+   "draft": true,
+   "variants": [
+    "You have 800 labeled rows. How do you choose a model and still report an honest estimate?",
+    "Would you still keep a separate test set if you use 5-fold cross-validation for tuning? Why?"
+   ]
+  }
+ ],
+ "ml-026": [
+  {
+   "base": "How does NDCG compare with precision@k and MAP?",
+   "draft": true,
+   "variants": [
+    "Two rankings each have three relevant items in the top 5, one at ranks 1 to 3 and the other at ranks 3 to 5. Which of precision@5 and NDCG@5 tells them apart?",
+    "Your labels are 'purchased', 'clicked' and 'ignored'. Would you evaluate with MAP or NDCG, and why?"
+   ]
+  },
+  {
+   "base": "Where do the relevance labels come from, and what can go wrong with them?",
+   "draft": true,
+   "variants": [
+    "You build relevance labels from clicks logged under the current ranker. Why might a new model look worse offline than it really is?",
+    "Items shown in position 1 get clicked far more than items in position 8. How does that affect an NDCG computed from click logs?"
+   ]
+  },
+  {
+   "base": "Your new model wins on offline NDCG. Are you done?",
+   "draft": true,
+   "variants": [
+    "Offline NDCG@10 rose from 0.41 to 0.44, but the A/B test shows no change in purchases. What could explain it?",
+    "How would you decide whether an offline NDCG gain is large enough to justify an online test?"
+   ]
+  }
  ]
 }

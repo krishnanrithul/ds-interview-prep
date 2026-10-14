@@ -484,5 +484,83 @@
     "What does the proportional hazards assumption mean, and how would you check it?"
    ]
   }
+ ],
+ "stats-020": [
+  {
+   "base": "How would you explain this result to the fraud operations lead?",
+   "draft": true,
+   "variants": [
+    "The ops lead says the model is supposed to be 99% accurate, so why are most reviews false alarms? How do you answer?",
+    "How would you show the effect of the fraud rate on wasted reviews in a single table for a non-technical audience?"
+   ]
+  },
+  {
+   "base": "Which would improve precision more here: higher sensitivity or higher specificity?",
+   "draft": true,
+   "variants": [
+    "You can raise sensitivity from 99% to 99.9%, or specificity from 95% to 98%. Which do you pick if the goal is fewer wasted reviews, and roughly what precision does each give?",
+    "Why does a one-point change in the false positive rate matter so much when only 0.5% of cases are positive?"
+   ]
+  },
+  {
+   "base": "A second, independent check also flags the transaction. How do you update the probability?",
+   "draft": true,
+   "variants": [
+    "A flagged transaction goes to a second check with 90% sensitivity and 99% specificity, and it flags too. What is the probability of fraud now, assuming the checks err independently?",
+    "Two models trained on the same features both flag a transaction. Can you multiply their evidence as if they were independent?"
+   ]
+  }
+ ],
+ "stats-021": [
+  {
+   "base": "What else could explain a pattern like this one?",
+   "draft": true,
+   "variants": [
+    "Users who turn on two-factor authentication churn less. Why might that not mean two-factor authentication prevents churn?",
+    "Stores with more staff on the floor have higher sales. What could explain this besides staff driving sales?"
+   ]
+  },
+  {
+   "base": "How could you get evidence on whether support itself helps or hurts retention?",
+   "draft": true,
+   "variants": [
+    "You can't randomly withhold support from customers. What natural variation could you use instead?",
+    "How would you use time to first response to study whether support quality affects churn?"
+   ]
+  },
+  {
+   "base": "What do you tell the VP today, before any further analysis?",
+   "draft": true,
+   "variants": [
+    "The VP wants to cut support headcount next week based on this chart. What do you say?",
+    "How do you explain reverse causation to an executive who doesn't use statistics?"
+   ]
+  }
+ ],
+ "stats-022": [
+  {
+   "base": "How would you check whether the prompt is a strong enough instrument?",
+   "draft": true,
+   "variants": [
+    "The prompt raised adoption from 20% to only 22%. What does that do to your estimate and its confidence interval?",
+    "What first-stage results would you report alongside the IV estimate, and what would make you distrust it?"
+   ]
+  },
+  {
+   "base": "What could violate the exclusion restriction here?",
+   "draft": true,
+   "variants": [
+    "The prompt included the line 'Users who budget save more every month.' Is the prompt still a valid instrument?",
+    "The prompted group also got a push notification showing their savings balance. What does that do to your estimate?"
+   ]
+  },
+  {
+   "base": "Whose effect does your estimate describe, and can leadership use it to predict the gain from turning the feature on by default for everyone?",
+   "draft": true,
+   "variants": [
+    "Leadership wants the savings gain if every user adopts. Does your IV estimate answer that?",
+    "Why might the effect for users who adopt only when prompted differ from the effect for early adopters?"
+   ]
+  }
  ]
 }

@@ -416,5 +416,31 @@
     "How would you avoid comparing a query against every one of millions of documents?"
    ]
   }
+ ],
+ "python-018": [
+  {
+   "base": "Some rows have a missing customer_id. What happens to them in agg and in transform?",
+   "draft": true,
+   "variants": [
+    "After df['total'] = df.groupby('region')['sales'].transform('sum'), some rows show NaN in total even though sales is never missing. Why?",
+    "How do you keep rows with a missing key as their own group in a groupby?"
+   ]
+  },
+  {
+   "base": "You use transform('mean') to add each customer's average order value as a feature in a churn model. What could go wrong?",
+   "draft": true,
+   "variants": [
+    "A feature 'user's average basket size' is computed with groupby over the full dataset before the train/test split. Is that a problem?",
+    "How would you compute each customer's average order value using only their orders before each row's date?"
+   ]
+  },
+  {
+   "base": "Your groupby with a lambda takes 20 minutes on 5 million rows. What do you do?",
+   "draft": true,
+   "variants": [
+    "df.groupby('user_id').apply(lambda g: g['amount'].sum() / len(g)) is slow. How would you rewrite it?",
+    "When is groupby().apply() still the right tool despite being slower?"
+   ]
+  }
  ]
 }

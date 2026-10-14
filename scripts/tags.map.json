@@ -75,7 +75,8 @@
         "ml-018",
         "algo-017",
         "algo-021",
-        "algo-024"
+        "algo-024",
+        "ml-025"
       ]
     },
     "data-leakage": {
@@ -89,7 +90,9 @@
         "ml-018",
         "algo-021",
         "algo-023",
-        "ml-024"
+        "ml-024",
+        "python-018",
+        "ml-025"
       ]
     },
     "distribution-shift": {
@@ -116,7 +119,9 @@
         "prodml-011",
         "prodml-013",
         "prodml-015",
-        "system-design-012"
+        "system-design-012",
+        "system-design-016",
+        "prodml-016"
       ]
     },
     "retraining": {
@@ -141,7 +146,8 @@
         "ml-015",
         "prodml-012",
         "python-014",
-        "algo-018"
+        "algo-018",
+        "dl-014"
       ]
     },
     "missing-data-and-outliers": {
@@ -175,7 +181,11 @@
         "ml-016",
         "python-009",
         "algo-023",
-        "ml-022"
+        "ml-022",
+        "stats-020",
+        "ml-026",
+        "algo-026",
+        "prodml-017"
       ]
     },
     "class-imbalance": {
@@ -184,7 +194,8 @@
         "ml-007",
         "system-design-006",
         "ml-001",
-        "algo-023"
+        "algo-023",
+        "stats-020"
       ]
     },
     "cost-sensitive-decisions": {
@@ -270,7 +281,9 @@
         "stats-012",
         "stats-014",
         "stats-015",
-        "stats-018"
+        "stats-018",
+        "stats-022",
+        "prodml-017"
       ]
     },
     "segment-analysis": {
@@ -289,7 +302,9 @@
         "stats-002",
         "ml-007",
         "system-design-006",
-        "ml-008"
+        "ml-008",
+        "system-design-016",
+        "prodml-016"
       ]
     },
     "window-functions": {
@@ -310,7 +325,8 @@
       "questions": [
         "sql-008",
         "python-004",
-        "sql-013"
+        "sql-013",
+        "sql-017"
       ]
     },
     "null-semantics": {
@@ -318,7 +334,9 @@
       "questions": [
         "sql-008",
         "sql-003",
-        "sql-014"
+        "sql-014",
+        "sql-017",
+        "sql-018"
       ]
     },
     "retention-cohorts": {
@@ -329,7 +347,8 @@
         "sql-012",
         "sql-016",
         "system-design-008",
-        "stats-019"
+        "stats-019",
+        "stats-021"
       ]
     },
     "performance-at-scale": {
@@ -374,7 +393,8 @@
       "questions": [
         "python-004",
         "python-005",
-        "python-008"
+        "python-008",
+        "python-018"
       ]
     },
     "batch-vs-realtime": {
@@ -385,7 +405,8 @@
         "system-design-005",
         "system-design-006",
         "system-design-007",
-        "system-design-008"
+        "system-design-008",
+        "system-design-015"
       ]
     },
     "latency-and-cost": {
@@ -396,7 +417,8 @@
         "prodml-007",
         "llm-006",
         "system-design-013",
-        "llm-013"
+        "llm-013",
+        "system-design-015"
       ]
     },
     "training-serving-skew": {
@@ -404,7 +426,8 @@
       "questions": [
         "prodml-005",
         "system-design-005",
-        "prodml-012"
+        "prodml-012",
+        "system-design-016"
       ]
     },
     "versioning-reproducibility": {
@@ -413,7 +436,8 @@
         "prodml-006",
         "system-design-002",
         "python-013",
-        "system-design-011"
+        "system-design-011",
+        "system-design-016"
       ]
     },
     "model-deployment": {
@@ -421,7 +445,9 @@
       "questions": [
         "prodml-004",
         "prodml-007",
-        "system-design-002"
+        "system-design-002",
+        "system-design-015",
+        "prodml-017"
       ]
     },
     "governance-and-process": {
@@ -441,7 +467,8 @@
         "prodml-002",
         "python-002",
         "prodml-014",
-        "system-design-012"
+        "system-design-012",
+        "prodml-016"
       ]
     },
     "fraud-detection": {
@@ -450,7 +477,8 @@
         "ml-007",
         "system-design-006",
         "prodml-013",
-        "algo-011"
+        "algo-011",
+        "stats-020"
       ]
     },
     "rag": {
@@ -471,7 +499,8 @@
         "llm-001",
         "llm-004",
         "llm-011",
-        "llm-012"
+        "llm-012",
+        "llm-016"
       ]
     },
     "prompting-vs-fine-tuning": {
@@ -479,7 +508,8 @@
       "questions": [
         "llm-003",
         "llm-004",
-        "llm-014"
+        "llm-014",
+        "llm-016"
       ]
     },
     "ai-agents": {
@@ -503,7 +533,10 @@
         "llm-010",
         "system-design-013",
         "dl-011",
-        "python-017"
+        "python-017",
+        "algo-027",
+        "dl-016",
+        "llm-015"
       ]
     },
     "llm-output-control": {
@@ -519,14 +552,16 @@
         "llm-006",
         "llm-007",
         "llm-013",
-        "dl-012"
+        "dl-012",
+        "llm-015"
       ]
     },
     "calibration": {
       "label": "Probability calibration",
       "questions": [
         "ml-013",
-        "ml-016"
+        "ml-016",
+        "algo-026"
       ]
     },
     "causal-inference": {
@@ -534,7 +569,9 @@
       "questions": [
         "prodml-009",
         "stats-013",
-        "stats-015"
+        "stats-015",
+        "stats-021",
+        "stats-022"
       ]
     },
     "feedback-loops": {
@@ -542,7 +579,9 @@
       "questions": [
         "prodml-009",
         "prodml-015",
-        "ml-023"
+        "ml-023",
+        "ml-026",
+        "prodml-017"
       ]
     },
     "python-fundamentals": {
@@ -557,7 +596,8 @@
         "python-010",
         "python-015",
         "python-016",
-        "python-017"
+        "python-017",
+        "python-018"
       ]
     },
     "sql-fundamentals": {
@@ -568,7 +608,9 @@
         "sql-011",
         "sql-012",
         "sql-014",
-        "sql-015"
+        "sql-015",
+        "sql-017",
+        "sql-018"
       ]
     },
     "summary-statistics": {
@@ -590,7 +632,8 @@
       "label": "Bayesian thinking",
       "questions": [
         "stats-011",
-        "stats-012"
+        "stats-012",
+        "stats-020"
       ]
     },
     "linear-models": {
@@ -599,7 +642,8 @@
         "algo-001",
         "algo-002",
         "algo-007",
-        "algo-010"
+        "algo-010",
+        "algo-025"
       ]
     },
     "decision-trees": {
@@ -647,14 +691,17 @@
         "algo-017",
         "algo-018",
         "algo-020",
-        "python-015"
+        "python-015",
+        "algo-027",
+        "dl-016"
       ]
     },
     "dimensionality-reduction": {
       "label": "Dimensionality reduction",
       "questions": [
         "algo-019",
-        "algo-020"
+        "algo-020",
+        "algo-027"
       ]
     },
     "feature-selection": {
@@ -672,7 +719,8 @@
     "hyperparameter-tuning": {
       "label": "Hyperparameter tuning",
       "questions": [
-        "algo-024"
+        "algo-024",
+        "ml-025"
       ]
     },
     "feature-scaling": {
@@ -686,13 +734,15 @@
       "label": "Gradient descent & optimizers",
       "questions": [
         "dl-002",
-        "python-016"
+        "python-016",
+        "dl-013"
       ]
     },
     "loss-functions": {
       "label": "Loss functions",
       "questions": [
-        "dl-003"
+        "dl-003",
+        "algo-026"
       ]
     },
     "neural-networks": {
@@ -703,14 +753,17 @@
         "dl-004",
         "dl-005",
         "dl-006",
-        "dl-009"
+        "dl-009",
+        "dl-013",
+        "dl-015"
       ]
     },
     "sequence-models": {
       "label": "Sequence models & attention",
       "questions": [
         "dl-007",
-        "dl-008"
+        "dl-008",
+        "dl-015"
       ]
     },
     "transfer-learning": {
@@ -724,7 +777,9 @@
       "questions": [
         "dl-010",
         "dl-011",
-        "python-017"
+        "python-017",
+        "dl-014",
+        "dl-016"
       ]
     },
     "llm-training": {
@@ -737,7 +792,8 @@
     "maximum-likelihood": {
       "label": "Maximum likelihood",
       "questions": [
-        "stats-016"
+        "stats-016",
+        "algo-025"
       ]
     },
     "categorical-tests": {
@@ -775,7 +831,8 @@
     "recommender-systems": {
       "label": "Recommender systems",
       "questions": [
-        "ml-023"
+        "ml-023",
+        "ml-026"
       ]
     }
   },
@@ -826,7 +883,9 @@
         "algo-005",
         "algo-022",
         "dl-005",
-        "dl-010"
+        "dl-010",
+        "stats-022",
+        "system-design-015"
       ]
     },
     "stakeholder-communication": {
@@ -845,7 +904,9 @@
         "sql-016",
         "stats-011",
         "system-design-014",
-        "algo-017"
+        "algo-017",
+        "stats-021",
+        "dl-016"
       ]
     },
     "edge-cases": {
@@ -869,7 +930,10 @@
         "algo-011",
         "algo-012",
         "algo-020",
-        "dl-009"
+        "dl-009",
+        "sql-017",
+        "sql-018",
+        "dl-014"
       ]
     },
     "designing-systems": {
@@ -911,7 +975,12 @@
         "sql-010",
         "stats-009",
         "dl-001",
-        "dl-008"
+        "dl-008",
+        "algo-025",
+        "dl-013",
+        "dl-015",
+        "llm-015",
+        "llm-016"
       ]
     }
   }

@@ -246,6 +246,45 @@
         "A Cox model adds features and gives hazard ratios",
         "For a 30-day churn score, a fixed-window classifier can be simpler"
       ]
+    },
+    {
+      "id": "stats-020",
+      "base": "It's Bayes' rule, and I'd work it with counts because stakeholders can follow them. Take 100,000 tra",
+      "draft": true,
+      "points": [
+        "Bayes' rule: P(fraud | flag), not P(flag | fraud)",
+        "With counts, 495 true flags out of 5,470: about 9%",
+        "Rare fraud means false positives swamp true positives",
+        "Precision depends on prevalence: about 51% at a 5% fraud rate",
+        "Raising specificity to 99.5% lifts precision to about 50%",
+        "Check the fraud rate in the traffic actually being scored"
+      ]
+    },
+    {
+      "id": "stats-021",
+      "base": "I'd say the data shows an association, not that support causes churn, and name the most likely confo",
+      "draft": true,
+      "points": [
+        "The data shows association, not that support causes churn",
+        "Confounder: product problems drive both support contact and churn",
+        "Reverse causation: some customers contact support in order to cancel",
+        "Separate cancellation contacts from issue-related contacts",
+        "Compare customers with the same issue, with and without support",
+        "Queue-driven resolution time can act as a natural experiment"
+      ]
+    },
+    {
+      "id": "stats-022",
+      "base": "The 15% gap mixes the feature's effect with who chooses it, since motivated savers adopt first, so I",
+      "draft": true,
+      "points": [
+        "The 15% gap mixes the feature's effect with self-selection",
+        "Relevance: the prompt must strongly shift adoption",
+        "Exclusion restriction: the prompt affects savings only through adoption",
+        "Wald estimate: savings difference divided by adoption-rate difference",
+        "It's a local average treatment effect for compliers only",
+        "Prefer a gated randomized holdout when the feature allows it"
+      ]
     }
   ]
 }

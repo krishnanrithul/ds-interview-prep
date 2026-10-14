@@ -362,5 +362,57 @@
     "What evidence would show that prompting and retrieval aren't enough?"
    ]
   }
+ ],
+ "llm-015": [
+  {
+   "base": "Why not use a generative LLM for search over a million documents?",
+   "draft": true,
+   "variants": [
+    "A teammate wants to ask an LLM \"is this document relevant?\" for every document in a 2-million-row corpus. What would you suggest?",
+    "Where would a generative model fit in a search system if not for scoring every document?"
+   ]
+  },
+  {
+   "base": "What happens if you upgrade your embedding model?",
+   "draft": true,
+   "variants": [
+    "You embed new documents with a newer model but keep the old vectors in the index. What goes wrong?",
+    "How would you roll out a new embedding model for a live semantic search feature?"
+   ]
+  },
+  {
+   "base": "Two support tickets have very similar embeddings but mean opposite things. How can that happen?",
+   "draft": true,
+   "variants": [
+    "\"Refund was processed\" and \"refund was not processed\" score 0.95 cosine similarity. How would you handle that in a ticket router?",
+    "Why might embedding similarity work well for topic grouping but poorly for detecting contradictions?"
+   ]
+  }
+ ],
+ "llm-016": [
+  {
+   "base": "How would you choose which examples to include?",
+   "draft": true,
+   "variants": [
+    "All five of your few-shot examples are short and positive, and the model now labels long complaints as positive. What would you change?",
+    "Your classifier has 12 labels. How would you pick examples without making the prompt huge?"
+   ]
+  },
+  {
+   "base": "Where would you get your few-shot examples, and how do you keep them from inflating your eval score?",
+   "draft": true,
+   "variants": [
+    "You find three of your few-shot examples are also in the test set. How does that affect the score you reported?",
+    "How would you build the example pool and the evaluation set so they don't overlap?"
+   ]
+  },
+  {
+   "base": "When would you move from few-shot prompting to something else?",
+   "draft": true,
+   "variants": [
+    "You keep adding examples and the prompt is now 6,000 tokens per call. What are your options?",
+    "Different input types need different examples to work well. How could you pick examples per input?"
+   ]
+  }
  ]
 }

@@ -310,5 +310,109 @@
     "What is reward hacking, and what's an example for a chat model?"
    ]
   }
+ ],
+ "dl-013": [
+  {
+   "base": "How many iterations are in one epoch?",
+   "draft": true,
+   "variants": [
+    "You have 60,000 training images and a batch size of 128. How many weight updates happen per epoch, and what happens to the last partial batch?",
+    "A colleague doubles the batch size and trains for the same number of epochs. How has the number of weight updates changed?"
+   ]
+  },
+  {
+   "base": "Why do larger batches usually need a different learning rate?",
+   "draft": true,
+   "variants": [
+    "You move to a much bigger GPU and raise the batch size eightfold, and validation accuracy drops. What would you adjust?",
+    "Why do teams often scale the learning rate up and add warmup when they train with very large batches?"
+   ]
+  },
+  {
+   "base": "Your model won't fit in GPU memory at the batch size you want. What can you do?",
+   "draft": true,
+   "variants": [
+    "Only 8 examples fit in memory, but the recipe you're following used a batch of 64. How can you match it?",
+    "Your recipe calls for a batch of 256, but your GPU runs out of memory above 32. What would you try before buying more hardware?"
+   ]
+  }
+ ],
+ "dl-014": [
+  {
+   "base": "When would stemming hurt your model?",
+   "draft": true,
+   "variants": [
+    "A Porter stemmer maps \"university\" and \"universe\" to the same stem. Why might that matter for a review classifier?",
+    "Your sentiment model confuses \"organize\" and \"organ\" after preprocessing. What could cause that?"
+   ]
+  },
+  {
+   "base": "Would you remove stopwords for sentiment analysis?",
+   "draft": true,
+   "variants": [
+    "After stopword removal, \"not good\" and \"good\" look the same to your model. What went wrong?",
+    "What would you check before applying a library's built-in English stopword list to product reviews?"
+   ]
+  },
+  {
+   "base": "Do you need stemming or lemmatization if you use a transformer model?",
+   "draft": true,
+   "variants": [
+    "You switch from TF-IDF to a pretrained BERT classifier. Which preprocessing steps would you drop, and why?",
+    "Why can lemmatizing text before feeding it to a pretrained transformer make results worse?"
+   ]
+  }
+ ],
+ "dl-015": [
+  {
+   "base": "What does the forget gate do, and what happens if it stays near zero?",
+   "draft": true,
+   "variants": [
+    "Your LSTM ignores anything more than a few steps back. What might the forget gate activations look like?",
+    "Why do many implementations initialize the forget gate bias to a positive value such as 1?"
+   ]
+  },
+  {
+   "base": "Your training loss suddenly jumps to NaN. What would you check?",
+   "draft": true,
+   "variants": [
+    "Your LSTM's loss spikes every few hundred batches and sometimes becomes NaN. What would you add?",
+    "What is the difference between clipping gradients by value and clipping by norm?"
+   ]
+  },
+  {
+   "base": "How would you choose between an LSTM and a GRU?",
+   "draft": true,
+   "variants": [
+    "You have 3,000 short sensor sequences and a tight training budget. Which would you try first, and how would you decide?",
+    "An LSTM and a GRU score within noise of each other on validation. Which would you ship, and why?"
+   ]
+  }
+ ],
+ "dl-016": [
+  {
+   "base": "How would you choose the number of topics?",
+   "draft": true,
+   "variants": [
+    "Coherence peaks at 40 topics but product wants about 10 themes. What do you do?",
+    "Perplexity keeps improving as you add topics, but the topics get harder to name. Which do you trust?"
+   ]
+  },
+  {
+   "base": "You rerun the model and half the topics change. What does that tell you?",
+   "draft": true,
+   "variants": [
+    "Two runs with different random seeds give different top topics. How would you decide what to report?",
+    "How would you make the theme counts you send product each month comparable over time?"
+   ]
+  },
+  {
+   "base": "How would you show the themes are actually useful?",
+   "draft": true,
+   "variants": [
+    "Product asks whether the \"billing confusion\" topic is real or an artifact of the model. How would you check?",
+    "How would you turn the themes into something support can act on, such as routing or a fix to prioritize?"
+   ]
+  }
  ]
 }

@@ -193,6 +193,32 @@
         "Overrides used as labels carry reviewer bias",
         "Check for rubber-stamping using cases the model is known to get wrong"
       ]
+    },
+    {
+      "id": "prodml-016",
+      "base": "I'd keep it small and cover four questions. Is it running: request volume, error rate, latency, and ",
+      "draft": true,
+      "points": [
+        "Monitor system health: volume, errors, latency and job completion",
+        "Check input nulls, ranges and schema against training",
+        "Track the prediction distribution as an early warning",
+        "Join delayed labels back to track the main metric",
+        "Log each prediction with its inputs and model version",
+        "Every alert needs an owner and a defined action"
+      ]
+    },
+    {
+      "id": "prodml-017",
+      "base": "Offline evaluation scores a model on held-out historical data, such as a test set or a backtest. It'",
+      "draft": true,
+      "points": [
+        "Offline evaluation measures a proxy metric on held-out history",
+        "Online evaluation measures the real outcome on live traffic",
+        "The offline metric may not track the business metric",
+        "Historical data was shaped by the old model's decisions",
+        "Leakage or training-serving skew can inflate offline scores",
+        "Filter candidates offline, confirm decision-changing models online"
+      ]
     }
   ]
 }

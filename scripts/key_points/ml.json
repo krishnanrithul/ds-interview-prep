@@ -308,6 +308,32 @@
         "Fit the scaler on training data only to avoid leakage",
         "Use a robust scaler when there are outliers"
       ]
+    },
+    {
+      "id": "ml-025",
+      "base": "Each set answers a different question. The training set fits parameters, the validation set chooses ",
+      "draft": true,
+      "points": [
+        "The validation set chooses models, features and hyperparameters",
+        "The test set estimates performance on new data",
+        "Tuning on the test set selects on noise and inflates results",
+        "Look at the test set once, at the end",
+        "Use time-based splits for forecast-like problems",
+        "Use group splits so one entity never sits on both sides"
+      ]
+    },
+    {
+      "id": "ml-026",
+      "base": "NDCG takes graded relevance for each item, discounts it by position, and normalizes by the best poss",
+      "draft": true,
+      "points": [
+        "NDCG discounts graded relevance by log2 of position",
+        "Normalize by the DCG of the ideal ordering",
+        "Relevance 0, 2, 1 gives NDCG@3 of about 0.67",
+        "Unlike MAP, graded labels let a purchase outweigh a click",
+        "Click-based labels are position-biased toward the old ranker",
+        "Treat offline NDCG as a filter and confirm online"
+      ]
     }
   ]
 }

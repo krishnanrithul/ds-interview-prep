@@ -622,5 +622,83 @@
     "Explain the inner and outer loops of nested cross-validation."
    ]
   }
+ ],
+ "algo-025": [
+  {
+   "base": "Is logistic regression a linear model?",
+   "draft": true,
+   "variants": [
+    "What shape is the decision boundary of a logistic regression with two features and no interactions?",
+    "A colleague says logistic regression is non-linear because of the sigmoid. Are they right?"
+   ]
+  },
+  {
+   "base": "How is each one fit?",
+   "draft": true,
+   "variants": [
+    "Why is logistic regression fit by maximum likelihood rather than by least squares on the 0/1 labels?",
+    "What does logistic regression minimize during training, and why that rather than squared error?"
+   ]
+  },
+  {
+   "base": "Is there ever a case for the linear probability model?",
+   "draft": true,
+   "variants": [
+    "An economist fits OLS on a 0/1 outcome to estimate an average effect. When is that reasonable?",
+    "Your linear model on a 0/1 target predicts 1.3 for some customers. What does that tell you?"
+   ]
+  }
+ ],
+ "algo-026": [
+  {
+   "base": "Why does log loss punish confident mistakes so heavily?",
+   "draft": true,
+   "variants": [
+    "One positive case gets a predicted probability of 0.001. Roughly how much does that single row add to the loss compared with a case predicted at 0.9?",
+    "Your log loss jumped after a data change, but accuracy barely moved. What kind of predictions would you look for first?"
+   ]
+  },
+  {
+   "base": "How do log loss and AUC relate?",
+   "draft": true,
+   "variants": [
+    "You divide every predicted probability by 2. What happens to AUC and to log loss?",
+    "Model A has better AUC, model B has better log loss. Which do you ship for a pricing model, and which for a top-100 review queue?"
+   ]
+  },
+  {
+   "base": "What baseline would you compare against?",
+   "draft": true,
+   "variants": [
+    "The positive rate is 2% and your model's log loss is 0.12. Is that good?",
+    "How would you compute the log loss of a model that has learned nothing beyond the class balance?"
+   ]
+  }
+ ],
+ "algo-027": [
+  {
+   "base": "What do n_neighbors and min_dist control in UMAP?",
+   "draft": true,
+   "variants": [
+    "Raising n_neighbors from 15 to 100 merges several small clusters into a few big ones. What changed?",
+    "Why would you set min_dist near 0 when clustering on UMAP output, but higher for a picture?"
+   ]
+  },
+  {
+   "base": "How would you handle new documents that arrive after you've built the map?",
+   "draft": true,
+   "variants": [
+    "Next week 20,000 new support tickets arrive. Do you refit UMAP on everything or place them into the existing map?",
+    "Your topic map feeds a dashboard that updates weekly. What does the choice between t-SNE and UMAP mean for keeping it stable?"
+   ]
+  },
+  {
+   "base": "What are the risks of clustering with HDBSCAN on UMAP output?",
+   "draft": true,
+   "variants": [
+    "HDBSCAN on a 10-dimensional UMAP output finds 40 clean clusters. How do you check they are real?",
+    "You rerun UMAP with a different random seed and the cluster assignments change. What do you do?"
+   ]
+  }
  ]
 }

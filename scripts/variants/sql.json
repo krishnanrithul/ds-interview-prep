@@ -390,5 +390,57 @@
     "How would a single metrics layer or documented definition help, and what does it cost to maintain?"
    ]
   }
+ ],
+ "sql-017": [
+  {
+   "base": "What happens if you put a condition on the customers table in the ON clause instead of WHERE?",
+   "draft": true,
+   "variants": [
+    "You write LEFT JOIN orders o ON o.customer_id = c.customer_id AND c.country = 'IN'. Do customers from other countries disappear from the result?",
+    "A report meant to cover only active customers puts c.status = 'active' in the ON clause of a LEFT JOIN. What does the output contain?"
+   ]
+  },
+  {
+   "base": "After moving the filter into ON, how do you make sure customers with no 2025 orders show the right numbers?",
+   "draft": true,
+   "variants": [
+    "After the fix, a customer with no 2025 orders shows an order count of 1. What is the query counting?",
+    "You also need 2025 revenue per customer, and customers with no orders should show 0 rather than NULL. How do you write it?"
+   ]
+  },
+  {
+   "base": "When is a filter on the right table in WHERE exactly what you want?",
+   "draft": true,
+   "variants": [
+    "Find customers who placed no orders in 2025 using a LEFT JOIN. Where does the date condition go, and where does the NULL check go?",
+    "A colleague writes WHERE o.order_date >= '2025-01-01' AND o.order_id IS NULL to find customers with no 2025 orders and gets zero rows. Why?"
+   ]
+  }
+ ],
+ "sql-018": [
+  {
+   "base": "Why does COUNT(CASE WHEN status = 'refunded' THEN 1 ELSE 0 END) give the wrong answer?",
+   "draft": true,
+   "variants": [
+    "A colleague's refunded-order count always equals the total order count. What is the likely bug?",
+    "When do COUNT(CASE WHEN x THEN 1 END) and SUM(CASE WHEN x THEN 1 ELSE 0 END) agree, and when does leaving out ELSE 0 in the SUM change the result?"
+   ]
+  },
+  {
+   "base": "The business now wants one column per country instead of per status. How do you pivot?",
+   "draft": true,
+   "variants": [
+    "You need revenue for each of 40 product categories as separate columns. Do you write 40 CASE expressions, and what are the alternatives?",
+    "Show 2024 and 2025 revenue side by side, one row per calendar month. How do you write it?"
+   ]
+  },
+  {
+   "base": "The refund rate comes out as 0 for every month. What happened?",
+   "draft": true,
+   "variants": [
+    "In Postgres, SUM(is_refunded) / COUNT(*) returns 0 even though some orders were refunded. Why, and how do you fix it?",
+    "Your conversion rate query works in Snowflake but returns only 0s and 1s after porting to SQL Server. What do you check?"
+   ]
+  }
  ]
 }

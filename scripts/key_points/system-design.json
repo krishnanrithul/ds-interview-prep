@@ -181,6 +181,32 @@
         "Flag assumptions outside historical ranges",
         "Label scenarios as 'if' statements, not forecasts"
       ]
+    },
+    {
+      "id": "system-design-015",
+      "base": "Batch. The decision is made weekly by people planning campaigns, so a score computed the night befor",
+      "draft": true,
+      "points": [
+        "Batch, because the decision is weekly and made by people",
+        "Batch is cheaper and easier to retry, backfill and monitor",
+        "Real time only when the decision happens inside a live request",
+        "Give new or unscored customers a clear default",
+        "Check freshness and row count before the table is used",
+        "Compare the score distribution with last week's"
+      ]
+    },
+    {
+      "id": "system-design-016",
+      "base": "I'd log enough to reproduce any single prediction and join it to its outcome later. That means a req",
+      "draft": true,
+      "points": [
+        "Log request ID, entity ID, timestamp and model version",
+        "Log feature values exactly as the model received them",
+        "Log the score, the decision and any fallback used",
+        "Served features expose training-serving skew",
+        "IDs let me join predictions to labels later",
+        "Mask or exclude personal data from the log"
+      ]
     }
   ]
 }

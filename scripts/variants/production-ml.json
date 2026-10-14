@@ -380,5 +380,57 @@
     "How would you check that reviewers are still exercising judgment?"
    ]
   }
+ ],
+ "prodml-016": [
+  {
+   "base": "Outcomes won't be known for weeks. How do you know the model is healthy before then?",
+   "draft": true,
+   "variants": [
+    "A credit model's defaults only show up after three months. How do you know in week one that something is wrong?",
+    "Which signals would tell you an upstream feed broke before any outcomes come in?"
+   ]
+  },
+  {
+   "base": "How would you set alert thresholds for a brand-new model?",
+   "draft": true,
+   "variants": [
+    "You have no history for the new model's score distribution. What thresholds would you start with?",
+    "Your first-week alerts fire every day on normal variation. What would you change?"
+   ]
+  },
+  {
+   "base": "Why log the inputs and model version with each prediction?",
+   "draft": true,
+   "variants": [
+    "A customer disputes a decision your model made last month. What do you need to explain it?",
+    "Two model versions ran during a rollout and one produced odd scores. How would you tell which predictions came from which?"
+   ]
+  }
+ ],
+ "prodml-017": [
+  {
+   "base": "Why might a better offline AUC not improve the business metric?",
+   "draft": true,
+   "variants": [
+    "Your new ranking model improves AUC by 0.02 but click-through doesn't move in the A/B test. What could explain it?",
+    "A churn model is more accurate offline, but retention doesn't improve after launch. What would you look at?"
+   ]
+  },
+  {
+   "base": "How does the current model bias your offline evaluation?",
+   "draft": true,
+   "variants": [
+    "Your recommender's training data only contains items the old model chose to show. How does that limit offline evaluation of a new model?",
+    "Why is it hard to evaluate a new loan model offline when you only have outcomes for applicants the old model approved?"
+   ]
+  },
+  {
+   "base": "When is offline evaluation enough on its own?",
+   "draft": true,
+   "variants": [
+    "You retrain the same model on a fresh month of data with no feature changes. Do you need an A/B test?",
+    "Your model only ranks internal reports for analysts and has no measurable online outcome. How would you validate it?"
+   ]
+  }
  ]
 }

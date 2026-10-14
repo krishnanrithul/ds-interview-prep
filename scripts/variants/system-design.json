@@ -354,5 +354,57 @@
     "What tests would you run on the metrics layer itself?"
    ]
   }
+ ],
+ "system-design-015": [
+  {
+   "base": "What would make you switch to real-time scoring?",
+   "draft": true,
+   "variants": [
+    "The team now wants to show a retention offer the moment a customer opens the cancellation page. Does your design change?",
+    "A product manager says real-time scoring is more modern. What questions would you ask before agreeing?"
+   ]
+  },
+  {
+   "base": "How do you handle customers the batch job hasn't scored yet?",
+   "draft": true,
+   "variants": [
+    "A customer signed up yesterday and has no score in this week's table. What does the campaign tool see?",
+    "Twelve percent of customers are missing from the score table this week. How would you find out and what would you do?"
+   ]
+  },
+  {
+   "base": "How do you know the batch run worked before anyone uses it?",
+   "draft": true,
+   "variants": [
+    "The scoring job finished without errors, but every score is 0.5. What checks would have caught that?",
+    "What would you check automatically between the job finishing and the campaign team pulling the scores?"
+   ]
+  }
+ ],
+ "system-design-016": [
+  {
+   "base": "Why log the feature values rather than recompute them later from the warehouse?",
+   "draft": true,
+   "variants": [
+    "A customer disputes a decision from three months ago. Can you explain it if you only logged the score?",
+    "Your training pipeline recomputes features from the warehouse. How would logged serving features help you find training-serving skew?"
+   ]
+  },
+  {
+   "base": "How do the logs get joined to outcomes?",
+   "draft": true,
+   "variants": [
+    "Loan defaults arrive 6 to 12 months after the decision. What must the log contain to compute accuracy later?",
+    "You only logged the score and a timestamp. Why is it hard to measure recall a month later?"
+   ]
+  },
+  {
+   "base": "What are the costs and risks of logging everything?",
+   "draft": true,
+   "variants": [
+    "Your model serves 50,000 requests a second. How would you keep logging from adding latency or huge storage costs?",
+    "The features include names and addresses. What do you do with them in the log?"
+   ]
+  }
  ]
 }

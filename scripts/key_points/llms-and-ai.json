@@ -181,6 +181,32 @@
         "Use LoRA for style, format or domain adaptation with limited data",
         "Try prompting or retrieval before fine-tuning"
       ]
+    },
+    {
+      "id": "llm-015",
+      "base": "An embedding model maps a piece of text to a fixed-length vector, so texts with similar meaning land",
+      "draft": true,
+      "points": [
+        "An embedding model maps text to a fixed-length vector",
+        "Similar meanings land close together, measured by cosine similarity",
+        "A generative LLM produces text by predicting the next token",
+        "Use embeddings for search, retrieval, clustering and classifier features",
+        "Similar embeddings aren't always relevant; negations can embed close",
+        "Switching embedding models means re-embedding the whole index"
+      ]
+    },
+    {
+      "id": "llm-016",
+      "base": "Zero-shot gives the model only instructions; few-shot adds a handful of worked input and output exam",
+      "draft": true,
+      "points": [
+        "Zero-shot gives only instructions; few-shot adds worked examples",
+        "Examples pin down format and label boundaries better than words",
+        "Examples add input tokens to every call",
+        "Vary examples, since the model copies their length and quirks",
+        "Never reuse evaluation items as few-shot examples",
+        "Compare zero-shot and few-shot on the same labeled set"
+      ]
     }
   ]
 }

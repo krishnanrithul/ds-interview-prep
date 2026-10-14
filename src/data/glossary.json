@@ -1054,6 +1054,72 @@
       "label": "Metrics layer",
       "definition": "A shared place where business metric definitions are written once and queried by every dashboard, notebook and model.",
       "tag": "governance-and-process"
+    },
+    {
+      "id": "left-join",
+      "label": "LEFT JOIN",
+      "definition": "A join that keeps every row from the left table and fills the right table's columns with NULL where no matching row exists.",
+      "tag": "joins"
+    },
+    {
+      "id": "group-by",
+      "label": "GROUP BY",
+      "definition": "A SQL clause that collapses rows sharing the same values in the listed columns into one row per group, so aggregates are computed per group.",
+      "tag": "sql-fundamentals"
+    },
+    {
+      "id": "groupby",
+      "label": "groupby",
+      "definition": "The pandas operation that splits a DataFrame into groups by key values so a function can be applied to each group.",
+      "tag": "pandas"
+    },
+    {
+      "id": "sensitivity",
+      "label": "Sensitivity",
+      "definition": "The share of actual positive cases that a test or model correctly flags, also called recall or the true positive rate.",
+      "tag": "evaluation-metrics"
+    },
+    {
+      "id": "specificity",
+      "label": "Specificity",
+      "definition": "The share of actual negative cases that a test or model correctly leaves unflagged, equal to one minus the false positive rate.",
+      "tag": "evaluation-metrics"
+    },
+    {
+      "id": "self-selection",
+      "label": "Self-selection",
+      "definition": "When individuals choose for themselves whether to receive a treatment, so those who receive it can differ systematically from those who don't.",
+      "tag": "causal-inference"
+    },
+    {
+      "id": "ndcg",
+      "label": "NDCG",
+      "definition": "Normalized discounted cumulative gain, a metric for judging the quality of a ranked list of results.",
+      "tag": "evaluation-metrics"
+    },
+    {
+      "id": "log-loss",
+      "label": "Log loss",
+      "definition": "A metric that scores a classifier's predicted probabilities against the actual outcomes; lower is better.",
+      "tag": "evaluation-metrics"
+    },
+    {
+      "id": "umap",
+      "label": "UMAP",
+      "definition": "Uniform manifold approximation and projection, a technique for mapping high-dimensional data into a few dimensions.",
+      "tag": "dimensionality-reduction"
+    },
+    {
+      "id": "lstm",
+      "label": "LSTM",
+      "definition": "Long short-term memory network: a widely used type of recurrent neural network, introduced in 1997.",
+      "tag": "sequence-models"
+    },
+    {
+      "id": "unlabeled-data",
+      "label": "Unlabeled data",
+      "definition": "Records that have no known category or target value attached to them.",
+      "tag": "text-features"
     }
   ]
 }

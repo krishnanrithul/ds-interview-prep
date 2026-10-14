@@ -155,6 +155,58 @@
         "A KL penalty keeps it close to the instruction-tuned model",
         "Optimizing a proxy reward can make models sycophantic or verbose"
       ]
+    },
+    {
+      "id": "dl-013",
+      "base": "An epoch is one full pass over the training data, a batch is the subset of examples used to compute ",
+      "draft": true,
+      "points": [
+        "An epoch is one full pass over the training data",
+        "An iteration is one weight update on one batch",
+        "Small batches give noisy gradients that can mildly regularize",
+        "Large batches use hardware efficiently but may generalize worse",
+        "Retune the learning rate when you change batch size",
+        "Gradient accumulation simulates a batch larger than memory allows"
+      ]
+    },
+    {
+      "id": "dl-014",
+      "base": "Tokenization splits text into units, usually words, and the details matter: punctuation, contraction",
+      "draft": true,
+      "points": [
+        "Keep each preprocessing step only if validation improves",
+        "Check the tokenizer on real text, since defaults drop signal",
+        "Stemming chops suffixes by rule and can produce non-words",
+        "Lemmatization maps words to dictionary forms using part of speech",
+        "Both shrink the vocabulary, which helps most with small data",
+        "Keep negations like \"not\" instead of removing them as stopwords"
+      ]
+    },
+    {
+      "id": "dl-015",
+      "base": "An RNN is trained by backpropagation through time, so the gradient reaching an early step is a produ",
+      "draft": true,
+      "points": [
+        "Backpropagation through time multiplies one factor per step",
+        "Repeated multiplication makes gradients vanish or explode",
+        "The LSTM cell state is updated additively, so gradients survive",
+        "Forget, input and output gates control keeping, writing and exposing",
+        "A GRU is a lighter variant with fewer gates and parameters",
+        "Clip the gradient norm, since gating doesn't prevent explosions"
+      ]
+    },
+    {
+      "id": "dl-016",
+      "base": "LDA treats each ticket as a mixture of topics and each topic as a distribution over words. It works ",
+      "draft": true,
+      "points": [
+        "LDA: tickets are topic mixtures, topics are word distributions",
+        "LDA is sensitive to stopwords and boilerplate in preprocessing",
+        "Choose k by coherence and whether people can name topics",
+        "Embed and cluster tickets, BERTopic-style, to group paraphrases",
+        "Support leads name, merge or split topics from sample tickets",
+        "Rerun with different seeds to check topic stability"
+      ]
     }
   ]
 }

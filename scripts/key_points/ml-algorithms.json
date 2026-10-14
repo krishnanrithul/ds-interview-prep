@@ -310,6 +310,45 @@
         "Repeated tuning overfits the validation folds",
         "Keep a final untouched holdout or use nested cross-validation"
       ]
+    },
+    {
+      "id": "algo-025",
+      "base": "Both combine features linearly; what differs is the target and the loss. Linear regression predicts ",
+      "draft": true,
+      "points": [
+        "Linear regression predicts an unbounded number fit by least squares",
+        "Logistic regression models log-odds linearly through a sigmoid",
+        "Logistic regression is fit by maximum likelihood, minimizing log loss",
+        "A straight line on 0/1 predicts outside 0 and 1",
+        "Logistic regression still has a linear decision boundary",
+        "Choose the threshold from costs, not by default at 0.5"
+      ]
+    },
+    {
+      "id": "algo-026",
+      "base": "Log loss is the average of minus the log of the probability the model gave to what actually happened",
+      "draft": true,
+      "points": [
+        "Log loss averages minus log of the probability given to the outcome",
+        "A positive at 0.01 costs about 4.6, versus 0.105 at 0.9",
+        "It is a proper scoring rule that rewards calibration",
+        "AUC ignores calibration; it only measures ranking",
+        "Compare against the base-rate baseline, about 0.199 at 5%",
+        "Clip probabilities away from 0 and 1"
+      ]
+    },
+    {
+      "id": "algo-027",
+      "base": "I'd start with PCA to about 50 dimensions: it's fast, deterministic, linear, and removes noise, but ",
+      "draft": true,
+      "points": [
+        "Start with PCA to about 50 dimensions as a linear baseline",
+        "Prefer UMAP over t-SNE for speed at this scale",
+        "UMAP can transform new points; scikit-learn's t-SNE cannot",
+        "n_neighbors balances local against global structure",
+        "Cluster with HDBSCAN on roughly 10-dimensional UMAP output, not 2D",
+        "Check stability across seeds and confirm clusters in the original space"
+      ]
     }
   ]
 }

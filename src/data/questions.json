@@ -11400,6 +11400,1579 @@
         "Try prompting or retrieval before fine-tuning"
       ],
       "key_points_draft": true
+    },
+    {
+      "id": "sql-017",
+      "question": "You LEFT JOIN customers to orders to count each customer's 2025 orders, and add WHERE o.order_date >= '2025-01-01'. Customers with no orders disappear from the result. Why, and how do you fix it?",
+      "topic": "SQL",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, SQL fundamentals",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What happens if you put a condition on the customers table in the ON clause instead of WHERE?",
+          "intent": "test that ON conditions on the left table do not filter left rows",
+          "variants": [
+            {
+              "text": "You write LEFT JOIN orders o ON o.customer_id = c.customer_id AND c.country = 'IN'. Do customers from other countries disappear from the result?",
+              "draft": true
+            },
+            {
+              "text": "A report meant to cover only active customers puts c.status = 'active' in the ON clause of a LEFT JOIN. What does the output contain?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "After moving the filter into ON, how do you make sure customers with no 2025 orders show the right numbers?",
+          "intent": "test aggregating over NULL-filled rows from an outer join",
+          "variants": [
+            {
+              "text": "After the fix, a customer with no 2025 orders shows an order count of 1. What is the query counting?",
+              "draft": true
+            },
+            {
+              "text": "You also need 2025 revenue per customer, and customers with no orders should show 0 rather than NULL. How do you write it?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "When is a filter on the right table in WHERE exactly what you want?",
+          "intent": "test the IS NULL anti-join pattern and where each condition goes",
+          "variants": [
+            {
+              "text": "Find customers who placed no orders in 2025 using a LEFT JOIN. Where does the date condition go, and where does the NULL check go?",
+              "draft": true
+            },
+            {
+              "text": "A colleague writes WHERE o.order_date >= '2025-01-01' AND o.order_id IS NULL to find customers with no 2025 orders and gets zero rows. Why?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "A WHERE filter on the right table of a LEFT JOIN removes the unmatched rows, so right-table conditions belong in the ON clause.",
+      "junior_answer": "The WHERE clause filters them out, so I'd remove the date filter.",
+      "senior_answer": "A LEFT JOIN keeps every customer and fills the order columns with NULL when there is no match. WHERE runs after the join, and o.order_date >= '2025-01-01' is unknown for those NULL rows, so they are dropped and the LEFT JOIN effectively becomes an INNER JOIN. The fix is to move the condition into the ON clause: LEFT JOIN orders o ON o.customer_id = c.customer_id AND o.order_date >= '2025-01-01'. Customers without 2025 orders now stay, and I'd count COUNT(o.order_id), not COUNT(*), so they show 0 instead of 1. The reverse also trips people up: a condition on the customers table placed in ON doesn't remove any customers, it only stops them matching, so left-table filters go in WHERE. The one right-table filter that belongs in WHERE is o.order_id IS NULL, which deliberately keeps only unmatched customers for an anti-join.",
+      "draft": true,
+      "tags": [
+        "joins",
+        "null-semantics",
+        "sql-fundamentals",
+        "edge-cases"
+      ],
+      "terms": [
+        "left-join"
+      ],
+      "key_points": [
+        "WHERE runs after the join and drops the NULL-filled rows",
+        "The LEFT JOIN effectively becomes an INNER JOIN",
+        "Move right-table conditions into the ON clause",
+        "Use COUNT(o.order_id), not COUNT(*), so unmatched customers show 0",
+        "Left-table conditions in ON don't remove any left rows",
+        "WHERE o.order_id IS NULL deliberately keeps unmatched rows for an anti-join"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "sql-018",
+      "question": "An orders table has order_date and a status of 'completed', 'refunded' or 'cancelled'. In a single GROUP BY query, return one row per month with total orders, completed orders and the refund rate.",
+      "topic": "SQL",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, data analyst or data scientist",
+      "kind": "implementation",
+      "follow_ups": [
+        {
+          "text": "Why does COUNT(CASE WHEN status = 'refunded' THEN 1 ELSE 0 END) give the wrong answer?",
+          "intent": "test NULL semantics of COUNT inside conditional aggregation",
+          "variants": [
+            {
+              "text": "A colleague's refunded-order count always equals the total order count. What is the likely bug?",
+              "draft": true
+            },
+            {
+              "text": "When do COUNT(CASE WHEN x THEN 1 END) and SUM(CASE WHEN x THEN 1 ELSE 0 END) agree, and when does leaving out ELSE 0 in the SUM change the result?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "The business now wants one column per country instead of per status. How do you pivot?",
+          "intent": "test using conditional aggregation as a pivot and knowing its limits",
+          "variants": [
+            {
+              "text": "You need revenue for each of 40 product categories as separate columns. Do you write 40 CASE expressions, and what are the alternatives?",
+              "draft": true
+            },
+            {
+              "text": "Show 2024 and 2025 revenue side by side, one row per calendar month. How do you write it?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "The refund rate comes out as 0 for every month. What happened?",
+          "intent": "test integer division in SQL rates",
+          "variants": [
+            {
+              "text": "In Postgres, SUM(is_refunded) / COUNT(*) returns 0 even though some orders were refunded. Why, and how do you fix it?",
+              "draft": true
+            },
+            {
+              "text": "Your conversion rate query works in Snowflake but returns only 0s and 1s after porting to SQL Server. What do you check?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "CASE WHEN inside an aggregate computes many filtered metrics in one pass, as long as you get the NULLs and the denominator right.",
+      "junior_answer": "Write one query per status, each grouped by month, and join the three results on month.",
+      "senior_answer": "I'd use conditional aggregation, putting CASE WHEN inside the aggregates. In Postgres or Snowflake: SELECT DATE_TRUNC('month', order_date) AS month, COUNT(*) AS orders, SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed, AVG(CASE WHEN status = 'refunded' THEN 1.0 ELSE 0 END) AS refund_rate FROM orders GROUP BY DATE_TRUNC('month', order_date). That scans the table once instead of joining three filtered subqueries. A few details matter. COUNT(CASE WHEN status = 'refunded' THEN 1 END) also works because COUNT skips NULLs, but adding ELSE 0 inside COUNT counts every row, a common bug. If I divide two integer counts instead, Postgres and SQL Server truncate the rate to 0, and SQL Server's AVG of integers truncates too, hence the 1.0. NULL or inconsistently cased status values silently fall into ELSE, so I'd check the distinct values first. And I'd confirm the denominator with finance: refunds over all orders, or over completed ones.",
+      "draft": true,
+      "tags": [
+        "null-semantics",
+        "sql-fundamentals",
+        "edge-cases"
+      ],
+      "terms": [
+        "group-by"
+      ],
+      "key_points": [
+        "Conditional aggregation: CASE WHEN inside SUM or AVG",
+        "One table scan instead of joining several filtered subqueries",
+        "COUNT with ELSE 0 counts every row, a common bug",
+        "Integer division can truncate the rate to 0; use 1.0",
+        "NULL or messy status values silently fall into ELSE",
+        "Confirm whether the denominator is all orders or completed ones"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "python-018",
+      "question": "In pandas, what's the difference between df.groupby(...).agg() and df.groupby(...).transform()? Give a case where you'd need each.",
+      "topic": "Python",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, pandas",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "Some rows have a missing customer_id. What happens to them in agg and in transform?",
+          "intent": "test how groupby handles NaN keys",
+          "variants": [
+            {
+              "text": "After df['total'] = df.groupby('region')['sales'].transform('sum'), some rows show NaN in total even though sales is never missing. Why?",
+              "draft": true
+            },
+            {
+              "text": "How do you keep rows with a missing key as their own group in a groupby?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "You use transform('mean') to add each customer's average order value as a feature in a churn model. What could go wrong?",
+          "intent": "test leakage from group statistics computed over all rows",
+          "variants": [
+            {
+              "text": "A feature 'user's average basket size' is computed with groupby over the full dataset before the train/test split. Is that a problem?",
+              "draft": true
+            },
+            {
+              "text": "How would you compute each customer's average order value using only their orders before each row's date?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "Your groupby with a lambda takes 20 minutes on 5 million rows. What do you do?",
+          "intent": "test preferring built-in vectorized aggregations over per-group Python",
+          "variants": [
+            {
+              "text": "df.groupby('user_id').apply(lambda g: g['amount'].sum() / len(g)) is slow. How would you rewrite it?",
+              "draft": true
+            },
+            {
+              "text": "When is groupby().apply() still the right tool despite being slower?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "agg collapses each group to one row, while transform broadcasts the group result back onto every original row.",
+      "junior_answer": "agg returns a summary per group and transform keeps the same shape as the DataFrame.",
+      "senior_answer": "agg reduces each group to one row: df.groupby('customer_id')['amount'].agg(['sum', 'mean']) gives one row per customer, which is what I want for a report or a customer-level table. transform returns a result aligned to the original index, the same length as df, so df['cust_total'] = df.groupby('customer_id')['amount'].transform('sum') puts each customer's total on every transaction row, and df['amount'] / df['cust_total'] gives each purchase's share. I'd pass built-in names like 'sum' or 'mean' rather than lambdas, because those run as optimized vectorized code while a lambda runs Python once per group, which is far slower with millions of groups. Two edge cases: groupby uses dropna=True by default, so rows with a missing key get no group: agg drops them, and since pandas 1.5 transform returns NaN for them. And when I build model features, a group mean computed over the whole dataset includes future rows, which leaks; for time-ordered data I'd use a shifted expanding mean per group instead.",
+      "draft": true,
+      "tags": [
+        "data-leakage",
+        "pandas",
+        "python-fundamentals"
+      ],
+      "terms": [
+        "groupby"
+      ],
+      "key_points": [
+        "agg reduces each group to one row",
+        "transform returns a result aligned to the original index",
+        "transform('sum') puts the group total on every row",
+        "Built-in names like 'sum' are much faster than lambdas",
+        "dropna=True by default, so missing keys get NaN from transform",
+        "Group stats over the whole dataset can leak future rows into features"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "stats-020",
+      "question": "A fraud model has 99% sensitivity and 95% specificity, and 0.5% of transactions are fraudulent. If the model flags a transaction, what is the probability it is actually fraud?",
+      "topic": "Statistics",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, data scientist, fintech",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "How would you explain this result to the fraud operations lead?",
+          "intent": "test communicating base rates with natural frequencies",
+          "variants": [
+            {
+              "text": "The ops lead says the model is supposed to be 99% accurate, so why are most reviews false alarms? How do you answer?",
+              "draft": true
+            },
+            {
+              "text": "How would you show the effect of the fraud rate on wasted reviews in a single table for a non-technical audience?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "Which would improve precision more here: higher sensitivity or higher specificity?",
+          "intent": "test which error rate drives precision when positives are rare",
+          "variants": [
+            {
+              "text": "You can raise sensitivity from 99% to 99.9%, or specificity from 95% to 98%. Which do you pick if the goal is fewer wasted reviews, and roughly what precision does each give?",
+              "draft": true
+            },
+            {
+              "text": "Why does a one-point change in the false positive rate matter so much when only 0.5% of cases are positive?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "A second, independent check also flags the transaction. How do you update the probability?",
+          "intent": "test sequential Bayesian updating and the independence assumption",
+          "variants": [
+            {
+              "text": "A flagged transaction goes to a second check with 90% sensitivity and 99% specificity, and it flags too. What is the probability of fraud now, assuming the checks err independently?",
+              "draft": true
+            },
+            {
+              "text": "Two models trained on the same features both flag a transaction. Can you multiply their evidence as if they were independent?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "When the condition is rare, even an accurate test produces mostly false positives, so precision depends on the base rate.",
+      "junior_answer": "About 99%, because the model catches 99% of fraud.",
+      "senior_answer": "It's Bayes' rule, and I'd work it with counts because stakeholders can follow them. Take 100,000 transactions: 500 are fraud and the model flags 495 of them. Of the 99,500 legitimate ones, 5% are flagged, which is 4,975. So there are 5,470 flags, and only 495 of them are fraud: about 9%. The 99% is P(flag | fraud), but the question asks for P(fraud | flag). Because fraud is rare, false positives swamp the true ones, and the review team would spend most of its time on legitimate transactions. Precision depends on prevalence: the same model at a 5% fraud rate gives about 51%. Specificity is the lever here: raising it to 99.5% lifts precision to about 50%, while extra sensitivity barely moves it. I'd also check that 0.5% is the fraud rate in the traffic the model actually scores, since an upstream rule filter changes it.",
+      "draft": true,
+      "tags": [
+        "evaluation-metrics",
+        "class-imbalance",
+        "fraud-detection",
+        "bayesian-inference"
+      ],
+      "terms": [
+        "sensitivity",
+        "specificity"
+      ],
+      "key_points": [
+        "Bayes' rule: P(fraud | flag), not P(flag | fraud)",
+        "With counts, 495 true flags out of 5,470: about 9%",
+        "Rare fraud means false positives swamp true positives",
+        "Precision depends on prevalence: about 51% at a 5% fraud rate",
+        "Raising specificity to 99.5% lifts precision to about 50%",
+        "Check the fraud rate in the traffic actually being scored"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "stats-021",
+      "question": "Customers who contacted support churn at twice the rate of customers who never did. A VP concludes that support interactions are driving customers away. How do you respond?",
+      "topic": "Statistics",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, product data scientist",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What else could explain a pattern like this one?",
+          "intent": "test naming a concrete confounder or reverse causation",
+          "variants": [
+            {
+              "text": "Users who turn on two-factor authentication churn less. Why might that not mean two-factor authentication prevents churn?",
+              "draft": true
+            },
+            {
+              "text": "Stores with more staff on the floor have higher sales. What could explain this besides staff driving sales?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "How could you get evidence on whether support itself helps or hurts retention?",
+          "intent": "test designing a comparison that isolates the causal effect",
+          "variants": [
+            {
+              "text": "You can't randomly withhold support from customers. What natural variation could you use instead?",
+              "draft": true
+            },
+            {
+              "text": "How would you use time to first response to study whether support quality affects churn?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "What do you tell the VP today, before any further analysis?",
+          "intent": "test communicating uncertainty without dismissing the stakeholder",
+          "variants": [
+            {
+              "text": "The VP wants to cut support headcount next week based on this chart. What do you say?",
+              "draft": true
+            },
+            {
+              "text": "How do you explain reverse causation to an executive who doesn't use statistics?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "An association between a behavior and an outcome often reflects a shared cause or reverse causation, so name the alternative and design a comparison that rules it out.",
+      "junior_answer": "Correlation isn't causation, so we can't conclude anything from this.",
+      "senior_answer": "I'd say the data shows an association, not that support causes churn, and name the most likely confounder: customers who hit product problems, such as failed payments or bugs, are the ones who both contact support and leave. There's also reverse causation, since some customers contact support precisely to cancel. That doesn't mean we can conclude nothing. I'd first separate cancellation contacts from issue contacts, then compare customers who hit the same issue with and without a support contact, adjusting for tenure and plan. A sharper test is resolution time: when it depends on queue load rather than the customer or an outage, it works as a natural experiment, and if faster, better support goes with lower churn for the same issue, support is helping. For the VP, I'd frame it as: the problems drive churn, support is where they show up, and making support harder to reach could raise churn.",
+      "draft": true,
+      "tags": [
+        "retention-cohorts",
+        "causal-inference",
+        "stakeholder-communication"
+      ],
+      "terms": [
+        "churn"
+      ],
+      "key_points": [
+        "The data shows association, not that support causes churn",
+        "Confounder: product problems drive both support contact and churn",
+        "Reverse causation: some customers contact support in order to cancel",
+        "Separate cancellation contacts from issue-related contacts",
+        "Compare customers with the same issue, with and without support",
+        "Queue-driven resolution time can act as a natural experiment"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "stats-022",
+      "question": "Users self-select into a new budgeting feature, and adopters save 15% more than non-adopters. Last quarter a random half of users saw an in-app prompt encouraging them to try it. How would you estimate the feature's causal effect on savings?",
+      "topic": "Statistics",
+      "difficulty": "hard",
+      "frequency": "common in senior DS interviews",
+      "context": "Senior DS interview, fintech product analytics",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "How would you check whether the prompt is a strong enough instrument?",
+          "intent": "test relevance and weak-instrument diagnostics",
+          "variants": [
+            {
+              "text": "The prompt raised adoption from 20% to only 22%. What does that do to your estimate and its confidence interval?",
+              "draft": true
+            },
+            {
+              "text": "What first-stage results would you report alongside the IV estimate, and what would make you distrust it?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "What could violate the exclusion restriction here?",
+          "intent": "test reasoning about untestable instrument assumptions",
+          "variants": [
+            {
+              "text": "The prompt included the line 'Users who budget save more every month.' Is the prompt still a valid instrument?",
+              "draft": true
+            },
+            {
+              "text": "The prompted group also got a push notification showing their savings balance. What does that do to your estimate?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "Whose effect does your estimate describe, and can leadership use it to predict the gain from turning the feature on by default for everyone?",
+          "intent": "test LATE interpretation and external validity",
+          "variants": [
+            {
+              "text": "Leadership wants the savings gain if every user adopts. Does your IV estimate answer that?",
+              "draft": true
+            },
+            {
+              "text": "Why might the effect for users who adopt only when prompted differ from the effect for early adopters?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "An instrument recovers a causal effect only for the users it moves, and only if it is strong and affects the outcome solely through the treatment.",
+      "junior_answer": "Regress savings on adoption, controlling for income, age and past savings.",
+      "senior_answer": "The 15% gap mixes the feature's effect with who chooses it, since motivated savers adopt first, so I'd use the random prompt as an instrument. First, relevance: the prompt must shift adoption meaningfully, and I'd want a first-stage F-statistic well above 10, because a weak instrument gives biased and very noisy estimates. Second, the exclusion restriction, which I can't test: the prompt must affect savings only through adoption. If its copy nudges people to save on its own, the estimate is inflated. The Wald estimate is the difference in savings between prompted and unprompted users divided by the difference in adoption rates, or two-stage least squares with covariates. Assuming nobody is put off adopting by the prompt, that's a local average treatment effect for compliers, users who adopt only because they were prompted, not the effect for everyone. If the feature can be gated, I'd prefer a randomized holdout where control users can't access it, because the assumptions are far easier to defend.",
+      "draft": true,
+      "tags": [
+        "ab-testing",
+        "causal-inference",
+        "tradeoffs"
+      ],
+      "terms": [
+        "self-selection",
+        "causation"
+      ],
+      "key_points": [
+        "The 15% gap mixes the feature's effect with self-selection",
+        "Relevance: the prompt must strongly shift adoption",
+        "Exclusion restriction: the prompt affects savings only through adoption",
+        "Wald estimate: savings difference divided by adoption-rate difference",
+        "It's a local average treatment effect for compliers only",
+        "Prefer a gated randomized holdout when the feature allows it"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "ml-025",
+      "question": "Why do you split data into training, validation and test sets, and why shouldn't you tune your model on the test set?",
+      "topic": "ML",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, data scientist",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What actually goes wrong if you keep checking the test set while you tune?",
+          "intent": "test that repeated use turns the test set into a selection set and biases the estimate upward",
+          "variants": [
+            {
+              "text": "You tried 40 feature sets and kept the one with the best test AUC. Is that AUC a fair estimate of production performance?",
+              "draft": true
+            },
+            {
+              "text": "A teammate reports test accuracy after each of 15 tuning rounds and picks the best round. What would you tell them?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "How should the split change when rows are not independent?",
+          "intent": "test time-based and group-based splits to prevent leakage",
+          "variants": [
+            {
+              "text": "You're forecasting next month's sales from three years of history. How do you split the data?",
+              "draft": true
+            },
+            {
+              "text": "Each patient has many visits in your dataset. What goes wrong with a random row-level split?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "What do you do when there isn't enough data for three separate sets?",
+          "intent": "test cross-validation for selection with a small final holdout or nested CV",
+          "variants": [
+            {
+              "text": "You have 800 labeled rows. How do you choose a model and still report an honest estimate?",
+              "draft": true
+            },
+            {
+              "text": "Would you still keep a separate test set if you use 5-fold cross-validation for tuning? Why?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "Every time a dataset influences a decision it stops being an unbiased estimate, so the test set is looked at once, at the end.",
+      "junior_answer": "You train on the training set, tune on the validation set and check the final accuracy on the test set so you know how well it generalizes.",
+      "senior_answer": "Each set answers a different question. The training set fits parameters, the validation set chooses between models, features and hyperparameters, and the test set estimates how the chosen model will do on new data. The test set only stays unbiased if it never influences a decision. If I check it after every tuning round and keep the best result, I've selected on noise and the reported number is optimistic, often by more than people expect when they try dozens of variants. So I touch the test set once, at the end. The split also has to mirror production: a time-based split for anything forecast-like, and a group split when one customer or patient has many rows, so the same entity never sits on both sides. With little data I'd tune with cross-validation and still keep a small final holdout.",
+      "draft": true,
+      "tags": [
+        "validation-strategy",
+        "data-leakage",
+        "hyperparameter-tuning"
+      ],
+      "terms": [
+        "test-set",
+        "validation-set"
+      ],
+      "key_points": [
+        "The validation set chooses models, features and hyperparameters",
+        "The test set estimates performance on new data",
+        "Tuning on the test set selects on noise and inflates results",
+        "Look at the test set once, at the end",
+        "Use time-based splits for forecast-like problems",
+        "Use group splits so one entity never sits on both sides"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "ml-026",
+      "question": "How would you evaluate a ranking or recommendation model offline with NDCG? Walk me through how it works on a small example.",
+      "topic": "ML",
+      "difficulty": "medium",
+      "frequency": "common in senior DS interviews",
+      "context": "DS interview, search or recommendations team",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "How does NDCG compare with precision@k and MAP?",
+          "intent": "test graded versus binary relevance and order sensitivity",
+          "variants": [
+            {
+              "text": "Two rankings each have three relevant items in the top 5, one at ranks 1 to 3 and the other at ranks 3 to 5. Which of precision@5 and NDCG@5 tells them apart?",
+              "draft": true
+            },
+            {
+              "text": "Your labels are 'purchased', 'clicked' and 'ignored'. Would you evaluate with MAP or NDCG, and why?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "Where do the relevance labels come from, and what can go wrong with them?",
+          "intent": "test position bias in click-derived labels",
+          "variants": [
+            {
+              "text": "You build relevance labels from clicks logged under the current ranker. Why might a new model look worse offline than it really is?",
+              "draft": true
+            },
+            {
+              "text": "Items shown in position 1 get clicked far more than items in position 8. How does that affect an NDCG computed from click logs?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "Your new model wins on offline NDCG. Are you done?",
+          "intent": "test that offline gains need online confirmation",
+          "variants": [
+            {
+              "text": "Offline NDCG@10 rose from 0.41 to 0.44, but the A/B test shows no change in purchases. What could explain it?",
+              "draft": true
+            },
+            {
+              "text": "How would you decide whether an offline NDCG gain is large enough to justify an online test?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "NDCG rewards putting the most relevant items at the top, but it is only as good as the relevance labels, which from clicks are biased toward what the old ranker showed.",
+      "junior_answer": "NDCG measures how good the ranking is, and higher is better, so I'd compute NDCG@10 on a test set and pick the model with the highest score.",
+      "senior_answer": "NDCG takes graded relevance for each item, discounts it by position, and normalizes by the best possible ordering. DCG@k sums relevance divided by log2(position + 1), so a hit at rank 1 counts fully and one at rank 3 counts half. Say my top 3 has relevance 0, 2, 1. DCG is 2/1.585 + 1/2, about 1.76. The ideal order 2, 1, 0 gives 2.63, so NDCG@3 is about 0.67. Unlike precision@k it cares about order, and unlike MAP it uses graded labels, so a purchase can count more than a click. I'd compute it per query or user, average it, and use a time-based split. The big pitfall is labels from clicks: they're position-biased toward what the old ranker showed, so I'd treat offline NDCG as a filter and confirm with an online test.",
+      "draft": true,
+      "tags": [
+        "evaluation-metrics",
+        "feedback-loops",
+        "recommender-systems"
+      ],
+      "terms": [
+        "ndcg",
+        "recommendation-system"
+      ],
+      "key_points": [
+        "NDCG discounts graded relevance by log2 of position",
+        "Normalize by the DCG of the ideal ordering",
+        "Relevance 0, 2, 1 gives NDCG@3 of about 0.67",
+        "Unlike MAP, graded labels let a purchase outweigh a click",
+        "Click-based labels are position-biased toward the old ranker",
+        "Treat offline NDCG as a filter and confirm online"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "algo-025",
+      "question": "What's the difference between linear and logistic regression, and why not just use linear regression for a yes/no outcome?",
+      "topic": "ML Algorithms",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, ML fundamentals",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "Is logistic regression a linear model?",
+          "intent": "test linear in log-odds and a linear decision boundary",
+          "variants": [
+            {
+              "text": "What shape is the decision boundary of a logistic regression with two features and no interactions?",
+              "draft": true
+            },
+            {
+              "text": "A colleague says logistic regression is non-linear because of the sigmoid. Are they right?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "How is each one fit?",
+          "intent": "test least squares versus maximum likelihood and log loss",
+          "variants": [
+            {
+              "text": "Why is logistic regression fit by maximum likelihood rather than by least squares on the 0/1 labels?",
+              "draft": true
+            },
+            {
+              "text": "What does logistic regression minimize during training, and why that rather than squared error?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "Is there ever a case for the linear probability model?",
+          "intent": "test when a linear fit on 0/1 is acceptable",
+          "variants": [
+            {
+              "text": "An economist fits OLS on a 0/1 outcome to estimate an average effect. When is that reasonable?",
+              "draft": true
+            },
+            {
+              "text": "Your linear model on a 0/1 target predicts 1.3 for some customers. What does that tell you?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "Logistic regression is a linear model of the log-odds, fit by maximum likelihood, so it gives probabilities between 0 and 1 where a straight line cannot.",
+      "junior_answer": "Linear regression predicts a number and logistic regression predicts a class, so for yes/no outcomes you use logistic regression.",
+      "senior_answer": "Both combine features linearly; what differs is the target and the loss. Linear regression predicts an unbounded number and is fit by least squares. Logistic regression models the log-odds as linear and passes it through a sigmoid, so the output is a probability between 0 and 1, and it is fit by maximum likelihood, which is minimizing log loss. If I fit a straight line to a 0/1 label I get predictions below 0 or above 1, errors that can't have constant variance, and a fit that outliers far from the boundary can drag. That said, logistic regression is still linear in the features, so its decision boundary is a straight line (a hyperplane with more features) unless I add interactions or splines. The class is a separate step: I pick a threshold from costs, not by default at 0.5, and check calibration if the probability itself drives decisions.",
+      "draft": true,
+      "tags": [
+        "linear-models",
+        "maximum-likelihood",
+        "explaining-concepts"
+      ],
+      "terms": [
+        "linear-regression",
+        "logistic-regression"
+      ],
+      "key_points": [
+        "Linear regression predicts an unbounded number fit by least squares",
+        "Logistic regression models log-odds linearly through a sigmoid",
+        "Logistic regression is fit by maximum likelihood, minimizing log loss",
+        "A straight line on 0/1 predicts outside 0 and 1",
+        "Logistic regression still has a linear decision boundary",
+        "Choose the threshold from costs, not by default at 0.5"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "algo-026",
+      "question": "What does log loss measure for a binary classifier, and how do you tell whether a log loss value is any good?",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, model evaluation",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "Why does log loss punish confident mistakes so heavily?",
+          "intent": "test the shape of -ln(p) and its effect on the average",
+          "variants": [
+            {
+              "text": "One positive case gets a predicted probability of 0.001. Roughly how much does that single row add to the loss compared with a case predicted at 0.9?",
+              "draft": true
+            },
+            {
+              "text": "Your log loss jumped after a data change, but accuracy barely moved. What kind of predictions would you look for first?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "How do log loss and AUC relate?",
+          "intent": "test that AUC ignores calibration while log loss does not",
+          "variants": [
+            {
+              "text": "You divide every predicted probability by 2. What happens to AUC and to log loss?",
+              "draft": true
+            },
+            {
+              "text": "Model A has better AUC, model B has better log loss. Which do you ship for a pricing model, and which for a top-100 review queue?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "What baseline would you compare against?",
+          "intent": "test the base-rate log loss baseline",
+          "variants": [
+            {
+              "text": "The positive rate is 2% and your model's log loss is 0.12. Is that good?",
+              "draft": true
+            },
+            {
+              "text": "How would you compute the log loss of a model that has learned nothing beyond the class balance?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "Log loss scores the probabilities themselves, so it rewards calibration and punishes confident errors, and it only means something next to the base-rate baseline.",
+      "junior_answer": "Log loss measures how far the predicted probabilities are from the true labels, and lower is better.",
+      "senior_answer": "Log loss is the average of minus the log of the probability the model gave to what actually happened. For a positive, predicting 0.9 costs -ln(0.9), about 0.105, but predicting 0.01 costs -ln(0.01), about 4.6, roughly 44 times more, so a few confident mistakes can dominate the average. Because it's a proper scoring rule it rewards calibrated probabilities, unlike AUC, which only looks at ranking and is unchanged by any order-preserving change to the scores. A model can have great AUC and poor log loss. A raw value means little on its own, so I compare it with the base-rate baseline: always predicting a 5% positive rate gives about 0.199, and the model has to beat that. In practice I clip probabilities away from 0 and 1 so one hard zero doesn't make the loss infinite, and I look at which rows drive it.",
+      "draft": true,
+      "tags": [
+        "evaluation-metrics",
+        "calibration",
+        "loss-functions"
+      ],
+      "terms": [
+        "log-loss"
+      ],
+      "key_points": [
+        "Log loss averages minus log of the probability given to the outcome",
+        "A positive at 0.01 costs about 4.6, versus 0.105 at 0.9",
+        "It is a proper scoring rule that rewards calibration",
+        "AUC ignores calibration; it only measures ranking",
+        "Compare against the base-rate baseline, about 0.199 at 5%",
+        "Clip probabilities away from 0 and 1"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "algo-027",
+      "question": "You have 200,000 text embeddings with 768 dimensions and want to visualize them and find topic clusters. Would you use PCA, t-SNE or UMAP, and how would you set it up?",
+      "topic": "ML Algorithms",
+      "difficulty": "medium",
+      "frequency": "increasingly common",
+      "context": "DS interview, NLP or unsupervised learning",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "What do n_neighbors and min_dist control in UMAP?",
+          "intent": "test local versus global balance and how tightly points pack",
+          "variants": [
+            {
+              "text": "Raising n_neighbors from 15 to 100 merges several small clusters into a few big ones. What changed?",
+              "draft": true
+            },
+            {
+              "text": "Why would you set min_dist near 0 when clustering on UMAP output, but higher for a picture?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "How would you handle new documents that arrive after you've built the map?",
+          "intent": "test transforming new points versus refitting, and what each does to the layout",
+          "variants": [
+            {
+              "text": "Next week 20,000 new support tickets arrive. Do you refit UMAP on everything or place them into the existing map?",
+              "draft": true
+            },
+            {
+              "text": "Your topic map feeds a dashboard that updates weekly. What does the choice between t-SNE and UMAP mean for keeping it stable?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "What are the risks of clustering with HDBSCAN on UMAP output?",
+          "intent": "test that density and stability need checking in the original space",
+          "variants": [
+            {
+              "text": "HDBSCAN on a 10-dimensional UMAP output finds 40 clean clusters. How do you check they are real?",
+              "draft": true
+            },
+            {
+              "text": "You rerun UMAP with a different random seed and the cluster assignments change. What do you do?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "PCA is the honest linear baseline, UMAP is the practical choice for neighborhoods at scale, and any clusters it reveals still need checking in the original space.",
+      "junior_answer": "I'd use t-SNE because it gives the clearest clusters, then label the groups I see in the plot.",
+      "senior_answer": "I'd start with PCA to about 50 dimensions: it's fast, deterministic, linear, and removes noise, but two components rarely separate topics. For the picture I'd use UMAP over t-SNE at this size because it's faster, tends to keep more global structure, and can transform new points, which scikit-learn's t-SNE can't. n_neighbors sets the balance between local and global structure, and min_dist sets how tightly points pack. Even so, cluster sizes and gaps in the plot aren't literal, and runs vary with the seed. For clustering I wouldn't cluster the 2D plot. I'd run UMAP to around 10 dimensions with min_dist near 0 and cosine distance, then HDBSCAN. UMAP can manufacture or merge density, so I'd check stability across seeds and settings and confirm clusters with similarities in the original space and by reading samples.",
+      "draft": true,
+      "tags": [
+        "embeddings-and-search",
+        "clustering",
+        "dimensionality-reduction"
+      ],
+      "terms": [
+        "umap",
+        "t-sne",
+        "embedding"
+      ],
+      "key_points": [
+        "Start with PCA to about 50 dimensions as a linear baseline",
+        "Prefer UMAP over t-SNE for speed at this scale",
+        "UMAP can transform new points; scikit-learn's t-SNE cannot",
+        "n_neighbors balances local against global structure",
+        "Cluster with HDBSCAN on roughly 10-dimensional UMAP output, not 2D",
+        "Check stability across seeds and confirm clusters in the original space"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "system-design-015",
+      "question": "A marketing team wants a churn score for every customer to plan its weekly retention campaigns. Would you score in batch or in real time?",
+      "topic": "System Design",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, data scientist or ML engineer",
+      "kind": "design",
+      "follow_ups": [
+        {
+          "text": "What would make you switch to real-time scoring?",
+          "intent": "test that real time is justified by in-request decisions and request-time information",
+          "variants": [
+            {
+              "text": "The team now wants to show a retention offer the moment a customer opens the cancellation page. Does your design change?",
+              "draft": true
+            },
+            {
+              "text": "A product manager says real-time scoring is more modern. What questions would you ask before agreeing?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "How do you handle customers the batch job hasn't scored yet?",
+          "intent": "test fallbacks for new or missing entities",
+          "variants": [
+            {
+              "text": "A customer signed up yesterday and has no score in this week's table. What does the campaign tool see?",
+              "draft": true
+            },
+            {
+              "text": "Twelve percent of customers are missing from the score table this week. How would you find out and what would you do?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "How do you know the batch run worked before anyone uses it?",
+          "intent": "test output checks on row counts, score distribution and freshness",
+          "variants": [
+            {
+              "text": "The scoring job finished without errors, but every score is 0.5. What checks would have caught that?",
+              "draft": true
+            },
+            {
+              "text": "What would you check automatically between the job finishing and the campaign team pulling the scores?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "Score in batch unless the decision happens inside a live request and depends on information that only exists at that moment.",
+      "junior_answer": "Real time, so the scores are always up to date when marketing needs them.",
+      "senior_answer": "Batch. The decision is made weekly by people planning campaigns, so a score computed the night before is fresh enough, and nothing about the decision happens inside a live request. A scheduled job that writes scores to a table is cheaper, easier to retry and backfill, and easier to monitor than a serving endpoint. I'd switch to real time only if the decision happened in the moment and depended on information that exists only then, like an offer on the cancellation page. Batch has its own failure modes: customers who joined after the run have no score, so I'd give the campaign tool a clear default for them, and a job can succeed while producing garbage. Before marketing reads the table I'd check freshness, row count against the customer base, and the score distribution against last week.",
+      "draft": true,
+      "tags": [
+        "batch-vs-realtime",
+        "latency-and-cost",
+        "model-deployment",
+        "tradeoffs"
+      ],
+      "terms": [
+        "batch-processing",
+        "real-time",
+        "churn"
+      ],
+      "key_points": [
+        "Batch, because the decision is weekly and made by people",
+        "Batch is cheaper and easier to retry, backfill and monitor",
+        "Real time only when the decision happens inside a live request",
+        "Give new or unscored customers a clear default",
+        "Check freshness and row count before the table is used",
+        "Compare the score distribution with last week's"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "system-design-016",
+      "question": "What would you log for every prediction a production model makes, and why?",
+      "topic": "System Design",
+      "difficulty": "easy",
+      "frequency": "common in senior DS interviews",
+      "context": "DS or ML engineer interview, production ML basics",
+      "kind": "design",
+      "follow_ups": [
+        {
+          "text": "Why log the feature values rather than recompute them later from the warehouse?",
+          "intent": "test that recomputed features differ from what the model saw",
+          "variants": [
+            {
+              "text": "A customer disputes a decision from three months ago. Can you explain it if you only logged the score?",
+              "draft": true
+            },
+            {
+              "text": "Your training pipeline recomputes features from the warehouse. How would logged serving features help you find training-serving skew?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "How do the logs get joined to outcomes?",
+          "intent": "test join keys and label delay",
+          "variants": [
+            {
+              "text": "Loan defaults arrive 6 to 12 months after the decision. What must the log contain to compute accuracy later?",
+              "draft": true
+            },
+            {
+              "text": "You only logged the score and a timestamp. Why is it hard to measure recall a month later?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "What are the costs and risks of logging everything?",
+          "intent": "test storage, latency and personal data handling",
+          "variants": [
+            {
+              "text": "Your model serves 50,000 requests a second. How would you keep logging from adding latency or huge storage costs?",
+              "draft": true
+            },
+            {
+              "text": "The features include names and addresses. What do you do with them in the log?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "Log enough to replay a prediction exactly and to join it to its outcome later; everything in monitoring and debugging depends on that.",
+      "junior_answer": "I'd log the input and the prediction with a timestamp so we can check it later.",
+      "senior_answer": "I'd log enough to reproduce any single prediction and join it to its outcome later. That means a request ID and the entity ID, the timestamp, the model version, the feature values exactly as the model received them, the score, the threshold and resulting decision, and whether a fallback or human override was used. Logging the features as served, rather than recomputing them later, is what lets me catch training-serving skew and explain a disputed decision months later. The IDs are what let me attach labels when they arrive, which is how I measure real performance and monitor drift by version. I'd write logs asynchronously so they don't add latency, partition the table by date, and set retention by need. Personal data gets masked or kept out, with access controlled, because a prediction log quickly becomes a sensitive dataset.",
+      "draft": true,
+      "tags": [
+        "model-monitoring",
+        "label-delay",
+        "training-serving-skew",
+        "versioning-reproducibility"
+      ],
+      "terms": [
+        "production-model"
+      ],
+      "key_points": [
+        "Log request ID, entity ID, timestamp and model version",
+        "Log feature values exactly as the model received them",
+        "Log the score, the decision and any fallback used",
+        "Served features expose training-serving skew",
+        "IDs let me join predictions to labels later",
+        "Mask or exclude personal data from the log"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "dl-013",
+      "question": "When you train a neural network with mini-batch gradient descent, what are an epoch, a batch and an iteration, and how does batch size affect training?",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, deep learning",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "How many iterations are in one epoch?",
+          "intent": "test the relationship between dataset size, batch size and updates",
+          "variants": [
+            {
+              "text": "You have 60,000 training images and a batch size of 128. How many weight updates happen per epoch, and what happens to the last partial batch?",
+              "draft": true
+            },
+            {
+              "text": "A colleague doubles the batch size and trains for the same number of epochs. How has the number of weight updates changed?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "Why do larger batches usually need a different learning rate?",
+          "intent": "test the batch size and learning rate interaction",
+          "variants": [
+            {
+              "text": "You move to a much bigger GPU and raise the batch size eightfold, and validation accuracy drops. What would you adjust?",
+              "draft": true
+            },
+            {
+              "text": "Why do teams often scale the learning rate up and add warmup when they train with very large batches?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "Your model won't fit in GPU memory at the batch size you want. What can you do?",
+          "intent": "test gradient accumulation and memory trade-offs",
+          "variants": [
+            {
+              "text": "Only 8 examples fit in memory, but the recipe you're following used a batch of 64. How can you match it?",
+              "draft": true
+            },
+            {
+              "text": "Your recipe calls for a batch of 256, but your GPU runs out of memory above 32. What would you try before buying more hardware?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "Batch size trades gradient noise against hardware throughput, and changing it without retuning the learning rate makes runs hard to compare.",
+      "junior_answer": "An epoch is one pass over the data and a batch is a group of examples. Bigger batches train faster.",
+      "senior_answer": "An epoch is one full pass over the training data, a batch is the subset of examples used to compute one gradient estimate, and an iteration is one weight update on one batch. With 100,000 examples and a batch size of 250, one epoch is 400 iterations. Small batches use a GPU less efficiently, so each epoch is slower, but their noisy gradients can act as a mild regularizer. Large batches use the hardware efficiently and give smoother gradients, but often need a higher learning rate with warmup and can generalize slightly worse if nothing else is retuned. Memory sets the ceiling, and gradient accumulation lets me simulate a larger batch than fits. When I change the batch size I'd retune the learning rate, and compare runs at equal wall-clock time as well as equal epochs, since a larger batch makes fewer updates per epoch.",
+      "draft": true,
+      "tags": [
+        "optimization",
+        "neural-networks",
+        "explaining-concepts"
+      ],
+      "terms": [
+        "neural-network",
+        "gradient-descent"
+      ],
+      "key_points": [
+        "An epoch is one full pass over the training data",
+        "An iteration is one weight update on one batch",
+        "Small batches give noisy gradients that can mildly regularize",
+        "Large batches use hardware efficiently but may generalize worse",
+        "Retune the learning rate when you change batch size",
+        "Gradient accumulation simulates a batch larger than memory allows"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "dl-014",
+      "question": "You're building a TF-IDF model on customer reviews. How would you tokenize the text, and would you use stemming or lemmatization?",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, NLP",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "When would stemming hurt your model?",
+          "intent": "test that stemming can merge words with different meanings",
+          "variants": [
+            {
+              "text": "A Porter stemmer maps \"university\" and \"universe\" to the same stem. Why might that matter for a review classifier?",
+              "draft": true
+            },
+            {
+              "text": "Your sentiment model confuses \"organize\" and \"organ\" after preprocessing. What could cause that?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "Would you remove stopwords for sentiment analysis?",
+          "intent": "test that standard stopword lists can remove signal",
+          "variants": [
+            {
+              "text": "After stopword removal, \"not good\" and \"good\" look the same to your model. What went wrong?",
+              "draft": true
+            },
+            {
+              "text": "What would you check before applying a library's built-in English stopword list to product reviews?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "Do you need stemming or lemmatization if you use a transformer model?",
+          "intent": "test that subword tokenizers make classic normalization unnecessary",
+          "variants": [
+            {
+              "text": "You switch from TF-IDF to a pretrained BERT classifier. Which preprocessing steps would you drop, and why?",
+              "draft": true
+            },
+            {
+              "text": "Why can lemmatizing text before feeding it to a pretrained transformer make results worse?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "Text preprocessing choices quietly decide which signal survives, so check them on real text and keep only what improves the validation score.",
+      "junior_answer": "I'd split on spaces, lowercase, remove stopwords and use lemmatization because it's more accurate than stemming.",
+      "senior_answer": "Tokenization splits text into units, usually words, and the details matter: punctuation, contractions, numbers, emoji and casing. I'd check the tokenizer on real reviews, because defaults can drop signal. scikit-learn's default token pattern ignores one-character tokens, so a rating like \"5/5\" vanishes. Stemming chops suffixes by rule, so \"running\" and \"runs\" become \"run\", but it produces non-words like \"studi\" and can merge unrelated words. Lemmatization maps words to dictionary forms using a vocabulary and the part of speech, so \"better\" can become \"good\"; it is more accurate but slower. Both shrink the vocabulary, which helps most with small data. With plenty of data I'd often skip both, since each word form then gets a reliable weight of its own. I'd keep negations like \"not\", which scikit-learn's built-in English stopword list removes, and I'd decide each step by validation score.",
+      "draft": true,
+      "tags": [
+        "feature-engineering",
+        "text-features",
+        "edge-cases"
+      ],
+      "terms": [
+        "tf-idf"
+      ],
+      "key_points": [
+        "Keep each preprocessing step only if validation improves",
+        "Check the tokenizer on real text, since defaults drop signal",
+        "Stemming chops suffixes by rule and can produce non-words",
+        "Lemmatization maps words to dictionary forms using part of speech",
+        "Both shrink the vocabulary, which helps most with small data",
+        "Keep negations like \"not\" instead of removing them as stopwords"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "dl-015",
+      "question": "Why do vanilla RNNs struggle to learn from long sequences, and how do LSTMs and GRUs help?",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, deep learning",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "What does the forget gate do, and what happens if it stays near zero?",
+          "intent": "test the role of the forget gate in preserving memory and gradients",
+          "variants": [
+            {
+              "text": "Your LSTM ignores anything more than a few steps back. What might the forget gate activations look like?",
+              "draft": true
+            },
+            {
+              "text": "Why do many implementations initialize the forget gate bias to a positive value such as 1?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "Your training loss suddenly jumps to NaN. What would you check?",
+          "intent": "test exploding gradients and gradient clipping",
+          "variants": [
+            {
+              "text": "Your LSTM's loss spikes every few hundred batches and sometimes becomes NaN. What would you add?",
+              "draft": true
+            },
+            {
+              "text": "What is the difference between clipping gradients by value and clipping by norm?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "How would you choose between an LSTM and a GRU?",
+          "intent": "test the GRU and LSTM trade-off in parameters, data and compute",
+          "variants": [
+            {
+              "text": "You have 3,000 short sensor sequences and a tight training budget. Which would you try first, and how would you decide?",
+              "draft": true
+            },
+            {
+              "text": "An LSTM and a GRU score within noise of each other on validation. Which would you ship, and why?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "An LSTM's additively updated cell state gives gradients a path that needn't shrink at every step, but gradients can still explode, so clipping stays.",
+      "junior_answer": "RNNs have the vanishing gradient problem, and LSTMs fix it with gates that let them remember things longer.",
+      "senior_answer": "An RNN is trained by backpropagation through time, so the gradient reaching an early step is a product of one factor per step. If those factors are mostly below one, the gradient shrinks exponentially and the network can't learn long-range dependencies; if they're above one, it explodes and training diverges. An LSTM adds a cell state that is updated additively: the forget gate decides what to keep, the input gate what to write, and the output gate what to expose as the hidden state. The direct path through the cell state is scaled only by the forget gate, so when that gate stays near one, gradients survive many steps. A GRU merges the cell and hidden state and uses only update and reset gates, so it has fewer parameters and often performs about as well. Gating doesn't prevent explosions, so I'd still clip the gradient norm. I'd pick between the two on validation, starting with a GRU when data or compute is tight.",
+      "draft": true,
+      "tags": [
+        "neural-networks",
+        "sequence-models",
+        "explaining-concepts"
+      ],
+      "terms": [
+        "rnn",
+        "lstm"
+      ],
+      "key_points": [
+        "Backpropagation through time multiplies one factor per step",
+        "Repeated multiplication makes gradients vanish or explode",
+        "The LSTM cell state is updated additively, so gradients survive",
+        "Forget, input and output gates control keeping, writing and exposing",
+        "A GRU is a lighter variant with fewer gates and parameters",
+        "Clip the gradient norm, since gating doesn't prevent explosions"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "dl-016",
+      "question": "Product wants the main themes in 50,000 unlabeled support tickets. How would you find them?",
+      "topic": "Deep Learning & NLP",
+      "difficulty": "medium",
+      "frequency": "common in DS interviews",
+      "context": "Mid-level DS interview, NLP",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "How would you choose the number of topics?",
+          "intent": "test choosing k with coherence and human judgment rather than a single metric",
+          "variants": [
+            {
+              "text": "Coherence peaks at 40 topics but product wants about 10 themes. What do you do?",
+              "draft": true
+            },
+            {
+              "text": "Perplexity keeps improving as you add topics, but the topics get harder to name. Which do you trust?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "You rerun the model and half the topics change. What does that tell you?",
+          "intent": "test stability across runs",
+          "variants": [
+            {
+              "text": "Two runs with different random seeds give different top topics. How would you decide what to report?",
+              "draft": true
+            },
+            {
+              "text": "How would you make the theme counts you send product each month comparable over time?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "How would you show the themes are actually useful?",
+          "intent": "test validating topics with domain experts and decisions",
+          "variants": [
+            {
+              "text": "Product asks whether the \"billing confusion\" topic is real or an artifact of the model. How would you check?",
+              "draft": true
+            },
+            {
+              "text": "How would you turn the themes into something support can act on, such as routing or a fix to prioritize?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "Topic models produce candidate themes, not answers, so they only count once domain experts can name them and they stay stable across runs.",
+      "junior_answer": "I'd run LDA with 10 topics and report the top words in each one.",
+      "senior_answer": "LDA treats each ticket as a mixture of topics and each topic as a distribution over words. It works on bag-of-words counts, so it is sensitive to preprocessing: stopwords, email signatures and templated text will dominate topics unless I remove them. I'd choose the number of topics k by trying a range and checking coherence and whether a person can name each topic, since perplexity often disagrees with interpretability. Short tickets give LDA few words per document, so I'd also try embedding each ticket with a sentence model, reducing dimensions and clustering, BERTopic-style, then describing clusters with their most distinctive words. That groups paraphrases LDA misses, but gives mostly one topic per ticket and leaves some as outliers. Either way, I'd have support leads read sample tickets per topic to name, merge or split them, and I'd rerun with different seeds to check the topics are stable before reporting volumes.",
+      "draft": true,
+      "tags": [
+        "embeddings-and-search",
+        "clustering",
+        "text-features",
+        "stakeholder-communication"
+      ],
+      "terms": [
+        "unlabeled-data"
+      ],
+      "key_points": [
+        "LDA: tickets are topic mixtures, topics are word distributions",
+        "LDA is sensitive to stopwords and boilerplate in preprocessing",
+        "Choose k by coherence and whether people can name topics",
+        "Embed and cluster tickets, BERTopic-style, to group paraphrases",
+        "Support leads name, merge or split topics from sample tickets",
+        "Rerun with different seeds to check topic stability"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "llm-015",
+      "question": "What's the difference between an embedding model and a generative LLM, and when would you use each?",
+      "topic": "LLMs & AI",
+      "difficulty": "easy",
+      "frequency": "increasingly common",
+      "context": "Phone screen, LLM applications",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "Why not use a generative LLM for search over a million documents?",
+          "intent": "test cost and latency of generation versus precomputed vectors",
+          "variants": [
+            {
+              "text": "A teammate wants to ask an LLM \"is this document relevant?\" for every document in a 2-million-row corpus. What would you suggest?",
+              "draft": true
+            },
+            {
+              "text": "Where would a generative model fit in a search system if not for scoring every document?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "What happens if you upgrade your embedding model?",
+          "intent": "test that vectors from different models aren't comparable",
+          "variants": [
+            {
+              "text": "You embed new documents with a newer model but keep the old vectors in the index. What goes wrong?",
+              "draft": true
+            },
+            {
+              "text": "How would you roll out a new embedding model for a live semantic search feature?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "Two support tickets have very similar embeddings but mean opposite things. How can that happen?",
+          "intent": "test the limits of similarity as a proxy for meaning",
+          "variants": [
+            {
+              "text": "\"Refund was processed\" and \"refund was not processed\" score 0.95 cosine similarity. How would you handle that in a ticket router?",
+              "draft": true
+            },
+            {
+              "text": "Why might embedding similarity work well for topic grouping but poorly for detecting contradictions?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "Embedding models turn text into vectors for comparing meaning; generative models write new text, and many systems use both together.",
+      "junior_answer": "An embedding model turns text into numbers and a generative model like GPT writes text.",
+      "senior_answer": "An embedding model maps a piece of text to a fixed-length vector, so texts with similar meaning land close together, usually measured with cosine similarity. A generative LLM produces text by predicting the next token, over and over. I'd use embeddings for search, retrieval in RAG, deduplication, clustering and as features for a classifier, because they're cheap and fast and I can precompute them for millions of documents. I'd use a generative model when the output has to be new text, such as an answer, a summary or fields extracted into a schema. They often work together: embeddings retrieve candidates and the LLM writes the answer. Two traps: similar isn't the same as relevant, since a sentence and its negation can embed close together, and vectors from different embedding models or versions aren't comparable, so switching models means re-embedding the whole index.",
+      "draft": true,
+      "tags": [
+        "embeddings-and-search",
+        "llm-fundamentals",
+        "explaining-concepts"
+      ],
+      "terms": [
+        "embedding",
+        "llm"
+      ],
+      "key_points": [
+        "An embedding model maps text to a fixed-length vector",
+        "Similar meanings land close together, measured by cosine similarity",
+        "A generative LLM produces text by predicting the next token",
+        "Use embeddings for search, retrieval, clustering and classifier features",
+        "Similar embeddings aren't always relevant; negations can embed close",
+        "Switching embedding models means re-embedding the whole index"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "llm-016",
+      "question": "In prompt engineering, what's the difference between zero-shot and few-shot prompting, and when is few-shot worth it?",
+      "topic": "LLMs & AI",
+      "difficulty": "easy",
+      "frequency": "increasingly common",
+      "context": "Phone screen, LLM applications",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "How would you choose which examples to include?",
+          "intent": "test example selection for coverage and bias",
+          "variants": [
+            {
+              "text": "All five of your few-shot examples are short and positive, and the model now labels long complaints as positive. What would you change?",
+              "draft": true
+            },
+            {
+              "text": "Your classifier has 12 labels. How would you pick examples without making the prompt huge?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "Where would you get your few-shot examples, and how do you keep them from inflating your eval score?",
+          "intent": "test leakage of evaluation items into the prompt",
+          "variants": [
+            {
+              "text": "You find three of your few-shot examples are also in the test set. How does that affect the score you reported?",
+              "draft": true
+            },
+            {
+              "text": "How would you build the example pool and the evaluation set so they don't overlap?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "When would you move from few-shot prompting to something else?",
+          "intent": "test retrieval of examples and fine-tuning as next steps",
+          "variants": [
+            {
+              "text": "You keep adding examples and the prompt is now 6,000 tokens per call. What are your options?",
+              "draft": true
+            },
+            {
+              "text": "Different input types need different examples to work well. How could you pick examples per input?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "Few-shot examples are the quickest way to show the model what you mean, but they cost tokens on every call and get copied, so pick them deliberately and measure.",
+      "junior_answer": "Zero-shot means no examples and few-shot means giving a few examples. Few-shot is usually better.",
+      "senior_answer": "Zero-shot gives the model only instructions; few-shot adds a handful of worked input and output examples to the prompt. Examples are often the fastest way to pin down a format, a label boundary or a tone that is hard to describe in words. They cost input tokens on every call, and the model tends to copy them closely, including their length and quirks. So I'd choose examples that vary in length and label and cover the tricky boundary cases, avoid ordering them so one label always comes last, and never reuse evaluation items as examples, because that inflates the score. With current instruction-tuned models, a clear zero-shot prompt with structured output often matches few-shot on easy tasks, so I'd compare both on the same labeled set. If I need many examples, I'd retrieve the most similar ones per input or consider fine-tuning.",
+      "draft": true,
+      "tags": [
+        "llm-evaluation",
+        "prompting-vs-fine-tuning",
+        "explaining-concepts"
+      ],
+      "terms": [
+        "prompt-engineering"
+      ],
+      "key_points": [
+        "Zero-shot gives only instructions; few-shot adds worked examples",
+        "Examples pin down format and label boundaries better than words",
+        "Examples add input tokens to every call",
+        "Vary examples, since the model copies their length and quirks",
+        "Never reuse evaluation items as few-shot examples",
+        "Compare zero-shot and few-shot on the same labeled set"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "prodml-016",
+      "question": "You're deploying your first model to production next week. What's the minimum monitoring you'd set up?",
+      "topic": "Production ML",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, ML in production",
+      "kind": "case",
+      "follow_ups": [
+        {
+          "text": "Outcomes won't be known for weeks. How do you know the model is healthy before then?",
+          "intent": "test leading indicators when labels are delayed",
+          "variants": [
+            {
+              "text": "A credit model's defaults only show up after three months. How do you know in week one that something is wrong?",
+              "draft": true
+            },
+            {
+              "text": "Which signals would tell you an upstream feed broke before any outcomes come in?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "How would you set alert thresholds for a brand-new model?",
+          "intent": "test using an initial baseline instead of guessed thresholds",
+          "variants": [
+            {
+              "text": "You have no history for the new model's score distribution. What thresholds would you start with?",
+              "draft": true
+            },
+            {
+              "text": "Your first-week alerts fire every day on normal variation. What would you change?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "Why log the inputs and model version with each prediction?",
+          "intent": "test debuggability and reproducing past predictions",
+          "variants": [
+            {
+              "text": "A customer disputes a decision your model made last month. What do you need to explain it?",
+              "draft": true
+            },
+            {
+              "text": "Two model versions ran during a rollout and one produced odd scores. How would you tell which predictions came from which?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "Start with a few checks that catch broken pipelines early, log enough to debug later, and make sure every alert has an owner.",
+      "junior_answer": "I'd track the model's accuracy over time and set an alert if it drops.",
+      "senior_answer": "I'd keep it small and cover four questions. Is it running: request volume, error rate, latency, and whether the batch job finished on time, with a page for hard failures. Are the inputs sane: null rates, out-of-range values and schema changes on the top features, compared with training. Are the predictions sane: the daily score distribution or positive rate, since a sudden shift is often the earliest sign of a broken upstream feed. Is it right: join outcomes back when labels arrive and track the main metric, accepting the delay. Accuracy alone isn't enough, because labels can take weeks. I'd log every prediction with its inputs and the model version, so I can debug any case later. And I'd write down who gets each alert and what they do about it, since an alert nobody owns gets ignored. Detailed drift dashboards can wait.",
+      "draft": true,
+      "tags": [
+        "model-monitoring",
+        "label-delay",
+        "alerting"
+      ],
+      "terms": [
+        "monitoring"
+      ],
+      "key_points": [
+        "Monitor system health: volume, errors, latency and job completion",
+        "Check input nulls, ranges and schema against training",
+        "Track the prediction distribution as an early warning",
+        "Join delayed labels back to track the main metric",
+        "Log each prediction with its inputs and model version",
+        "Every alert needs an owner and a defined action"
+      ],
+      "key_points_draft": true
+    },
+    {
+      "id": "prodml-017",
+      "question": "What's the difference between offline and online evaluation, and why can a model that wins on the test set lose in an A/B test?",
+      "topic": "Production ML",
+      "difficulty": "easy",
+      "frequency": "common in DS interviews",
+      "context": "Phone screen, ML in production",
+      "kind": "concept",
+      "follow_ups": [
+        {
+          "text": "Why might a better offline AUC not improve the business metric?",
+          "intent": "test the gap between proxy metrics and outcomes",
+          "variants": [
+            {
+              "text": "Your new ranking model improves AUC by 0.02 but click-through doesn't move in the A/B test. What could explain it?",
+              "draft": true
+            },
+            {
+              "text": "A churn model is more accurate offline, but retention doesn't improve after launch. What would you look at?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "How does the current model bias your offline evaluation?",
+          "intent": "test feedback loops in logged data",
+          "variants": [
+            {
+              "text": "Your recommender's training data only contains items the old model chose to show. How does that limit offline evaluation of a new model?",
+              "draft": true
+            },
+            {
+              "text": "Why is it hard to evaluate a new loan model offline when you only have outcomes for applicants the old model approved?",
+              "draft": true
+            }
+          ]
+        },
+        {
+          "text": "When is offline evaluation enough on its own?",
+          "intent": "test judging when an online test is worth its cost",
+          "variants": [
+            {
+              "text": "You retrain the same model on a fresh month of data with no feature changes. Do you need an A/B test?",
+              "draft": true
+            },
+            {
+              "text": "Your model only ranks internal reports for analysts and has no measurable online outcome. How would you validate it?",
+              "draft": true
+            }
+          ]
+        }
+      ],
+      "key_insight": "Offline evaluation measures a proxy on past data; only online evaluation measures the real outcome, so use offline to filter and online to decide.",
+      "junior_answer": "Offline evaluation uses historical data and online evaluation uses live users. They can disagree because of randomness.",
+      "senior_answer": "Offline evaluation scores a model on held-out historical data, such as a test set or a backtest. It's cheap, repeatable and safe, but it measures a proxy like AUC on past behavior. Online evaluation measures the real outcome on live traffic through an A/B test or a canary rollout, which is slower and riskier but tells me whether the model actually helped. They disagree for a few reasons. The offline metric may not track the business metric, so a better AUC might not move conversions. The historical data was shaped by the old model's decisions, so it never shows how users would react to what the new model would do. And leakage or training-serving skew can inflate offline scores. I'd use offline evaluation to filter candidates, require an online test for anything that changes decisions, and when the two disagree, check for skew and leakage before trusting either.",
+      "draft": true,
+      "tags": [
+        "evaluation-metrics",
+        "ab-testing",
+        "model-deployment",
+        "feedback-loops"
+      ],
+      "terms": [
+        "test-set",
+        "ab-test"
+      ],
+      "key_points": [
+        "Offline evaluation measures a proxy metric on held-out history",
+        "Online evaluation measures the real outcome on live traffic",
+        "The offline metric may not track the business metric",
+        "Historical data was shaped by the old model's decisions",
+        "Leakage or training-serving skew can inflate offline scores",
+        "Filter candidates offline, confirm decision-changing models online"
+      ],
+      "key_points_draft": true
     }
   ]
 }

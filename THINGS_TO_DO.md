@@ -26,8 +26,8 @@ The single prioritized list. Sections 1 to 4 below are history: the original ide
 
 **Content (Rithul's review, deferred)**
 14. ~~Content review~~ First full pass done 2026-10-14 (`docs/reviews/CONTENT_REVIEW_2026-10-14.md`): the content-reviewer checked all 155 questions; 175 fixes applied (7 wrong, 63 misleading, the rule flags), 2 rejected, invented "asked Nx" frequency labels replaced. Still open: 56 polish flags, and Rithul's own read of the draft questions. Re-run `/review-content <topic>` after content changes.
-15. More Foundations (easy) questions: only 25, and new learners start with them.
-16. Missing dedicated questions: instrumental variables, UMAP, topic models, NDCG, log loss, RNN and LSTM beyond dl-007.
+15. ~~More Foundations questions~~ Done (doc 26): 15 easy questions added across all 9 topics (now 40 of 176), including the first easy System Design ones.
+16. ~~Missing topics~~ Done (doc 26): stats-022 instrumental variables, algo-027 UMAP, dl-016 topic models, ml-026 NDCG, algo-026 log loss, dl-015 RNN and LSTM mechanics.
 
 **Later**
 17. Junior and senior answers for each follow-up (1.4); a Learn section; a weekly trend in Insights (needs more than 5 attempts kept per question); optional explainers (class imbalance and threshold, hierarchical clustering, LightGBM residuals).

@@ -219,6 +219,19 @@
         "At scale use BM25 scoring over an inverted index",
         "Or use embeddings with an approximate nearest-neighbor index"
       ]
+    },
+    {
+      "id": "python-018",
+      "base": "agg reduces each group to one row: df.groupby('customer_id')['amount'].agg(['sum', 'mean']) gives on",
+      "draft": true,
+      "points": [
+        "agg reduces each group to one row",
+        "transform returns a result aligned to the original index",
+        "transform('sum') puts the group total on every row",
+        "Built-in names like 'sum' are much faster than lambdas",
+        "dropna=True by default, so missing keys get NaN from transform",
+        "Group stats over the whole dataset can leak future rows into features"
+      ]
     }
   ]
 }

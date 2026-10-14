@@ -200,6 +200,32 @@
         "Agree on the definition from the decision the metric supports",
         "Put one documented definition in a shared metrics layer"
       ]
+    },
+    {
+      "id": "sql-017",
+      "base": "A LEFT JOIN keeps every customer and fills the order columns with NULL when there is no match. WHERE",
+      "draft": true,
+      "points": [
+        "WHERE runs after the join and drops the NULL-filled rows",
+        "The LEFT JOIN effectively becomes an INNER JOIN",
+        "Move right-table conditions into the ON clause",
+        "Use COUNT(o.order_id), not COUNT(*), so unmatched customers show 0",
+        "Left-table conditions in ON don't remove any left rows",
+        "WHERE o.order_id IS NULL deliberately keeps unmatched rows for an anti-join"
+      ]
+    },
+    {
+      "id": "sql-018",
+      "base": "I'd use conditional aggregation, putting CASE WHEN inside the aggregates. In Postgres or Snowflake: ",
+      "draft": true,
+      "points": [
+        "Conditional aggregation: CASE WHEN inside SUM or AVG",
+        "One table scan instead of joining several filtered subqueries",
+        "COUNT with ELSE 0 counts every row, a common bug",
+        "Integer division can truncate the rate to 0; use 1.0",
+        "NULL or messy status values silently fall into ELSE",
+        "Confirm whether the denominator is all orders or completed ones"
+      ]
     }
   ]
 }

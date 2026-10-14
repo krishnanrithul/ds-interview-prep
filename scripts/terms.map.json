@@ -883,6 +883,61 @@
       "label": "Metrics layer",
       "definition": "A shared place where business metric definitions are written once and queried by every dashboard, notebook and model.",
       "tag": "governance-and-process"
+    },
+    "left-join": {
+      "label": "LEFT JOIN",
+      "definition": "A join that keeps every row from the left table and fills the right table's columns with NULL where no matching row exists.",
+      "tag": "joins"
+    },
+    "group-by": {
+      "label": "GROUP BY",
+      "definition": "A SQL clause that collapses rows sharing the same values in the listed columns into one row per group, so aggregates are computed per group.",
+      "tag": "sql-fundamentals"
+    },
+    "groupby": {
+      "label": "groupby",
+      "definition": "The pandas operation that splits a DataFrame into groups by key values so a function can be applied to each group.",
+      "tag": "pandas"
+    },
+    "sensitivity": {
+      "label": "Sensitivity",
+      "definition": "The share of actual positive cases that a test or model correctly flags, also called recall or the true positive rate.",
+      "tag": "evaluation-metrics"
+    },
+    "specificity": {
+      "label": "Specificity",
+      "definition": "The share of actual negative cases that a test or model correctly leaves unflagged, equal to one minus the false positive rate.",
+      "tag": "evaluation-metrics"
+    },
+    "self-selection": {
+      "label": "Self-selection",
+      "definition": "When individuals choose for themselves whether to receive a treatment, so those who receive it can differ systematically from those who don't.",
+      "tag": "causal-inference"
+    },
+    "ndcg": {
+      "label": "NDCG",
+      "definition": "Normalized discounted cumulative gain, a metric for judging the quality of a ranked list of results.",
+      "tag": "evaluation-metrics"
+    },
+    "log-loss": {
+      "label": "Log loss",
+      "definition": "A metric that scores a classifier's predicted probabilities against the actual outcomes; lower is better.",
+      "tag": "evaluation-metrics"
+    },
+    "umap": {
+      "label": "UMAP",
+      "definition": "Uniform manifold approximation and projection, a technique for mapping high-dimensional data into a few dimensions.",
+      "tag": "dimensionality-reduction"
+    },
+    "lstm": {
+      "label": "LSTM",
+      "definition": "Long short-term memory network: a widely used type of recurrent neural network, introduced in 1997.",
+      "tag": "sequence-models"
+    },
+    "unlabeled-data": {
+      "label": "Unlabeled data",
+      "definition": "Records that have no known category or target value attached to them.",
+      "tag": "text-features"
     }
   },
   "questions": {
@@ -1449,6 +1504,82 @@
     "llm-014": [
       "lora",
       "pretrained-model"
+    ],
+    "sql-017": [
+      "left-join"
+    ],
+    "sql-018": [
+      "group-by"
+    ],
+    "python-018": [
+      "groupby"
+    ],
+    "stats-020": [
+      "sensitivity",
+      "specificity"
+    ],
+    "stats-021": [
+      "churn"
+    ],
+    "stats-022": [
+      "self-selection",
+      "causation"
+    ],
+    "ml-025": [
+      "test-set",
+      "validation-set"
+    ],
+    "ml-026": [
+      "ndcg",
+      "recommendation-system"
+    ],
+    "algo-025": [
+      "linear-regression",
+      "logistic-regression"
+    ],
+    "algo-026": [
+      "log-loss"
+    ],
+    "algo-027": [
+      "umap",
+      "t-sne",
+      "embedding"
+    ],
+    "system-design-015": [
+      "batch-processing",
+      "real-time",
+      "churn"
+    ],
+    "system-design-016": [
+      "production-model"
+    ],
+    "dl-013": [
+      "neural-network",
+      "gradient-descent"
+    ],
+    "dl-014": [
+      "tf-idf"
+    ],
+    "dl-015": [
+      "rnn",
+      "lstm"
+    ],
+    "dl-016": [
+      "unlabeled-data"
+    ],
+    "llm-015": [
+      "embedding",
+      "llm"
+    ],
+    "llm-016": [
+      "prompt-engineering"
+    ],
+    "prodml-016": [
+      "monitoring"
+    ],
+    "prodml-017": [
+      "test-set",
+      "ab-test"
     ]
   }
 }
