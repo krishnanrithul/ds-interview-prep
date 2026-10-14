@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { rng, gauss } from '../../lib/toy.js'
+import { rng } from '../../lib/toy.js'
 import Shell, { Seg, Slider, Spark } from './Shell.jsx'
 
 // Two classes in a plane: an inner disc against an outer ring, with 12% of labels flipped.

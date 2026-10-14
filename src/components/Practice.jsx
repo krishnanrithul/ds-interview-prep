@@ -121,7 +121,7 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
     return () => window.removeEventListener('keydown', onKey)
   })
 
-  useEffect(() => { if (active && !typing && !rating && !done) textRef.current?.focus() }, [i, step, revealed, active])
+  useEffect(() => { if (active && !typing && !rating && !done) textRef.current?.focus() }, [i, step, revealed, active, typing, rating, done])
   useEffect(() => {
     if (!active || (step === 0 && revealed === 0)) return
     endRef.current?.scrollIntoView?.({ behavior: reduced() ? 'auto' : 'smooth', block: 'end' })
@@ -288,7 +288,7 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
         <div ref={endRef} style={{ scrollMarginBottom: '12rem' }} />
       </div>
 
-      <div className={deepOpen ? '' : 'sticky bottom-4 z-10'}>
+      <div className={deepOpen ? '' : 'sticky bottom-[calc(1rem+env(safe-area-inset-bottom))] z-10'}>
         {!rating ? (
           <div className="rounded-2xl border border-border bg-card shadow-lg focus-within:border-primary transition-colors">
             <textarea

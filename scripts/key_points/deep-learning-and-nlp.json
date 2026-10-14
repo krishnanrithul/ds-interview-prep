@@ -19,10 +19,10 @@
       "draft": true,
       "points": [
         "Gradient descent uses the gradient over all the data",
-        "SGD uses mini-batches: cheaper steps and helpful noise",
+        "SGD uses small random mini-batches for cheaper, noisier steps",
         "Momentum smooths the steps",
         "Adam gives each weight its own adaptive step size and converges fast",
-        "Too high a learning rate oscillates or diverges; too low crawls",
+        "Too high a learning rate diverges and too low trains slowly",
         "Use warmup and decay schedules and watch loss curves"
       ]
     },
@@ -35,7 +35,7 @@
         "MSE penalizes large errors heavily and targets the mean",
         "MAE is robust to outliers and targets the median",
         "Huber is quadratic for small errors and linear for large ones",
-        "Cross-entropy trains well-behaved probabilities; accuracy has no usable gradient",
+        "Cross-entropy trains well-calibrated class probabilities",
         "Use quantile or weighted loss for asymmetric costs, evaluated on the business metric"
       ]
     },
@@ -44,12 +44,12 @@
       "base": "Options in rough order of effort: get more or augmented data, simplify the architecture, add weight ",
       "draft": true,
       "points": [
-        "First confirm it's overfitting, not a leak or bug, with train and validation curves",
+        "Confirm it is overfitting first with train and validation curves",
         "Get more or augmented data",
         "Simplify the architecture, add weight decay and early stopping",
         "Dropout randomly zeroes units, like averaging many sub-networks",
         "Batch normalization standardizes layer inputs to stabilize training",
-        "Batch norm mainly aids optimization; its regularizing effect is mild"
+        "Batch norm mainly helps optimization, not regularization"
       ]
     },
     {
@@ -59,9 +59,9 @@
       "points": [
         "Start with a boosted-tree baseline",
         "Trees usually match or beat deep models on mid-sized tabular data",
-        "Trees handle mixed types, missing values and sharp thresholds, and are easier to explain",
+        "Trees handle mixed types, missing values and sharp thresholds",
         "Neural networks need careful scaling, encoding and tuning",
-        "A network earns its place with huge data, embeddings, multimodal inputs or online updates",
+        "A network earns its place with huge data or multimodal inputs",
         "Compare on the same time-aware folds including calibration, latency and maintenance"
       ]
     },
@@ -70,12 +70,12 @@
       "base": "A convolutional layer slides a small filter over the input and records how strongly each location ma",
       "draft": true,
       "points": [
-        "A filter slides over the image and scores how well each location matches a pattern",
-        "Early layers find edges; deeper layers combine them into shapes and objects",
+        "A filter slides over the input and records how well each spot matches a pattern",
+        "Layers build up from edges to shapes to objects",
         "Shared filters need far fewer parameters than a fully connected network",
         "Patterns are recognized wherever they appear",
         "Pooling summarizes regions and tolerates small shifts",
-        "Works for any grid-like data; start from a pretrained model"
+        "For most new work, start from a pretrained model"
       ]
     },
     {
@@ -109,9 +109,9 @@
       "base": "Training from scratch on 500 images would overfit, so I'd start from a model pretrained on a large d",
       "draft": true,
       "points": [
-        "500 images is too few to train from scratch",
-        "Start from a pretrained model such as an ImageNet backbone",
-        "Freeze the backbone and train a new head, then unfreeze top layers with a small learning rate",
+        "Start from a pretrained backbone rather than training from scratch",
+        "Freeze the backbone and train a new head",
+        "Then unfreeze the top layers with a small learning rate",
         "Use augmentation and early stopping",
         "Use stratified cross-validation since one small split is noisy",
         "For very different domains, check against a baseline or use a domain-specific model"
@@ -122,9 +122,9 @@
       "base": "I'd start with TF-IDF and logistic regression: it trains in seconds, needs little data, is easy to d",
       "draft": true,
       "points": [
-        "Start with TF-IDF and logistic regression: fast, cheap, easy to debug",
+        "Start with a TF-IDF and logistic regression baseline",
         "TF-IDF has no notion of meaning, so synonyms look unrelated",
-        "Pretrained embeddings capture meaning and can feed the same simple classifier",
+        "Pretrained embeddings capture meaning that TF-IDF misses",
         "An LLM classifies with few labels at higher cost, latency and variability",
         "Compare on one test set for accuracy, cost and latency",
         "Choose the simplest option that meets the target"
@@ -153,7 +153,7 @@
         "RLHF collects human comparisons between answers",
         "A reward model learns preferences and the chat model is optimized against it",
         "Training stays close to the original model",
-        "The reward is a proxy, so models can become sycophantic or verbose"
+        "Optimizing a proxy reward can make models sycophantic or verbose"
       ]
     }
   ]

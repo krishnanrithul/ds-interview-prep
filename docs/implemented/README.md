@@ -27,4 +27,7 @@ Each file states what changed, which files were touched, the decisions made and 
 | 20 | [Rename to Saddle Point](20_rename_saddle_point.md) | Built, uncommitted at time of writing |
 | 21 | [Quick fixes: reactive Mock for all topics, tap targets, follow-up grading in Practice](21_quick_fixes.md) | Built, uncommitted at time of writing |
 | 22 | [Feedback links: report a question, send feedback](22_feedback_links.md) | Built, uncommitted at time of writing |
+| 23 | [Review agents and linters](23_review_agents_and_linters.md) | Built, uncommitted at time of writing |
+| 24 | [Privacy note, invite-code proxy, icons and PWA](24_privacy_proxy_pwa.md) | Built, uncommitted at time of writing; proxy needs Vercel env vars |
+| 25 | [Link preview, welcome card, housekeeping, split key points](25_preview_welcome_split_points.md) | Built, uncommitted at time of writing |
 | – | Learn section: concept lessons | Not started |

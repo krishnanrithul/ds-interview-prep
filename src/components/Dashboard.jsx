@@ -5,8 +5,12 @@ import { QUESTIONS } from '../data/questions'
 import { summarize, countDue } from '../lib/queue'
 import { currentStreak, bestStreak, countToday } from '../lib/streak'
 import { SendFeedback } from './FeedbackLink'
+import Welcome, { welcomeDismissed, setWelcomeDismissed } from './Welcome'
 
-export default function Dashboard({ progress, settings, activity, onStart, onMock }) {
+export default function Dashboard({ progress, settings, activity, onStart, onMock, onPrivacy, onSettings }) {
+  const [welcome, setWelcome] = useState(() => !welcomeDismissed())
+  const closeWelcome = () => { setWelcomeDismissed(true); setWelcome(false) }
+  const openWelcome = () => { setWelcomeDismissed(false); setWelcome(true); window.scrollTo?.({ top: 0 }) }
   const overall = summarize(QUESTIONS, progress)
   const topics = [...new Set(QUESTIONS.map((q) => q.topic))]
   const due = countDue(QUESTIONS, progress)
@@ -37,6 +41,7 @@ export default function Dashboard({ progress, settings, activity, onStart, onMoc
 
   return (
     <div className="space-y-8">
+      {welcome && <Welcome onStart={onStart} onMock={onMock} onSettings={onSettings} onClose={closeWelcome} />}
       <section className="rounded-3xl bg-ink text-ink-foreground p-7 sm:p-10 border border-white/5">
         <div className="flex items-start justify-between gap-4 mb-4">
           <p className="text-ink-foreground/70 text-sm">Today's session</p>
@@ -49,7 +54,7 @@ export default function Dashboard({ progress, settings, activity, onStart, onMoc
         </div>
         <h2 className="font-serif text-3xl sm:text-[2.6rem] font-medium leading-[1.15] mb-4 max-w-2xl">{heading}</h2>
         <p className="text-ink-foreground/75 mb-8 max-w-xl leading-relaxed">
-          Answer out loud or in writing, then take the follow-ups the way an interviewer would push them. Rate yourself honestly. Missed questions come back tomorrow.
+          Answer out loud or in writing, take the follow-ups the way an interviewer would push them, then see how close you got to a senior answer. Missed questions come back tomorrow.
           {nextTopic && nextTopic.weak > 0 && <> Your weakest area right now is {nextTopic.t}.</>}
         </p>
         <div className="flex flex-wrap gap-3">
@@ -103,7 +108,11 @@ export default function Dashboard({ progress, settings, activity, onStart, onMoc
 
       <MasteryMap progress={progress} onStart={onStart} />
 
-      <div className="flex justify-center pt-2"><SendFeedback /></div>
+      <div className="flex flex-wrap justify-center items-center gap-x-5 gap-y-2 pt-2">
+        <button onClick={openWelcome} className="text-sm text-muted-foreground hover:text-foreground">How it works</button>
+        <SendFeedback />
+        <button onClick={onPrivacy} className="text-sm text-muted-foreground hover:text-foreground">Privacy</button>
+      </div>
     </div>
   )
 }

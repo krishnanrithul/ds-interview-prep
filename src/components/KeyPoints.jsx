@@ -4,7 +4,7 @@ import { scorePct, liveCredits, GRADE_CREDIT, THRESHOLD } from '../lib/match'
 import { getApiKey, gradeAnswer, cachedGrade } from '../lib/grade'
 
 // Live line under the answer box: how far the answer is toward a senior answer, never which points it hit.
-export function CoverageMeter({ q, status, sims }) {
+export function CoverageMeter({ status, sims }) {
   if (status === 'off') return null
   if (status === 'error') return <p className="text-xs text-muted-foreground">Match score unavailable in this browser</p>
   if (status === 'loading' || !sims) return <p className="text-xs text-muted-foreground" role="status">Loading match score…</p>
@@ -122,7 +122,7 @@ export function KeyPointsReview({ q, answer, sims, gradeText, onScore, followUps
         {text && state === 'busy' && <p className="flex items-center gap-1.5" role="status"><Sparkles className="w-3.5 h-3.5" />Checking correctness with Haiku…</p>}
         {text && state === 'done' && grade?.summary && <p className="text-sm text-foreground/90"><Sparkles className="inline w-3.5 h-3.5 mr-1.5 -mt-0.5 text-muted-foreground" />{grade.summary}</p>}
         {text && state === 'error' && <p>Correctness check failed: {error}. The score above is based on which ideas you mentioned.</p>}
-        {text && state === 'nokey' && <p>This score checks which ideas you mentioned, not whether you got them right. Add an Anthropic API key in Settings to have each point graded for correctness.</p>}
+        {text && state === 'nokey' && <p>This score checks which ideas you mentioned, not whether you got them right. Add an invite code or an API key in Settings to have each point graded for correctness.</p>}
       </div>
     </div>
   )

@@ -42,7 +42,8 @@ export default function CLT({ onClose }) {
   const draw = (count) => { const r = rngRef.current, d = POPS[pop].draw; return Array.from({ length: count }, () => { let s = 0; for (let i = 0; i < n; i++) s += d(r); return s / n }) }
   const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
 
-  useEffect(() => { clearInterval(timer.current); rngRef.current = rng(pop.length * 97 + n); setMeans(draw(300)) }, [pop, n])
+  // draw() is rebuilt every render but only reads pop and n; listing it would resample on every render.
+  useEffect(() => { clearInterval(timer.current); rngRef.current = rng(pop.length * 97 + n); setMeans(draw(300)) }, [pop, n]) // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => () => clearInterval(timer.current), [])
 
   const addMany = () => {

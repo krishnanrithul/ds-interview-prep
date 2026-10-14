@@ -1,4 +1,5 @@
-// Optional AI grade: one Haiku call per answer, using the learner's own Anthropic API key.
+// Optional AI grade: one Haiku call per answer, using the learner's own Anthropic API key, or an invite code that
+// routes the call through the app's server (api/claude.js), which holds the owner's key.
 // The embedding score says whether an idea was mentioned; this says whether it was right.
 import { safeParse } from './safeStorage'
 
@@ -12,8 +13,13 @@ const MAX_ANSWER = 4000 // room for a Mock transcript; Practice answers are usua
 // carries the key. A key saved in Settings takes priority.
 const DEV_KEY = import.meta.env.DEV ? (import.meta.env.VITE_ANTHROPIC_API_KEY || '') : ''
 const storedKey = () => { try { return localStorage.getItem(API_KEY_STORAGE) || '' } catch { return '' } }
-export const getApiKey = () => storedKey() || DEV_KEY
-export const apiKeySource = () => (storedKey() ? 'settings' : DEV_KEY ? 'env' : null)
+export const INVITE_STORAGE = 'ds-invite-code'
+export const getInviteCode = () => { try { return localStorage.getItem(INVITE_STORAGE) || '' } catch { return '' } }
+export const setInviteCode = (c) => { try { c ? localStorage.setItem(INVITE_STORAGE, c) : localStorage.removeItem(INVITE_STORAGE) } catch { /* ignore */ } }
+// The credential AI calls use: your own key first, then the dev key, then an invite code (as "invite:<code>").
+// Truthy means grading and the reacting interviewer are available.
+export const getApiKey = () => storedKey() || DEV_KEY || (getInviteCode() ? `invite:${getInviteCode()}` : '')
+export const apiKeySource = () => (storedKey() ? 'settings' : DEV_KEY ? 'env' : getInviteCode() ? 'invite' : null)
 export const setApiKey = (k) => { try { k ? localStorage.setItem(API_KEY_STORAGE, k) : localStorage.removeItem(API_KEY_STORAGE) } catch { /* ignore */ } }
 
 const hash = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36) }
@@ -33,15 +39,18 @@ function storeGrade(q, answer, fus, result) {
 
 // One forced tool call to Claude from the browser with the learner's own key. Returns the tool input.
 export async function callTool({ key, signal, system, user, tool, maxTokens = 800 }) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const viaInvite = key.startsWith('invite:')
+  const res = await fetch(viaInvite ? '/api/claude' : 'https://api.anthropic.com/v1/messages', {
     method: 'POST',
     signal,
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
+    headers: viaInvite
+      ? { 'content-type': 'application/json', 'x-invite-code': key.slice('invite:'.length) }
+      : {
+        'content-type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
     body: JSON.stringify({
       model: MODEL,
       max_tokens: maxTokens,
@@ -54,7 +63,8 @@ export async function callTool({ key, signal, system, user, tool, maxTokens = 80
   if (!res.ok) {
     let msg = `Request failed (${res.status})`
     try { msg = (await res.json())?.error?.message || msg } catch { /* keep default */ }
-    if (res.status === 401) msg = 'The API key was rejected. Check it in Settings.'
+    if (res.status === 401) msg = viaInvite ? "The invite code wasn't accepted. Check it in Settings." : 'The API key was rejected. Check it in Settings.'
+    if (viaInvite && res.status === 404) msg = 'Invite codes only work on the deployed site.'
     throw new Error(msg)
   }
   const body = await res.json()

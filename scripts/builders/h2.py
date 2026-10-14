@@ -1,5 +1,4 @@
 from h import *
-import h
 def _tag(i, l): TAGS[i] = {"label": l, "kind": "subject"}
 for i, l in [("linear-models","Linear & regularized models"),("decision-trees","Decision trees & forests"),("svm","Support vector machines"),("knn","k-nearest neighbors"),
  ("probabilistic-models","Probabilistic models"),("anomaly-detection","Anomaly detection"),("clustering","Clustering"),("dimensionality-reduction","Dimensionality reduction"),

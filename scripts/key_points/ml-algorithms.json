@@ -9,8 +9,8 @@
         "For prediction, linearity matters most: a missed curve gives systematic error",
         "Independence between train and test matters: leakage breaks predictions",
         "Constant variance and normality mainly affect intervals, not point predictions",
-        "Outliers drag least squares; check leverage or use a robust loss like Huber",
-        "Diagnose with residual plots; fix with transforms, interactions or a flexible model"
+        "Handle high-leverage outliers with a robust loss like Huber",
+        "Diagnose violations with residual plots"
       ]
     },
     {
@@ -21,7 +21,7 @@
         "All three add a penalty that reduces variance",
         "Ridge (L2) shrinks coefficients smoothly and keeps every feature",
         "Lasso (L1) sets coefficients to zero, so it selects features",
-        "With correlated features lasso picks one arbitrarily; elastic net keeps the group",
+        "Elastic net keeps correlated features together where lasso picks one",
         "Standardize features before applying the penalty",
         "Choose the penalty strength by cross-validation, time-aware for time data"
       ]
@@ -49,7 +49,7 @@
         "Averaging decorrelated trees reduces variance without adding much bias",
         "Out-of-bag samples give a built-in validation estimate",
         "Impurity importance is biased toward high-cardinality features and computed on training data",
-        "Use permutation importance on held-out data or SHAP; importance is not causation"
+        "Prefer permutation importance on held-out data or SHAP"
       ]
     },
     {
@@ -58,7 +58,7 @@
       "draft": true,
       "points": [
         "All three are gradient-boosted trees with similar accuracy when tuned equally",
-        "LightGBM grows leaf-wise with histograms: fast, but can overfit small data",
+        "LightGBM is fast because it grows trees leaf-wise with histograms",
         "XGBoost is the most widely deployed and documented, level-wise by default",
         "CatBoost handles categorical features natively with ordered target statistics",
         "With many categoricals, start with CatBoost",
@@ -73,9 +73,9 @@
         "SVM finds the boundary with the largest margin between classes",
         "Only the support vectors nearest the boundary define it",
         "Kernels like RBF allow non-linear boundaries",
-        "C trades margin width against training errors; gamma sets how local the kernel is",
+        "C trades margin width against training errors",
         "Features must be standardized because it is distance-based",
-        "Good on small, high-dimensional data like text; slow on large data and scores are not probabilities"
+        "Suits small, high-dimensional data like text but scales poorly"
       ]
     },
     {
@@ -86,9 +86,9 @@
         "Linear regression penalizes squared error on every point",
         "SVR ignores errors inside an epsilon tube around the fit",
         "Errors outside the tube are penalized linearly, weighted by C",
-        "Only points on or outside the tube are support vectors, so it is robust to small noise and outliers",
+        "Only points on or outside the tube become support vectors",
         "Needs scaled features and tuning of epsilon, C and gamma",
-        "Prefer it for small, smooth non-linear problems; otherwise regularized linear or boosting"
+        "Prefer it for small, smooth non-linear problems"
       ]
     },
     {
@@ -97,7 +97,8 @@
       "draft": true,
       "points": [
         "Predicts by majority vote or average of the k nearest training points",
-        "Small k is high variance; large k smooths toward the base rate; pick k by cross-validation",
+        "Small k overfits; large k smooths toward the base rate",
+        "Pick k by cross-validation",
         "Features must be scaled and irrelevant ones removed",
         "In high dimensions distances become similar, so neighbors lose meaning",
         "Prediction is slow on large data without an index or approximate search"
@@ -109,8 +110,8 @@
       "draft": true,
       "points": [
         "Assumes features are independent given the class and multiplies their likelihoods",
-        "Classification only needs the right class ranked first, which often survives the wrong assumption",
-        "Its probabilities are poorly calibrated; recalibrate before cost-based decisions",
+        "Ranking the right class first often survives the wrong assumption",
+        "Its probabilities are poorly calibrated",
         "Trains in one pass and needs little data",
         "Works well on high-dimensional sparse text, a strong baseline",
         "Smoothing stops an unseen word from zeroing out a class"
@@ -124,8 +125,8 @@
         "A coefficient is the change in log-odds per unit increase, others held fixed",
         "Exponentiate a coefficient to get an odds ratio",
         "Reading coefficients needs comparable scales and little collinearity",
-        "Check linearity in the log-odds; add splines, bins or interactions",
-        "Choose it when regulators need reasons, data is small, or the accuracy gap is within noise",
+        "Check that effects are linear in the log-odds",
+        "Choose it when regulators need reasons or the accuracy gap is small",
         "Verify with a held-out comparison and calibration check"
       ]
     },
@@ -134,7 +135,7 @@
       "base": "An isolation forest builds random trees that split features at random; points that are isolated in f",
       "draft": true,
       "points": [
-        "Isolation forest splits features at random; anomalies are isolated in fewer splits",
+        "Isolation forest isolates anomalies in fewer random splits",
         "Engineer behavioral features like amount versus the customer's norm and velocity",
         "Set the threshold from review capacity, such as the top N per day",
         "Unusual is not the same as fraud",
@@ -148,7 +149,7 @@
       "draft": true,
       "points": [
         "Linear regression can predict negative counts and assumes constant variance",
-        "Use a Poisson GLM with a log link; effects are multiplicative on the rate",
+        "Use a Poisson GLM with a log link",
         "Check for overdispersion and use negative binomial if variance exceeds the mean",
         "Add zero inflation when many customers have no claims",
         "Use an exposure offset for customers observed for different periods",
@@ -161,7 +162,7 @@
       "draft": true,
       "points": [
         "Alternates assigning points to the nearest center and moving centers to the mean",
-        "Finds a local optimum; use k-means++ and several restarts",
+        "Use k-means++ and several restarts to avoid poor local optima",
         "Choose k with the elbow and silhouette, plus interpretability and stability",
         "Fails on elongated shapes, very different cluster sizes and outliers",
         "Needs scaled numeric features",
@@ -188,9 +189,9 @@
       "points": [
         "Agglomerative clustering repeatedly merges the two closest clusters",
         "The dendrogram records every merge and its distance",
-        "Linkage matters: single chains, complete is compact, average and Ward in between",
+        "The linkage choice (single, complete, average, Ward) changes the clusters",
         "Useful when the number of groups is unknown or structure is nested",
-        "Cut the tree at large gaps in merge height or where the business can act",
+        "Cut the dendrogram at a large gap in merge height",
         "Needs pairwise distances, so impractical beyond tens of thousands of points"
       ]
     },
@@ -199,7 +200,7 @@
       "base": "k-means is a special case that assumes equal, round clusters and gives hard labels. A Gaussian mixtu",
       "draft": true,
       "points": [
-        "k-means assumes equal round clusters and gives hard labels",
+        "k-means assumes equal, round clusters",
         "A Gaussian mixture lets clusters have their own mean, shape, size and weight",
         "Soft assignments give each point a probability of membership",
         "Fitted with expectation-maximization and can hit local optima",
@@ -224,7 +225,7 @@
       "base": "I'd start with the purpose: marketing, risk and service design each want different features. I'd eng",
       "draft": true,
       "points": [
-        "Start from the purpose: marketing, risk and service need different features",
+        "Choose features from the segmentation's business purpose",
         "Engineer behavioral features, transform skewed ones and scale",
         "For mixed data use Gower distance, k-prototypes, or PCA or embeddings first",
         "Compare values of k on stability and interpretability",
@@ -253,7 +254,7 @@
         "A t-SNE plot is a prompt, not proof",
         "t-SNE preserves local neighborhoods but distorts global structure",
         "Cluster sizes, gaps and positions in the plot are not reliable",
-        "Results change with perplexity and seed and can show clusters in pure noise",
+        "t-SNE can show clusters in pure noise",
         "Re-run with several settings and cluster in the original or PCA space",
         "Check stability and whether groups differ on outcomes the embedding never saw"
       ]
@@ -263,7 +264,7 @@
       "base": "With many more features than the data supports, I'd start with cheap filters: drop constants, near-d",
       "draft": true,
       "points": [
-        "Start with cheap filters: drop constants, near-duplicates and highly correlated features",
+        "Start with cheap filters like dropping constant or correlated features",
         "Use embedded methods like lasso or tree importance to rank features",
         "Wrapper methods like recursive elimination refine at higher cost",
         "Do selection inside each cross-validation fold",
@@ -281,7 +282,7 @@
         "Using in-sample predictions for stacking leaks and overstates the gain",
         "Blending uses a holdout set instead",
         "Gains are small when base models are highly correlated boosted trees",
-        "Try a simple average first; ship only if the gain beats maintenance and latency cost"
+        "Ship only if the gain beats maintenance and latency cost"
       ]
     },
     {
@@ -289,12 +290,12 @@
       "base": "First I'd fix evaluation: accuracy is meaningless at 2%, so I'd use precision-recall, PR AUC and cos",
       "draft": true,
       "points": [
-        "Fix evaluation first: accuracy is meaningless; use precision-recall, PR AUC and cost",
+        "Evaluate with precision-recall and PR AUC, not accuracy",
         "Class weights change the loss without changing the data",
-        "Undersampling discards data; oversampling duplicates rows",
+        "Undersampling discards useful majority-class data",
         "SMOTE interpolates synthetic points that can be unrealistic or overlap",
         "Resample only inside the training fold, or validation leaks",
-        "Resampling distorts probabilities, so recalibrate; try weights plus threshold tuning first"
+        "Resampling distorts probabilities, so recalibrate afterwards"
       ]
     },
     {
@@ -307,7 +308,7 @@
         "Random search beats grid search because only a few hyperparameters matter",
         "Bayesian optimization like Optuna is worth it when each run is expensive",
         "Repeated tuning overfits the validation folds",
-        "Keep a final holdout or use nested cross-validation; stop when gains are within noise"
+        "Keep a final untouched holdout or use nested cross-validation"
       ]
     }
   ]

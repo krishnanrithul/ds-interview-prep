@@ -5,12 +5,12 @@
       "base": "I'd start with the decision the model supports: who gets a retention offer, and what an offer costs ",
       "draft": true,
       "points": [
-        "Start from the decision: who gets a retention offer, and what it costs versus a lost customer",
+        "Start from the decision: who gets a retention offer",
         "Define churn and the prediction window explicitly",
         "Build features only from data available at prediction time and split by time",
         "Baseline with logistic regression before a complex model",
-        "Churn is imbalanced, so use precision and recall at an actionable top-k, not accuracy",
-        "Ship when the false-positive cost is acceptable, not when a metric crosses a number"
+        "Use precision and recall at an actionable top-k, not accuracy",
+        "Ship when the false-positive cost is acceptable, not on a metric"
       ]
     },
     {
@@ -22,7 +22,7 @@
         "Measure input drift with PSI or KS on key features",
         "Labels arrive late, so input and prediction distributions are the early signal",
         "Tie thresholds to impact with a rule for investigate, retrain or roll back",
-        "Alert on a few important features and an aggregate score to avoid alert fatigue"
+        "Alert on a few key features to avoid alert fatigue"
       ]
     },
     {
@@ -47,8 +47,8 @@
         "Verify by recomputing features at past cutoffs",
         "Features like days since last payment leak if computed on the full table",
         "Prune features by domain priors, stability over time and time-based importance",
-        "Keep missingness as a signal and impute inside a pipeline fit on training data",
-        "Check whether missingness correlates with the target"
+        "Impute inside a pipeline fit on training data only",
+        "Keep missingness as a signal if it correlates with the target"
       ]
     },
     {
@@ -69,11 +69,11 @@
       "base": "I'd diagnose before acting. If training and validation error are both high and close, that's bias: u",
       "draft": true,
       "points": [
-        "Diagnose before acting by comparing training and validation error",
-        "Both errors high and close means bias: richer model, better features, less regularization",
+        "Diagnose with training versus validation error and learning curves",
+        "Both errors high and close together means high bias",
+        "Fix bias with a richer model, better features or less regularization",
         "Low training and much higher validation error means variance",
         "Fix variance with more data, stronger regularization, a simpler model or bagging",
-        "Learning curves show which regime you are in",
         "Regularization trades a little bias for a larger cut in variance"
       ]
     },
@@ -97,7 +97,8 @@
         "Random k-fold mixes future into training, so scores are too optimistic",
         "Use walk-forward validation: train up to a cutoff, test on the next period",
         "Leave a gap between train and test when the label looks ahead",
-        "Expanding windows suit stable relationships; sliding windows adapt to drift",
+        "Expanding windows suit stable relationships",
+        "Sliding windows adapt to drift",
         "Tune hyperparameters inside the training period with time-aware splits"
       ]
     },
@@ -107,7 +108,7 @@
       "draft": true,
       "points": [
         "Don't ship automatically on a 1% AUC gain",
-        "Check the gain is real with a confidence interval from bootstrap or repeated folds",
+        "Check the gain is real with a bootstrap confidence interval",
         "Translate the gain into the business metric and weigh it against costs",
         "Consider explainability, latency, fragility to drift and maintenance burden",
         "If the gain is small, ship logistic regression or add SHAP and monitoring"
@@ -119,11 +120,11 @@
       "draft": true,
       "points": [
         "First understand why values are missing",
-        "If missingness depends on the value, mean imputation biases; add a missing indicator",
+        "Add a missing indicator when missingness carries information",
         "Fit imputation inside the pipeline on training data only to avoid leakage",
         "Tree models like XGBoost handle missing values natively",
         "Check whether outliers are errors or real extremes",
-        "Keep real outliers with robust methods or log transforms; remove only confirmed errors"
+        "Keep real extremes and use robust methods or log transforms"
       ]
     },
     {
@@ -135,7 +136,7 @@
         "First confirm the split is valid: no duplicates, similar distributions, no leakage",
         "Use learning curves to see whether more data would help",
         "Try a simpler model or stronger regularization and early stopping",
-        "Also feature pruning, more or augmented data, and cross-validation",
+        "More or augmented data also reduces overfitting",
         "Judge each change on the gap and the validation score together"
       ]
     },
@@ -148,7 +149,7 @@
         "Averaging cancels variance, so random forest trees can be deep",
         "Boosting builds trees sequentially, each fitting the remaining errors, reducing bias",
         "Boosting trees are shallow and scaled by a learning rate",
-        "Boosting is usually more accurate but more sensitive to noisy labels and tuning",
+        "Boosting is more sensitive to noisy labels and tuning",
         "A random forest is a robust low-tuning baseline"
       ]
     },
@@ -196,12 +197,12 @@
       "base": "I'd turn it into expected value: flagging a customer costs the discount, and pays off only if the cu",
       "draft": true,
       "points": [
-        "Frame the threshold as expected value: discount cost versus value of a saved customer",
+        "Turn the threshold into expected value per flagged customer",
         "You need the discount's real effect on churn, ideally from an experiment",
         "High churn probability doesn't mean the customer is persuadable",
         "Sweep thresholds on held-out data with calibrated probabilities to maximize profit",
         "Respect capacity limits like how many offers the team can send",
-        "0.5 and F1 are arbitrary; re-tune when base rates or costs shift"
+        "A 0.5 or F1-optimal threshold is arbitrary here"
       ]
     },
     {
@@ -222,12 +223,12 @@
       "base": "Not yet. With 400 examples a single cross-validation estimate is very uncertain, so I'd report an in",
       "draft": true,
       "points": [
-        "Don't trust it yet: a CV estimate on 400 examples is very uncertain",
+        "A CV estimate on 400 examples is very uncertain",
         "Report an interval and use repeated or stratified CV",
         "Look for duplicates or the same entity split across folds",
-        "Look for a feature that encodes the label or tuning on the same folds",
+        "Look for a feature that encodes the label",
         "Use grouped splits, nested CV and an untouched holdout",
-        "Compare with a trivial baseline and check whether real data resembles the sample"
+        "Compare with a trivial baseline"
       ]
     },
     {
@@ -239,7 +240,7 @@
         "Differencing makes the series stationary so coefficients stay stable",
         "Choose orders with autocorrelation plots and information criteria",
         "Validate with walk-forward backtests",
-        "Good for a single short regular series with few drivers, and easy to explain",
+        "Good for a single short, regular series with few drivers",
         "Poor for many series, multiple seasonalities, holidays or rich external features"
       ]
     },
@@ -251,9 +252,9 @@
         "Exponential smoothing is a quick robust baseline per series",
         "Prophet adds trend changes, seasonality and holidays but isn't always most accurate",
         "Gradient boosting trains one global model across all products",
-        "A global model uses lag, calendar, price and promotion features and helps short histories",
+        "A global model helps products with short histories",
         "Compare all three with walk-forward validation on the business metric",
-        "Ship the simple baseline first and switch only if the global model clearly wins"
+        "Ship the simple baseline first"
       ]
     },
     {
@@ -287,11 +288,11 @@
       "draft": true,
       "points": [
         "Matrix factorization learns user and item vectors from interactions",
-        "It captures taste without item attributes but struggles with new items",
-        "Content-based scores items by attribute or embedding similarity and handles new items",
+        "Matrix factorization struggles with new items",
+        "Content-based handles new items through attribute similarity",
         "Content-based tends to recommend more of the same",
-        "Use implicit feedback and combine approaches, often with a ranking model on top",
-        "Evaluate offline with recall at k or NDCG on time splits, then an online experiment"
+        "Combine both approaches, often with a ranking model on top",
+        "Evaluate offline on time splits, then with an online test"
       ]
     },
     {
@@ -303,7 +304,8 @@
         "Penalized models and gradient-based models like neural networks need scaling",
         "Tree models split on thresholds, so scaling changes nothing",
         "Fit the scaler on training data only to avoid leakage",
-        "Standardize by default; min-max for bounded inputs; robust scaler for outliers"
+        "Standardize by default",
+        "Use a robust scaler when there are outliers"
       ]
     }
   ]

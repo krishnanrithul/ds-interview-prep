@@ -8,7 +8,7 @@ import Explainer from './Explainer'
 export default function KeyTerms({ terms = [], onTag, onDeepChange }) {
   const [openId, setOpenId] = useState(null)
   const [deepId, setDeepId] = useState(null) // term whose interactive explainer is open
-  useEffect(() => { onDeepChange?.(!!deepId); return () => onDeepChange?.(false) }, [deepId])
+  useEffect(() => { onDeepChange?.(!!deepId); return () => onDeepChange?.(false) }, [deepId, onDeepChange])
   const list = terms.map((id) => GLOSSARY[id]).filter(Boolean)
   if (!list.length) return null
   const open = list.find((t) => t.id === openId)

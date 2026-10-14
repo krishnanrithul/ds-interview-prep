@@ -18,8 +18,8 @@ function makeData(kind) {
   if (kind === 'moons') {
     for (let i = 0; i < 60; i++) {
       const t = (i / 59) * Math.PI
-      pts.push([cos2(t, 0), sin2(t, 0)].map((v, j) => v + 0.06 * gauss(r)))
-      pts.push([cos2(t, 1), sin2(t, 1)].map((v, j) => v + 0.06 * gauss(r)))
+      pts.push([cos2(t, 0), sin2(t, 0)].map((v) => v + 0.06 * gauss(r)))
+      pts.push([cos2(t, 1), sin2(t, 1)].map((v) => v + 0.06 * gauss(r)))
     }
     return pts.map(([x, y]) => [((x + 1) / 3) * 8 + 1, ((y + 0.5) / 1.5) * 5 + 2.5])
   }

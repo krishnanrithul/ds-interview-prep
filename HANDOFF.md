@@ -14,7 +14,7 @@ Paste this into a new conversation, or tell it to read HANDOFF.md in the repo. I
 | Item | State |
 |---|---|
 | Git | Everything through doc 18 is committed and pushed (`e574d2f`). **Uncommitted:** doc 19 (saved scores) and doc 20 (rename to Saddle Point); he asked for them to be committed as two commits once reviewed. |
-| Bank | 155 questions (133 draft; the 22 without `draft` are the real-interview ones), 9 topics, 455 follow-ups with 910 draft variants, 910 key points (all hand-written short points, all draft), 88 tags, 165 glossary terms, 17 explainers |
+| Bank | 155 questions (133 draft; the 22 without `draft` are the real-interview ones), 9 topics, 455 follow-ups with 910 draft variants, 914 key points (hand-written, one idea each, all draft), 88 tags, 165 glossary terms, 17 explainers |
 | AI | Live match score in Practice for all topics; Haiku grade in Practice (main answer plus a verdict per follow-up reply) and in the Mock review when a key is set; reactive Mock follow-ups for all topics (since doc 21) |
 | Tested | Built app in headless Chromium with the model served locally and the Anthropic API mocked. Real Haiku calls have been checked by Rithul only a few times (grading works; one reactive Mock run). Safari, Firefox and real phones untested. |
 
@@ -49,13 +49,19 @@ Never hand-edit the generated parts of `src/data/questions.json`.
 ### 6.1 Why the AI packages are pinned
 The worker serves the ONNX runtime files from the installed `onnxruntime-web`. If transformers updated and expected a different runtime version, the served files would stop matching. Upgrade both together and re-test.
 
-## 7. Next (THINGS_TO_DO section 4 has the full list)
+## 7. Next (THINGS_TO_DO section 0 is the single prioritized list)
 1. Commit docs 19 and 20 (two commits), and he pushes.
 2. A few real Mock runs to confirm the stricter rules (no "Good—", one re-ask); reactive Mock is already on for all topics.
-3. Review: the 910 key points, 910 variants and 133 draft questions; split bundled key points.
+3. Review: the 914 key points, 910 variants and 133 draft questions (bundled key points already split, doc 25).
 4. Tune `THRESHOLD` from saved answers and scores (about 30 labeled).
 5. ~~Grade follow-up replies in Practice~~ Done (doc 21).
 6. Launch: trademark search and domain for Saddle Point, PNG icons from the new mountain-pass mark (doc 20), decision on bring-your-own-key versus a hosted backend, privacy note, feedback link, Vercel deploy, PWA. iOS: see `docs/IOS_READINESS.md`.
+
+## 7a. Live site, proxy and PWA (doc 24)
+Deployed on Vercel by Rithul. `api/claude.js` is a Vercel Function: invite-code holders get grading and the reacting Mock through it, with the owner's key from the `ANTHROPIC_API_KEY` env var and codes from `INVITE_CODES`; the Anthropic spend limit is the cost cap. Invite codes don't work on `npm run dev`. The app is a PWA (`public/manifest.webmanifest`, `public/sw.js`, icons in `public/`), service worker registered in production only; `vercel.json` sets caching headers. Privacy page: `src/components/Privacy.jsx`; keep it in step with what leaves the device.
+
+## 7b. Review agents and linters (doc 23)
+`.claude/agents/`: `content-reviewer`, `ai-prompt-reviewer`, `ui-reviewer`, `launch-reviewer` (read-only, report only); commands `/review-content`, `/review-prompts`, `/review-ui`, `/prelaunch`, `/lint`. Use them after content, AI-prompt and UI changes, and `/prelaunch` before any deploy. Linters: `npm run lint` (ESLint), `npm run format:check` (Prettier, not yet applied to the codebase), `ruff check scripts`.
 
 ## 8. Rules and preferences to keep
 - Rithul prefers direct, honest answers without hedging, dislikes repetition and emoji-heavy replies. Answer in the reply; ask only when a wrong guess is expensive. Explain in plain words when he asks what something is.

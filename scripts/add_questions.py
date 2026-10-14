@@ -9,7 +9,7 @@ Each file in scripts/batches/*.json looks like:
 The script appends unseen questions to src/data/questions.json (marked draft), records their tags and
 terms in scripts/tags.map.json and scripts/terms.map.json, then runs apply_tags.py and apply_terms.py.
 Re-running is safe. Run from the repo root: python3 scripts/add_questions.py"""
-import glob, json, re, subprocess, sys
+import glob, json, subprocess, sys
 
 TOPICS = {'SQL', 'ML', 'Statistics', 'System Design', 'Python', 'Production ML', 'LLMs & AI', 'ML Algorithms', 'Deep Learning & NLP'}
 DIFFS = {'easy', 'medium', 'hard'}

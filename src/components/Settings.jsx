@@ -6,7 +6,7 @@ import {
   getReminderHour, isReminderEnabled, isReminderSupported, setReminderEnabled, setReminderHour,
 } from '../lib/reminders'
 import ConfirmDialog from './ConfirmDialog'
-import { getApiKey, setApiKey, apiKeySource } from '../lib/grade'
+import { setApiKey, apiKeySource, getInviteCode, setInviteCode } from '../lib/grade'
 import { generalFeedbackUrl } from '../lib/feedback'
 
 const formatHour = (h) => `${h % 12 === 0 ? 12 : h % 12}:00 ${h < 12 ? 'AM' : 'PM'}`
@@ -71,7 +71,7 @@ function Toggle({ checked, onChange, disabled, label }) {
 
 const buttonCls = 'inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors'
 
-export default function Settings({ settings, update, flash }) {
+export default function Settings({ settings, update, flash, onPrivacy }) {
   const { theme, setTheme } = useTheme()
 
   // Numeric settings use a draft with Save/Cancel, like vape-ease-journey.
@@ -95,16 +95,27 @@ export default function Settings({ settings, update, flash }) {
     else flash(enabled ? `Daily reminder on at ${formatHour(hour)}` : 'Daily reminder off')
   }
 
-  // AI feedback: the key stays in this browser and is sent only to Anthropic
-  const [savedKey, setSavedKey] = useState(getApiKey())
+  // AI feedback: an invite code (calls go through the app's server) or the learner's own key (straight to Anthropic).
+  // Both stay in this browser and are left out of backups.
+  const [source, setSource] = useState(apiKeySource())
   const [keyDraft, setKeyDraft] = useState('')
+  const [codeDraft, setCodeDraft] = useState('')
+  const refresh = () => setSource(apiKeySource())
   const saveKey = () => {
     const k = keyDraft.trim()
     if (!k) return
-    setApiKey(k); setSavedKey(k); setKeyDraft('')
+    setApiKey(k); setKeyDraft(''); refresh()
     flash('API key saved in this browser')
   }
-  const removeKey = () => { setApiKey(''); setSavedKey(''); flash('API key removed') }
+  const saveCode = () => {
+    const c = codeDraft.trim()
+    if (!c) return
+    setInviteCode(c); setCodeDraft(''); refresh()
+    flash('Invite code saved. Grading and the reacting interviewer are on.')
+  }
+  const removeKey = () => { setApiKey(''); refresh(); flash('API key removed') }
+  const removeCode = () => { setInviteCode(''); refresh(); flash('Invite code removed') }
+  const storedKeyTail = () => { try { return (localStorage.getItem('ds-anthropic-key') || '').slice(-4) } catch { return '' } }
 
   // data
   const fileRef = useRef(null)
@@ -223,35 +234,57 @@ export default function Settings({ settings, update, flash }) {
       </Section>
 
       <Section title="AI feedback">
-        <div className="p-4 space-y-3">
-          <div>
-            <p className="font-medium">Anthropic API key</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Optional. Checks whether your answer is right, not just whether it mentions the key points. One Haiku call per answer, roughly $0.004, billed to your key. Your answer and the question go to Anthropic. The key is stored only in this browser and is left out of backups. Used in Practice and Mock.
-            </p>
-          </div>
-          {savedKey && apiKeySource() === 'env' ? (
+        <div className="p-4 space-y-4">
+          <p className="text-xs text-muted-foreground">
+            Optional. Grades whether your answers are right, not just whether they mention the key points, and makes the Mock interviewer react to what you say. Uses Claude Haiku: your answer and the question are sent to Anthropic. Stored only in this browser and left out of backups.
+          </p>
+          {source === 'env' && (
             <p className="text-sm text-muted-foreground"><KeyRound size={14} className="inline -mt-0.5 mr-1.5" />Using the key from <code className="font-mono text-xs">.env.development.local</code> (dev server only)</p>
-          ) : savedKey ? (
+          )}
+          {source === 'settings' && (
             <div className="flex items-center justify-between gap-3">
-              <span className="inline-flex items-center gap-2 text-sm font-mono text-muted-foreground"><KeyRound size={14} />…{savedKey.slice(-4)}</span>
+              <span className="inline-flex items-center gap-2 text-sm"><KeyRound size={14} className="text-muted-foreground" />Your API key <span className="font-mono text-muted-foreground">…{storedKeyTail()}</span></span>
               <button onClick={removeKey} className={buttonCls}>Remove</button>
             </div>
-          ) : (
-            <div className="flex gap-2">
-              <input
-                type="password"
-                autoComplete="off"
-                spellCheck={false}
-                value={keyDraft}
-                onChange={(e) => setKeyDraft(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') saveKey() }}
-                placeholder="sk-ant-…"
-                aria-label="Anthropic API key"
-                className="flex-1 min-w-0 h-9 rounded-md border border-border bg-background px-3 text-sm font-mono"
-              />
-              <button onClick={saveKey} disabled={!keyDraft.trim()} className="px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40">Save</button>
+          )}
+          {source === 'invite' && (
+            <div className="flex items-center justify-between gap-3">
+              <span className="inline-flex items-center gap-2 text-sm"><KeyRound size={14} className="text-muted-foreground" />Invite code <span className="font-mono text-muted-foreground">{getInviteCode().slice(0, 3)}…</span></span>
+              <button onClick={removeCode} className={buttonCls}>Remove</button>
             </div>
+          )}
+          {!source && (
+            <>
+              <div>
+                <p className="font-medium text-sm mb-1.5">Invite code</p>
+                <div className="flex gap-2">
+                  <input
+                    autoComplete="off" spellCheck={false} value={codeDraft}
+                    onChange={(e) => setCodeDraft(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') saveCode() }}
+                    placeholder="From the person who shared Saddle Point with you"
+                    aria-label="Invite code"
+                    className="flex-1 min-w-0 h-9 rounded-md border border-border bg-background px-3 text-sm"
+                  />
+                  <button onClick={saveCode} disabled={!codeDraft.trim()} className="px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40">Save</button>
+                </div>
+              </div>
+              <div>
+                <p className="font-medium text-sm">Or your own Anthropic API key</p>
+                <p className="text-xs text-muted-foreground mt-0.5 mb-1.5">Billed to you, roughly half a cent per graded answer. Calls go straight from your browser to Anthropic.</p>
+                <div className="flex gap-2">
+                  <input
+                    type="password" autoComplete="off" spellCheck={false} value={keyDraft}
+                    onChange={(e) => setKeyDraft(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') saveKey() }}
+                    placeholder="sk-ant-…"
+                    aria-label="Anthropic API key"
+                    className="flex-1 min-w-0 h-9 rounded-md border border-border bg-background px-3 text-sm font-mono"
+                  />
+                  <button onClick={saveKey} disabled={!keyDraft.trim()} className="px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40">Save</button>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </Section>
@@ -287,7 +320,10 @@ export default function Settings({ settings, update, flash }) {
         </Row>
       </Section>
 
-      <p className="text-center text-xs text-muted-foreground mt-8">All data stays on this device. Nothing is sent anywhere, except answers sent to Anthropic for grading if you add an API key.</p>
+      <p className="text-center text-xs text-muted-foreground mt-8">
+        Your data stays on this device; answers go to Anthropic only when grading is on.{' '}
+        <button onClick={onPrivacy} className="underline underline-offset-2 hover:text-foreground">Privacy details</button>
+      </p>
 
       <ConfirmDialog
         open={pendingImport !== null}

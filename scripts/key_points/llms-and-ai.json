@@ -19,10 +19,10 @@
       "draft": true,
       "points": [
         "Collect real inputs including hard and adversarial cases",
-        "Write a rubric defining good: correctness, groundedness, tone, format",
+        "Write a rubric for correctness, groundedness, tone and format",
         "A human-labeled set is the anchor",
         "Scale with an LLM judge checked against human labels for bias",
-        "Run the set as a regression suite on every change and track failure categories",
+        "Run the set as a regression suite on every change",
         "Confirm with online signals like task completion and feedback"
       ]
     },
@@ -36,7 +36,7 @@
         "Fine-tuning is a poor way to inject facts",
         "Fine-tune for consistent style or format, specialized behavior, or a cheaper smaller model",
         "Fine-tuning needs quality examples and ongoing curation and retraining",
-        "They combine well; decide with an evaluation set"
+        "Decide between the options with an evaluation set"
       ]
     },
     {
@@ -71,11 +71,11 @@
       "draft": true,
       "points": [
         "A token is a chunk of text, often a word fragment",
-        "About three quarters of a word in English; varies by language, code and numbers",
+        "In English a token is about three quarters of a word",
         "Providers charge per input and output token, output usually more",
-        "The context window caps input plus output; latency scales with output",
+        "The context window caps input plus output tokens",
         "Estimate cost from tokens per request times volume and price",
-        "Over the limit: retrieve relevant parts, summarize or cache prefixes"
+        "Over the limit, retrieve only the relevant parts or summarize"
       ]
     },
     {
@@ -86,7 +86,7 @@
         "Use low temperature, often 0, for classification",
         "Constrain output to the label set with an enum or structured output",
         "Temperature flattens token probabilities so unlikely tokens appear more",
-        "Top-p samples only from the most likely tokens; tune one, not both",
+        "Top-p samples only from the most likely tokens",
         "Even at temperature 0 outputs aren't guaranteed identical",
         "Use higher temperature for brainstorming and varied writing"
       ]
@@ -100,8 +100,8 @@
         "Use schema-constrained or tool-calling output mode",
         "Give a schema and examples and set adequate max tokens",
         "Always validate against a schema in code",
-        "On failure retry once with the error, then fall back or route to a human",
-        "Log failure rate by prompt version and model; never parse with a regex"
+        "On failure, retry once with the validation error",
+        "Log the failure rate by prompt version and model"
       ]
     },
     {
@@ -111,9 +111,9 @@
       "points": [
         "The model may follow injected text because instructions and data share one channel",
         "Delimiters and warnings help but don't stop a determined attacker",
-        "Least privilege: no secrets in the system prompt, no sensitive actions without confirmation",
-        "Restrict tools and outbound traffic; treat outputs as untrusted",
-        "With tools, injection can trigger actions, so require approval",
+        "Give the model least privilege over tools and data",
+        "Treat model outputs as untrusted input",
+        "Require human approval before tool actions with side effects",
         "Test with an adversarial suite and monitor"
       ]
     },
@@ -163,10 +163,10 @@
       "points": [
         "Instrument cost per request, feature and user to find the heavy tail",
         "Trim prompts and context and cap output length",
-        "Cache repeated prefixes and identical requests; batch non-urgent work",
+        "Cache repeated prompt prefixes and identical requests",
         "Route easy requests to a smaller model",
         "Fine-tune a small model at high volume",
-        "Rerun evaluations after each change; some savings need product changes"
+        "Rerun evaluations after each cost change"
       ]
     },
     {
@@ -177,9 +177,9 @@
         "LoRA freezes pretrained weights and trains small low-rank matrices",
         "It cuts GPU memory and training time",
         "Store a small adapter per task and swap on one base model",
-        "Full fine-tuning captures bigger changes but costs more and risks forgetting",
+        "Full fine-tuning costs more and risks forgetting",
         "Use LoRA for style, format or domain adaptation with limited data",
-        "Check prompting or retrieval first; fine-tuning is for behavior, not facts"
+        "Try prompting or retrieval before fine-tuning"
       ]
     }
   ]

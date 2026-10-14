@@ -28,3 +28,9 @@ dist-ssr
 .env.local
 .env.*.local
 dist-bundle.tgz
+
+# Claude Code personal settings (the shared agents and commands in .claude/ are committed)
+.claude/settings.local.json
+
+# Python bytecode
+__pycache__/

@@ -13,6 +13,7 @@ import Practice from './components/Practice'
 import Mock from './components/Mock'
 import Library from './components/Library'
 import Insights from './components/Insights'
+import Privacy from './components/Privacy'
 import Logo from './components/Logo'
 import Settings from './components/Settings'
 import './index.css'
@@ -35,6 +36,8 @@ export default function App() {
   const [session, setSession] = useState(null) // { ids, topic, key }
   const [status, setStatus] = useState(null)
   const [libraryTags, setLibraryTags] = useState([])
+  const [privacyFrom, setPrivacyFrom] = useState('settings') // where the privacy page's Back goes
+  const openPrivacy = (from) => { setPrivacyFrom(from); setView('privacy'); window.scrollTo?.({ top: 0 }) }
   const byId = useMemo(() => Object.fromEntries(QUESTIONS.map((q) => [q.id, q])), [])
 
   const flash = useCallback((m) => { setStatus(m); setTimeout(() => setStatus(null), 3000) }, [])
@@ -67,7 +70,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-20 bg-card/90 backdrop-blur border-b border-border">
+      <header className="sticky top-0 z-20 bg-card/90 backdrop-blur border-b border-border pt-[env(safe-area-inset-top)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center gap-4">
           <div className="flex items-center gap-2.5 mr-2">
             <Logo />
@@ -94,9 +97,9 @@ export default function App() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-4xl mx-auto px-4 py-8 pb-[calc(2rem+env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         {view === 'dashboard' && (
-          <Dashboard progress={progress} settings={settings} activity={activity} onStart={start} onMock={() => setView('mock')} />
+          <Dashboard progress={progress} settings={settings} activity={activity} onStart={start} onMock={() => setView('mock')} onPrivacy={() => openPrivacy('dashboard')} onSettings={() => setView('settings')} />
         )}
 
         {/* Practice and Mock stay mounted while hidden so switching tabs doesn't lose your place. */}
@@ -122,7 +125,8 @@ export default function App() {
 
         {view === 'insights' && <Insights progress={progress} notes={notes} onStart={start} onTag={openTag} />}
         {view === 'library' && <Library progress={progress} notes={notes} onPractice={(id) => start({ only: [id] })} tags={libraryTags} setTags={setLibraryTags} onPracticeMany={(ids) => start({ only: ids })} />}
-        {view === 'settings' && <Settings settings={settings} update={update} flash={flash} />}
+        {view === 'settings' && <Settings settings={settings} update={update} flash={flash} onPrivacy={() => openPrivacy('settings')} />}
+        {view === 'privacy' && <Privacy onBack={() => setView(privacyFrom)} />}
       </main>
 
       {status && (

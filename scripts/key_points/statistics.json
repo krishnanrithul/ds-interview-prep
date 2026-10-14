@@ -5,11 +5,11 @@
       "base": "Type I means we ship a change that does nothing, and Type II means we miss a real improvement. Which",
       "draft": true,
       "points": [
-        "Type I is shipping a change that does nothing; Type II is missing a real improvement",
-        "Which is worse depends on cost; use a stricter alpha for risky decisions",
+        "Type I error is shipping a change that does nothing",
+        "Type II error is missing a real improvement",
+        "Which error is worse depends on its cost",
         "Control Type II by planning power and sample size before the test",
-        "Don't stop or extend a test to chase p below 0.05",
-        "Fix the stopping rule in advance; peeking inflates false positives",
+        "Peeking and stopping early inflate false positives",
         "Use sequential methods if early looks are needed"
       ]
     },
@@ -87,7 +87,7 @@
         "It breaks when observations aren't independent",
         "Use a block bootstrap for time series",
         "It behaves badly for extremes like the maximum and for tiny samples",
-        "About a thousand resamples for a standard error; more for tail percentiles"
+        "About a thousand resamples suffice for a standard error"
       ]
     },
     {
@@ -110,8 +110,8 @@
       "points": [
         "Averages of repeated samples form a bell shape around the true mean",
         "The spread of the average shrinks as the sample grows",
-        "That's why we can put a margin of error on an average and compare groups",
-        "The data itself doesn't become normal; the average does",
+        "That is what justifies a margin of error on an average",
+        "The data does not become normal, only the average does",
         "Heavily skewed metrics need much larger samples than 30",
         "Check heavy-tailed metrics with a bootstrap"
       ]
@@ -124,7 +124,7 @@
         "Choose by the decision: total revenue needs the mean",
         "For the typical user's experience use the median or a trimmed mean",
         "At large n the CLT still supports a t-test on the mean",
-        "With heavy tails confirm with a bootstrap or reduce variance with CUPED or winsorizing",
+        "With heavy tails, confirm with a bootstrap",
         "Mann-Whitney doesn't specifically test medians",
         "Report both mean and median with intervals"
       ]
@@ -152,7 +152,7 @@
         "Daily peeking can push false positives to 20 to 30%",
         "Pre-commit to a sample size, or use a sequential design",
         "Sequential options: alpha spending, always-valid p-values or Bayesian rules",
-        "Monitor early for harm, not for declaring wins; run full weeks"
+        "Monitor early for harm, not for declaring wins"
       ]
     },
     {
@@ -160,12 +160,12 @@
       "base": "First I'd learn how discounts were assigned: if marketing targeted engaged customers, or at-risk cus",
       "draft": true,
       "points": [
-        "First learn how discounts were assigned; targeting creates selection bias",
-        "Map the likely causal structure",
+        "Learn how discounts were assigned, since targeting creates selection bias",
         "Compare like with like: propensity matching, weighting or regression on pre-treatment covariates",
         "Use difference-in-differences or regression discontinuity if there's a rollout or cutoff",
-        "Check covariate balance and run a sensitivity analysis",
-        "Adjustment only handles measured factors; recommend a holdout experiment"
+        "Check covariate balance after adjustment",
+        "Adjustment only handles measured confounders",
+        "Recommend a small holdout experiment going forward"
       ]
     },
     {
@@ -175,7 +175,7 @@
       "points": [
         "SE of the difference is sqrt(p1(1-p1)/n1 + p2(1-p2)/n2)",
         "The 95% interval is the difference plus or minus 1.96 standard errors",
-        "Here the SE is about 0.063 points, so differences under 0.12 are noise",
+        "Here differences under about 0.12 points are noise",
         "Assumes independent users and a large enough n",
         "Analyze per user when randomizing users, not per click or session",
         "Cross-check with a bootstrap"
@@ -201,10 +201,10 @@
       "points": [
         "The likelihood is the probability the model assigns to the observed data",
         "MLE chooses the parameters that maximize it",
-        "Maximize the log-likelihood: a sum, and no underflow",
+        "Maximize the log-likelihood to turn products into sums",
         "Squared error is Gaussian MLE; cross-entropy is Bernoulli MLE",
         "MLE overfits with little data",
-        "With separable classes logistic coefficients diverge; regularization or priors fix it"
+        "With separable classes, logistic coefficients diverge without regularization"
       ]
     },
     {
@@ -213,7 +213,7 @@
       "draft": true,
       "points": [
         "Use a chi-square test of independence on the channel-by-outcome table",
-        "Needs independent users and large expected counts; otherwise Fisher's exact test",
+        "Use Fisher's exact test when expected counts are small",
         "A significant result only says some channels differ",
         "Find which with pairwise comparisons corrected by Holm or Tukey",
         "Report effect sizes with intervals, since big samples make tiny gaps significant",
@@ -242,7 +242,7 @@
         "Averaging only churned customers' lifetimes biases the answer down",
         "Use survival analysis to handle censoring",
         "A Kaplan-Meier curve shows the share still subscribed at each tenure",
-        "A Cox model adds features and gives hazard ratios; check proportional hazards",
+        "A Cox model adds features and gives hazard ratios",
         "For a 30-day churn score, a fixed-window classifier can be simpler"
       ]
     }

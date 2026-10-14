@@ -9,7 +9,7 @@
         "Generate candidates with fast retrieval from embeddings or an ANN index",
         "Rank a few hundred candidates with a heavier model",
         "Budget the 100ms across feature fetch, retrieval and ranking with a buffer",
-        "Train offline on a schedule but update cheap features like recent clicks in real time",
+        "Update cheap features like recent clicks in real time",
         "Randomize A/B tests by user through one assignment layer"
       ]
     },
@@ -74,8 +74,8 @@
         "Hard rules catch known patterns before the model scores",
         "Use score bands: approve, step-up or manual review, decline",
         "Set thresholds from fraud loss versus lost sales and friction",
-        "Labels arrive late via chargebacks; train on mature data",
-        "Fraudsters adapt: monitor drift, retrain often, keep rules for fast response"
+        "Train on mature data because chargeback labels arrive late",
+        "Fraudsters adapt, so monitor drift and retrain often"
       ]
     },
     {

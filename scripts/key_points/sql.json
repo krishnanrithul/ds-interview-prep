@@ -5,12 +5,12 @@
       "base": "First I'd ask what counts as a duplicate: same email, same normalized email (case, whitespace, plus-",
       "draft": true,
       "points": [
-        "First define what counts as a duplicate: email, normalized email, phone or several fields",
+        "First define what counts as a duplicate",
         "Normalize the key: case, whitespace, plus-addressing",
         "GROUP BY the normalized key with HAVING COUNT(*) > 1",
-        "Use ROW_NUMBER() over the key ordered by created_at to keep one and flag the rest",
+        "ROW_NUMBER() over the key keeps one row and flags the rest",
         "At 100M rows precompute and index the normalized key",
-        "GROUP BY surfaces duplicate groups; DISTINCT just hides them"
+        "DISTINCT hides duplicates instead of finding them"
       ]
     },
     {
@@ -18,8 +18,9 @@
       "base": "I'd define the unit first: the distribution of days from invoice to cash by segment, not just the av",
       "draft": true,
       "points": [
-        "Define the unit: distribution of days from invoice to cash by segment, not the average",
-        "Unpaid invoices are censored; dropping them biases toward fast payers",
+        "Model the distribution of days to pay, not the average",
+        "Unpaid invoices are censored, not missing",
+        "Dropping unpaid invoices biases toward fast payers",
         "Build a daily incremental table so the scan becomes a small partition read",
         "New customers without history fall back to their segment prior",
         "Handle regime changes like COVID with recency weighting or exclusion, decided by backtest"
@@ -45,7 +46,7 @@
       "points": [
         "Define the cohort (signup month) and 'active' explicitly",
         "LEFT JOIN cohort members to activity so inactive customers stay in the denominator",
-        "Returning customers count as active; report 'never lapsed' separately if needed",
+        "Returning customers count as active again",
         "Compare cohorts at the same age and mask incomplete periods",
         "Before crediting the product, check confounders: seasonality, channel, pricing, customer mix"
       ]
@@ -56,9 +57,9 @@
       "draft": true,
       "points": [
         "DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC)",
-        "Rank in a CTE and filter rank <= 3 outside, since window functions run after WHERE",
+        "Filter rank <= 3 in an outer query, since windows run after WHERE",
         "Ask how ties should work first",
-        "ROW_NUMBER gives exactly 3, RANK can give more and skips, DENSE_RANK keeps top 3 salary levels",
+        "ROW_NUMBER and RANK treat ties differently from DENSE_RANK",
         "Departments with fewer than three people return what they have"
       ]
     },
@@ -119,7 +120,7 @@
         "HAVING filters groups after aggregation",
         "Fix: GROUP BY dept HAVING AVG(salary) > 50000",
         "Keep row conditions in WHERE so they cut rows early and use indexes",
-        "Use both together: WHERE for rows, HAVING for groups"
+        "Using both WHERE and HAVING in one query is normal"
       ]
     },
     {
@@ -131,7 +132,7 @@
         "Use LAG partitioned by product, ordered by month",
         "Join to a calendar of months and fill gaps with zero before LAG",
         "Divide with NULLIF(previous, 0) so a zero base gives NULL",
-        "The first month has no prior value: NULL, not 0%",
+        "The first month has no prior value, so return NULL",
         "Ask how to treat tiny bases where percentages mislead"
       ]
     },
@@ -143,7 +144,7 @@
         "Deduplicate to distinct user-day first",
         "Number each user's days with ROW_NUMBER() ordered by date",
         "Date minus row number is constant within a consecutive run",
-        "Group by user and that constant; HAVING COUNT(*) >= 3",
+        "Group by user and that constant with HAVING COUNT(*) >= 3",
         "Self-joins work for exactly 3 but don't generalize",
         "Confirm how 'day' is defined, since time zones shift days"
       ]
@@ -156,9 +157,9 @@
         "Payments are one-to-many per order, so each order row repeats per payment",
         "The SUM then counts revenue multiple times: join fan-out",
         "DISTINCT only hides it and can drop legitimate rows",
-        "Aggregate each table to one row per order before joining, or use separate CTEs",
+        "Aggregate payments to one row per order before joining",
         "Check row counts and key uniqueness before and after every join",
-        "A LEFT JOIN doesn't help; the duplication comes from matches"
+        "A LEFT JOIN doesn't fix the duplication"
       ]
     },
     {
@@ -170,7 +171,7 @@
         "COUNT(col) skips NULLs",
         "COUNT(DISTINCT col) counts distinct non-NULL values",
         "AVG and SUM also skip NULLs, so AVG divides by the non-NULL count",
-        "COUNT(DISTINCT) is expensive at scale; use approximate distinct counts",
+        "At scale use approximate distinct counts",
         "Comparing COUNT(*) with COUNT(col) checks completeness"
       ]
     },
@@ -194,7 +195,7 @@
         "Line up the definitions first: denominator and numerator window",
         "Check treatment of cancelled, refunded, test and internal orders",
         "Check guest checkouts, currency and time zone cut-offs",
-        "Reproduce both numbers step by step from the same base to find where they diverge",
+        "Reproduce both numbers step by step from the same base",
         "Agree on the definition from the decision the metric supports",
         "Put one documented definition in a shared metrics layer"
       ]

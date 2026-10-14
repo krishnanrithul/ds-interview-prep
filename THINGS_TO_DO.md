@@ -2,6 +2,40 @@
 
 Living list for Saddle Point (formerly Gradient Ascent). What has already been built is recorded in `docs/implemented/`.
 
+## 0. Open list (updated 2026-10-14)
+The single prioritized list. Sections 1 to 4 below are history: the original ideas, the coverage audit and earlier status notes, kept for context. Most of section 1 is now built (see `docs/implemented/` 16 to 22).
+
+**Soft launch (next)**
+1. ~~Invite-code proxy~~ Built (doc 24): `api/claude.js`. **Rithul to do:** set `ANTHROPIC_API_KEY` and `INVITE_CODES` in Vercel, redeploy, set a monthly spend limit in the Anthropic Console, test one grade on the live site.
+2. ~~Deploy to Vercel~~ Done by Rithul (Hobby plan; commercial use will need Pro).
+3. Safari and iPhone check on the deployed build: the in-browser model, the ONNX runtime, grading through the invite code, Add to Home Screen, offline, layout and safe areas.
+4. ~~Privacy note~~ Done (doc 24).
+5. Dedicated feedback address in `src/lib/feedback.js` (currently Rithul's personal email).
+6. Share with a small group of data scientists; collect feedback through the report links. First-time visitors now get a short welcome card (doc 25).
+
+**Before a public launch**
+7. Trademark search for Saddle Point (USPTO, IP India) and a domain.
+8. ~~PNG icons and share image~~ Done (docs 24 and 25). **Rithul to do:** put the live site URL in `VITE_SITE_URL` in `.env.production` so link previews use an absolute image URL (LinkedIn and Slack ignore relative ones).
+9. ~~PWA~~ Done (doc 24); check "Add to Home Screen" on the iPhone (item 3).
+10. Positioning: practice, not learning ("courses teach you; Saddle Point interviews you"), aimed at senior and staff candidates. Practice and the live score free; graded Mock interviews paid. Free competitors (for example Krish Naik's AI tutorials hub, which has interview Q&A sets and an AI voice tutor but no mock interviews or grading) make a free tier necessary.
+11. Hosted backend for paying users: sign-in, quotas, spend cap, payments (the proxy from step 1 grows into this). iOS after that: `docs/IOS_READINESS.md`.
+
+**Score accuracy**
+12. Tune the 0.5 match threshold from saved answers and scores (about 30 hand-labeled).
+13. ~~Split bundled key points~~ Done (doc 25): 93 questions rewritten so each point holds one idea. Points where a single idea scored under 0.6 against its own point fell from 78 to 37; the rest are a framing phrase plus one idea ("Start from the decision: …"), which is fine.
+
+**Content (Rithul's review, deferred)**
+14. Review draft questions, senior answers, key points (914), follow-up variants (910) and key-term definitions. Start each topic with `/review-content <topic>` and fix what it flags.
+15. More Foundations (easy) questions: only 25, and new learners start with them.
+16. Missing dedicated questions: instrumental variables, UMAP, topic models, NDCG, log loss, RNN and LSTM beyond dl-007.
+
+**Later**
+17. Junior and senior answers for each follow-up (1.4); a Learn section; a weekly trend in Insights (needs more than 5 attempts kept per question); optional explainers (class imbalance and threshold, hierarchical clustering, LightGBM residuals).
+18. Draft badge shows on 133 of 155 questions: show it only in the Library, or quietly in the debrief.
+19. ~~Housekeeping~~ Mostly done (doc 25): obsolete extraction scripts deleted, ESLint clean, Ruff unused imports fixed. Still open: 81 Ruff style issues in older scripts (none affect behavior), and whether to run Prettier over the codebase once (58 files would change, formatting only).
+
+**Tooling (2026-10-14, doc 23):** review agents in `.claude/agents/` (content-reviewer, ai-prompt-reviewer, ui-reviewer, launch-reviewer) with shortcut commands `/review-content`, `/review-prompts`, `/review-ui`, `/prelaunch`, `/lint`; ESLint, Prettier and Ruff configured.
+
 ## 1. Ideas for improvement
 
 ### 1.1 Match score
@@ -99,11 +133,11 @@ Recommended next, in order:
 2. Review the variants, topic by topic, and flip `"draft"` to false for the good ones. Start with ML and the 22 real-interview questions.
 3. ~~Key points for every question (1.1).~~ First pass done 2026-10-05 for all 155 (docs/implemented/16).
 4. ~~Rewrite the key points as short, one-idea points marked draft.~~ Done for all 155 questions (2026-10-05, doc 17); the score is on for every topic. Remaining: review the points topic by topic and drop the draft flag; split points that bundle several details (main cause of false misses).
-5. ~~Real-time coverage score~~ Built in Practice for all topics (doc 17): in-browser embeddings, live "x of n key points covered", key-points panel in the debrief. Still to do: tune the 0.5 threshold on about 30 hand-labeled answers. Overall score ("x% of a senior answer", partial credit from the AI grade) added the same day. Possible next: let the score suggest Solid, Shaky or Missed; grade follow-up replies in the same Haiku call.
+5. ~~Real-time coverage score~~ Built in Practice for all topics (doc 17): in-browser embeddings, live "x of n key points covered", key-points panel in the debrief. Still to do: tune the 0.5 threshold on about 30 hand-labeled answers. Overall score ("x% of a senior answer", partial credit from the AI grade) added the same day. ~~Possible next: let the score suggest Solid, Shaky or Missed; grade follow-up replies in the same Haiku call.~~ Both done (docs 19, 21).
 6. ~~Bring-your-own-key setting~~ Built (doc 17): Settings > AI feedback; one Haiku grade per answer in the debrief marks each key point correct, wrong or missing. Check the first real grades by hand (the sandbox test used a mocked response). Reactive Mock (1.5) built for Production ML (doc 18): Mock is a back-and-forth and every follow-up is written by Haiku from the conversation so far, guided by the fixed follow-ups, which are also the fallback. Widened to all topics on 2026-10-06 (doc 21).
 
 Still open:
-- Logo: the current mark (dots, trend line, arrow) may resemble others. Plan: contour hill with climbing dots; keep `Logo.jsx` and `public/favicon.svg` in sync; run a real trademark and logo search before public launch.
+- ~~Logo~~ Done 2026-10-06: mountain-pass mark (doc 20). A trademark search is still open (see section 0).
 - More Foundations questions (only 25 easy). Matters more now that new learners start with them.
 - Expert review of the 133 draft questions.
 - Optional explainers: class imbalance and threshold, hierarchical clustering, boosting residuals for LightGBM.

@@ -9,8 +9,8 @@
         "Compare input distributions for data drift and the prediction distribution",
         "Where labels exist, check performance by segment and time for concept drift",
         "Label drift is a change in the base rate",
-        "Fix the cheapest cause first; retrain on a recent window or warm start if needed",
-        "Validate with a backtest and add telemetry for next time"
+        "Fix the cheapest cause first, retraining only if needed",
+        "Validate the fix with a backtest"
       ]
     },
     {
@@ -33,10 +33,10 @@
       "points": [
         "Measure first: approval and error rates by group",
         "Use fairness metrics like demographic parity and equalized odds",
-        "Involve legal and compliance; in lending it's regulatory",
+        "Involve legal and compliance, since lending is regulated",
         "Removing protected attributes fails when proxies like zip code carry the signal",
         "Audit and constrain proxies, or use fairness-constrained training or thresholds",
-        "The accuracy-fairness tradeoff is a business decision: present options and document"
+        "The accuracy-fairness tradeoff is a business decision, not a modeling one"
       ]
     },
     {
@@ -82,12 +82,12 @@
       "base": "I'd profile a request end to end first, because the time often goes to fetching features or network ",
       "draft": true,
       "points": [
-        "Profile a request end to end first; time often goes to feature fetch or network",
+        "Profile a request end to end to find where time goes",
         "Precompute predictions in batch or cache them if freshness allows",
         "Use fewer or cheaper features",
         "Use a smaller model, distillation or quantization",
         "Batch inference requests",
-        "Measure accuracy loss against latency and cost gains; pick the cheapest that meets the SLA"
+        "Pick the cheapest option that meets the latency SLA"
       ]
     },
     {
@@ -97,10 +97,10 @@
       "points": [
         "Data drift: the input distribution shifts",
         "Concept drift: the same inputs now lead to different outcomes",
-        "Give a concrete example of each",
-        "Data drift is visible from inputs with PSI or KS; concept drift needs labels",
-        "Data drift hurts only where the model is weak; concept drift always hurts",
-        "Handle data drift with segment checks or reweighting; concept drift by retraining"
+        "Detect data drift from inputs alone with PSI or KS",
+        "Detecting concept drift needs labels",
+        "Data drift hurts only where the model was weak",
+        "Concept drift usually needs retraining"
       ]
     },
     {
@@ -110,7 +110,7 @@
       "points": [
         "You only observe outcomes for approved applicants: selection bias",
         "The model never learns about rejected applicants, so it extrapolates",
-        "Wrongly rejected good applicants are never discovered; the loop reinforces itself",
+        "Wrongly rejected good applicants are never discovered, so errors persist",
         "Approve a small random slice of borderline applicants to get unbiased labels",
         "Use reject inference with caveats and evaluate on the random holdout",
         "Tell the business what's unknowable and what it costs"
@@ -139,7 +139,7 @@
         "Rule of thumb: under 0.1 stable, 0.1 to 0.25 moderate, above 0.25 large",
         "Thresholds are heuristics that depend on bins and sample size",
         "PSI misses shifts within bins, is unstable for sparse bins and ignores performance",
-        "Combine with KS or Wasserstein, weight by importance, and investigate before retraining"
+        "Investigate a PSI alert before retraining"
       ]
     },
     {
@@ -149,10 +149,10 @@
       "points": [
         "Start from today's pain: recomputed features, inconsistent definitions, skew",
         "A feature store gives shared definitions and point-in-time training data",
-        "It also gives consistent online serving",
+        "A feature store also gives consistent online serving",
         "Costs: infrastructure, ownership, backfills and migration",
         "For a few batch models, warehouse tables and shared code are enough",
-        "Pilot on one high-value feature set when there are many models or real-time needs"
+        "Pilot on one high-value feature set first"
       ]
     },
     {
@@ -163,7 +163,7 @@
         "Confirm the drop is real: metric definitions and label maturity",
         "Check upstream: schema, null rates, feature distributions, joins, traffic mix",
         "Slice precision by segment, channel, merchant and time",
-        "A sudden step suggests a pipeline change; a gradual slide suggests adapting fraudsters",
+        "A sharp one-day step suggests a pipeline or product change",
         "Tell stakeholders the impact and an interim fix like raising the threshold",
         "Retrain only after diagnosing"
       ]
@@ -191,7 +191,7 @@
         "Overrides from a few reviewers suggest preference or inconsistency",
         "Overrides using information the model lacks suggest a missing feature",
         "Audit a sample against real outcomes to see who is right",
-        "Overrides as labels carry reviewer bias; also watch for rubber-stamping"
+        "Overrides used as labels carry reviewer bias"
       ]
     }
   ]

@@ -82,7 +82,7 @@ def main():
     with open(questions_file, 'w') as f:
         json.dump(data, f, indent=2)
     
-    print(f"Key points applied successfully:")
+    print("Key points applied successfully:")
     print(f"  Applied to {applied} questions")
     print(f"  Not included: {skipped} questions (no key_points extracted)")
     

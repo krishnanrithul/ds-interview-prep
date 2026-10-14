@@ -30,7 +30,6 @@ export default function Sampling({ onClose }) {
     for (let n = 0; n < 50; n++) { let u = r(), i = 0; while (i < final.length - 1 && u > final[i]) { u -= final[i]; i++ } counts[i]++ }
     setDraws(counts); setSeed((s) => s + 1)
   }
-  const entropy = -final.reduce((s, p) => s + (p > 0 ? p * Math.log2(p) : 0), 0)
   const top = Math.max(...final)
 
   return (

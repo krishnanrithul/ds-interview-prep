@@ -21,8 +21,8 @@
         "Layer checks: schema, types, null rates, ranges, uniqueness, freshness, volume",
         "Add distribution checks against a recent baseline",
         "Give each check a severity: hard failures block, soft ones warn",
-        "A key feature suddenly 50% missing should fail or fall back, not be silently imputed",
-        "Treat it as a contract: alert the upstream owner with the failing check and sample rows",
+        "A key feature suddenly half missing should fail, not be imputed",
+        "Alert the upstream owner with the failing check and sample rows",
         "Batch alerts into a daily digest to avoid a flood"
       ]
     },
@@ -61,7 +61,7 @@
         "Process in chunks and aggregate incrementally",
         "Or use an out-of-core engine like DuckDB or lazy Polars",
         "Convert once to Parquet if the data will be reused",
-        "Move to Spark or a warehouse when data grows or jobs are shared and scheduled"
+        "Move to Spark or a warehouse when jobs outgrow one machine"
       ]
     },
     {
@@ -74,7 +74,7 @@
         "Run schema and data quality checks inside the pipeline",
         "Regression-test the model on a fixed dataset and seed with a metric floor",
         "Use seeds and tolerances for randomness instead of exact equality",
-        "Fast tests on every commit; heavier end-to-end runs on a schedule"
+        "Run fast tests on every commit and end-to-end runs on a schedule"
       ]
     },
     {
@@ -111,7 +111,7 @@
         "Count TP, FP and FN in one pass over zip(y_true, y_pred)",
         "Precision = TP / (TP + FP); recall = TP / (TP + FN)",
         "Unequal input lengths should raise an error",
-        "No predicted or actual positives leaves a metric undefined: return 0 or NaN explicitly",
+        "Handle zero denominators explicitly, returning 0 or NaN",
         "For multiclass report macro, micro or weighted averages",
         "Test against sklearn on random and degenerate inputs"
       ]
@@ -126,7 +126,7 @@
         "Suits streaming a large file through chained transform stages",
         "You can iterate only once; a second pass silently yields nothing",
         "No indexing or len() without consuming it",
-        "Use a list for multiple passes; prefer vectorized chunks for numeric work"
+        "Use a list when you need multiple passes"
       ]
     },
     {
@@ -138,7 +138,7 @@
         "Use heapq.nlargest or Counter.most_common(k) instead of sorting everything",
         "The heap costs O(m log k) for m distinct items",
         "Memory grows with the number of distinct items",
-        "For huge streams use Count-Min Sketch or Misra-Gries; counts become estimates",
+        "For huge streams use an approximate sketch like Count-Min",
         "Define tie-breaking so results are deterministic"
       ]
     },
@@ -151,7 +151,7 @@
         "Every call that omits items mutates the same shared list",
         "Items leak across calls, even across users in a long-running service",
         "Fix: items=None, then create a new list inside the function",
-        "Same trap for dicts and sets; dataclasses use field(default_factory=list)",
+        "The same trap applies to dict and set defaults",
         "Tests miss it because each passes alone but fails in a different order"
       ]
     },
@@ -165,7 +165,7 @@
         "Unit-test edge cases like empty frames, NaNs and unexpected categories",
         "Validate data at the boundary and fail loudly",
         "Use the same functions for training and inference to avoid skew",
-        "Add logging, config, code review and CI; the notebook calls the package"
+        "Add logging, config, code review and CI"
       ]
     },
     {
@@ -176,7 +176,7 @@
         "First try vectorizing with pandas, NumPy or Polars, or push it to SQL",
         "For CPU-bound Python use processes, because the GIL blocks threads",
         "Threads suit I/O-bound work",
-        "Multiprocessing costs pickling, duplicated memory and task overhead, so use large chunks",
+        "Multiprocessing has pickling and memory overhead, so use large chunks",
         "Beyond one machine use Spark, Dask or the warehouse",
         "Profile first to parallelize the real bottleneck"
       ]
@@ -191,7 +191,7 @@
         "Move each center to the mean of its points",
         "Re-seed empty clusters",
         "Stop when assignments stop changing or within tolerance, with an iteration cap",
-        "Run several seeds, keep the lowest inertia, and check scaling and stability"
+        "Run several seeds and keep the lowest inertia"
       ]
     },
     {
@@ -203,8 +203,8 @@
         "MSE gradient is (2/n) * X.T @ (X @ w - y)",
         "Update w -= lr * gradient until the loss stops improving",
         "Scale features first or the loss surface becomes a narrow valley",
-        "Plot loss per iteration: oscillation means too high, slow decline means too low",
-        "Closed form is exact for small data; mini-batches make updates cheaper"
+        "Tune the learning rate by plotting loss per iteration",
+        "The closed form is exact and fine for small data"
       ]
     },
     {

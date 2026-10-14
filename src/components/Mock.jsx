@@ -226,7 +226,7 @@ ${f.reply || '(no reply)'}`)].filter(Boolean).join('\n\n')
         <p className="text-center text-xs text-muted-foreground mt-1">
           {getApiKey()
             ? 'The interviewer reacts to your answers, and each question is graded at the end.'
-            : 'Add an API key in Settings and the interviewer reacts to your answers and grades them.'}
+            : 'Add an invite code or an API key in Settings and the interviewer reacts to your answers and grades them.'}
         </p>
       </div>
     )

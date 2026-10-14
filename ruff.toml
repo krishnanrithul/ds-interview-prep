@@ -1,0 +1,11 @@
+# Ruff for the content pipeline in scripts/. Run with `ruff check scripts` (install: `brew install ruff` or `pipx install ruff`).
+line-length = 140
+target-version = "py310"
+
+[lint]
+select = ["E", "F", "W", "B", "I"]
+ignore = ["E501"] # long content strings in the builders are expected
+
+[lint.per-file-ignores]
+# The builders are compact data files that import the shared helpers with `from h import *` on purpose.
+"scripts/builders/*.py" = ["F403", "F405", "E701", "E702", "E731"]

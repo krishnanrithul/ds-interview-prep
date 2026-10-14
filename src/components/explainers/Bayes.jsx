@@ -3,7 +3,7 @@ import Shell, { Seg, path } from './Shell.jsx'
 import { rng } from '../../lib/toy.js'
 
 // Beta-binomial updating for a conversion rate.
-const lgamma = (x) => { const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5]; let y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t); let s = 1.000000000190015; for (const v of c) s += v / ++y; return -t + Math.log((2.5066282746310005 * s) / x) }
+const lgamma = (x) => { const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5]; let y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t); let s = 1.000000000190015; for (const v of c) s += v / ++y; return -t + Math.log((2.5066282746310005 * s) / x) } // eslint-disable-line no-loss-of-precision -- published Lanczos coefficients, extra digits are harmless
 const pdf = (x, a, b) => (x <= 0 || x >= 1 ? 0 : Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + (a - 1) * Math.log(x) + (b - 1) * Math.log(1 - x)))
 const PRIORS = { flat: { a: 1, b: 1, label: 'No opinion (flat)' }, sceptic: { a: 20, b: 180, label: 'Past launches suggest about 10%' }, wrong: { a: 40, b: 160, label: 'Confident it is about 20%' } }
 const TRUE_RATE = 0.12, BASE = 0.1

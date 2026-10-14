@@ -63,12 +63,12 @@
       ],
       "kind": "implementation",
       "key_points": [
-        "First define what counts as a duplicate: email, normalized email, phone or several fields",
+        "First define what counts as a duplicate",
         "Normalize the key: case, whitespace, plus-addressing",
         "GROUP BY the normalized key with HAVING COUNT(*) > 1",
-        "Use ROW_NUMBER() over the key ordered by created_at to keep one and flag the rest",
+        "ROW_NUMBER() over the key keeps one row and flags the rest",
         "At 100M rows precompute and index the normalized key",
-        "GROUP BY surfaces duplicate groups; DISTINCT just hides them"
+        "DISTINCT hides duplicates instead of finding them"
       ],
       "key_points_draft": true
     },
@@ -139,8 +139,9 @@
       ],
       "kind": "case",
       "key_points": [
-        "Define the unit: distribution of days from invoice to cash by segment, not the average",
-        "Unpaid invoices are censored; dropping them biases toward fast payers",
+        "Model the distribution of days to pay, not the average",
+        "Unpaid invoices are censored, not missing",
+        "Dropping unpaid invoices biases toward fast payers",
         "Build a daily incremental table so the scan becomes a small partition read",
         "New customers without history fall back to their segment prior",
         "Handle regime changes like COVID with recency weighting or exclusion, decided by backtest"
@@ -260,7 +261,7 @@
       "key_points": [
         "Define the cohort (signup month) and 'active' explicitly",
         "LEFT JOIN cohort members to activity so inactive customers stay in the denominator",
-        "Returning customers count as active; report 'never lapsed' separately if needed",
+        "Returning customers count as active again",
         "Compare cohorts at the same age and mask incomplete periods",
         "Before crediting the product, check confounders: seasonality, channel, pricing, customer mix"
       ],
@@ -334,12 +335,12 @@
       ],
       "kind": "case",
       "key_points": [
-        "Start from the decision: who gets a retention offer, and what it costs versus a lost customer",
+        "Start from the decision: who gets a retention offer",
         "Define churn and the prediction window explicitly",
         "Build features only from data available at prediction time and split by time",
         "Baseline with logistic regression before a complex model",
-        "Churn is imbalanced, so use precision and recall at an actionable top-k, not accuracy",
-        "Ship when the false-positive cost is acceptable, not when a metric crosses a number"
+        "Use precision and recall at an actionable top-k, not accuracy",
+        "Ship when the false-positive cost is acceptable, not on a metric"
       ],
       "key_points_draft": true
     },
@@ -413,7 +414,7 @@
         "Measure input drift with PSI or KS on key features",
         "Labels arrive late, so input and prediction distributions are the early signal",
         "Tie thresholds to impact with a rule for investigate, retrain or roll back",
-        "Alert on a few important features and an aggregate score to avoid alert fatigue"
+        "Alert on a few key features to avoid alert fatigue"
       ],
       "key_points_draft": true
     },
@@ -562,8 +563,8 @@
         "Verify by recomputing features at past cutoffs",
         "Features like days since last payment leak if computed on the full table",
         "Prune features by domain priors, stability over time and time-based importance",
-        "Keep missingness as a signal and impute inside a pipeline fit on training data",
-        "Check whether missingness correlates with the target"
+        "Impute inside a pipeline fit on training data only",
+        "Keep missingness as a signal if it correlates with the target"
       ],
       "key_points_draft": true
     },
@@ -697,11 +698,11 @@
       ],
       "kind": "concept",
       "key_points": [
-        "Type I is shipping a change that does nothing; Type II is missing a real improvement",
-        "Which is worse depends on cost; use a stricter alpha for risky decisions",
+        "Type I error is shipping a change that does nothing",
+        "Type II error is missing a real improvement",
+        "Which error is worse depends on its cost",
         "Control Type II by planning power and sample size before the test",
-        "Don't stop or extend a test to chase p below 0.05",
-        "Fix the stopping rule in advance; peeking inflates false positives",
+        "Peeking and stopping early inflate false positives",
         "Use sequential methods if early looks are needed"
       ],
       "key_points_draft": true
@@ -915,7 +916,7 @@
         "Generate candidates with fast retrieval from embeddings or an ANN index",
         "Rank a few hundred candidates with a heavier model",
         "Budget the 100ms across feature fetch, retrieval and ranking with a buffer",
-        "Train offline on a schedule but update cheap features like recent clicks in real time",
+        "Update cheap features like recent clicks in real time",
         "Randomize A/B tests by user through one assignment layer"
       ],
       "key_points_draft": true
@@ -1176,8 +1177,8 @@
         "Layer checks: schema, types, null rates, ranges, uniqueness, freshness, volume",
         "Add distribution checks against a recent baseline",
         "Give each check a severity: hard failures block, soft ones warn",
-        "A key feature suddenly 50% missing should fail or fall back, not be silently imputed",
-        "Treat it as a contract: alert the upstream owner with the failing check and sample rows",
+        "A key feature suddenly half missing should fail, not be imputed",
+        "Alert the upstream owner with the failing check and sample rows",
         "Batch alerts into a daily digest to avoid a flood"
       ],
       "key_points_draft": true
@@ -1298,8 +1299,8 @@
         "Compare input distributions for data drift and the prediction distribution",
         "Where labels exist, check performance by segment and time for concept drift",
         "Label drift is a change in the base rate",
-        "Fix the cheapest cause first; retrain on a recent window or warm start if needed",
-        "Validate with a backtest and add telemetry for next time"
+        "Fix the cheapest cause first, retraining only if needed",
+        "Validate the fix with a backtest"
       ],
       "key_points_draft": true
     },
@@ -1449,10 +1450,10 @@
       "key_points": [
         "Measure first: approval and error rates by group",
         "Use fairness metrics like demographic parity and equalized odds",
-        "Involve legal and compliance; in lending it's regulatory",
+        "Involve legal and compliance, since lending is regulated",
         "Removing protected attributes fails when proxies like zip code carry the signal",
         "Audit and constrain proxies, or use fairness-constrained training or thresholds",
-        "The accuracy-fairness tradeoff is a business decision: present options and document"
+        "The accuracy-fairness tradeoff is a business decision, not a modeling one"
       ],
       "key_points_draft": true
     },
@@ -1598,9 +1599,9 @@
       "kind": "implementation",
       "key_points": [
         "DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC)",
-        "Rank in a CTE and filter rank <= 3 outside, since window functions run after WHERE",
+        "Filter rank <= 3 in an outer query, since windows run after WHERE",
         "Ask how ties should work first",
-        "ROW_NUMBER gives exactly 3, RANK can give more and skips, DENSE_RANK keeps top 3 salary levels",
+        "ROW_NUMBER and RANK treat ties differently from DENSE_RANK",
         "Departments with fewer than three people return what they have"
       ],
       "key_points_draft": true
@@ -1886,11 +1887,11 @@
       ],
       "kind": "concept",
       "key_points": [
-        "Diagnose before acting by comparing training and validation error",
-        "Both errors high and close means bias: richer model, better features, less regularization",
+        "Diagnose with training versus validation error and learning curves",
+        "Both errors high and close together means high bias",
+        "Fix bias with a richer model, better features or less regularization",
         "Low training and much higher validation error means variance",
         "Fix variance with more data, stronger regularization, a simpler model or bagging",
-        "Learning curves show which regime you are in",
         "Regularization trades a little bias for a larger cut in variance"
       ],
       "key_points_draft": true
@@ -2043,7 +2044,8 @@
         "Random k-fold mixes future into training, so scores are too optimistic",
         "Use walk-forward validation: train up to a cutoff, test on the next period",
         "Leave a gap between train and test when the label looks ahead",
-        "Expanding windows suit stable relationships; sliding windows adapt to drift",
+        "Expanding windows suit stable relationships",
+        "Sliding windows adapt to drift",
         "Tune hyperparameters inside the training period with time-aware splits"
       ],
       "key_points_draft": true
@@ -2120,7 +2122,7 @@
       "kind": "case",
       "key_points": [
         "Don't ship automatically on a 1% AUC gain",
-        "Check the gain is real with a confidence interval from bootstrap or repeated folds",
+        "Check the gain is real with a bootstrap confidence interval",
         "Translate the gain into the business metric and weigh it against costs",
         "Consider explainability, latency, fragility to drift and maintenance burden",
         "If the gain is small, ship logistic regression or add SHAP and monitoring"
@@ -2195,11 +2197,11 @@
       "kind": "concept",
       "key_points": [
         "First understand why values are missing",
-        "If missingness depends on the value, mean imputation biases; add a missing indicator",
+        "Add a missing indicator when missingness carries information",
         "Fit imputation inside the pipeline on training data only to avoid leakage",
         "Tree models like XGBoost handle missing values natively",
         "Check whether outliers are errors or real extremes",
-        "Keep real outliers with robust methods or log transforms; remove only confirmed errors"
+        "Keep real extremes and use robust methods or log transforms"
       ],
       "key_points_draft": true
     },
@@ -2499,7 +2501,7 @@
         "It breaks when observations aren't independent",
         "Use a block bootstrap for time series",
         "It behaves badly for extremes like the maximum and for tiny samples",
-        "About a thousand resamples for a standard error; more for tail percentiles"
+        "About a thousand resamples suffice for a standard error"
       ],
       "key_points_draft": true
     },
@@ -2731,8 +2733,8 @@
         "Hard rules catch known patterns before the model scores",
         "Use score bands: approve, step-up or manual review, decline",
         "Set thresholds from fraud loss versus lost sales and friction",
-        "Labels arrive late via chargebacks; train on mature data",
-        "Fraudsters adapt: monitor drift, retrain often, keep rules for fast response"
+        "Train on mature data because chargeback labels arrive late",
+        "Fraudsters adapt, so monitor drift and retrain often"
       ],
       "key_points_draft": true
     },
@@ -2881,7 +2883,7 @@
         "Process in chunks and aggregate incrementally",
         "Or use an out-of-core engine like DuckDB or lazy Polars",
         "Convert once to Parquet if the data will be reused",
-        "Move to Spark or a warehouse when data grows or jobs are shared and scheduled"
+        "Move to Spark or a warehouse when jobs outgrow one machine"
       ],
       "key_points_draft": true
     },
@@ -2955,7 +2957,7 @@
         "Run schema and data quality checks inside the pipeline",
         "Regression-test the model on a fixed dataset and seed with a metric floor",
         "Use seeds and tolerances for randomness instead of exact equality",
-        "Fast tests on every commit; heavier end-to-end runs on a schedule"
+        "Run fast tests on every commit and end-to-end runs on a schedule"
       ],
       "key_points_draft": true
     },
@@ -3174,12 +3176,12 @@
       ],
       "kind": "case",
       "key_points": [
-        "Profile a request end to end first; time often goes to feature fetch or network",
+        "Profile a request end to end to find where time goes",
         "Precompute predictions in batch or cache them if freshness allows",
         "Use fewer or cheaper features",
         "Use a smaller model, distillation or quantization",
         "Batch inference requests",
-        "Measure accuracy loss against latency and cost gains; pick the cheapest that meets the SLA"
+        "Pick the cheapest option that meets the latency SLA"
       ],
       "key_points_draft": true
     },
@@ -3322,10 +3324,10 @@
       "kind": "case",
       "key_points": [
         "Collect real inputs including hard and adversarial cases",
-        "Write a rubric defining good: correctness, groundedness, tone, format",
+        "Write a rubric for correctness, groundedness, tone and format",
         "A human-labeled set is the anchor",
         "Scale with an LLM judge checked against human labels for bias",
-        "Run the set as a regression suite on every change and track failure categories",
+        "Run the set as a regression suite on every change",
         "Confirm with online signals like task completion and feedback"
       ],
       "key_points_draft": true
@@ -3402,7 +3404,7 @@
         "Fine-tuning is a poor way to inject facts",
         "Fine-tune for consistent style or format, specialized behavior, or a cheaper smaller model",
         "Fine-tuning needs quality examples and ongoing curation and retraining",
-        "They combine well; decide with an evaluation set"
+        "Decide between the options with an evaluation set"
       ],
       "key_points_draft": true
     },
@@ -3622,11 +3624,11 @@
       ],
       "key_points": [
         "A token is a chunk of text, often a word fragment",
-        "About three quarters of a word in English; varies by language, code and numbers",
+        "In English a token is about three quarters of a word",
         "Providers charge per input and output token, output usually more",
-        "The context window caps input plus output; latency scales with output",
+        "The context window caps input plus output tokens",
         "Estimate cost from tokens per request times volume and price",
-        "Over the limit: retrieve relevant parts, summarize or cache prefixes"
+        "Over the limit, retrieve only the relevant parts or summarize"
       ],
       "key_points_draft": true
     },
@@ -3699,7 +3701,7 @@
         "Use low temperature, often 0, for classification",
         "Constrain output to the label set with an enum or structured output",
         "Temperature flattens token probabilities so unlikely tokens appear more",
-        "Top-p samples only from the most likely tokens; tune one, not both",
+        "Top-p samples only from the most likely tokens",
         "Even at temperature 0 outputs aren't guaranteed identical",
         "Use higher temperature for brainstorming and varied writing"
       ],
@@ -3775,8 +3777,8 @@
         "Use schema-constrained or tool-calling output mode",
         "Give a schema and examples and set adequate max tokens",
         "Always validate against a schema in code",
-        "On failure retry once with the error, then fall back or route to a human",
-        "Log failure rate by prompt version and model; never parse with a regex"
+        "On failure, retry once with the validation error",
+        "Log the failure rate by prompt version and model"
       ],
       "key_points_draft": true
     },
@@ -3847,9 +3849,9 @@
       "key_points": [
         "The model may follow injected text because instructions and data share one channel",
         "Delimiters and warnings help but don't stop a determined attacker",
-        "Least privilege: no secrets in the system prompt, no sensitive actions without confirmation",
-        "Restrict tools and outbound traffic; treat outputs as untrusted",
-        "With tools, injection can trigger actions, so require approval",
+        "Give the model least privilege over tools and data",
+        "Treat model outputs as untrusted input",
+        "Require human approval before tool actions with side effects",
         "Test with an adversarial suite and monitor"
       ],
       "key_points_draft": true
@@ -4149,7 +4151,7 @@
         "First confirm the split is valid: no duplicates, similar distributions, no leakage",
         "Use learning curves to see whether more data would help",
         "Try a simpler model or stronger regularization and early stopping",
-        "Also feature pruning, more or augmented data, and cross-validation",
+        "More or augmented data also reduces overfitting",
         "Judge each change on the gap and the validation score together"
       ],
       "key_points_draft": true
@@ -4224,7 +4226,7 @@
         "Averaging cancels variance, so random forest trees can be deep",
         "Boosting builds trees sequentially, each fitting the remaining errors, reducing bias",
         "Boosting trees are shallow and scaled by a learning rate",
-        "Boosting is usually more accurate but more sensitive to noisy labels and tuning",
+        "Boosting is more sensitive to noisy labels and tuning",
         "A random forest is a robust low-tuning baseline"
       ],
       "key_points_draft": true
@@ -4520,12 +4522,12 @@
         "precision-recall"
       ],
       "key_points": [
-        "Frame the threshold as expected value: discount cost versus value of a saved customer",
+        "Turn the threshold into expected value per flagged customer",
         "You need the discount's real effect on churn, ideally from an experiment",
         "High churn probability doesn't mean the customer is persuadable",
         "Sweep thresholds on held-out data with calibrated probabilities to maximize profit",
         "Respect capacity limits like how many offers the team can send",
-        "0.5 and F1 are arbitrary; re-tune when base rates or costs shift"
+        "A 0.5 or F1-optimal threshold is arbitrary here"
       ],
       "key_points_draft": true
     },
@@ -4670,12 +4672,12 @@
         "sample-size"
       ],
       "key_points": [
-        "Don't trust it yet: a CV estimate on 400 examples is very uncertain",
+        "A CV estimate on 400 examples is very uncertain",
         "Report an interval and use repeated or stratified CV",
         "Look for duplicates or the same entity split across folds",
-        "Look for a feature that encodes the label or tuning on the same folds",
+        "Look for a feature that encodes the label",
         "Use grouped splits, nested CV and an untouched holdout",
-        "Compare with a trivial baseline and check whether real data resembles the sample"
+        "Compare with a trivial baseline"
       ],
       "key_points_draft": true
     },
@@ -4745,10 +4747,10 @@
       "key_points": [
         "Data drift: the input distribution shifts",
         "Concept drift: the same inputs now lead to different outcomes",
-        "Give a concrete example of each",
-        "Data drift is visible from inputs with PSI or KS; concept drift needs labels",
-        "Data drift hurts only where the model is weak; concept drift always hurts",
-        "Handle data drift with segment checks or reweighting; concept drift by retraining"
+        "Detect data drift from inputs alone with PSI or KS",
+        "Detecting concept drift needs labels",
+        "Data drift hurts only where the model was weak",
+        "Concept drift usually needs retraining"
       ],
       "key_points_draft": true
     },
@@ -4819,7 +4821,7 @@
       "key_points": [
         "You only observe outcomes for approved applicants: selection bias",
         "The model never learns about rejected applicants, so it extrapolates",
-        "Wrongly rejected good applicants are never discovered; the loop reinforces itself",
+        "Wrongly rejected good applicants are never discovered, so errors persist",
         "Approve a small random slice of borderline applicants to get unbiased labels",
         "Use reject inference with caveats and evaluate on the random holdout",
         "Tell the business what's unknowable and what it costs"
@@ -4971,7 +4973,7 @@
         "Rule of thumb: under 0.1 stable, 0.1 to 0.25 moderate, above 0.25 large",
         "Thresholds are heuristics that depend on bins and sample size",
         "PSI misses shifts within bins, is unstable for sparse bins and ignores performance",
-        "Combine with KS or Wasserstein, weight by importance, and investigate before retraining"
+        "Investigate a PSI alert before retraining"
       ],
       "key_points_draft": true
     },
@@ -5043,10 +5045,10 @@
       "key_points": [
         "Start from today's pain: recomputed features, inconsistent definitions, skew",
         "A feature store gives shared definitions and point-in-time training data",
-        "It also gives consistent online serving",
+        "A feature store also gives consistent online serving",
         "Costs: infrastructure, ownership, backfills and migration",
         "For a few batch models, warehouse tables and shared code are enough",
-        "Pilot on one high-value feature set when there are many models or real-time needs"
+        "Pilot on one high-value feature set first"
       ],
       "key_points_draft": true
     },
@@ -5119,7 +5121,7 @@
         "Confirm the drop is real: metric definitions and label maturity",
         "Check upstream: schema, null rates, feature distributions, joins, traffic mix",
         "Slice precision by segment, channel, merchant and time",
-        "A sudden step suggests a pipeline change; a gradual slide suggests adapting fraudsters",
+        "A sharp one-day step suggests a pipeline or product change",
         "Tell stakeholders the impact and an interim fix like raising the threshold",
         "Retrain only after diagnosing"
       ],
@@ -5270,7 +5272,7 @@
         "Overrides from a few reviewers suggest preference or inconsistency",
         "Overrides using information the model lacks suggest a missing feature",
         "Audit a sample against real outcomes to see who is right",
-        "Overrides as labels carry reviewer bias; also watch for rubber-stamping"
+        "Overrides used as labels carry reviewer bias"
       ],
       "key_points_draft": true
     },
@@ -5489,7 +5491,7 @@
         "Count TP, FP and FN in one pass over zip(y_true, y_pred)",
         "Precision = TP / (TP + FP); recall = TP / (TP + FN)",
         "Unequal input lengths should raise an error",
-        "No predicted or actual positives leaves a metric undefined: return 0 or NaN explicitly",
+        "Handle zero denominators explicitly, returning 0 or NaN",
         "For multiclass report macro, micro or weighted averages",
         "Test against sklearn on random and degenerate inputs"
       ],
@@ -5563,7 +5565,7 @@
         "Use heapq.nlargest or Counter.most_common(k) instead of sorting everything",
         "The heap costs O(m log k) for m distinct items",
         "Memory grows with the number of distinct items",
-        "For huge streams use Count-Min Sketch or Misra-Gries; counts become estimates",
+        "For huge streams use an approximate sketch like Count-Min",
         "Define tie-breaking so results are deterministic"
       ],
       "key_points_draft": true
@@ -5636,7 +5638,7 @@
         "Every call that omits items mutates the same shared list",
         "Items leak across calls, even across users in a long-running service",
         "Fix: items=None, then create a new list inside the function",
-        "Same trap for dicts and sets; dataclasses use field(default_factory=list)",
+        "The same trap applies to dict and set defaults",
         "Tests miss it because each passes alone but fails in a different order"
       ],
       "key_points_draft": true
@@ -5712,7 +5714,7 @@
         "Unit-test edge cases like empty frames, NaNs and unexpected categories",
         "Validate data at the boundary and fail loudly",
         "Use the same functions for training and inference to avoid skew",
-        "Add logging, config, code review and CI; the notebook calls the package"
+        "Add logging, config, code review and CI"
       ],
       "key_points_draft": true
     },
@@ -5784,7 +5786,7 @@
         "First try vectorizing with pandas, NumPy or Polars, or push it to SQL",
         "For CPU-bound Python use processes, because the GIL blocks threads",
         "Threads suit I/O-bound work",
-        "Multiprocessing costs pickling, duplicated memory and task overhead, so use large chunks",
+        "Multiprocessing has pickling and memory overhead, so use large chunks",
         "Beyond one machine use Spark, Dask or the warehouse",
         "Profile first to parallelize the real bottleneck"
       ],
@@ -5918,7 +5920,7 @@
         "HAVING filters groups after aggregation",
         "Fix: GROUP BY dept HAVING AVG(salary) > 50000",
         "Keep row conditions in WHERE so they cut rows early and use indexes",
-        "Use both together: WHERE for rows, HAVING for groups"
+        "Using both WHERE and HAVING in one query is normal"
       ],
       "key_points_draft": true
     },
@@ -5992,7 +5994,7 @@
         "Use LAG partitioned by product, ordered by month",
         "Join to a calendar of months and fill gaps with zero before LAG",
         "Divide with NULLIF(previous, 0) so a zero base gives NULL",
-        "The first month has no prior value: NULL, not 0%",
+        "The first month has no prior value, so return NULL",
         "Ask how to treat tiny bases where percentages mislead"
       ],
       "key_points_draft": true
@@ -6065,7 +6067,7 @@
         "Deduplicate to distinct user-day first",
         "Number each user's days with ROW_NUMBER() ordered by date",
         "Date minus row number is constant within a consecutive run",
-        "Group by user and that constant; HAVING COUNT(*) >= 3",
+        "Group by user and that constant with HAVING COUNT(*) >= 3",
         "Self-joins work for exactly 3 but don't generalize",
         "Confirm how 'day' is defined, since time zones shift days"
       ],
@@ -6139,9 +6141,9 @@
         "Payments are one-to-many per order, so each order row repeats per payment",
         "The SUM then counts revenue multiple times: join fan-out",
         "DISTINCT only hides it and can drop legitimate rows",
-        "Aggregate each table to one row per order before joining, or use separate CTEs",
+        "Aggregate payments to one row per order before joining",
         "Check row counts and key uniqueness before and after every join",
-        "A LEFT JOIN doesn't help; the duplication comes from matches"
+        "A LEFT JOIN doesn't fix the duplication"
       ],
       "key_points_draft": true
     },
@@ -6214,7 +6216,7 @@
         "COUNT(col) skips NULLs",
         "COUNT(DISTINCT col) counts distinct non-NULL values",
         "AVG and SUM also skip NULLs, so AVG divides by the non-NULL count",
-        "COUNT(DISTINCT) is expensive at scale; use approximate distinct counts",
+        "At scale use approximate distinct counts",
         "Comparing COUNT(*) with COUNT(col) checks completeness"
       ],
       "key_points_draft": true
@@ -6362,7 +6364,7 @@
         "Line up the definitions first: denominator and numerator window",
         "Check treatment of cancelled, refunded, test and internal orders",
         "Check guest checkouts, currency and time zone cut-offs",
-        "Reproduce both numbers step by step from the same base to find where they diverge",
+        "Reproduce both numbers step by step from the same base",
         "Agree on the definition from the decision the metric supports",
         "Put one documented definition in a shared metrics layer"
       ],
@@ -6511,8 +6513,8 @@
       "key_points": [
         "Averages of repeated samples form a bell shape around the true mean",
         "The spread of the average shrinks as the sample grows",
-        "That's why we can put a margin of error on an average and compare groups",
-        "The data itself doesn't become normal; the average does",
+        "That is what justifies a margin of error on an average",
+        "The data does not become normal, only the average does",
         "Heavily skewed metrics need much larger samples than 30",
         "Check heavy-tailed metrics with a bootstrap"
       ],
@@ -6588,7 +6590,7 @@
         "Choose by the decision: total revenue needs the mean",
         "For the typical user's experience use the median or a trimmed mean",
         "At large n the CLT still supports a t-test on the mean",
-        "With heavy tails confirm with a bootstrap or reduce variance with CUPED or winsorizing",
+        "With heavy tails, confirm with a bootstrap",
         "Mann-Whitney doesn't specifically test medians",
         "Report both mean and median with intervals"
       ],
@@ -6741,7 +6743,7 @@
         "Daily peeking can push false positives to 20 to 30%",
         "Pre-commit to a sample size, or use a sequential design",
         "Sequential options: alpha spending, always-valid p-values or Bayesian rules",
-        "Monitor early for harm, not for declaring wins; run full weeks"
+        "Monitor early for harm, not for declaring wins"
       ],
       "key_points_draft": true
     },
@@ -6812,12 +6814,12 @@
         "retention"
       ],
       "key_points": [
-        "First learn how discounts were assigned; targeting creates selection bias",
-        "Map the likely causal structure",
+        "Learn how discounts were assigned, since targeting creates selection bias",
         "Compare like with like: propensity matching, weighting or regression on pre-treatment covariates",
         "Use difference-in-differences or regression discontinuity if there's a rollout or cutoff",
-        "Check covariate balance and run a sensitivity analysis",
-        "Adjustment only handles measured factors; recommend a holdout experiment"
+        "Check covariate balance after adjustment",
+        "Adjustment only handles measured confounders",
+        "Recommend a small holdout experiment going forward"
       ],
       "key_points_draft": true
     },
@@ -6889,7 +6891,7 @@
       "key_points": [
         "SE of the difference is sqrt(p1(1-p1)/n1 + p2(1-p2)/n2)",
         "The 95% interval is the difference plus or minus 1.96 standard errors",
-        "Here the SE is about 0.063 points, so differences under 0.12 are noise",
+        "Here differences under about 0.12 points are noise",
         "Assumes independent users and a large enough n",
         "Analyze per user when randomizing users, not per click or session",
         "Cross-check with a bootstrap"
@@ -7416,10 +7418,10 @@
       "key_points": [
         "Instrument cost per request, feature and user to find the heavy tail",
         "Trim prompts and context and cap output length",
-        "Cache repeated prefixes and identical requests; batch non-urgent work",
+        "Cache repeated prompt prefixes and identical requests",
         "Route easy requests to a smaller model",
         "Fine-tune a small model at high volume",
-        "Rerun evaluations after each change; some savings need product changes"
+        "Rerun evaluations after each cost change"
       ],
       "key_points_draft": true
     },
@@ -7493,7 +7495,7 @@
         "Suits streaming a large file through chained transform stages",
         "You can iterate only once; a second pass silently yields nothing",
         "No indexing or len() without consuming it",
-        "Use a list for multiple passes; prefer vectorized chunks for numeric work"
+        "Use a list when you need multiple passes"
       ],
       "key_points_draft": true
     },
@@ -7794,8 +7796,8 @@
         "For prediction, linearity matters most: a missed curve gives systematic error",
         "Independence between train and test matters: leakage breaks predictions",
         "Constant variance and normality mainly affect intervals, not point predictions",
-        "Outliers drag least squares; check leverage or use a robust loss like Huber",
-        "Diagnose with residual plots; fix with transforms, interactions or a flexible model"
+        "Handle high-leverage outliers with a robust loss like Huber",
+        "Diagnose violations with residual plots"
       ],
       "key_points_draft": true
     },
@@ -7868,7 +7870,7 @@
         "All three add a penalty that reduces variance",
         "Ridge (L2) shrinks coefficients smoothly and keeps every feature",
         "Lasso (L1) sets coefficients to zero, so it selects features",
-        "With correlated features lasso picks one arbitrarily; elastic net keeps the group",
+        "Elastic net keeps correlated features together where lasso picks one",
         "Standardize features before applying the penalty",
         "Choose the penalty strength by cross-validation, time-aware for time data"
       ],
@@ -8017,7 +8019,7 @@
         "Averaging decorrelated trees reduces variance without adding much bias",
         "Out-of-bag samples give a built-in validation estimate",
         "Impurity importance is biased toward high-cardinality features and computed on training data",
-        "Use permutation importance on held-out data or SHAP; importance is not causation"
+        "Prefer permutation importance on held-out data or SHAP"
       ],
       "key_points_draft": true
     },
@@ -8089,7 +8091,7 @@
       ],
       "key_points": [
         "All three are gradient-boosted trees with similar accuracy when tuned equally",
-        "LightGBM grows leaf-wise with histograms: fast, but can overfit small data",
+        "LightGBM is fast because it grows trees leaf-wise with histograms",
         "XGBoost is the most widely deployed and documented, level-wise by default",
         "CatBoost handles categorical features natively with ordered target statistics",
         "With many categoricals, start with CatBoost",
@@ -8164,9 +8166,9 @@
         "SVM finds the boundary with the largest margin between classes",
         "Only the support vectors nearest the boundary define it",
         "Kernels like RBF allow non-linear boundaries",
-        "C trades margin width against training errors; gamma sets how local the kernel is",
+        "C trades margin width against training errors",
         "Features must be standardized because it is distance-based",
-        "Good on small, high-dimensional data like text; slow on large data and scores are not probabilities"
+        "Suits small, high-dimensional data like text but scales poorly"
       ],
       "key_points_draft": true
     },
@@ -8237,9 +8239,9 @@
         "Linear regression penalizes squared error on every point",
         "SVR ignores errors inside an epsilon tube around the fit",
         "Errors outside the tube are penalized linearly, weighted by C",
-        "Only points on or outside the tube are support vectors, so it is robust to small noise and outliers",
+        "Only points on or outside the tube become support vectors",
         "Needs scaled features and tuning of epsilon, C and gamma",
-        "Prefer it for small, smooth non-linear problems; otherwise regularized linear or boosting"
+        "Prefer it for small, smooth non-linear problems"
       ],
       "key_points_draft": true
     },
@@ -8308,7 +8310,8 @@
       ],
       "key_points": [
         "Predicts by majority vote or average of the k nearest training points",
-        "Small k is high variance; large k smooths toward the base rate; pick k by cross-validation",
+        "Small k overfits; large k smooths toward the base rate",
+        "Pick k by cross-validation",
         "Features must be scaled and irrelevant ones removed",
         "In high dimensions distances become similar, so neighbors lose meaning",
         "Prediction is slow on large data without an index or approximate search"
@@ -8380,8 +8383,8 @@
       ],
       "key_points": [
         "Assumes features are independent given the class and multiplies their likelihoods",
-        "Classification only needs the right class ranked first, which often survives the wrong assumption",
-        "Its probabilities are poorly calibrated; recalibrate before cost-based decisions",
+        "Ranking the right class first often survives the wrong assumption",
+        "Its probabilities are poorly calibrated",
         "Trains in one pass and needs little data",
         "Works well on high-dimensional sparse text, a strong baseline",
         "Smoothing stops an unseen word from zeroing out a class"
@@ -8457,8 +8460,8 @@
         "A coefficient is the change in log-odds per unit increase, others held fixed",
         "Exponentiate a coefficient to get an odds ratio",
         "Reading coefficients needs comparable scales and little collinearity",
-        "Check linearity in the log-odds; add splines, bins or interactions",
-        "Choose it when regulators need reasons, data is small, or the accuracy gap is within noise",
+        "Check that effects are linear in the log-odds",
+        "Choose it when regulators need reasons or the accuracy gap is small",
         "Verify with a held-out comparison and calibration check"
       ],
       "key_points_draft": true
@@ -8529,7 +8532,7 @@
         "anomaly-detection"
       ],
       "key_points": [
-        "Isolation forest splits features at random; anomalies are isolated in fewer splits",
+        "Isolation forest isolates anomalies in fewer random splits",
         "Engineer behavioral features like amount versus the customer's norm and velocity",
         "Set the threshold from review capacity, such as the top N per day",
         "Unusual is not the same as fraud",
@@ -8604,7 +8607,7 @@
       ],
       "key_points": [
         "Linear regression can predict negative counts and assumes constant variance",
-        "Use a Poisson GLM with a log link; effects are multiplicative on the rate",
+        "Use a Poisson GLM with a log link",
         "Check for overdispersion and use negative binomial if variance exceeds the mean",
         "Add zero inflation when many customers have no claims",
         "Use an exposure offset for customers observed for different periods",
@@ -8677,7 +8680,7 @@
       ],
       "key_points": [
         "Alternates assigning points to the nearest center and moving centers to the mean",
-        "Finds a local optimum; use k-means++ and several restarts",
+        "Use k-means++ and several restarts to avoid poor local optima",
         "Choose k with the elbow and silhouette, plus interpretability and stability",
         "Fails on elongated shapes, very different cluster sizes and outliers",
         "Needs scaled numeric features",
@@ -8825,9 +8828,9 @@
       "key_points": [
         "Agglomerative clustering repeatedly merges the two closest clusters",
         "The dendrogram records every merge and its distance",
-        "Linkage matters: single chains, complete is compact, average and Ward in between",
+        "The linkage choice (single, complete, average, Ward) changes the clusters",
         "Useful when the number of groups is unknown or structure is nested",
-        "Cut the tree at large gaps in merge height or where the business can act",
+        "Cut the dendrogram at a large gap in merge height",
         "Needs pairwise distances, so impractical beyond tens of thousands of points"
       ],
       "key_points_draft": true
@@ -8897,7 +8900,7 @@
         "k-means"
       ],
       "key_points": [
-        "k-means assumes equal round clusters and gives hard labels",
+        "k-means assumes equal, round clusters",
         "A Gaussian mixture lets clusters have their own mean, shape, size and weight",
         "Soft assignments give each point a probability of membership",
         "Fitted with expectation-maximization and can hit local optima",
@@ -9044,7 +9047,7 @@
         "clustering"
       ],
       "key_points": [
-        "Start from the purpose: marketing, risk and service need different features",
+        "Choose features from the segmentation's business purpose",
         "Engineer behavioral features, transform skewed ones and scale",
         "For mixed data use Gower distance, k-prototypes, or PCA or embeddings first",
         "Compare values of k on stability and interpretability",
@@ -9196,7 +9199,7 @@
         "A t-SNE plot is a prompt, not proof",
         "t-SNE preserves local neighborhoods but distorts global structure",
         "Cluster sizes, gaps and positions in the plot are not reliable",
-        "Results change with perplexity and seed and can show clusters in pure noise",
+        "t-SNE can show clusters in pure noise",
         "Re-run with several settings and cluster in the original or PCA space",
         "Check stability and whether groups differ on outcomes the embedding never saw"
       ],
@@ -9268,7 +9271,7 @@
         "cross-validation"
       ],
       "key_points": [
-        "Start with cheap filters: drop constants, near-duplicates and highly correlated features",
+        "Start with cheap filters like dropping constant or correlated features",
         "Use embedded methods like lasso or tree importance to rank features",
         "Wrapper methods like recursive elimination refine at higher cost",
         "Do selection inside each cross-validation fold",
@@ -9347,7 +9350,7 @@
         "Using in-sample predictions for stacking leaks and overstates the gain",
         "Blending uses a holdout set instead",
         "Gains are small when base models are highly correlated boosted trees",
-        "Try a simple average first; ship only if the gain beats maintenance and latency cost"
+        "Ship only if the gain beats maintenance and latency cost"
       ],
       "key_points_draft": true
     },
@@ -9416,12 +9419,12 @@
         "smote"
       ],
       "key_points": [
-        "Fix evaluation first: accuracy is meaningless; use precision-recall, PR AUC and cost",
+        "Evaluate with precision-recall and PR AUC, not accuracy",
         "Class weights change the loss without changing the data",
-        "Undersampling discards data; oversampling duplicates rows",
+        "Undersampling discards useful majority-class data",
         "SMOTE interpolates synthetic points that can be unrealistic or overlap",
         "Resample only inside the training fold, or validation leaks",
-        "Resampling distorts probabilities, so recalibrate; try weights plus threshold tuning first"
+        "Resampling distorts probabilities, so recalibrate afterwards"
       ],
       "key_points_draft": true
     },
@@ -9495,7 +9498,7 @@
         "Random search beats grid search because only a few hyperparameters matter",
         "Bayesian optimization like Optuna is worth it when each run is expensive",
         "Repeated tuning overfits the validation folds",
-        "Keep a final holdout or use nested cross-validation; stop when gains are within noise"
+        "Keep a final untouched holdout or use nested cross-validation"
       ],
       "key_points_draft": true
     },
@@ -9639,10 +9642,10 @@
       ],
       "key_points": [
         "Gradient descent uses the gradient over all the data",
-        "SGD uses mini-batches: cheaper steps and helpful noise",
+        "SGD uses small random mini-batches for cheaper, noisier steps",
         "Momentum smooths the steps",
         "Adam gives each weight its own adaptive step size and converges fast",
-        "Too high a learning rate oscillates or diverges; too low crawls",
+        "Too high a learning rate diverges and too low trains slowly",
         "Use warmup and decay schedules and watch loss curves"
       ],
       "key_points_draft": true
@@ -9716,7 +9719,7 @@
         "MSE penalizes large errors heavily and targets the mean",
         "MAE is robust to outliers and targets the median",
         "Huber is quadratic for small errors and linear for large ones",
-        "Cross-entropy trains well-behaved probabilities; accuracy has no usable gradient",
+        "Cross-entropy trains well-calibrated class probabilities",
         "Use quantile or weighted loss for asymmetric costs, evaluated on the business metric"
       ],
       "key_points_draft": true
@@ -9786,12 +9789,12 @@
         "batch-normalization"
       ],
       "key_points": [
-        "First confirm it's overfitting, not a leak or bug, with train and validation curves",
+        "Confirm it is overfitting first with train and validation curves",
         "Get more or augmented data",
         "Simplify the architecture, add weight decay and early stopping",
         "Dropout randomly zeroes units, like averaging many sub-networks",
         "Batch normalization standardizes layer inputs to stabilize training",
-        "Batch norm mainly aids optimization; its regularizing effect is mild"
+        "Batch norm mainly helps optimization, not regularization"
       ],
       "key_points_draft": true
     },
@@ -9863,9 +9866,9 @@
       "key_points": [
         "Start with a boosted-tree baseline",
         "Trees usually match or beat deep models on mid-sized tabular data",
-        "Trees handle mixed types, missing values and sharp thresholds, and are easier to explain",
+        "Trees handle mixed types, missing values and sharp thresholds",
         "Neural networks need careful scaling, encoding and tuning",
-        "A network earns its place with huge data, embeddings, multimodal inputs or online updates",
+        "A network earns its place with huge data or multimodal inputs",
         "Compare on the same time-aware folds including calibration, latency and maintenance"
       ],
       "key_points_draft": true
@@ -9933,12 +9936,12 @@
         "convolutional-neural-network"
       ],
       "key_points": [
-        "A filter slides over the image and scores how well each location matches a pattern",
-        "Early layers find edges; deeper layers combine them into shapes and objects",
+        "A filter slides over the input and records how well each spot matches a pattern",
+        "Layers build up from edges to shapes to objects",
         "Shared filters need far fewer parameters than a fully connected network",
         "Patterns are recognized wherever they appear",
         "Pooling summarizes regions and tolerates small shifts",
-        "Works for any grid-like data; start from a pretrained model"
+        "For most new work, start from a pretrained model"
       ],
       "key_points_draft": true
     },
@@ -10154,9 +10157,9 @@
         "pretrained-model"
       ],
       "key_points": [
-        "500 images is too few to train from scratch",
-        "Start from a pretrained model such as an ImageNet backbone",
-        "Freeze the backbone and train a new head, then unfreeze top layers with a small learning rate",
+        "Start from a pretrained backbone rather than training from scratch",
+        "Freeze the backbone and train a new head",
+        "Then unfreeze the top layers with a small learning rate",
         "Use augmentation and early stopping",
         "Use stratified cross-validation since one small split is noisy",
         "For very different domains, check against a baseline or use a domain-specific model"
@@ -10230,9 +10233,9 @@
         "logistic-regression"
       ],
       "key_points": [
-        "Start with TF-IDF and logistic regression: fast, cheap, easy to debug",
+        "Start with a TF-IDF and logistic regression baseline",
         "TF-IDF has no notion of meaning, so synonyms look unrelated",
-        "Pretrained embeddings capture meaning and can feed the same simple classifier",
+        "Pretrained embeddings capture meaning that TF-IDF misses",
         "An LLM classifies with few labels at higher cost, latency and variability",
         "Compare on one test set for accuracy, cost and latency",
         "Choose the simplest option that meets the target"
@@ -10382,7 +10385,7 @@
         "RLHF collects human comparisons between answers",
         "A reward model learns preferences and the chat model is optimized against it",
         "Training stays close to the original model",
-        "The reward is a proxy, so models can become sycophantic or verbose"
+        "Optimizing a proxy reward can make models sycophantic or verbose"
       ],
       "key_points_draft": true
     },
@@ -10451,10 +10454,10 @@
       "key_points": [
         "The likelihood is the probability the model assigns to the observed data",
         "MLE chooses the parameters that maximize it",
-        "Maximize the log-likelihood: a sum, and no underflow",
+        "Maximize the log-likelihood to turn products into sums",
         "Squared error is Gaussian MLE; cross-entropy is Bernoulli MLE",
         "MLE overfits with little data",
-        "With separable classes logistic coefficients diverge; regularization or priors fix it"
+        "With separable classes, logistic coefficients diverge without regularization"
       ],
       "key_points_draft": true
     },
@@ -10525,7 +10528,7 @@
       ],
       "key_points": [
         "Use a chi-square test of independence on the channel-by-outcome table",
-        "Needs independent users and large expected counts; otherwise Fisher's exact test",
+        "Use Fisher's exact test when expected counts are small",
         "A significant result only says some channels differ",
         "Find which with pairwise comparisons corrected by Holm or Tukey",
         "Report effect sizes with intervals, since big samples make tiny gaps significant",
@@ -10675,7 +10678,7 @@
         "Averaging only churned customers' lifetimes biases the answer down",
         "Use survival analysis to handle censoring",
         "A Kaplan-Meier curve shows the share still subscribed at each tenure",
-        "A Cox model adds features and gives hazard ratios; check proportional hazards",
+        "A Cox model adds features and gives hazard ratios",
         "For a 30-day churn score, a fixed-window classifier can be simpler"
       ],
       "key_points_draft": true
@@ -10749,7 +10752,7 @@
         "Differencing makes the series stationary so coefficients stay stable",
         "Choose orders with autocorrelation plots and information criteria",
         "Validate with walk-forward backtests",
-        "Good for a single short regular series with few drivers, and easy to explain",
+        "Good for a single short, regular series with few drivers",
         "Poor for many series, multiple seasonalities, holidays or rich external features"
       ],
       "key_points_draft": true
@@ -10823,9 +10826,9 @@
         "Exponential smoothing is a quick robust baseline per series",
         "Prophet adds trend changes, seasonality and holidays but isn't always most accurate",
         "Gradient boosting trains one global model across all products",
-        "A global model uses lag, calendar, price and promotion features and helps short histories",
+        "A global model helps products with short histories",
         "Compare all three with walk-forward validation on the business metric",
-        "Ship the simple baseline first and switch only if the global model clearly wins"
+        "Ship the simple baseline first"
       ],
       "key_points_draft": true
     },
@@ -11040,11 +11043,11 @@
       ],
       "key_points": [
         "Matrix factorization learns user and item vectors from interactions",
-        "It captures taste without item attributes but struggles with new items",
-        "Content-based scores items by attribute or embedding similarity and handles new items",
+        "Matrix factorization struggles with new items",
+        "Content-based handles new items through attribute similarity",
         "Content-based tends to recommend more of the same",
-        "Use implicit feedback and combine approaches, often with a ranking model on top",
-        "Evaluate offline with recall at k or NDCG on time splits, then an online experiment"
+        "Combine both approaches, often with a ranking model on top",
+        "Evaluate offline on time splits, then with an online test"
       ],
       "key_points_draft": true
     },
@@ -11116,7 +11119,8 @@
         "Penalized models and gradient-based models like neural networks need scaling",
         "Tree models split on thresholds, so scaling changes nothing",
         "Fit the scaler on training data only to avoid leakage",
-        "Standardize by default; min-max for bounded inputs; robust scaler for outliers"
+        "Standardize by default",
+        "Use a robust scaler when there are outliers"
       ],
       "key_points_draft": true
     },
@@ -11189,7 +11193,7 @@
         "Move each center to the mean of its points",
         "Re-seed empty clusters",
         "Stop when assignments stop changing or within tolerance, with an iteration cap",
-        "Run several seeds, keep the lowest inertia, and check scaling and stability"
+        "Run several seeds and keep the lowest inertia"
       ],
       "key_points_draft": true
     },
@@ -11262,8 +11266,8 @@
         "MSE gradient is (2/n) * X.T @ (X @ w - y)",
         "Update w -= lr * gradient until the loss stops improving",
         "Scale features first or the loss surface becomes a narrow valley",
-        "Plot loss per iteration: oscillation means too high, slow decline means too low",
-        "Closed form is exact for small data; mini-batches make updates cheaper"
+        "Tune the learning rate by plotting loss per iteration",
+        "The closed form is exact and fine for small data"
       ],
       "key_points_draft": true
     },
@@ -11410,9 +11414,9 @@
         "LoRA freezes pretrained weights and trains small low-rank matrices",
         "It cuts GPU memory and training time",
         "Store a small adapter per task and swap on one base model",
-        "Full fine-tuning captures bigger changes but costs more and risks forgetting",
+        "Full fine-tuning costs more and risks forgetting",
         "Use LoRA for style, format or domain adaptation with limited data",
-        "Check prompting or retrieval first; fine-tuning is for behavior, not facts"
+        "Try prompting or retrieval before fine-tuning"
       ],
       "key_points_draft": true
     }
