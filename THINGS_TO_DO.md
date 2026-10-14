@@ -3,7 +3,7 @@
 Living list for Saddle Point (formerly Gradient Ascent). What has already been built is recorded in `docs/implemented/`.
 
 ## 0. Open list (updated 2026-10-14)
-The single prioritized list. Sections 1 to 4 below are history: the original ideas, the coverage audit and earlier status notes, kept for context. Most of section 1 is now built (see `docs/implemented/` 16 to 22).
+The single prioritized list. Sections 1 to 4 below are history: the original ideas, the coverage audit and earlier status notes, kept for context. Most of section 1 is now built (see `docs/implemented/` 16 to 29).
 
 **Soft launch (next)**
 1. ~~Invite-code proxy~~ Built (doc 24): `api/claude.js`. **Rithul to do:** set `ANTHROPIC_API_KEY` and `INVITE_CODES` in Vercel, redeploy, set a monthly spend limit in the Anthropic Console, test one grade on the live site.
@@ -33,6 +33,10 @@ The single prioritized list. Sections 1 to 4 below are history: the original ide
 17. Junior and senior answers for each follow-up (1.4); ~~a weekly trend in Insights~~ done (doc 29); optional explainers (class imbalance and threshold, hierarchical clustering; boosting on residuals is already covered by the Boosting explainer).
 18. ~~Draft badge~~ Done (doc 26): the badge now shows only in the Library. Practice and Mock show "New question, not yet checked by the author. Flag anything that looks off." above "Report a problem with this question" in the debrief.
 19. ~~Housekeeping~~ Done (docs 25 and 26): obsolete scripts deleted, ESLint clean, Ruff clean (`ruff check scripts` passes; the pipeline scripts' one-line style is allowed in `ruff.toml`), Prettier run once over `src/` and `npm run format:check` passes.
+
+20. Starting-level choice for new users ("New to DS", "A few years in", "Senior"), so a beginner isn't flooded with Advanced questions and an experienced user doesn't wade through all 40 Foundations ones first. Suggested after the all-levels positioning (item 10); not decided.
+
+**UI (2026-10-14, docs 27 to 29):** the Library is redesigned (topic groups with progress, one filter bar, one-line rows); Insights has less text, a weekly score trend, a topic picker and the same topic rows as the Library. Each change was checked by the ui-reviewer agent.
 
 **Tooling (2026-10-14, doc 23):** review agents in `.claude/agents/` (content-reviewer, ai-prompt-reviewer, ui-reviewer, launch-reviewer) with shortcut commands `/review-content`, `/review-prompts`, `/review-ui`, `/prelaunch`, `/lint`; ESLint, Prettier and Ruff configured.
 
