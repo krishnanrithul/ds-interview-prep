@@ -3,7 +3,6 @@ import { ArrowUp, X, RotateCcw, Repeat, CornerDownRight } from 'lucide-react'
 import { RATINGS, dot } from '../lib/topics'
 import AnswerLadder from './AnswerLadder'
 import Attempts from './Attempts'
-import DraftBadge from './DraftBadge'
 import TagChips from './TagChips'
 import KeyTerms from './KeyTerms'
 import { pickVariants, markSeen, followUpText } from '../lib/variants'
@@ -235,7 +234,6 @@ export default function Practice({ ids, byId, notes, active, onRate, onExit, onA
             </span>
             <span className="capitalize">{q.difficulty}</span>
             <span>{q.frequency}</span>
-            <DraftBadge q={q} />
           </div>
           <h2 className="font-serif text-[1.65rem] sm:text-3xl leading-[1.4] font-medium">
             <span className="marker-text">{q.question}</span>

@@ -6,7 +6,6 @@ import { buildMockQueue } from '../lib/queue'
 import { DIFFICULTY, RATINGS, dot } from '../lib/topics'
 import AnswerLadder from './AnswerLadder'
 import ConfirmDialog from './ConfirmDialog'
-import DraftBadge from './DraftBadge'
 import { generateProbe, reactiveEnabled } from '../lib/probe'
 import { getApiKey } from '../lib/grade'
 import { matchEnabled, ratingFromScore, interviewVerdict, toSavedScore } from '../lib/match'
@@ -326,7 +325,6 @@ ${f.reply || '(no reply)'}`,
               {q.topic}
             </span>
             <span className={`px-2 py-0.5 rounded-md ring-1 capitalize font-medium ${DIFFICULTY[q.difficulty] || ''}`}>{q.difficulty}</span>
-            <DraftBadge q={q} />
             {reactive && <span className="text-muted-foreground">Follow-ups react to your answers</span>}
           </div>
           <h2 className="text-2xl font-semibold leading-snug mb-5">{q.question}</h2>

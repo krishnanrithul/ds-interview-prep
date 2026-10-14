@@ -1,4 +1,5 @@
-// Shown on questions that haven't been reviewed by the author yet (draft: true in questions.json).
+// Shown in the Library on questions that haven't been reviewed by the author yet (draft: true in questions.json).
+// Practice and Mock show a short note next to "Report a problem" instead (ReportQuestion in FeedbackLink.jsx).
 export default function DraftBadge({ q }) {
   if (!q.draft) return null
   return (
